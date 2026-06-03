@@ -32,7 +32,7 @@ function Kaddish() {
             <label className="text-[10px] uppercase tracking-wider text-white/50">For whom</label>
             <input
               className="w-full bg-transparent outline-none text-sm mt-1 placeholder:text-white/40"
-              placeholder="Avraham ben Yitzchak z"l"
+              placeholder='Avraham ben Yitzchak z"l'
               defaultValue="Avraham ben Yitzchak"
             />
           </div>
