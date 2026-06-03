@@ -9,19 +9,27 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TrustRouteImport } from './routes/trust'
 import { Route as TravelerRouteImport } from './routes/traveler'
 import { Route as SynagogueRouteImport } from './routes/synagogue'
+import { Route as SuccessRouteImport } from './routes/success'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as MinyanRouteImport } from './routes/minyan'
 import { Route as MapRouteImport } from './routes/map'
+import { Route as KaddishRouteImport } from './routes/kaddish'
 import { Route as HomeRouteImport } from './routes/home'
 import { Route as CreateRouteImport } from './routes/create'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
 
+const TrustRoute = TrustRouteImport.update({
+  id: '/trust',
+  path: '/trust',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TravelerRoute = TravelerRouteImport.update({
   id: '/traveler',
   path: '/traveler',
@@ -30,6 +38,11 @@ const TravelerRoute = TravelerRouteImport.update({
 const SynagogueRoute = SynagogueRouteImport.update({
   id: '/synagogue',
   path: '/synagogue',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SuccessRoute = SuccessRouteImport.update({
+  id: '/success',
+  path: '/success',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SettingsRoute = SettingsRouteImport.update({
@@ -62,6 +75,11 @@ const MapRoute = MapRouteImport.update({
   path: '/map',
   getParentRoute: () => rootRouteImport,
 } as any)
+const KaddishRoute = KaddishRouteImport.update({
+  id: '/kaddish',
+  path: '/kaddish',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const HomeRoute = HomeRouteImport.update({
   id: '/home',
   path: '/home',
@@ -88,28 +106,34 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/create': typeof CreateRoute
   '/home': typeof HomeRoute
+  '/kaddish': typeof KaddishRoute
   '/map': typeof MapRoute
   '/minyan': typeof MinyanRoute
   '/notifications': typeof NotificationsRoute
   '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
   '/settings': typeof SettingsRoute
+  '/success': typeof SuccessRoute
   '/synagogue': typeof SynagogueRoute
   '/traveler': typeof TravelerRoute
+  '/trust': typeof TrustRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/create': typeof CreateRoute
   '/home': typeof HomeRoute
+  '/kaddish': typeof KaddishRoute
   '/map': typeof MapRoute
   '/minyan': typeof MinyanRoute
   '/notifications': typeof NotificationsRoute
   '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
   '/settings': typeof SettingsRoute
+  '/success': typeof SuccessRoute
   '/synagogue': typeof SynagogueRoute
   '/traveler': typeof TravelerRoute
+  '/trust': typeof TrustRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -117,14 +141,17 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/create': typeof CreateRoute
   '/home': typeof HomeRoute
+  '/kaddish': typeof KaddishRoute
   '/map': typeof MapRoute
   '/minyan': typeof MinyanRoute
   '/notifications': typeof NotificationsRoute
   '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
   '/settings': typeof SettingsRoute
+  '/success': typeof SuccessRoute
   '/synagogue': typeof SynagogueRoute
   '/traveler': typeof TravelerRoute
+  '/trust': typeof TrustRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -133,42 +160,51 @@ export interface FileRouteTypes {
     | '/auth'
     | '/create'
     | '/home'
+    | '/kaddish'
     | '/map'
     | '/minyan'
     | '/notifications'
     | '/onboarding'
     | '/profile'
     | '/settings'
+    | '/success'
     | '/synagogue'
     | '/traveler'
+    | '/trust'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
     | '/create'
     | '/home'
+    | '/kaddish'
     | '/map'
     | '/minyan'
     | '/notifications'
     | '/onboarding'
     | '/profile'
     | '/settings'
+    | '/success'
     | '/synagogue'
     | '/traveler'
+    | '/trust'
   id:
     | '__root__'
     | '/'
     | '/auth'
     | '/create'
     | '/home'
+    | '/kaddish'
     | '/map'
     | '/minyan'
     | '/notifications'
     | '/onboarding'
     | '/profile'
     | '/settings'
+    | '/success'
     | '/synagogue'
     | '/traveler'
+    | '/trust'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -176,18 +212,28 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   CreateRoute: typeof CreateRoute
   HomeRoute: typeof HomeRoute
+  KaddishRoute: typeof KaddishRoute
   MapRoute: typeof MapRoute
   MinyanRoute: typeof MinyanRoute
   NotificationsRoute: typeof NotificationsRoute
   OnboardingRoute: typeof OnboardingRoute
   ProfileRoute: typeof ProfileRoute
   SettingsRoute: typeof SettingsRoute
+  SuccessRoute: typeof SuccessRoute
   SynagogueRoute: typeof SynagogueRoute
   TravelerRoute: typeof TravelerRoute
+  TrustRoute: typeof TrustRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/trust': {
+      id: '/trust'
+      path: '/trust'
+      fullPath: '/trust'
+      preLoaderRoute: typeof TrustRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/traveler': {
       id: '/traveler'
       path: '/traveler'
@@ -200,6 +246,13 @@ declare module '@tanstack/react-router' {
       path: '/synagogue'
       fullPath: '/synagogue'
       preLoaderRoute: typeof SynagogueRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/success': {
+      id: '/success'
+      path: '/success'
+      fullPath: '/success'
+      preLoaderRoute: typeof SuccessRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/settings': {
@@ -244,6 +297,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MapRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/kaddish': {
+      id: '/kaddish'
+      path: '/kaddish'
+      fullPath: '/kaddish'
+      preLoaderRoute: typeof KaddishRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/home': {
       id: '/home'
       path: '/home'
@@ -280,25 +340,18 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   CreateRoute: CreateRoute,
   HomeRoute: HomeRoute,
+  KaddishRoute: KaddishRoute,
   MapRoute: MapRoute,
   MinyanRoute: MinyanRoute,
   NotificationsRoute: NotificationsRoute,
   OnboardingRoute: OnboardingRoute,
   ProfileRoute: ProfileRoute,
   SettingsRoute: SettingsRoute,
+  SuccessRoute: SuccessRoute,
   SynagogueRoute: SynagogueRoute,
   TravelerRoute: TravelerRoute,
+  TrustRoute: TrustRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
