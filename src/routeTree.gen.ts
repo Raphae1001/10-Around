@@ -13,6 +13,9 @@ import { Route as TrustRouteImport } from './routes/trust'
 import { Route as TravelerRouteImport } from './routes/traveler'
 import { Route as SynagogueRouteImport } from './routes/synagogue'
 import { Route as SuccessRouteImport } from './routes/success'
+import { Route as SiddurRouteImport } from './routes/siddur'
+import { Route as ShareRouteImport } from './routes/share'
+import { Route as ShabbatRouteImport } from './routes/shabbat'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
@@ -21,7 +24,9 @@ import { Route as MinyanRouteImport } from './routes/minyan'
 import { Route as MapRouteImport } from './routes/map'
 import { Route as KaddishRouteImport } from './routes/kaddish'
 import { Route as HomeRouteImport } from './routes/home'
+import { Route as FlightRouteImport } from './routes/flight'
 import { Route as CreateRouteImport } from './routes/create'
+import { Route as BackupRouteImport } from './routes/backup'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
 
@@ -43,6 +48,21 @@ const SynagogueRoute = SynagogueRouteImport.update({
 const SuccessRoute = SuccessRouteImport.update({
   id: '/success',
   path: '/success',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SiddurRoute = SiddurRouteImport.update({
+  id: '/siddur',
+  path: '/siddur',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ShareRoute = ShareRouteImport.update({
+  id: '/share',
+  path: '/share',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ShabbatRoute = ShabbatRouteImport.update({
+  id: '/shabbat',
+  path: '/shabbat',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SettingsRoute = SettingsRouteImport.update({
@@ -85,9 +105,19 @@ const HomeRoute = HomeRouteImport.update({
   path: '/home',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FlightRoute = FlightRouteImport.update({
+  id: '/flight',
+  path: '/flight',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CreateRoute = CreateRouteImport.update({
   id: '/create',
   path: '/create',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BackupRoute = BackupRouteImport.update({
+  id: '/backup',
+  path: '/backup',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -104,7 +134,9 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/backup': typeof BackupRoute
   '/create': typeof CreateRoute
+  '/flight': typeof FlightRoute
   '/home': typeof HomeRoute
   '/kaddish': typeof KaddishRoute
   '/map': typeof MapRoute
@@ -113,6 +145,9 @@ export interface FileRoutesByFullPath {
   '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
   '/settings': typeof SettingsRoute
+  '/shabbat': typeof ShabbatRoute
+  '/share': typeof ShareRoute
+  '/siddur': typeof SiddurRoute
   '/success': typeof SuccessRoute
   '/synagogue': typeof SynagogueRoute
   '/traveler': typeof TravelerRoute
@@ -121,7 +156,9 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/backup': typeof BackupRoute
   '/create': typeof CreateRoute
+  '/flight': typeof FlightRoute
   '/home': typeof HomeRoute
   '/kaddish': typeof KaddishRoute
   '/map': typeof MapRoute
@@ -130,6 +167,9 @@ export interface FileRoutesByTo {
   '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
   '/settings': typeof SettingsRoute
+  '/shabbat': typeof ShabbatRoute
+  '/share': typeof ShareRoute
+  '/siddur': typeof SiddurRoute
   '/success': typeof SuccessRoute
   '/synagogue': typeof SynagogueRoute
   '/traveler': typeof TravelerRoute
@@ -139,7 +179,9 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/backup': typeof BackupRoute
   '/create': typeof CreateRoute
+  '/flight': typeof FlightRoute
   '/home': typeof HomeRoute
   '/kaddish': typeof KaddishRoute
   '/map': typeof MapRoute
@@ -148,6 +190,9 @@ export interface FileRoutesById {
   '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
   '/settings': typeof SettingsRoute
+  '/shabbat': typeof ShabbatRoute
+  '/share': typeof ShareRoute
+  '/siddur': typeof SiddurRoute
   '/success': typeof SuccessRoute
   '/synagogue': typeof SynagogueRoute
   '/traveler': typeof TravelerRoute
@@ -158,7 +203,9 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/backup'
     | '/create'
+    | '/flight'
     | '/home'
     | '/kaddish'
     | '/map'
@@ -167,6 +214,9 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/profile'
     | '/settings'
+    | '/shabbat'
+    | '/share'
+    | '/siddur'
     | '/success'
     | '/synagogue'
     | '/traveler'
@@ -175,7 +225,9 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/backup'
     | '/create'
+    | '/flight'
     | '/home'
     | '/kaddish'
     | '/map'
@@ -184,6 +236,9 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/profile'
     | '/settings'
+    | '/shabbat'
+    | '/share'
+    | '/siddur'
     | '/success'
     | '/synagogue'
     | '/traveler'
@@ -192,7 +247,9 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/auth'
+    | '/backup'
     | '/create'
+    | '/flight'
     | '/home'
     | '/kaddish'
     | '/map'
@@ -201,6 +258,9 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/profile'
     | '/settings'
+    | '/shabbat'
+    | '/share'
+    | '/siddur'
     | '/success'
     | '/synagogue'
     | '/traveler'
@@ -210,7 +270,9 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
+  BackupRoute: typeof BackupRoute
   CreateRoute: typeof CreateRoute
+  FlightRoute: typeof FlightRoute
   HomeRoute: typeof HomeRoute
   KaddishRoute: typeof KaddishRoute
   MapRoute: typeof MapRoute
@@ -219,6 +281,9 @@ export interface RootRouteChildren {
   OnboardingRoute: typeof OnboardingRoute
   ProfileRoute: typeof ProfileRoute
   SettingsRoute: typeof SettingsRoute
+  ShabbatRoute: typeof ShabbatRoute
+  ShareRoute: typeof ShareRoute
+  SiddurRoute: typeof SiddurRoute
   SuccessRoute: typeof SuccessRoute
   SynagogueRoute: typeof SynagogueRoute
   TravelerRoute: typeof TravelerRoute
@@ -253,6 +318,27 @@ declare module '@tanstack/react-router' {
       path: '/success'
       fullPath: '/success'
       preLoaderRoute: typeof SuccessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/siddur': {
+      id: '/siddur'
+      path: '/siddur'
+      fullPath: '/siddur'
+      preLoaderRoute: typeof SiddurRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/share': {
+      id: '/share'
+      path: '/share'
+      fullPath: '/share'
+      preLoaderRoute: typeof ShareRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/shabbat': {
+      id: '/shabbat'
+      path: '/shabbat'
+      fullPath: '/shabbat'
+      preLoaderRoute: typeof ShabbatRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/settings': {
@@ -311,11 +397,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HomeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/flight': {
+      id: '/flight'
+      path: '/flight'
+      fullPath: '/flight'
+      preLoaderRoute: typeof FlightRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/create': {
       id: '/create'
       path: '/create'
       fullPath: '/create'
       preLoaderRoute: typeof CreateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/backup': {
+      id: '/backup'
+      path: '/backup'
+      fullPath: '/backup'
+      preLoaderRoute: typeof BackupRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -338,7 +438,9 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
+  BackupRoute: BackupRoute,
   CreateRoute: CreateRoute,
+  FlightRoute: FlightRoute,
   HomeRoute: HomeRoute,
   KaddishRoute: KaddishRoute,
   MapRoute: MapRoute,
@@ -347,6 +449,9 @@ const rootRouteChildren: RootRouteChildren = {
   OnboardingRoute: OnboardingRoute,
   ProfileRoute: ProfileRoute,
   SettingsRoute: SettingsRoute,
+  ShabbatRoute: ShabbatRoute,
+  ShareRoute: ShareRoute,
+  SiddurRoute: SiddurRoute,
   SuccessRoute: SuccessRoute,
   SynagogueRoute: SynagogueRoute,
   TravelerRoute: TravelerRoute,

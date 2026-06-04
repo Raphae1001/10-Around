@@ -54,20 +54,24 @@ function Traveler() {
       <div className="px-6 mt-6">
         <div className="text-[11px] uppercase tracking-[0.2em] text-white/50 mb-3">Built for your trip</div>
         <div className="grid grid-cols-3 gap-2">
-          {[
-            { icon: Plane, label: "Airport" },
-            { icon: Building2, label: "Hotel" },
-            { icon: Briefcase, label: "Business" },
-          ].map((c, i) => {
-            const Icon = c.icon;
-            return (
-              <div key={i} className="rounded-2xl bg-white/5 border border-white/10 p-3 text-center">
-                <Icon className="h-5 w-5 mx-auto text-gold" />
-                <div className="text-xs mt-2">{c.label}</div>
-              </div>
-            );
-          })}
+          <Link to="/flight" className="rounded-2xl bg-white/5 border border-white/10 p-3 text-center relative">
+            <Plane className="h-5 w-5 mx-auto text-gold" />
+            <div className="text-xs mt-2">Flight</div>
+            <span className="absolute top-2 right-2 h-1.5 w-1.5 rounded-full bg-gold" />
+          </Link>
+          <div className="rounded-2xl bg-white/5 border border-white/10 p-3 text-center">
+            <Building2 className="h-5 w-5 mx-auto text-gold" />
+            <div className="text-xs mt-2">Hotel</div>
+          </div>
+          <div className="rounded-2xl bg-white/5 border border-white/10 p-3 text-center">
+            <Briefcase className="h-5 w-5 mx-auto text-gold" />
+            <div className="text-xs mt-2">Business</div>
+          </div>
         </div>
+
+        <Link to="/flight" className="mt-3 block rounded-2xl border border-gold/40 bg-gold/10 p-3 text-center text-xs font-semibold text-gold">
+          ✈ Enter your flight number — find Jews on board
+        </Link>
       </div>
 
       {/* Section */}
