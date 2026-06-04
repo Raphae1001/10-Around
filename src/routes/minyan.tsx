@@ -49,6 +49,19 @@ function Details() {
           ))}
           <div className="h-8 w-8 rounded-full border-2 border-dashed border-urgent flex items-center justify-center text-urgent text-xs ml-1">?</div>
         </div>
+
+        {/* Live movement */}
+        <div className="mt-4 -mx-1 rounded-xl bg-muted/60 p-3 flex items-center gap-3">
+          <div className="relative h-8 w-8 rounded-full bg-success/15 flex items-center justify-center">
+            <span className="absolute inset-0 rounded-full bg-success/30 live-pulse-ring text-success" />
+            <Users className="h-4 w-4 text-success relative" />
+          </div>
+          <div className="text-xs leading-tight flex-1">
+            <div className="font-semibold">3 walking · 1 driving</div>
+            <div className="text-muted-foreground">Average arrival in 4 min</div>
+          </div>
+          <span className="text-[10px] uppercase tracking-wider text-success font-semibold">Live</span>
+        </div>
       </div>
 
       {/* Organizer */}
@@ -80,9 +93,9 @@ function Details() {
           <button className="bg-surface border border-border font-medium py-3 rounded-2xl text-sm flex items-center justify-center gap-2">
             <Navigation2 className="h-4 w-4" /> Directions
           </button>
-          <button className="bg-surface border border-border font-medium py-3 rounded-2xl text-sm flex items-center justify-center gap-2">
+          <Link to="/share" className="bg-surface border border-border font-medium py-3 rounded-2xl text-sm flex items-center justify-center gap-2">
             <Share2 className="h-4 w-4" /> WhatsApp
-          </button>
+          </Link>
         </div>
       </div>
     </MobileFrame>

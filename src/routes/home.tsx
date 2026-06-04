@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { MobileFrame } from "@/components/MobileFrame";
 import { ScreenHeader, LiveBadge, MinyanCard, UrgentBanner, type Minyan } from "@/components/ui-bits";
 import { MapCanvas } from "@/components/MapCanvas";
-import { ChevronRight, Plane, Sparkles } from "lucide-react";
+import { ChevronRight, Plane, Sparkles, Shield, Sunset } from "lucide-react";
 
 export const Route = createFileRoute("/home")({
   component: Home,
@@ -77,8 +77,27 @@ function Home() {
         </Link>
       </div>
 
+      {/* Quick rail */}
+      <div className="px-6 mt-5 grid grid-cols-2 gap-3">
+        <Link to="/backup" className="rounded-2xl border border-border bg-surface p-4 flex flex-col gap-2">
+          <div className="h-9 w-9 rounded-xl bg-success/15 text-success flex items-center justify-center">
+            <Shield className="h-4 w-4" />
+          </div>
+          <div className="text-sm font-semibold leading-tight">Backup Mode</div>
+          <div className="text-[11px] text-muted-foreground">Be the 10th when needed nearby.</div>
+        </Link>
+        <Link to="/shabbat" className="rounded-2xl border border-border bg-surface p-4 flex flex-col gap-2 relative overflow-hidden">
+          <div className="absolute -right-4 -bottom-4 h-20 w-20 rounded-full bg-gold/15 blur-2xl" />
+          <div className="h-9 w-9 rounded-xl bg-gold/15 text-gold flex items-center justify-center relative">
+            <Sunset className="h-4 w-4" />
+          </div>
+          <div className="text-sm font-semibold leading-tight relative">Shabbat plan</div>
+          <div className="text-[11px] text-muted-foreground relative">Pre-confirm before 16:24.</div>
+        </Link>
+      </div>
+
       {/* Insight */}
-      <div className="px-6 mt-6 mb-8">
+      <div className="px-6 mt-5 mb-8">
         <div className="rounded-2xl border border-gold/30 bg-gold/5 p-4 flex items-start gap-3">
           <Sparkles className="h-5 w-5 text-gold mt-0.5" />
           <div className="text-sm leading-snug">
