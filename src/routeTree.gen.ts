@@ -13,6 +13,9 @@ import { Route as TrustRouteImport } from './routes/trust'
 import { Route as TravelerRouteImport } from './routes/traveler'
 import { Route as SynagogueRouteImport } from './routes/synagogue'
 import { Route as SuccessRouteImport } from './routes/success'
+import { Route as SiddurRouteImport } from './routes/siddur'
+import { Route as ShareRouteImport } from './routes/share'
+import { Route as ShabbatRouteImport } from './routes/shabbat'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
@@ -21,35 +24,112 @@ import { Route as MinyanRouteImport } from './routes/minyan'
 import { Route as MapRouteImport } from './routes/map'
 import { Route as KaddishRouteImport } from './routes/kaddish'
 import { Route as HomeRouteImport } from './routes/home'
+import { Route as FlightRouteImport } from './routes/flight'
 import { Route as CreateRouteImport } from './routes/create'
+import { Route as BackupRouteImport } from './routes/backup'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as SiddurRouteImport } from './routes/siddur'
-import { Route as FlightRouteImport } from './routes/flight'
-import { Route as BackupRouteImport } from './routes/backup'
-import { Route as ShareRouteImport } from './routes/share'
-import { Route as ShabbatRouteImport } from './routes/shabbat'
 
-const TrustRoute = TrustRouteImport.update({ id: '/trust', path: '/trust', getParentRoute: () => rootRouteImport } as any)
-const TravelerRoute = TravelerRouteImport.update({ id: '/traveler', path: '/traveler', getParentRoute: () => rootRouteImport } as any)
-const SynagogueRoute = SynagogueRouteImport.update({ id: '/synagogue', path: '/synagogue', getParentRoute: () => rootRouteImport } as any)
-const SuccessRoute = SuccessRouteImport.update({ id: '/success', path: '/success', getParentRoute: () => rootRouteImport } as any)
-const SettingsRoute = SettingsRouteImport.update({ id: '/settings', path: '/settings', getParentRoute: () => rootRouteImport } as any)
-const ProfileRoute = ProfileRouteImport.update({ id: '/profile', path: '/profile', getParentRoute: () => rootRouteImport } as any)
-const OnboardingRoute = OnboardingRouteImport.update({ id: '/onboarding', path: '/onboarding', getParentRoute: () => rootRouteImport } as any)
-const NotificationsRoute = NotificationsRouteImport.update({ id: '/notifications', path: '/notifications', getParentRoute: () => rootRouteImport } as any)
-const MinyanRoute = MinyanRouteImport.update({ id: '/minyan', path: '/minyan', getParentRoute: () => rootRouteImport } as any)
-const MapRoute = MapRouteImport.update({ id: '/map', path: '/map', getParentRoute: () => rootRouteImport } as any)
-const KaddishRoute = KaddishRouteImport.update({ id: '/kaddish', path: '/kaddish', getParentRoute: () => rootRouteImport } as any)
-const HomeRoute = HomeRouteImport.update({ id: '/home', path: '/home', getParentRoute: () => rootRouteImport } as any)
-const CreateRoute = CreateRouteImport.update({ id: '/create', path: '/create', getParentRoute: () => rootRouteImport } as any)
-const AuthRoute = AuthRouteImport.update({ id: '/auth', path: '/auth', getParentRoute: () => rootRouteImport } as any)
-const IndexRoute = IndexRouteImport.update({ id: '/', path: '/', getParentRoute: () => rootRouteImport } as any)
-const SiddurRoute = SiddurRouteImport.update({ id: '/siddur', path: '/siddur', getParentRoute: () => rootRouteImport } as any)
-const FlightRoute = FlightRouteImport.update({ id: '/flight', path: '/flight', getParentRoute: () => rootRouteImport } as any)
-const BackupRoute = BackupRouteImport.update({ id: '/backup', path: '/backup', getParentRoute: () => rootRouteImport } as any)
-const ShareRoute = ShareRouteImport.update({ id: '/share', path: '/share', getParentRoute: () => rootRouteImport } as any)
-const ShabbatRoute = ShabbatRouteImport.update({ id: '/shabbat', path: '/shabbat', getParentRoute: () => rootRouteImport } as any)
+const TrustRoute = TrustRouteImport.update({
+  id: '/trust',
+  path: '/trust',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TravelerRoute = TravelerRouteImport.update({
+  id: '/traveler',
+  path: '/traveler',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SynagogueRoute = SynagogueRouteImport.update({
+  id: '/synagogue',
+  path: '/synagogue',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SuccessRoute = SuccessRouteImport.update({
+  id: '/success',
+  path: '/success',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SiddurRoute = SiddurRouteImport.update({
+  id: '/siddur',
+  path: '/siddur',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ShareRoute = ShareRouteImport.update({
+  id: '/share',
+  path: '/share',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ShabbatRoute = ShabbatRouteImport.update({
+  id: '/shabbat',
+  path: '/shabbat',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OnboardingRoute = OnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NotificationsRoute = NotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MinyanRoute = MinyanRouteImport.update({
+  id: '/minyan',
+  path: '/minyan',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MapRoute = MapRouteImport.update({
+  id: '/map',
+  path: '/map',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KaddishRoute = KaddishRouteImport.update({
+  id: '/kaddish',
+  path: '/kaddish',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HomeRoute = HomeRouteImport.update({
+  id: '/home',
+  path: '/home',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FlightRoute = FlightRouteImport.update({
+  id: '/flight',
+  path: '/flight',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CreateRoute = CreateRouteImport.update({
+  id: '/create',
+  path: '/create',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BackupRoute = BackupRouteImport.update({
+  id: '/backup',
+  path: '/backup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -73,7 +153,28 @@ export interface FileRoutesByFullPath {
   '/traveler': typeof TravelerRoute
   '/trust': typeof TrustRoute
 }
-export interface FileRoutesByTo extends FileRoutesByFullPath {}
+export interface FileRoutesByTo {
+  '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/backup': typeof BackupRoute
+  '/create': typeof CreateRoute
+  '/flight': typeof FlightRoute
+  '/home': typeof HomeRoute
+  '/kaddish': typeof KaddishRoute
+  '/map': typeof MapRoute
+  '/minyan': typeof MinyanRoute
+  '/notifications': typeof NotificationsRoute
+  '/onboarding': typeof OnboardingRoute
+  '/profile': typeof ProfileRoute
+  '/settings': typeof SettingsRoute
+  '/shabbat': typeof ShabbatRoute
+  '/share': typeof ShareRoute
+  '/siddur': typeof SiddurRoute
+  '/success': typeof SuccessRoute
+  '/synagogue': typeof SynagogueRoute
+  '/traveler': typeof TravelerRoute
+  '/trust': typeof TrustRoute
+}
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
@@ -100,21 +201,70 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/' | '/auth' | '/backup' | '/create' | '/flight' | '/home' | '/kaddish'
-    | '/map' | '/minyan' | '/notifications' | '/onboarding' | '/profile'
-    | '/settings' | '/shabbat' | '/share' | '/siddur' | '/success'
-    | '/synagogue' | '/traveler' | '/trust'
+    | '/'
+    | '/auth'
+    | '/backup'
+    | '/create'
+    | '/flight'
+    | '/home'
+    | '/kaddish'
+    | '/map'
+    | '/minyan'
+    | '/notifications'
+    | '/onboarding'
+    | '/profile'
+    | '/settings'
+    | '/shabbat'
+    | '/share'
+    | '/siddur'
+    | '/success'
+    | '/synagogue'
+    | '/traveler'
+    | '/trust'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/' | '/auth' | '/backup' | '/create' | '/flight' | '/home' | '/kaddish'
-    | '/map' | '/minyan' | '/notifications' | '/onboarding' | '/profile'
-    | '/settings' | '/shabbat' | '/share' | '/siddur' | '/success'
-    | '/synagogue' | '/traveler' | '/trust'
+    | '/'
+    | '/auth'
+    | '/backup'
+    | '/create'
+    | '/flight'
+    | '/home'
+    | '/kaddish'
+    | '/map'
+    | '/minyan'
+    | '/notifications'
+    | '/onboarding'
+    | '/profile'
+    | '/settings'
+    | '/shabbat'
+    | '/share'
+    | '/siddur'
+    | '/success'
+    | '/synagogue'
+    | '/traveler'
+    | '/trust'
   id:
-    | '__root__' | '/' | '/auth' | '/backup' | '/create' | '/flight' | '/home'
-    | '/kaddish' | '/map' | '/minyan' | '/notifications' | '/onboarding'
-    | '/profile' | '/settings' | '/shabbat' | '/share' | '/siddur' | '/success'
-    | '/synagogue' | '/traveler' | '/trust'
+    | '__root__'
+    | '/'
+    | '/auth'
+    | '/backup'
+    | '/create'
+    | '/flight'
+    | '/home'
+    | '/kaddish'
+    | '/map'
+    | '/minyan'
+    | '/notifications'
+    | '/onboarding'
+    | '/profile'
+    | '/settings'
+    | '/shabbat'
+    | '/share'
+    | '/siddur'
+    | '/success'
+    | '/synagogue'
+    | '/traveler'
+    | '/trust'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -142,45 +292,171 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/trust': { id: '/trust'; path: '/trust'; fullPath: '/trust'; preLoaderRoute: typeof TrustRouteImport; parentRoute: typeof rootRouteImport }
-    '/traveler': { id: '/traveler'; path: '/traveler'; fullPath: '/traveler'; preLoaderRoute: typeof TravelerRouteImport; parentRoute: typeof rootRouteImport }
-    '/synagogue': { id: '/synagogue'; path: '/synagogue'; fullPath: '/synagogue'; preLoaderRoute: typeof SynagogueRouteImport; parentRoute: typeof rootRouteImport }
-    '/success': { id: '/success'; path: '/success'; fullPath: '/success'; preLoaderRoute: typeof SuccessRouteImport; parentRoute: typeof rootRouteImport }
-    '/settings': { id: '/settings'; path: '/settings'; fullPath: '/settings'; preLoaderRoute: typeof SettingsRouteImport; parentRoute: typeof rootRouteImport }
-    '/profile': { id: '/profile'; path: '/profile'; fullPath: '/profile'; preLoaderRoute: typeof ProfileRouteImport; parentRoute: typeof rootRouteImport }
-    '/onboarding': { id: '/onboarding'; path: '/onboarding'; fullPath: '/onboarding'; preLoaderRoute: typeof OnboardingRouteImport; parentRoute: typeof rootRouteImport }
-    '/notifications': { id: '/notifications'; path: '/notifications'; fullPath: '/notifications'; preLoaderRoute: typeof NotificationsRouteImport; parentRoute: typeof rootRouteImport }
-    '/minyan': { id: '/minyan'; path: '/minyan'; fullPath: '/minyan'; preLoaderRoute: typeof MinyanRouteImport; parentRoute: typeof rootRouteImport }
-    '/map': { id: '/map'; path: '/map'; fullPath: '/map'; preLoaderRoute: typeof MapRouteImport; parentRoute: typeof rootRouteImport }
-    '/kaddish': { id: '/kaddish'; path: '/kaddish'; fullPath: '/kaddish'; preLoaderRoute: typeof KaddishRouteImport; parentRoute: typeof rootRouteImport }
-    '/home': { id: '/home'; path: '/home'; fullPath: '/home'; preLoaderRoute: typeof HomeRouteImport; parentRoute: typeof rootRouteImport }
-    '/create': { id: '/create'; path: '/create'; fullPath: '/create'; preLoaderRoute: typeof CreateRouteImport; parentRoute: typeof rootRouteImport }
-    '/auth': { id: '/auth'; path: '/auth'; fullPath: '/auth'; preLoaderRoute: typeof AuthRouteImport; parentRoute: typeof rootRouteImport }
-    '/': { id: '/'; path: '/'; fullPath: '/'; preLoaderRoute: typeof IndexRouteImport; parentRoute: typeof rootRouteImport }
-    '/siddur': { id: '/siddur'; path: '/siddur'; fullPath: '/siddur'; preLoaderRoute: typeof SiddurRouteImport; parentRoute: typeof rootRouteImport }
-    '/flight': { id: '/flight'; path: '/flight'; fullPath: '/flight'; preLoaderRoute: typeof FlightRouteImport; parentRoute: typeof rootRouteImport }
-    '/backup': { id: '/backup'; path: '/backup'; fullPath: '/backup'; preLoaderRoute: typeof BackupRouteImport; parentRoute: typeof rootRouteImport }
-    '/share': { id: '/share'; path: '/share'; fullPath: '/share'; preLoaderRoute: typeof ShareRouteImport; parentRoute: typeof rootRouteImport }
-    '/shabbat': { id: '/shabbat'; path: '/shabbat'; fullPath: '/shabbat'; preLoaderRoute: typeof ShabbatRouteImport; parentRoute: typeof rootRouteImport }
+    '/trust': {
+      id: '/trust'
+      path: '/trust'
+      fullPath: '/trust'
+      preLoaderRoute: typeof TrustRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/traveler': {
+      id: '/traveler'
+      path: '/traveler'
+      fullPath: '/traveler'
+      preLoaderRoute: typeof TravelerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/synagogue': {
+      id: '/synagogue'
+      path: '/synagogue'
+      fullPath: '/synagogue'
+      preLoaderRoute: typeof SynagogueRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/success': {
+      id: '/success'
+      path: '/success'
+      fullPath: '/success'
+      preLoaderRoute: typeof SuccessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/siddur': {
+      id: '/siddur'
+      path: '/siddur'
+      fullPath: '/siddur'
+      preLoaderRoute: typeof SiddurRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/share': {
+      id: '/share'
+      path: '/share'
+      fullPath: '/share'
+      preLoaderRoute: typeof ShareRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/shabbat': {
+      id: '/shabbat'
+      path: '/shabbat'
+      fullPath: '/shabbat'
+      preLoaderRoute: typeof ShabbatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/onboarding': {
+      id: '/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof OnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/notifications': {
+      id: '/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof NotificationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/minyan': {
+      id: '/minyan'
+      path: '/minyan'
+      fullPath: '/minyan'
+      preLoaderRoute: typeof MinyanRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/map': {
+      id: '/map'
+      path: '/map'
+      fullPath: '/map'
+      preLoaderRoute: typeof MapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/kaddish': {
+      id: '/kaddish'
+      path: '/kaddish'
+      fullPath: '/kaddish'
+      preLoaderRoute: typeof KaddishRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/home': {
+      id: '/home'
+      path: '/home'
+      fullPath: '/home'
+      preLoaderRoute: typeof HomeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/flight': {
+      id: '/flight'
+      path: '/flight'
+      fullPath: '/flight'
+      preLoaderRoute: typeof FlightRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/create': {
+      id: '/create'
+      path: '/create'
+      fullPath: '/create'
+      preLoaderRoute: typeof CreateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/backup': {
+      id: '/backup'
+      path: '/backup'
+      fullPath: '/backup'
+      preLoaderRoute: typeof BackupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute, AuthRoute, BackupRoute, CreateRoute, FlightRoute, HomeRoute,
-  KaddishRoute, MapRoute, MinyanRoute, NotificationsRoute, OnboardingRoute,
-  ProfileRoute, SettingsRoute, ShabbatRoute, ShareRoute, SiddurRoute,
-  SuccessRoute, SynagogueRoute, TravelerRoute, TrustRoute,
+  IndexRoute: IndexRoute,
+  AuthRoute: AuthRoute,
+  BackupRoute: BackupRoute,
+  CreateRoute: CreateRoute,
+  FlightRoute: FlightRoute,
+  HomeRoute: HomeRoute,
+  KaddishRoute: KaddishRoute,
+  MapRoute: MapRoute,
+  MinyanRoute: MinyanRoute,
+  NotificationsRoute: NotificationsRoute,
+  OnboardingRoute: OnboardingRoute,
+  ProfileRoute: ProfileRoute,
+  SettingsRoute: SettingsRoute,
+  ShabbatRoute: ShabbatRoute,
+  ShareRoute: ShareRoute,
+  SiddurRoute: SiddurRoute,
+  SuccessRoute: SuccessRoute,
+  SynagogueRoute: SynagogueRoute,
+  TravelerRoute: TravelerRoute,
+  TrustRoute: TrustRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
