@@ -143,6 +143,28 @@ function Home() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* After-join: offer directions on the map */}
+      <AlertDialog open={!!justJoined} onOpenChange={(o) => !o && setJustJoined(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>You're in! Want directions?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {justJoined && (
+                <>
+                  Open the map to walk to <strong>{justJoined.name}</strong> — {justJoined.distance} away, starts in {justJoined.inMin} min.
+                </>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Later</AlertDialogCancel>
+            <AlertDialogAction asChild>
+              <Link to="/map" onClick={() => setJustJoined(null)}>Open map</Link>
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </MobileFrame>
   );
 }
