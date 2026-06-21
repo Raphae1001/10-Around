@@ -20,7 +20,7 @@ function Create() {
   const [ctx, setCtx] = useState<Context>(initialCtx ?? "Street");
   const [prayer, setPrayer] = useState("Mincha");
   const [when, setWhen] = useState("Now");
-  const [needed, setNeeded] = useState(10);
+  const [present, setPresent] = useState(3);
   const [nusach, setNusach] = useState("Any");
   const [comment, setComment] = useState("");
 
