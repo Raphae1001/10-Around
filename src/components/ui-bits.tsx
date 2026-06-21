@@ -79,6 +79,7 @@ export interface Minyan {
   nusach: string;
   urgency?: "kaddish" | "almost" | "missing" | "confirmed";
   location?: string;
+  comment?: string;
 }
 
 export function MinyanCard({ m, compact = false }: { m: Minyan; compact?: boolean }) {
