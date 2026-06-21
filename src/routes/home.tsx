@@ -29,14 +29,16 @@ const initialMinyanim: Minyan[] = [
 ];
 
 function Home() {
-  const [ctx, setCtx] = useState<Context>("Street");
+  const [ctx] = useState<Context>("Street");
   const [minyanim, setMinyanim] = useState(initialMinyanim);
   const [joined, setJoined] = useState<Record<string, boolean>>({});
   const [pending, setPending] = useState<Minyan | null>(null);
+  const [justJoined, setJustJoined] = useState<Minyan | null>(null);
 
   const confirmJoin = () => {
     if (!pending) return;
     const id = pending.id;
+    let updated: Minyan | null = null;
     setMinyanim((list) =>
       list.map((m) => {
         if (m.id !== id) return m;
@@ -46,10 +48,12 @@ function Home() {
         } else {
           toast(`You're in — ${confirmed}/${m.needed}`, { description: `${m.needed - confirmed} more needed.` });
         }
-        return { ...m, confirmed };
+        updated = { ...m, confirmed };
+        return updated;
       }),
     );
     setJoined((j) => ({ ...j, [id]: true }));
+    setJustJoined(updated ?? pending);
     setPending(null);
   };
 
@@ -63,14 +67,14 @@ function Home() {
         }
       />
 
-      {/* Where are you — TOP */}
+      {/* Where are you — TOP — each tile opens /create pre-filled */}
       <div className="px-6">
-        <div className="text-[11px] uppercase tracking-wider text-muted-foreground mb-2 font-semibold">Where are you?</div>
+        <div className="text-[11px] uppercase tracking-wider text-muted-foreground mb-2 font-semibold">Start a minyan — where are you?</div>
         <div className="grid grid-cols-4 gap-2">
-          <CtxTile id="Street" icon={MapPin} active={ctx === "Street"} onClick={() => setCtx("Street")} />
-          <CtxTile id="Airport" icon={Plane} active={ctx === "Airport"} onClick={() => setCtx("Airport")} />
-          <CtxTile id="Hotel" icon={Building2} active={ctx === "Hotel"} onClick={() => setCtx("Hotel")} />
-          <CtxTile id="Travel" icon={Plane} active={ctx === "Travel"} onClick={() => setCtx("Travel")} />
+          <CtxTile id="Street" icon={MapPin} />
+          <CtxTile id="Airport" icon={Plane} />
+          <CtxTile id="Hotel" icon={Building2} />
+          <CtxTile id="Travel" icon={Plane} />
         </div>
       </div>
 
