@@ -29,7 +29,7 @@ const initialMinyanim: Minyan[] = [
 ];
 
 function Home() {
-  const [ctx] = useState<Context>("Street");
+  // ctx state removed — each tile now navigates directly
   const [minyanim, setMinyanim] = useState(initialMinyanim);
   const [joined, setJoined] = useState<Record<string, boolean>>({});
   const [pending, setPending] = useState<Minyan | null>(null);
