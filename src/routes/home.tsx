@@ -148,22 +148,22 @@ function Home() {
 }
 
 function CtxTile({
-  id, icon: Icon, active, onClick,
-}: { id: Context; icon: typeof MapPin; active: boolean; onClick: () => void }) {
+  id, icon: Icon,
+}: { id: Context; icon: typeof MapPin }) {
   return (
-    <button
-      onClick={onClick}
-      className={`rounded-2xl border bg-surface p-3 flex flex-col items-center gap-1.5 transition-all ${
-        active ? "border-gold ring-2 ring-gold/30 bg-gold/5" : "border-border"
-      }`}
+    <Link
+      to="/create"
+      search={{ ctx: id }}
+      className="rounded-2xl border bg-surface border-border p-3 flex flex-col items-center gap-1.5 transition-all active:scale-[0.97] hover:border-gold/60"
     >
-      <div className={`h-9 w-9 rounded-xl flex items-center justify-center ${active ? "gold-gradient text-gold-foreground" : "bg-muted text-muted-foreground"}`}>
+      <div className="h-9 w-9 rounded-xl bg-muted text-muted-foreground flex items-center justify-center">
         <Icon className="h-4 w-4" />
       </div>
       <div className="text-xs font-semibold">{id}</div>
-    </button>
+    </Link>
   );
 }
+
 
 function NearbyCard({
   m, joined, onJoinRequest,
