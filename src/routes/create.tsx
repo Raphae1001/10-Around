@@ -205,28 +205,28 @@ function Create() {
         </Section>
 
         {/* 4. HOW MANY */}
-        <Section step="4" title="How many people do you need?">
+        <Section step="4" title="How many of us are already here?">
           <div className="flex items-center justify-between rounded-2xl border border-border bg-surface p-3">
             <button
-              onClick={() => setNeeded(Math.max(10, needed - 1))}
+              onClick={() => setPresent(Math.max(1, present - 1))}
               className="h-10 w-10 rounded-xl bg-muted flex items-center justify-center active:scale-95"
               aria-label="Less"
             >
               <Minus className="h-4 w-4" />
             </button>
             <div className="text-center">
-              <div className="font-display text-3xl leading-none">{needed}</div>
-              <div className="text-[10px] uppercase tracking-wider text-muted-foreground mt-1">total needed</div>
+              <div className="font-display text-3xl leading-none">{present}</div>
+              <div className="text-[10px] uppercase tracking-wider text-muted-foreground mt-1">already here</div>
             </div>
             <button
-              onClick={() => setNeeded(needed + 1)}
+              onClick={() => setPresent(Math.min(10, present + 1))}
               className="h-10 w-10 rounded-xl gold-gradient text-gold-foreground flex items-center justify-center active:scale-95"
               aria-label="More"
             >
               <Plus className="h-4 w-4" />
             </button>
           </div>
-          <p className="text-[11px] text-muted-foreground mt-2">Minimum 10 for a valid minyan.</p>
+          <p className="text-[11px] text-muted-foreground mt-2">You + anyone already with you. Minyan needs 10.</p>
         </Section>
 
         {/* 5. NUSACH */}
