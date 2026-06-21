@@ -270,7 +270,7 @@ function Create() {
             </div>
           </div>
           <div className="border-t border-border pt-2 text-[11px] text-muted-foreground space-y-1">
-            <div><span className="font-semibold text-foreground">{prayer}</span> · {when} · {needed} people</div>
+            <div><span className="font-semibold text-foreground">{prayer}</span> · {when} · {present} here · {Math.max(0, 10 - present)} missing</div>
             <div className="flex items-start gap-1"><MapPin className="h-3 w-3 mt-0.5 shrink-0" /><span className="truncate">{locationSummary}</span></div>
             <div>Nusach: <span className="text-foreground">{nusach}</span></div>
             {comment && <div className="italic">"{comment}"</div>}
@@ -286,7 +286,7 @@ function Create() {
           <Users className="h-5 w-5" /> Publish minyan
         </Link>
         <p className="text-center text-[11px] text-muted-foreground mt-2">
-          You'll be notified the moment {needed} people commit.
+          You'll be notified the moment we reach 10.
         </p>
       </div>
     </MobileFrame>
