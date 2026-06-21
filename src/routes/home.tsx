@@ -82,14 +82,14 @@ function Home() {
       <div className="px-6 mt-5">
         <Link
           to="/create"
-          search={{ ctx }}
+          search={{ ctx: "Street" }}
           className="relative block rounded-3xl overflow-hidden navy-gradient text-white p-5 shadow-lift active:scale-[0.99] transition-transform"
         >
           <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-gold/25 blur-3xl" />
           <div className="relative flex items-center justify-between gap-4">
             <div className="min-w-0">
               <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] text-white/60">
-                <MapPin className="h-3 w-3 text-gold" /> {ctx} · 5th Ave NYC
+                <MapPin className="h-3 w-3 text-gold" /> Right where you stand
               </div>
               <h2 className="mt-1.5 font-display text-[26px] leading-[1.05]">
                 Start a minyan<br /><span className="text-gold">right here.</span>
