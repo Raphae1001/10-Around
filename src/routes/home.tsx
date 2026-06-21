@@ -101,10 +101,11 @@ function Home() {
       {/* Context modes — secondary */}
       <div className="px-6 mt-6">
         <div className="text-[11px] uppercase tracking-wider text-muted-foreground mb-2 font-semibold">Where are you?</div>
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-4 gap-2">
           <ContextTile to="/create" icon={MapPin} label="Street" tone="gold" active />
           <ContextTile to="/flight" icon={Plane} label="Airport" tone="sky" />
           <ContextTile to="/traveler" icon={Building2} label="Hotel" tone="navy" />
+          <ContextTile to="/travel" icon={Plane} label="Travel" tone="gold" />
         </div>
       </div>
 
