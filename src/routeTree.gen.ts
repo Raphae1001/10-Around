@@ -19,6 +19,7 @@ import { Route as ShareRouteImport } from './routes/share'
 import { Route as ShabbatRouteImport } from './routes/shabbat'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as MinyanRouteImport } from './routes/minyan'
 import { Route as MapRouteImport } from './routes/map'
@@ -78,6 +79,11 @@ const SettingsRoute = SettingsRouteImport.update({
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OnboardingRoute = OnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NotificationsRoute = NotificationsRouteImport.update({
@@ -142,6 +148,7 @@ export interface FileRoutesByFullPath {
   '/map': typeof MapRoute
   '/minyan': typeof MinyanRoute
   '/notifications': typeof NotificationsRoute
+  '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
   '/settings': typeof SettingsRoute
   '/shabbat': typeof ShabbatRoute
@@ -164,6 +171,7 @@ export interface FileRoutesByTo {
   '/map': typeof MapRoute
   '/minyan': typeof MinyanRoute
   '/notifications': typeof NotificationsRoute
+  '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
   '/settings': typeof SettingsRoute
   '/shabbat': typeof ShabbatRoute
@@ -187,6 +195,7 @@ export interface FileRoutesById {
   '/map': typeof MapRoute
   '/minyan': typeof MinyanRoute
   '/notifications': typeof NotificationsRoute
+  '/onboarding': typeof OnboardingRoute
   '/profile': typeof ProfileRoute
   '/settings': typeof SettingsRoute
   '/shabbat': typeof ShabbatRoute
@@ -211,6 +220,7 @@ export interface FileRouteTypes {
     | '/map'
     | '/minyan'
     | '/notifications'
+    | '/onboarding'
     | '/profile'
     | '/settings'
     | '/shabbat'
@@ -233,6 +243,7 @@ export interface FileRouteTypes {
     | '/map'
     | '/minyan'
     | '/notifications'
+    | '/onboarding'
     | '/profile'
     | '/settings'
     | '/shabbat'
@@ -255,6 +266,7 @@ export interface FileRouteTypes {
     | '/map'
     | '/minyan'
     | '/notifications'
+    | '/onboarding'
     | '/profile'
     | '/settings'
     | '/shabbat'
@@ -278,6 +290,7 @@ export interface RootRouteChildren {
   MapRoute: typeof MapRoute
   MinyanRoute: typeof MinyanRoute
   NotificationsRoute: typeof NotificationsRoute
+  OnboardingRoute: typeof OnboardingRoute
   ProfileRoute: typeof ProfileRoute
   SettingsRoute: typeof SettingsRoute
   ShabbatRoute: typeof ShabbatRoute
@@ -360,6 +373,13 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/profile'
       preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/onboarding': {
+      id: '/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof OnboardingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/notifications': {
@@ -446,6 +466,7 @@ const rootRouteChildren: RootRouteChildren = {
   MapRoute: MapRoute,
   MinyanRoute: MinyanRoute,
   NotificationsRoute: NotificationsRoute,
+  OnboardingRoute: OnboardingRoute,
   ProfileRoute: ProfileRoute,
   SettingsRoute: SettingsRoute,
   ShabbatRoute: ShabbatRoute,
