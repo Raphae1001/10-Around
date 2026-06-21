@@ -1,12 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Logo, Wordmark } from "@/components/Logo";
 import { useEffect, useState } from "react";
+import { MapPin } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "MinyanLive — Real-Time Global Minyan Network" },
-      { name: "description", content: "Find, join, or create a minyan anywhere in the world, in real time." },
+      { title: "MinyanStreet — Start a minyan, anywhere, right now" },
+      { name: "description", content: "Create or join a minyan in the street, at the airport, anywhere in the world — in seconds." },
     ],
   }),
   component: Splash,
@@ -21,11 +22,9 @@ function Splash() {
   return (
     <div className="min-h-screen w-full bg-muted/40 flex items-stretch justify-center">
       <div className="relative w-full max-w-[440px] min-h-screen navy-gradient text-white overflow-hidden flex flex-col">
-        {/* ambient orbs */}
         <div className="absolute -top-24 -left-24 h-72 w-72 rounded-full bg-gold/20 blur-3xl" />
         <div className="absolute -bottom-32 -right-20 h-80 w-80 rounded-full bg-sky/10 blur-3xl" />
 
-        {/* world dots */}
         <svg className="absolute inset-0 w-full h-full opacity-[0.08]" viewBox="0 0 400 800">
           {Array.from({ length: 120 }).map((_, i) => {
             const x = (i * 53) % 400;
@@ -43,15 +42,18 @@ function Splash() {
             <h1 className="mt-8 font-display text-5xl tracking-tight">
               <Wordmark />
             </h1>
-            <p className="mt-3 text-sm text-white/70 max-w-xs mx-auto">
-              Real-Time Global Minyan Network
+            <p className="mt-4 text-base text-white/80 max-w-xs mx-auto leading-snug">
+              Start a minyan <span className="text-gold">right where you are</span>.
+            </p>
+            <p className="mt-1 text-xs text-white/50 max-w-xs mx-auto">
+              Street · Airport · Hotel · Anywhere
             </p>
           </div>
 
           <div className="absolute bottom-32 left-0 right-0 flex justify-center">
             <div className="flex items-center gap-2 text-[11px] tracking-[0.3em] uppercase text-white/40">
-              <span className="h-2 w-2 rounded-full bg-gold live-dot" />
-              Connecting communities
+              <MapPin className="h-3 w-3 text-gold" />
+              10 jews, 1 tap, anywhere
             </div>
           </div>
         </div>
