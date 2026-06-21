@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Logo, Wordmark } from "@/components/Logo";
-import { MapPin, Zap, Users, Plane, Globe2 } from "lucide-react";
+import { MapPin, Zap, Users, Globe2 } from "lucide-react";
 
 export const Route = createFileRoute("/onboarding")({
   component: Onboarding,
@@ -10,32 +10,26 @@ export const Route = createFileRoute("/onboarding")({
 const steps = [
   {
     icon: MapPin,
-    title: "Find a minyan in seconds",
-    body: "See live minyanim near you anywhere in the world.",
+    title: "A minyan near you, in seconds.",
+    body: "One tap shows every live minyan forming around you — street, café, airport, anywhere.",
     tone: "sky" as const,
   },
   {
     icon: Zap,
-    title: "Create one in under 10 seconds",
-    body: "Pick a prayer, drop a pin. Nearby Jews are notified instantly.",
+    title: "Missing one? Start it on the spot.",
+    body: "Drop a pin where you stand. Nearby Jews are pinged instantly — a minyan from zero in under 10 seconds.",
     tone: "gold" as const,
   },
   {
     icon: Users,
-    title: "Help complete a minyan nearby",
-    body: "When one person is missing, your presence completes the prayer.",
+    title: "Be the 10th. Complete the prayer.",
+    body: "When a minyan is one person short, your presence is what makes it happen.",
     tone: "urgent" as const,
   },
   {
-    icon: Plane,
-    title: "Travel without worry",
-    body: "Airports, hotels, conferences — there's almost always a minyan.",
-    tone: "sky" as const,
-  },
-  {
     icon: Globe2,
-    title: "One global community",
-    body: "Real-time coordination across every Jewish community.",
+    title: "Wherever you go, you're never alone.",
+    body: "Real-time Jewish coordination across every city, airport and hotel in the world.",
     tone: "gold" as const,
   },
 ];
