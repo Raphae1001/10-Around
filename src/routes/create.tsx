@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { MobileFrame } from "@/components/MobileFrame";
 import { ScreenHeader } from "@/components/ui-bits";
-import { Sunrise, Sun, Moon, MapPin, Users, Zap, ChevronDown, Crosshair, Plane, Building2 } from "lucide-react";
+import { Sunrise, Sun, Moon, MapPin, Users, Zap, Crosshair, Plane, Building2, Minus, Plus } from "lucide-react";
 
 type Context = "Street" | "Airport" | "Hotel" | "Travel";
 
@@ -20,11 +20,20 @@ function Create() {
   const [ctx, setCtx] = useState<Context>(initialCtx ?? "Street");
   const [prayer, setPrayer] = useState("Mincha");
   const [when, setWhen] = useState("Now");
-  const [advanced, setAdvanced] = useState(false);
+  const [needed, setNeeded] = useState(10);
   const [nusach, setNusach] = useState("Any");
   const [comment, setComment] = useState("");
-  const [flight, setFlight] = useState("");
-  const [hotel, setHotel] = useState("");
+
+  // Street
+  const [street, setStreet] = useState("5th Avenue · NYC");
+  // Airport
+  const [airport, setAirport] = useState("");
+  const [gate, setGate] = useState("");
+  // Hotel
+  const [hotelCity, setHotelCity] = useState("");
+  const [hotelName, setHotelName] = useState("");
+  const [hotelSpot, setHotelSpot] = useState("");
+  // Travel
   const [tripCity, setTripCity] = useState("");
   const [tripDate, setTripDate] = useState("");
 
@@ -41,13 +50,19 @@ function Create() {
     Travel: "For a future trip",
   };
 
+  const locationSummary =
+    ctx === "Street" ? street :
+    ctx === "Airport" ? [airport, gate && `Gate ${gate}`].filter(Boolean).join(" · ") || "Set airport & gate" :
+    ctx === "Hotel" ? [hotelCity, hotelName, hotelSpot].filter(Boolean).join(" · ") || "Set hotel details" :
+    [tripCity, tripDate].filter(Boolean).join(" · ") || "Set city & date";
+
   return (
     <MobileFrame>
-      <ScreenHeader title="Start a minyan" subtitle="A few taps — that's it" back />
+      <ScreenHeader title="Start a minyan" subtitle="Fill in the details — everyone will see them" back />
 
       <div className="px-6 space-y-5 pb-4">
         {/* 1. WHERE */}
-        <Section step="1" title="Where?">
+        <Section step="1" title="Where are you?">
           <div className="grid grid-cols-4 gap-2">
             {(["Street", "Airport", "Hotel", "Travel"] as Context[]).map((c) => {
               const Icon = c === "Street" ? MapPin : c === "Airport" ? Plane : c === "Hotel" ? Building2 : Plane;
@@ -72,37 +87,68 @@ function Create() {
 
           {/* Context-specific inputs */}
           {ctx === "Street" && (
-            <div className="mt-3 rounded-2xl border border-gold/30 bg-gold/5 p-3 flex items-center gap-3">
-              <Crosshair className="h-4 w-4 text-gold" />
-              <div className="flex-1 min-w-0">
-                <div className="text-sm font-semibold leading-tight">5th Avenue · NYC</div>
-                <div className="text-[11px] text-muted-foreground">Pin drops on this exact spot</div>
+            <div className="mt-3 space-y-2">
+              <div className="rounded-2xl border border-gold/30 bg-gold/5 p-3 flex items-center gap-3">
+                <Crosshair className="h-4 w-4 text-gold" />
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm font-semibold leading-tight">GPS auto-detected</div>
+                  <div className="text-[11px] text-muted-foreground">Drop pin on your exact spot</div>
+                </div>
               </div>
-              <button className="text-[11px] font-semibold text-gold">Adjust</button>
+              <input
+                value={street}
+                onChange={(e) => setStreet(e.target.value)}
+                placeholder="Street, corner, landmark…"
+                className="w-full rounded-2xl border border-border bg-surface p-3 text-sm outline-none focus:border-gold"
+              />
             </div>
           )}
           {ctx === "Airport" && (
-            <input
-              value={flight}
-              onChange={(e) => setFlight(e.target.value)}
-              placeholder="Flight number (e.g. AF007)"
-              className="mt-3 w-full rounded-2xl border border-border bg-surface p-3 text-sm outline-none focus:border-gold"
-            />
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              <input
+                value={airport}
+                onChange={(e) => setAirport(e.target.value)}
+                placeholder="Airport (e.g. JFK, CDG)"
+                className="rounded-2xl border border-border bg-surface p-3 text-sm outline-none focus:border-gold"
+              />
+              <input
+                value={gate}
+                onChange={(e) => setGate(e.target.value)}
+                placeholder="Terminal / Gate (e.g. T2 · B14)"
+                className="rounded-2xl border border-border bg-surface p-3 text-sm outline-none focus:border-gold"
+              />
+            </div>
           )}
           {ctx === "Hotel" && (
-            <input
-              value={hotel}
-              onChange={(e) => setHotel(e.target.value)}
-              placeholder="Hotel name & room/lobby"
-              className="mt-3 w-full rounded-2xl border border-border bg-surface p-3 text-sm outline-none focus:border-gold"
-            />
+            <div className="mt-3 space-y-2">
+              <div className="grid grid-cols-2 gap-2">
+                <input
+                  value={hotelCity}
+                  onChange={(e) => setHotelCity(e.target.value)}
+                  placeholder="City"
+                  className="rounded-2xl border border-border bg-surface p-3 text-sm outline-none focus:border-gold"
+                />
+                <input
+                  value={hotelName}
+                  onChange={(e) => setHotelName(e.target.value)}
+                  placeholder="Hotel name"
+                  className="rounded-2xl border border-border bg-surface p-3 text-sm outline-none focus:border-gold"
+                />
+              </div>
+              <input
+                value={hotelSpot}
+                onChange={(e) => setHotelSpot(e.target.value)}
+                placeholder="Where in the hotel? (Lobby, room 412, conf. room…)"
+                className="w-full rounded-2xl border border-border bg-surface p-3 text-sm outline-none focus:border-gold"
+              />
+            </div>
           )}
           {ctx === "Travel" && (
             <div className="mt-3 grid grid-cols-2 gap-2">
               <input
                 value={tripCity}
                 onChange={(e) => setTripCity(e.target.value)}
-                placeholder="City"
+                placeholder="Destination city"
                 className="rounded-2xl border border-border bg-surface p-3 text-sm outline-none focus:border-gold"
               />
               <input
@@ -137,9 +183,9 @@ function Create() {
         </Section>
 
         {/* 3. WHEN */}
-        <Section step="3" title="When?">
+        <Section step="3" title="Starting in…">
           <div className="flex gap-2 overflow-x-auto hide-scrollbar -mx-1 px-1">
-            {(ctx === "Travel" ? ["Morning", "Afternoon", "Evening", "Custom"] : ["Now", "+5 min", "+15 min", "+30 min", "Custom"]).map((t) => {
+            {(ctx === "Travel" ? ["Morning", "Afternoon", "Evening", "Custom"] : ["Now", "+5 min", "+10 min", "+15 min", "+30 min", "+1 h"]).map((t) => {
               const a = when === t;
               return (
                 <button
@@ -158,71 +204,89 @@ function Create() {
           </div>
         </Section>
 
-        {/* Smart preview */}
-        <div className="rounded-2xl bg-navy/[0.04] border border-border p-4 flex items-start gap-3">
-          <Zap className="h-4 w-4 text-gold mt-0.5" />
-          <div className="text-xs leading-snug">
-            <strong className="text-foreground">~38 people</strong> within 1 km will be notified.
-            <div className="text-muted-foreground mt-0.5">You'll get a push the moment 10 commit.</div>
+        {/* 4. HOW MANY */}
+        <Section step="4" title="How many people do you need?">
+          <div className="flex items-center justify-between rounded-2xl border border-border bg-surface p-3">
+            <button
+              onClick={() => setNeeded(Math.max(10, needed - 1))}
+              className="h-10 w-10 rounded-xl bg-muted flex items-center justify-center active:scale-95"
+              aria-label="Less"
+            >
+              <Minus className="h-4 w-4" />
+            </button>
+            <div className="text-center">
+              <div className="font-display text-3xl leading-none">{needed}</div>
+              <div className="text-[10px] uppercase tracking-wider text-muted-foreground mt-1">total needed</div>
+            </div>
+            <button
+              onClick={() => setNeeded(needed + 1)}
+              className="h-10 w-10 rounded-xl gold-gradient text-gold-foreground flex items-center justify-center active:scale-95"
+              aria-label="More"
+            >
+              <Plus className="h-4 w-4" />
+            </button>
+          </div>
+          <p className="text-[11px] text-muted-foreground mt-2">Minimum 10 for a valid minyan.</p>
+        </Section>
+
+        {/* 5. NUSACH */}
+        <Section step="5" title="Nusach">
+          <div className="flex gap-2 flex-wrap">
+            {["Any", "Ashkenaz", "Sephard", "Nusach Ari", "Edot Mizrach"].map((n) => {
+              const a = nusach === n;
+              return (
+                <button
+                  key={n}
+                  onClick={() => setNusach(n)}
+                  className={`rounded-full px-3.5 py-2 text-xs font-medium border ${
+                    a ? "bg-foreground text-background border-foreground" : "bg-surface border-border"
+                  }`}
+                >
+                  {n}
+                </button>
+              );
+            })}
+          </div>
+        </Section>
+
+        {/* 6. COMMENT */}
+        <Section step="6" title="Comment (optional)">
+          <textarea
+            rows={2}
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            placeholder="Kaddish · Yahrzeit · bring tefillin…"
+            className="w-full rounded-2xl border border-border bg-surface p-3 text-sm outline-none focus:border-gold"
+          />
+          <p className="text-[10px] text-muted-foreground mt-1">Visible to everyone notified.</p>
+        </Section>
+
+        {/* Preview */}
+        <div className="rounded-2xl bg-navy/[0.04] border border-border p-4 space-y-2">
+          <div className="flex items-start gap-3">
+            <Zap className="h-4 w-4 text-gold mt-0.5 shrink-0" />
+            <div className="text-xs leading-snug">
+              <strong className="text-foreground">~38 people</strong> within 1 km will be notified.
+            </div>
+          </div>
+          <div className="border-t border-border pt-2 text-[11px] text-muted-foreground space-y-1">
+            <div><span className="font-semibold text-foreground">{prayer}</span> · {when} · {needed} people</div>
+            <div className="flex items-start gap-1"><MapPin className="h-3 w-3 mt-0.5 shrink-0" /><span className="truncate">{locationSummary}</span></div>
+            <div>Nusach: <span className="text-foreground">{nusach}</span></div>
+            {comment && <div className="italic">"{comment}"</div>}
           </div>
         </div>
-
-        {/* Advanced */}
-        <button
-          onClick={() => setAdvanced(!advanced)}
-          className="w-full flex items-center justify-between text-xs font-semibold text-muted-foreground py-1"
-        >
-          More options (nusach, note)
-          <ChevronDown className={`h-4 w-4 transition-transform ${advanced ? "rotate-180" : ""}`} />
-        </button>
-
-        {advanced && (
-          <div className="space-y-4 pt-1">
-            <div>
-              <div className="text-[11px] uppercase tracking-wider text-muted-foreground mb-2 font-semibold">Nusach</div>
-              <div className="flex gap-2 flex-wrap">
-                {["Any", "Ashkenaz", "Sephard", "Nusach Ari", "Edot Mizrach"].map((n) => {
-                  const a = nusach === n;
-                  return (
-                    <button
-                      key={n}
-                      onClick={() => setNusach(n)}
-                      className={`rounded-full px-3.5 py-2 text-xs font-medium border ${
-                        a ? "bg-foreground text-background border-foreground" : "bg-surface border-border"
-                      }`}
-                    >
-                      {n}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div>
-              <div className="text-[11px] uppercase tracking-wider text-muted-foreground mb-2 font-semibold">Note (optional)</div>
-              <textarea
-                rows={2}
-                value={comment}
-                onChange={(e) => setComment(e.target.value)}
-                placeholder="Kaddish · Yahrzeit · bring tefillin…"
-                className="w-full rounded-2xl border border-border bg-surface p-3 text-sm outline-none focus:border-gold"
-              />
-              <p className="text-[10px] text-muted-foreground mt-1">Urgent reasons (Kaddish, yahrzeit) go here — visible to everyone notified.</p>
-            </div>
-          </div>
-        )}
       </div>
 
-      {/* Mega CTA */}
       <div className="sticky bottom-24 px-6 pb-2">
         <Link
           to="/success"
           className="flex items-center justify-center gap-2 w-full gold-gradient text-gold-foreground font-semibold py-5 rounded-2xl shadow-glow-gold text-base"
         >
-          <Users className="h-5 w-5" /> Start {prayer.toLowerCase()} · {ctx.toLowerCase()}
+          <Users className="h-5 w-5" /> Publish minyan
         </Link>
         <p className="text-center text-[11px] text-muted-foreground mt-2">
-          You'll be notified the moment 10 people have committed.
+          You'll be notified the moment {needed} people commit.
         </p>
       </div>
     </MobileFrame>
