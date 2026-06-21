@@ -234,13 +234,14 @@ function NearbyCard({
       </div>
 
       <div className="mt-3 flex items-center justify-between text-xs">
-        <span className="flex items-center gap-1.5">
+        <span className="flex items-center gap-2">
           <Users className="h-3.5 w-3.5 text-muted-foreground" />
-          <span className="font-semibold">{m.confirmed}/{m.needed}</span>
+          <span className="text-sm font-bold text-foreground">{m.confirmed} présents</span>
+          <span className="text-muted-foreground">/ {m.needed}</span>
           {missing > 0 ? (
-            <span className="text-urgent font-medium">· {missing} missing</span>
+            <span className="text-urgent font-medium">· {missing} manquent</span>
           ) : (
-            <span className="text-success font-medium">· complete</span>
+            <span className="text-success font-medium">· minyan complet</span>
           )}
         </span>
       </div>

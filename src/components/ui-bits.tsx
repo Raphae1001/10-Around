@@ -114,13 +114,14 @@ export function MinyanCard({ m, compact = false }: { m: Minyan; compact?: boolea
       {!compact && (
         <>
           <div className="mt-3 flex items-center justify-between text-xs">
-            <span className="flex items-center gap-1.5 text-muted-foreground">
+            <span className="flex items-center gap-2 text-muted-foreground">
               <Users className="h-3.5 w-3.5" />
-              <span className="text-foreground font-semibold count-up">{m.confirmed}</span>/{m.needed}
+              <span className="text-sm text-foreground font-bold count-up">{m.confirmed} présents</span>
+              <span>/ {m.needed}</span>
               {missing > 0 ? (
-                <span className="ml-1 text-urgent font-medium">· missing {missing}</span>
+                <span className="ml-1 text-urgent font-medium">· {missing} manquent</span>
               ) : (
-                <span className="ml-1 text-success font-medium">· confirmed</span>
+                <span className="ml-1 text-success font-medium">· minyan complet</span>
               )}
             </span>
             <span className="flex items-center gap-1 text-muted-foreground">
