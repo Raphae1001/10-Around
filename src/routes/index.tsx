@@ -43,7 +43,7 @@ function Splash() {
               <Wordmark />
             </h1>
             <p className="mt-4 text-base text-white/80 max-w-xs mx-auto leading-snug">
-              Start a minyan <span className="text-gold">right where you are</span>.
+              Start a minyan <span className="text-gold">everywhere, every moment</span>.
             </p>
             <p className="mt-1 text-xs text-white/50 max-w-xs mx-auto">
               Street · Airport · Hotel · Anywhere
