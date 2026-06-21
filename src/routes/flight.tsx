@@ -27,7 +27,7 @@ function Flight() {
         </div>
         <h1 className="font-display text-3xl leading-tight">Are there Jews on your flight?</h1>
         <p className="text-sm text-white/70 mt-2 max-w-xs leading-relaxed">
-          Enter your flight number. We'll quietly connect you with other MinyanLive members on board.
+          Enter your flight number. We'll quietly connect you with other MinyanStreet members on board.
         </p>
 
         <div className="mt-6 rounded-2xl bg-white/5 border border-white/10 p-4 backdrop-blur">
