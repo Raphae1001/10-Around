@@ -20,7 +20,7 @@ function Create() {
   const [ctx, setCtx] = useState<Context>(initialCtx ?? "Street");
   const [prayer, setPrayer] = useState("Mincha");
   const [when, setWhen] = useState("Now");
-  const [needed, setNeeded] = useState(10);
+  const [present, setPresent] = useState(3);
   const [nusach, setNusach] = useState("Any");
   const [comment, setComment] = useState("");
 
@@ -205,28 +205,28 @@ function Create() {
         </Section>
 
         {/* 4. HOW MANY */}
-        <Section step="4" title="How many people do you need?">
+        <Section step="4" title="How many of us are already here?">
           <div className="flex items-center justify-between rounded-2xl border border-border bg-surface p-3">
             <button
-              onClick={() => setNeeded(Math.max(10, needed - 1))}
+              onClick={() => setPresent(Math.max(1, present - 1))}
               className="h-10 w-10 rounded-xl bg-muted flex items-center justify-center active:scale-95"
               aria-label="Less"
             >
               <Minus className="h-4 w-4" />
             </button>
             <div className="text-center">
-              <div className="font-display text-3xl leading-none">{needed}</div>
-              <div className="text-[10px] uppercase tracking-wider text-muted-foreground mt-1">total needed</div>
+              <div className="font-display text-3xl leading-none">{present}</div>
+              <div className="text-[10px] uppercase tracking-wider text-muted-foreground mt-1">already here</div>
             </div>
             <button
-              onClick={() => setNeeded(needed + 1)}
+              onClick={() => setPresent(Math.min(10, present + 1))}
               className="h-10 w-10 rounded-xl gold-gradient text-gold-foreground flex items-center justify-center active:scale-95"
               aria-label="More"
             >
               <Plus className="h-4 w-4" />
             </button>
           </div>
-          <p className="text-[11px] text-muted-foreground mt-2">Minimum 10 for a valid minyan.</p>
+          <p className="text-[11px] text-muted-foreground mt-2">You + anyone already with you. Minyan needs 10.</p>
         </Section>
 
         {/* 5. NUSACH */}
@@ -270,7 +270,7 @@ function Create() {
             </div>
           </div>
           <div className="border-t border-border pt-2 text-[11px] text-muted-foreground space-y-1">
-            <div><span className="font-semibold text-foreground">{prayer}</span> · {when} · {needed} people</div>
+            <div><span className="font-semibold text-foreground">{prayer}</span> · {when} · {present} here · {Math.max(0, 10 - present)} missing</div>
             <div className="flex items-start gap-1"><MapPin className="h-3 w-3 mt-0.5 shrink-0" /><span className="truncate">{locationSummary}</span></div>
             <div>Nusach: <span className="text-foreground">{nusach}</span></div>
             {comment && <div className="italic">"{comment}"</div>}
@@ -286,7 +286,7 @@ function Create() {
           <Users className="h-5 w-5" /> Publish minyan
         </Link>
         <p className="text-center text-[11px] text-muted-foreground mt-2">
-          You'll be notified the moment {needed} people commit.
+          You'll be notified the moment we reach 10.
         </p>
       </div>
     </MobileFrame>
