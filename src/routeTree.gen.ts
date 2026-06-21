@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TrustRouteImport } from './routes/trust'
 import { Route as TravelerRouteImport } from './routes/traveler'
+import { Route as TravelRouteImport } from './routes/travel'
 import { Route as SynagogueRouteImport } from './routes/synagogue'
 import { Route as SuccessRouteImport } from './routes/success'
 import { Route as SiddurRouteImport } from './routes/siddur'
@@ -38,6 +39,11 @@ const TrustRoute = TrustRouteImport.update({
 const TravelerRoute = TravelerRouteImport.update({
   id: '/traveler',
   path: '/traveler',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TravelRoute = TravelRouteImport.update({
+  id: '/travel',
+  path: '/travel',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SynagogueRoute = SynagogueRouteImport.update({
@@ -150,6 +156,7 @@ export interface FileRoutesByFullPath {
   '/siddur': typeof SiddurRoute
   '/success': typeof SuccessRoute
   '/synagogue': typeof SynagogueRoute
+  '/travel': typeof TravelRoute
   '/traveler': typeof TravelerRoute
   '/trust': typeof TrustRoute
 }
@@ -172,6 +179,7 @@ export interface FileRoutesByTo {
   '/siddur': typeof SiddurRoute
   '/success': typeof SuccessRoute
   '/synagogue': typeof SynagogueRoute
+  '/travel': typeof TravelRoute
   '/traveler': typeof TravelerRoute
   '/trust': typeof TrustRoute
 }
@@ -195,6 +203,7 @@ export interface FileRoutesById {
   '/siddur': typeof SiddurRoute
   '/success': typeof SuccessRoute
   '/synagogue': typeof SynagogueRoute
+  '/travel': typeof TravelRoute
   '/traveler': typeof TravelerRoute
   '/trust': typeof TrustRoute
 }
@@ -219,6 +228,7 @@ export interface FileRouteTypes {
     | '/siddur'
     | '/success'
     | '/synagogue'
+    | '/travel'
     | '/traveler'
     | '/trust'
   fileRoutesByTo: FileRoutesByTo
@@ -241,6 +251,7 @@ export interface FileRouteTypes {
     | '/siddur'
     | '/success'
     | '/synagogue'
+    | '/travel'
     | '/traveler'
     | '/trust'
   id:
@@ -263,6 +274,7 @@ export interface FileRouteTypes {
     | '/siddur'
     | '/success'
     | '/synagogue'
+    | '/travel'
     | '/traveler'
     | '/trust'
   fileRoutesById: FileRoutesById
@@ -286,6 +298,7 @@ export interface RootRouteChildren {
   SiddurRoute: typeof SiddurRoute
   SuccessRoute: typeof SuccessRoute
   SynagogueRoute: typeof SynagogueRoute
+  TravelRoute: typeof TravelRoute
   TravelerRoute: typeof TravelerRoute
   TrustRoute: typeof TrustRoute
 }
@@ -304,6 +317,13 @@ declare module '@tanstack/react-router' {
       path: '/traveler'
       fullPath: '/traveler'
       preLoaderRoute: typeof TravelerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/travel': {
+      id: '/travel'
+      path: '/travel'
+      fullPath: '/travel'
+      preLoaderRoute: typeof TravelRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/synagogue': {
@@ -454,6 +474,7 @@ const rootRouteChildren: RootRouteChildren = {
   SiddurRoute: SiddurRoute,
   SuccessRoute: SuccessRoute,
   SynagogueRoute: SynagogueRoute,
+  TravelRoute: TravelRoute,
   TravelerRoute: TravelerRoute,
   TrustRoute: TrustRoute,
 }
