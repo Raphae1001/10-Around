@@ -2,17 +2,31 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { MobileFrame } from "@/components/MobileFrame";
 import { ScreenHeader } from "@/components/ui-bits";
-import { Sunrise, Sun, Moon, MapPin, Users, Zap, ChevronDown, Crosshair } from "lucide-react";
+import { Sunrise, Sun, Moon, MapPin, Users, Zap, ChevronDown, Crosshair, Plane, Building2 } from "lucide-react";
+
+type Context = "Street" | "Airport" | "Hotel" | "Travel";
 
 export const Route = createFileRoute("/create")({
+  validateSearch: (s: Record<string, unknown>): { ctx?: Context } => ({
+    ctx: (["Street", "Airport", "Hotel", "Travel"] as const).includes(s.ctx as Context)
+      ? (s.ctx as Context)
+      : undefined,
+  }),
   component: Create,
 });
 
 function Create() {
+  const { ctx: initialCtx } = Route.useSearch();
+  const [ctx, setCtx] = useState<Context>(initialCtx ?? "Street");
   const [prayer, setPrayer] = useState("Mincha");
   const [when, setWhen] = useState("Now");
   const [advanced, setAdvanced] = useState(false);
   const [nusach, setNusach] = useState("Any");
+  const [comment, setComment] = useState("");
+  const [flight, setFlight] = useState("");
+  const [hotel, setHotel] = useState("");
+  const [tripCity, setTripCity] = useState("");
+  const [tripDate, setTripDate] = useState("");
 
   const prayers = [
     { name: "Shacharit", icon: Sunrise },
@@ -20,72 +34,136 @@ function Create() {
     { name: "Maariv", icon: Moon },
   ];
 
+  const ctxLabel: Record<Context, string> = {
+    Street: "On the street, right now",
+    Airport: "At the airport before my flight",
+    Hotel: "At my hotel",
+    Travel: "For a future trip",
+  };
+
   return (
     <MobileFrame>
-      <ScreenHeader title="Start a minyan here" subtitle="Right where you stand · under 10 sec" back />
+      <ScreenHeader title="Start a minyan" subtitle="A few taps — that's it" back />
 
       <div className="px-6 space-y-5 pb-4">
-        {/* GIANT location confirmation — the soul of the app */}
-        <div className="relative rounded-3xl overflow-hidden border border-gold/30 bg-gold/5 p-5">
-          <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-gold/20 blur-3xl" />
-          <div className="relative flex items-start gap-3">
-            <div className="h-12 w-12 rounded-2xl gold-gradient text-navy flex items-center justify-center shrink-0">
-              <Crosshair className="h-5 w-5" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Live location</div>
-              <div className="font-display text-xl leading-tight mt-0.5">5th Avenue · NYC</div>
-              <div className="text-xs text-muted-foreground mt-0.5 truncate">Sidewalk · between 42nd & 43rd St</div>
-              <button className="text-[11px] font-semibold text-gold mt-1.5">Adjust the spot →</button>
-            </div>
+        {/* 1. WHERE */}
+        <Section step="1" title="Where?">
+          <div className="grid grid-cols-4 gap-2">
+            {(["Street", "Airport", "Hotel", "Travel"] as Context[]).map((c) => {
+              const Icon = c === "Street" ? MapPin : c === "Airport" ? Plane : c === "Hotel" ? Building2 : Plane;
+              const active = ctx === c;
+              return (
+                <button
+                  key={c}
+                  onClick={() => setCtx(c)}
+                  className={`rounded-2xl border p-3 flex flex-col items-center gap-1.5 transition-all ${
+                    active ? "border-gold ring-2 ring-gold/30 bg-gold/5" : "border-border bg-surface"
+                  }`}
+                >
+                  <div className={`h-9 w-9 rounded-xl flex items-center justify-center ${active ? "gold-gradient text-gold-foreground" : "bg-muted text-muted-foreground"}`}>
+                    <Icon className="h-4 w-4" />
+                  </div>
+                  <span className="text-[11px] font-semibold">{c}</span>
+                </button>
+              );
+            })}
           </div>
-        </div>
+          <p className="text-[11px] text-muted-foreground mt-2">{ctxLabel[ctx]}</p>
 
-        {/* Prayer — only 3 huge taps */}
-        <div className="grid grid-cols-3 gap-2">
-          {prayers.map(({ name, icon: Icon }) => {
-            const active = prayer === name;
-            return (
-              <button
-                key={name}
-                onClick={() => setPrayer(name)}
-                className={`flex flex-col items-center gap-2 py-4 rounded-2xl border transition-all ${
-                  active ? "border-gold bg-gold/10 shadow-soft" : "border-border bg-surface"
-                }`}
-              >
-                <Icon className={`h-5 w-5 ${active ? "text-gold" : "text-muted-foreground"}`} />
-                <span className="text-xs font-semibold">{name}</span>
-              </button>
-            );
-          })}
-        </div>
+          {/* Context-specific inputs */}
+          {ctx === "Street" && (
+            <div className="mt-3 rounded-2xl border border-gold/30 bg-gold/5 p-3 flex items-center gap-3">
+              <Crosshair className="h-4 w-4 text-gold" />
+              <div className="flex-1 min-w-0">
+                <div className="text-sm font-semibold leading-tight">5th Avenue · NYC</div>
+                <div className="text-[11px] text-muted-foreground">Pin drops on this exact spot</div>
+              </div>
+              <button className="text-[11px] font-semibold text-gold">Adjust</button>
+            </div>
+          )}
+          {ctx === "Airport" && (
+            <input
+              value={flight}
+              onChange={(e) => setFlight(e.target.value)}
+              placeholder="Flight number (e.g. AF007)"
+              className="mt-3 w-full rounded-2xl border border-border bg-surface p-3 text-sm outline-none focus:border-gold"
+            />
+          )}
+          {ctx === "Hotel" && (
+            <input
+              value={hotel}
+              onChange={(e) => setHotel(e.target.value)}
+              placeholder="Hotel name & room/lobby"
+              className="mt-3 w-full rounded-2xl border border-border bg-surface p-3 text-sm outline-none focus:border-gold"
+            />
+          )}
+          {ctx === "Travel" && (
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              <input
+                value={tripCity}
+                onChange={(e) => setTripCity(e.target.value)}
+                placeholder="City"
+                className="rounded-2xl border border-border bg-surface p-3 text-sm outline-none focus:border-gold"
+              />
+              <input
+                value={tripDate}
+                onChange={(e) => setTripDate(e.target.value)}
+                type="date"
+                className="rounded-2xl border border-border bg-surface p-3 text-sm outline-none focus:border-gold"
+              />
+            </div>
+          )}
+        </Section>
 
-        {/* Time — Now is hero */}
-        <div className="flex gap-2 overflow-x-auto hide-scrollbar -mx-1 px-1">
-          {["Now", "+5 min", "+15 min", "+30 min", "Custom"].map((t) => {
-            const a = when === t;
-            return (
-              <button
-                key={t}
-                onClick={() => setWhen(t)}
-                className={`shrink-0 rounded-2xl px-4 py-3 text-sm font-semibold border transition-all ${
-                  a
-                    ? "gold-gradient text-gold-foreground border-transparent shadow-glow-gold"
-                    : "bg-surface border-border text-muted-foreground"
-                }`}
-              >
-                {t}
-              </button>
-            );
-          })}
-        </div>
+        {/* 2. PRAYER */}
+        <Section step="2" title="Which prayer?">
+          <div className="grid grid-cols-3 gap-2">
+            {prayers.map(({ name, icon: Icon }) => {
+              const active = prayer === name;
+              return (
+                <button
+                  key={name}
+                  onClick={() => setPrayer(name)}
+                  className={`flex flex-col items-center gap-2 py-4 rounded-2xl border transition-all ${
+                    active ? "border-gold bg-gold/10 shadow-soft" : "border-border bg-surface"
+                  }`}
+                >
+                  <Icon className={`h-5 w-5 ${active ? "text-gold" : "text-muted-foreground"}`} />
+                  <span className="text-xs font-semibold">{name}</span>
+                </button>
+              );
+            })}
+          </div>
+        </Section>
 
-        {/* Smart preview — the WOW */}
+        {/* 3. WHEN */}
+        <Section step="3" title="When?">
+          <div className="flex gap-2 overflow-x-auto hide-scrollbar -mx-1 px-1">
+            {(ctx === "Travel" ? ["Morning", "Afternoon", "Evening", "Custom"] : ["Now", "+5 min", "+15 min", "+30 min", "Custom"]).map((t) => {
+              const a = when === t;
+              return (
+                <button
+                  key={t}
+                  onClick={() => setWhen(t)}
+                  className={`shrink-0 rounded-2xl px-4 py-3 text-sm font-semibold border transition-all ${
+                    a
+                      ? "gold-gradient text-gold-foreground border-transparent shadow-glow-gold"
+                      : "bg-surface border-border text-muted-foreground"
+                  }`}
+                >
+                  {t}
+                </button>
+              );
+            })}
+          </div>
+        </Section>
+
+        {/* Smart preview */}
         <div className="rounded-2xl bg-navy/[0.04] border border-border p-4 flex items-start gap-3">
           <Zap className="h-4 w-4 text-gold mt-0.5" />
           <div className="text-xs leading-snug">
-            <strong className="text-foreground">~38 jews</strong> within 500 m will be pinged the second you start.
-            <div className="text-muted-foreground mt-0.5">Average completion in your area: <strong className="text-foreground">6 min</strong>.</div>
+            <strong className="text-foreground">~38 people</strong> within 1 km will be notified.
+            <div className="text-muted-foreground mt-0.5">You'll get a push the moment 10 commit.</div>
           </div>
         </div>
 
@@ -94,7 +172,7 @@ function Create() {
           onClick={() => setAdvanced(!advanced)}
           className="w-full flex items-center justify-between text-xs font-semibold text-muted-foreground py-1"
         >
-          More options (optional)
+          More options (nusach, note)
           <ChevronDown className={`h-4 w-4 transition-transform ${advanced ? "rotate-180" : ""}`} />
         </button>
 
@@ -124,24 +202,12 @@ function Create() {
               <div className="text-[11px] uppercase tracking-wider text-muted-foreground mb-2 font-semibold">Note (optional)</div>
               <textarea
                 rows={2}
-                placeholder="Bring tefillin · Yahrzeit for Avraham ben Yitzchak"
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                placeholder="Kaddish · Yahrzeit · bring tefillin…"
                 className="w-full rounded-2xl border border-border bg-surface p-3 text-sm outline-none focus:border-gold"
               />
-            </div>
-
-            <div className="flex items-center justify-between rounded-2xl border border-border bg-surface p-3">
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-xl bg-sky/30 flex items-center justify-center">
-                  <MapPin className="h-4 w-4 text-navy" />
-                </div>
-                <div className="text-sm">
-                  <div className="font-semibold leading-tight">Visible to passers-by</div>
-                  <div className="text-[11px] text-muted-foreground">Show this pin on the public live map</div>
-                </div>
-              </div>
-              <div className="h-6 w-10 rounded-full bg-gold relative">
-                <span className="absolute right-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow" />
-              </div>
+              <p className="text-[10px] text-muted-foreground mt-1">Urgent reasons (Kaddish, yahrzeit) go here — visible to everyone notified.</p>
             </div>
           </div>
         )}
@@ -153,12 +219,24 @@ function Create() {
           to="/success"
           className="flex items-center justify-center gap-2 w-full gold-gradient text-gold-foreground font-semibold py-5 rounded-2xl shadow-glow-gold text-base"
         >
-          <Users className="h-5 w-5" /> Start {prayer.toLowerCase()} here · now
+          <Users className="h-5 w-5" /> Start {prayer.toLowerCase()} · {ctx.toLowerCase()}
         </Link>
         <p className="text-center text-[11px] text-muted-foreground mt-2">
-          A pin drops on this exact spot. The 9 closest jews get pinged.
+          You'll be notified the moment 10 people have committed.
         </p>
       </div>
     </MobileFrame>
+  );
+}
+
+function Section({ step, title, children }: { step: string; title: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <div className="flex items-center gap-2 mb-2">
+        <span className="h-5 w-5 rounded-full bg-foreground text-background text-[10px] font-bold flex items-center justify-center">{step}</span>
+        <h3 className="font-display text-sm font-semibold">{title}</h3>
+      </div>
+      {children}
+    </div>
   );
 }
