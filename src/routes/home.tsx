@@ -29,14 +29,16 @@ const initialMinyanim: Minyan[] = [
 ];
 
 function Home() {
-  const [ctx, setCtx] = useState<Context>("Street");
+  // ctx state removed — each tile now navigates directly
   const [minyanim, setMinyanim] = useState(initialMinyanim);
   const [joined, setJoined] = useState<Record<string, boolean>>({});
   const [pending, setPending] = useState<Minyan | null>(null);
+  const [justJoined, setJustJoined] = useState<Minyan | null>(null);
 
   const confirmJoin = () => {
     if (!pending) return;
     const id = pending.id;
+    let updated: Minyan | null = null;
     setMinyanim((list) =>
       list.map((m) => {
         if (m.id !== id) return m;
@@ -46,10 +48,12 @@ function Home() {
         } else {
           toast(`You're in — ${confirmed}/${m.needed}`, { description: `${m.needed - confirmed} more needed.` });
         }
-        return { ...m, confirmed };
+        updated = { ...m, confirmed };
+        return updated;
       }),
     );
     setJoined((j) => ({ ...j, [id]: true }));
+    setJustJoined(updated ?? pending);
     setPending(null);
   };
 
@@ -63,14 +67,14 @@ function Home() {
         }
       />
 
-      {/* Where are you — TOP */}
+      {/* Where are you — TOP — each tile opens /create pre-filled */}
       <div className="px-6">
-        <div className="text-[11px] uppercase tracking-wider text-muted-foreground mb-2 font-semibold">Where are you?</div>
+        <div className="text-[11px] uppercase tracking-wider text-muted-foreground mb-2 font-semibold">Start a minyan — where are you?</div>
         <div className="grid grid-cols-4 gap-2">
-          <CtxTile id="Street" icon={MapPin} active={ctx === "Street"} onClick={() => setCtx("Street")} />
-          <CtxTile id="Airport" icon={Plane} active={ctx === "Airport"} onClick={() => setCtx("Airport")} />
-          <CtxTile id="Hotel" icon={Building2} active={ctx === "Hotel"} onClick={() => setCtx("Hotel")} />
-          <CtxTile id="Travel" icon={Plane} active={ctx === "Travel"} onClick={() => setCtx("Travel")} />
+          <CtxTile id="Street" icon={MapPin} />
+          <CtxTile id="Airport" icon={Plane} />
+          <CtxTile id="Hotel" icon={Building2} />
+          <CtxTile id="Travel" icon={Plane} />
         </div>
       </div>
 
@@ -78,14 +82,14 @@ function Home() {
       <div className="px-6 mt-5">
         <Link
           to="/create"
-          search={{ ctx }}
+          search={{ ctx: "Street" }}
           className="relative block rounded-3xl overflow-hidden navy-gradient text-white p-5 shadow-lift active:scale-[0.99] transition-transform"
         >
           <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-gold/25 blur-3xl" />
           <div className="relative flex items-center justify-between gap-4">
             <div className="min-w-0">
               <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] text-white/60">
-                <MapPin className="h-3 w-3 text-gold" /> {ctx} · 5th Ave NYC
+                <MapPin className="h-3 w-3 text-gold" /> Right where you stand
               </div>
               <h2 className="mt-1.5 font-display text-[26px] leading-[1.05]">
                 Start a minyan<br /><span className="text-gold">right here.</span>
@@ -139,27 +143,49 @@ function Home() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* After-join: offer directions on the map */}
+      <AlertDialog open={!!justJoined} onOpenChange={(o) => !o && setJustJoined(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>You're in! Want directions?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {justJoined && (
+                <>
+                  Open the map to walk to <strong>{justJoined.name}</strong> — {justJoined.distance} away, starts in {justJoined.inMin} min.
+                </>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Later</AlertDialogCancel>
+            <AlertDialogAction asChild>
+              <Link to="/map" onClick={() => setJustJoined(null)}>Open map</Link>
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </MobileFrame>
   );
 }
 
 function CtxTile({
-  id, icon: Icon, active, onClick,
-}: { id: Context; icon: typeof MapPin; active: boolean; onClick: () => void }) {
+  id, icon: Icon,
+}: { id: Context; icon: typeof MapPin }) {
   return (
-    <button
-      onClick={onClick}
-      className={`rounded-2xl border bg-surface p-3 flex flex-col items-center gap-1.5 transition-all ${
-        active ? "border-gold ring-2 ring-gold/30 bg-gold/5" : "border-border"
-      }`}
+    <Link
+      to="/create"
+      search={{ ctx: id }}
+      className="rounded-2xl border bg-surface border-border p-3 flex flex-col items-center gap-1.5 transition-all active:scale-[0.97] hover:border-gold/60"
     >
-      <div className={`h-9 w-9 rounded-xl flex items-center justify-center ${active ? "gold-gradient text-gold-foreground" : "bg-muted text-muted-foreground"}`}>
+      <div className="h-9 w-9 rounded-xl bg-muted text-muted-foreground flex items-center justify-center">
         <Icon className="h-4 w-4" />
       </div>
       <div className="text-xs font-semibold">{id}</div>
-    </button>
+    </Link>
   );
 }
+
 
 function NearbyCard({
   m, joined, onJoinRequest,
