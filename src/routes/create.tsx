@@ -309,12 +309,19 @@ function Create() {
           <div className="flex items-start gap-3">
             <Zap className="h-4 w-4 text-gold mt-0.5 shrink-0" />
             <div className="text-xs leading-snug">
-              <strong className="text-foreground">~38 people</strong> within 1 km will be notified.
+              {ctx === "Street" || ctx === "Airport" ? (
+                <><strong className="text-foreground">~38 people</strong> within 1 km will be notified now.</>
+              ) : (
+                <><strong className="text-foreground">Scheduled minyan</strong> — travelers heading there will see it in advance.</>
+              )}
             </div>
           </div>
           <div className="border-t border-border pt-2 text-[11px] text-muted-foreground space-y-1">
             <div><span className="font-semibold text-foreground">{prayer}</span> · {when} · {present} here · {present >= 10 ? "minyan ready" : `${Math.max(0, 10 - present)} missing`}</div>
             <div className="flex items-start gap-1"><MapPin className="h-3 w-3 mt-0.5 shrink-0" /><span className="truncate">{locationSummary}</span></div>
+            {(ctx === "Hotel" || ctx === "Travel") && (scheduledDate || scheduledTime) && (
+              <div>Scheduled: <span className="text-foreground">{[scheduledDate, scheduledTime].filter(Boolean).join(" · ")}</span></div>
+            )}
             <div>Nusach: <span className="text-foreground">{nusach}</span></div>
             {comment && <div className="italic">"{comment}"</div>}
           </div>
