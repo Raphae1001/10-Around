@@ -394,6 +394,24 @@ function Create() {
         lng = position?.lng ?? 0;
       }
 
+      // Block creating a duplicate live minyan within 200m of an existing one
+      if (liveCtx) {
+        const { data: nearbyCount, error: rpcErr } = await supabase.rpc("count_minyanim_within", {
+          lat,
+          lng,
+          radius_m: 200,
+        });
+        if (rpcErr) throw rpcErr;
+        if ((nearbyCount ?? 0) > 0) {
+          toast.error("Another minyan already exists within 200 m", {
+            description: "Join it instead of starting a duplicate.",
+          });
+          setPublishing(false);
+          navigate({ to: "/home" });
+          return;
+        }
+      }
+
       // Compute scheduled_at for Hotel/Travel
       let scheduled_at: string | null = null;
       if ((ctx === "Hotel" || ctx === "Travel") && scheduledDate && scheduledTime) {
