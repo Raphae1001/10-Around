@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { Logo, Wordmark } from "@/components/Logo";
-import { MapPin, Users, Plane, Sparkles, ChevronRight, ArrowRight } from "lucide-react";
+import { MapPin, Users, Plane, ChevronRight, ArrowRight } from "lucide-react";
 
 export const Route = createFileRoute("/onboarding")({
   head: () => ({
@@ -124,23 +124,19 @@ function Onboarding() {
 function HeroSlide() {
   return (
     <div className="flex-1 flex flex-col items-center justify-center px-8 text-center">
-      <div className="relative inline-block float-slow">
-        <span className="absolute inset-0 rounded-2xl bg-gold/40 blur-2xl animate-pulse" />
-        <Logo size={88} glow />
+      <div className="h-16 w-16 rounded-2xl flex items-center justify-center shadow-glow-gold gold-gradient text-gold-foreground">
+        <Logo size={48} />
       </div>
-      <h1 className="mt-8 font-display text-5xl tracking-tight">
+      <p className="mt-6 text-[11px] tracking-[0.3em] uppercase text-gold/80">Welcome</p>
+      <h2 className="mt-2 font-display text-4xl tracking-tight leading-tight">
         <Wordmark />
-      </h1>
-      <p className="mt-4 text-base text-white/80 max-w-xs mx-auto leading-snug">
-        <span className="text-gold font-semibold">everywhere, every moment</span>
+      </h2>
+      <p className="mt-4 text-base text-white/75 max-w-xs leading-relaxed">
+        Start a minyan <span className="text-gold font-semibold">everywhere, every moment</span>.
       </p>
       <p className="mt-2 text-xs text-white/50 max-w-xs mx-auto">
         Street · Airport · Hotel · Anywhere
       </p>
-      <div className="mt-10 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-[11px] tracking-[0.2em] uppercase text-white/70">
-        <Sparkles className="h-3 w-3 text-gold" />
-        10 Jews · 1 tap · anywhere
-      </div>
     </div>
   );
 }
