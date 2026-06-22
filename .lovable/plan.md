@@ -1,97 +1,49 @@
-# Plan — V1 utilisable + préparation App Store iOS
+## Goal
+Make the live map real and complete the participation loop (directions → calendar → start confirmation → attendance + trust).
 
-## Objectif
+## 1. Real Google Maps map (`/map` + `/home` mini-map)
+- Connect **Google Maps Platform** (needed for the JS map, Places search, directions). I'll prompt the connect step.
+- Replace mock `MapCanvas` on `/map` with a real `@vis.gl/react-google-maps` map:
+  - Loads with `VITE_LOVABLE_CONNECTOR_GOOGLE_MAPS_BROWSER_KEY`.
+  - Center = user GPS (fallback: last known / NYC).
+  - Pins = live `nearby_minyanim` (1km for street/airport, all "Autres"/Travel).
+  - Tap pin → opens the bottom sheet entry for that minyan.
+  - Search bar uses Places Autocomplete (New) to recenter.
+- Keep the stylized `MapCanvas` only for `/minyan` detail header (small visual).
 
-Transformer le prototype actuel (100% local, données factices) en une vraie application :
-- Données partagées en live entre tous les utilisateurs
-- Géolocalisation réelle (filtrer les minyanim dans 1 km autour de l'utilisateur)
-- Notifications push sur le téléphone
-- Ajout au calendrier iOS d'un minyan programmé
-- Emballage iOS prêt à être ouvert dans Xcode pour soumission App Store
+## 2. Directions to the minyan
+- On minyan card / detail: **"Get directions"** button → opens `https://www.google.com/maps/dir/?api=1&destination=<lat>,<lng>&travelmode=walking` (universal link works on iOS Apple Maps redirect / Google Maps app if installed, browser fallback).
 
-Tu vas continuer à itérer sur le design web dans Lovable ; chaque changement sera ensuite synchronisé dans l'app iOS via une commande.
+## 3. Add to calendar on join
+- When user taps **Join**:
+  - Insert into `minyan_participants` (already wired).
+  - Trigger `nativeShare`-style calendar add: on native iOS use Capacitor Calendar plugin; on web call existing `downloadIcs()` helper with title `Minyan – <prayer>`, location = address, start = `scheduled_at ?? now()`, duration 20min.
 
----
+## 4. Start-time confirmations + trust system
+Database changes (one migration):
+- `profiles.trust_score INT DEFAULT 100`.
+- `minyan_confirmations` table: `minyan_id`, `user_id`, `role` ('organizer'|'participant'), `answer` ('yes'|'no'|null), `asked_at`, `answered_at`. RLS: user can read/update own row; organizer can read all for own minyan.
+- RPC `request_confirmations(minyan_id)`: creates rows for organizer + all participants, marks `asked_at = now()`.
+- RPC `answer_confirmation(minyan_id, answer)`: writes own answer; if participant and `answer='yes'` → `trust_score += 2`; if `'no'` → `trust_score -= 5`.
+- pg_cron job every minute: for each minyan where `scheduled_at <= now()` (or `created_at + 10min` for live ones) and no confirmations yet → call `request_confirmations` + insert into a `notifications_outbox` table.
 
-## Étape 1 — Backend live (Lovable Cloud)
+Push delivery:
+- New TanStack server route `/api/public/cron/dispatch-confirmations` reads outbox, sends via Apple/FCM later. For V1: client also polls `minyan_confirmations` where `user_id=me AND answer IS NULL` and shows an in-app modal "Did the minyan start / did you make it?" with Yes/No.
 
-Activation de Lovable Cloud (base de données Postgres + auth + notifications, intégré, zéro setup).
+UI:
+- New `<ConfirmationPrompt>` component mounted in `_authenticated` layout — listens via Realtime to `minyan_confirmations` for current user; shows modal when an unanswered row appears.
+- Profile shows live `trust_score` (replace static value).
 
-**Authentification** : Email + Google + Sign in with Apple (obligatoire Apple pour l'App Store dès qu'il y a d'autres logins sociaux).
+## 5. Wiring summary
+- Files added: `src/components/GoogleMap.tsx`, `src/components/ConfirmationPrompt.tsx`, `src/lib/directions.ts`, migration for trust + confirmations + cron.
+- Files edited: `src/routes/map.tsx`, `src/routes/home.tsx` (Join → calendar + directions buttons), `src/routes/minyan.tsx`, `src/routes/profile.tsx` (real trust), `src/routes/_authenticated/route.tsx` (mount prompt).
+- Connectors required: **Google Maps Platform** (I'll trigger `standard_connectors--connect`).
 
-**Tables créées** :
-- `profiles` — nom affiché, photo, langue
-- `minyanim` — créateur, type (street/airport/hotel/travel), localisation (lat/lng + adresse), date début/fin, heure programmée (pour hotel/travel), nusach, compteur de présents, message
-- `minyan_participants` — qui a rejoint quel minyan
-- RLS activée partout : un user voit tout en lecture, écrit seulement ses propres lignes
+## Technical notes
+- Maps lib: `@vis.gl/react-google-maps` (modern, no `mapId` required, works with vector or raster).
+- Real push (APNs/FCM) deferred — needs Apple Dev account + server keys. For V1 we use Realtime in-app prompts (works while app is open / iOS background fetch later).
+- `pg_cron` + `pg_net` are available on Supabase; we'll enable in the migration.
 
-**Index géospatial** : recherche "minyanim dans 1 km autour de moi" via PostGIS.
-
-## Étape 2 — Géolocalisation réelle
-
-- Web : `navigator.geolocation` avec demande de permission
-- iOS natif : plugin Capacitor Geolocation (plus précis, marche en arrière-plan si besoin)
-- Page d'accueil affiche uniquement les minyanim Street/Airport dans 1 km
-- Hotel/Travel s'affichent toujours (programmés à l'avance, peu importe la distance)
-- Bouton « rafraîchir ma position »
-
-## Étape 3 — Création d'un minyan branchée au backend
-
-L'écran `create.tsx` existant envoie maintenant vraiment vers la base. La position GPS est capturée au moment du "Set live". Le compteur de présents devient temps-réel (subscriptions Supabase Realtime) : si quelqu'un rejoint, tout le monde voit le compteur monter en direct.
-
-## Étape 4 — Notifications push
-
-- iOS : plugin Capacitor PushNotifications → token enregistré dans la table `profiles`
-- Notification envoyée quand : un minyan se crée près de toi (< 1 km), ou ton minyan atteint 10
-- Web : notifications navigateur en fallback
-
-## Étape 5 — Calendrier
-
-Pour les minyanim Hotel/Travel avec date+heure programmées : bouton « Ajouter au calendrier » qui ouvre l'app Calendar iOS native (plugin Capacitor Calendar) ou télécharge un fichier `.ics` sur web.
-
-## Étape 6 — Emballage iOS (Capacitor)
-
-J'ajoute Capacitor au projet : `capacitor.config.ts`, dossier `ios/`, plugins (Geolocation, PushNotifications, LocalNotifications, Calendar, App, Haptics, StatusBar). Je te donne ensuite **3 commandes à lancer sur ton Mac** :
-
-```text
-git pull
-npx cap sync ios
-npx cap open ios
-```
-
-Ça ouvre Xcode avec ton app dedans. De là tu testes sur simulateur, puis sur ton iPhone branché, puis tu soumets à TestFlight quand tu auras le compte Apple Developer (99 $/an, à créer sur developer.apple.com).
-
-## Étape 7 — Prêt pour soumission App Store
-
-Je prépare aussi : icône d'app (1024×1024), splash screen, captures pour l'App Store, fichier `Info.plist` avec les bons textes de permission ("Minyan utilise votre position pour trouver des prières près de vous"), politique de confidentialité minimale (page web obligatoire pour l'App Store).
-
----
-
-## Ordre d'implémentation
-
-1. Cloud + auth Apple/Google/Email + tables + RLS — **je le fais maintenant si tu valides**
-2. Géoloc + lecture live des minyanim sur la carte/liste
-3. Création de minyan branchée backend + realtime
-4. Capacitor + plugins natifs (GPS, push, calendrier)
-5. Assets iOS (icône, splash, captures) + Info.plist + page privacy
-6. Tu lances `npx cap open ios` sur ton Mac, on debug ensemble
-
----
-
-## Ce que tu dois faire en parallèle (pendant que je code)
-
-1. **Créer le compte Apple Developer** sur https://developer.apple.com/programs/ (99 $/an, ~48h de validation) — sans ça, impossible de soumettre
-2. **Installer Xcode** depuis le Mac App Store si pas déjà fait (gratuit, ~15 Go)
-3. Préparer un nom définitif d'app + description courte pour l'App Store
-
----
-
-## Détails techniques (pour info)
-
-- Stack : TanStack Start (déjà en place) + Lovable Cloud (Supabase managé) + Capacitor 6 pour iOS
-- Realtime via Supabase Channels pour le compteur de présents
-- PostGIS `ST_DWithin` pour la requête "dans 1 km"
-- Push via APNs (Apple Push) — config via certificats dans Apple Developer Console
-- Le code web et iOS partagent 100% du code React ; Capacitor wrappe simplement la web view
-
-Dis "go" et j'enchaîne avec l'étape 1 (activation Cloud + auth + schéma DB).
+## Confirm before I build
+1. OK to connect **Google Maps Platform** now (managed key — free, no setup)?
+2. OK to defer real push notifications and use **in-app Realtime prompts** for V1 (real APNs requires your Apple Dev account)?
