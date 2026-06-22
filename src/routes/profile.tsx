@@ -1,5 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { MobileFrame } from "@/components/MobileFrame";
 import { ScreenHeader, TrustBadge, StatusPill } from "@/components/ui-bits";
 import { Award, Plane, Flame, Settings, ChevronRight, Shield, CalendarCheck, Users, LogOut } from "lucide-react";
@@ -13,7 +14,8 @@ export const Route = createFileRoute("/profile")({
 function Profile() {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
-  const [profile, setProfile] = useState<{ display_name: string | null; avatar_url: string | null } | null>(null);
+  const [profile, setProfile] = useState<{ display_name: string | null; avatar_url: string | null; backup_mode: boolean; backup_radius_m: number } | null>(null);
+  const [savingBackup, setSavingBackup] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) navigate({ to: "/auth" });
@@ -21,17 +23,34 @@ function Profile() {
 
   useEffect(() => {
     if (!user) return;
-    supabase.from("profiles").select("display_name, avatar_url").eq("id", user.id).maybeSingle()
-      .then(({ data }) => setProfile(data));
+    supabase.from("profiles").select("display_name, avatar_url, backup_mode, backup_radius_m").eq("id", user.id).maybeSingle()
+      .then(({ data }) => setProfile(data as any));
   }, [user]);
 
   const name = profile?.display_name ?? user?.email?.split("@")[0] ?? "Guest";
   const initial = name[0]?.toUpperCase() ?? "?";
+  const backupOn = profile?.backup_mode ?? false;
+
+  async function toggleBackup() {
+    if (!user || !profile) return;
+    const next = !backupOn;
+    setSavingBackup(true);
+    setProfile({ ...profile, backup_mode: next });
+    const { error } = await supabase.from("profiles").update({ backup_mode: next }).eq("id", user.id);
+    setSavingBackup(false);
+    if (error) {
+      setProfile({ ...profile, backup_mode: !next });
+      toast.error("Could not update backup mode", { description: error.message });
+    } else {
+      toast.success(next ? "Backup mode ON · we'll ping you when a minyan needs a 10th within 1 km" : "Backup mode OFF");
+    }
+  }
 
   async function signOut() {
     await supabase.auth.signOut();
     navigate({ to: "/auth" });
   }
+
 
   return (
     <MobileFrame>
