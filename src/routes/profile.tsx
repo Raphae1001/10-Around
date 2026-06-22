@@ -1,5 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { MobileFrame } from "@/components/MobileFrame";
 import { ScreenHeader, TrustBadge, StatusPill } from "@/components/ui-bits";
 import { Award, Plane, Flame, Settings, ChevronRight, Shield, CalendarCheck, Users, LogOut } from "lucide-react";
@@ -13,7 +14,8 @@ export const Route = createFileRoute("/profile")({
 function Profile() {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
-  const [profile, setProfile] = useState<{ display_name: string | null; avatar_url: string | null } | null>(null);
+  const [profile, setProfile] = useState<{ display_name: string | null; avatar_url: string | null; backup_mode: boolean; backup_radius_m: number } | null>(null);
+  const [savingBackup, setSavingBackup] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) navigate({ to: "/auth" });
@@ -21,17 +23,34 @@ function Profile() {
 
   useEffect(() => {
     if (!user) return;
-    supabase.from("profiles").select("display_name, avatar_url").eq("id", user.id).maybeSingle()
-      .then(({ data }) => setProfile(data));
+    supabase.from("profiles").select("display_name, avatar_url, backup_mode, backup_radius_m").eq("id", user.id).maybeSingle()
+      .then(({ data }) => setProfile(data as any));
   }, [user]);
 
   const name = profile?.display_name ?? user?.email?.split("@")[0] ?? "Guest";
   const initial = name[0]?.toUpperCase() ?? "?";
+  const backupOn = profile?.backup_mode ?? false;
+
+  async function toggleBackup() {
+    if (!user || !profile) return;
+    const next = !backupOn;
+    setSavingBackup(true);
+    setProfile({ ...profile, backup_mode: next });
+    const { error } = await supabase.from("profiles").update({ backup_mode: next }).eq("id", user.id);
+    setSavingBackup(false);
+    if (error) {
+      setProfile({ ...profile, backup_mode: !next });
+      toast.error("Could not update backup mode", { description: error.message });
+    } else {
+      toast.success(next ? "Backup mode ON · we'll ping you when a minyan needs a 10th within 1 km" : "Backup mode OFF");
+    }
+  }
 
   async function signOut() {
     await supabase.auth.signOut();
     navigate({ to: "/auth" });
   }
+
 
   return (
     <MobileFrame>
@@ -75,8 +94,38 @@ function Profile() {
         </div>
       </div>
 
+      {/* Backup mode toggle */}
+      <div className="mx-6 mt-6 rounded-2xl border border-border bg-surface p-4 shadow-soft">
+        <div className="flex items-start gap-3">
+          <div className={`h-10 w-10 rounded-2xl flex items-center justify-center shrink-0 ${backupOn ? "gold-gradient text-gold-foreground" : "bg-muted text-muted-foreground"}`}>
+            <Shield className="h-5 w-5" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2">
+              <div className="text-sm font-semibold">Backup mode</div>
+              {backupOn && <StatusPill tone="success">ON</StatusPill>}
+            </div>
+            <div className="text-xs text-muted-foreground mt-0.5">
+              Get pinged when a minyan within 1 km hits 9/10 and needs you to complete it.
+            </div>
+          </div>
+          <button
+            onClick={toggleBackup}
+            disabled={savingBackup || !profile}
+            aria-label="Toggle backup mode"
+            className={`h-7 w-12 rounded-full relative transition-colors shrink-0 ${backupOn ? "bg-gold" : "bg-muted"} disabled:opacity-50`}
+          >
+            <span
+              className={`absolute top-0.5 h-6 w-6 rounded-full bg-white shadow transition-all ${
+                backupOn ? "left-[22px]" : "left-0.5"
+              }`}
+            />
+          </button>
+        </div>
+      </div>
+
       {/* Trust panel */}
-      <Link to="/trust" className="mx-6 mt-6 rounded-2xl border border-border bg-surface p-4 flex items-center gap-3 shadow-soft block">
+      <Link to="/trust" className="mx-6 mt-4 rounded-2xl border border-border bg-surface p-4 flex items-center gap-3 shadow-soft block">
         <div className="h-10 w-10 rounded-2xl bg-success/15 flex items-center justify-center">
           <Shield className="h-5 w-5 text-success" />
         </div>

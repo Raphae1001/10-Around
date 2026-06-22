@@ -109,6 +109,8 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          backup_mode: boolean
+          backup_radius_m: number
           created_at: string
           display_name: string | null
           id: string
@@ -118,6 +120,8 @@ export type Database = {
         }
         Insert: {
           avatar_url?: string | null
+          backup_mode?: boolean
+          backup_radius_m?: number
           created_at?: string
           display_name?: string | null
           id: string
@@ -127,6 +131,8 @@ export type Database = {
         }
         Update: {
           avatar_url?: string | null
+          backup_mode?: boolean
+          backup_radius_m?: number
           created_at?: string
           display_name?: string | null
           id?: string
@@ -141,6 +147,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      count_minyanim_within: {
+        Args: { lat: number; lng: number; radius_m?: number }
+        Returns: number
+      }
       nearby_minyanim: {
         Args: { lat: number; lng: number; radius_m?: number }
         Returns: {
