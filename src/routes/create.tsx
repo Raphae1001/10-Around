@@ -63,14 +63,21 @@ function Create() {
   const ctxLabel: Record<Context, string> = {
     Street: "On the street, right now",
     Airport: "At the airport before my flight",
-    Hotel: "At my hotel",
+    Hotel: "Hotel, synagogue, apartment… anywhere scheduled",
     Travel: "For a future trip",
+  };
+
+  const ctxDisplay: Record<Context, string> = {
+    Street: "Street",
+    Airport: "Airport",
+    Hotel: "Autres",
+    Travel: "Travel",
   };
 
   const locationSummary =
     ctx === "Street" ? street :
     ctx === "Airport" ? [airport, gate && `Gate ${gate}`].filter(Boolean).join(" · ") || "Set airport & gate" :
-    ctx === "Hotel" ? [hotelCity, hotelName, hotelSpot].filter(Boolean).join(" · ") || "Set hotel details" :
+    ctx === "Hotel" ? [hotelCity, hotelName, hotelSpot].filter(Boolean).join(" · ") || "Set venue details" :
     [tripCity, tripDateStart && tripDateEnd ? `${tripDateStart} → ${tripDateEnd}` : tripDateStart].filter(Boolean).join(" · ") || "Set city & dates";
 
   return (
@@ -95,7 +102,7 @@ function Create() {
                   <div className={`h-9 w-9 rounded-xl flex items-center justify-center ${active ? "gold-gradient text-gold-foreground" : "bg-muted text-muted-foreground"}`}>
                     <Icon className="h-4 w-4" />
                   </div>
-                  <span className="text-[11px] font-semibold">{c}</span>
+                  <span className="text-[11px] font-semibold">{ctxDisplay[c]}</span>
                 </button>
               );
             })}
@@ -148,14 +155,14 @@ function Create() {
                 <input
                   value={hotelName}
                   onChange={(e) => setHotelName(e.target.value)}
-                  placeholder="Hotel name"
+                  placeholder="Venue (hotel, shul, apt…)"
                   className="rounded-2xl border border-border bg-surface p-3 text-sm outline-none focus:border-gold"
                 />
               </div>
               <input
                 value={hotelSpot}
                 onChange={(e) => setHotelSpot(e.target.value)}
-                placeholder="Where in the hotel? (Lobby, room 412, conf. room…)"
+                placeholder="Exact spot (Lobby, room 412, 3rd floor…)"
                 className="w-full rounded-2xl border border-border bg-surface p-3 text-sm outline-none focus:border-gold"
               />
             </div>
