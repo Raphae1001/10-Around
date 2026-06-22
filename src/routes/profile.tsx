@@ -108,6 +108,16 @@ function Profile() {
           ))}
         </div>
       </div>
+
+      {/* Sign out */}
+      <div className="px-6 pb-10">
+        <button
+          onClick={signOut}
+          className="w-full flex items-center justify-center gap-2 rounded-2xl border border-border bg-surface py-3.5 text-sm font-semibold text-urgent"
+        >
+          <LogOut className="h-4 w-4" /> Sign out
+        </button>
+      </div>
     </MobileFrame>
   );
 }
