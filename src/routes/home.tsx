@@ -1,5 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { MobileFrame } from "@/components/MobileFrame";
 import { ScreenHeader, StatusPill } from "@/components/ui-bits";
@@ -29,6 +30,7 @@ export const Route = createFileRoute("/home")({
 type Context = "Street" | "Airport" | "Hotel" | "Travel";
 
 function Home() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
   const { position, request, error: geoError, loading: geoLoading } = useGeolocation(true);
@@ -57,10 +59,9 @@ function Home() {
     if (!pending || !user) return;
     const { error } = await joinMinyan(pending.id, user.id);
     if (error) {
-      toast.error("Could not join", { description: error.message });
+      toast.error(t("auth.signInFailed"), { description: error.message });
     } else {
-      toast.success("You're in!", { description: pending.address ?? "" });
-      // Add to calendar (downloads .ics on web; iOS opens in Calendar)
+      toast.success(t("home.youreIn"), { description: pending.address ?? "" });
       const start = pending.scheduled_at ? new Date(pending.scheduled_at) : new Date();
       downloadIcs({
         title: `Minyan · ${pending.prayer}`,
