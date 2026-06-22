@@ -1,13 +1,38 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { MobileFrame } from "@/components/MobileFrame";
 import { ScreenHeader, TrustBadge, StatusPill } from "@/components/ui-bits";
-import { Award, Plane, Flame, Settings, ChevronRight, Shield, CalendarCheck, Users } from "lucide-react";
+import { Award, Plane, Flame, Settings, ChevronRight, Shield, CalendarCheck, Users, LogOut } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/profile")({
   component: Profile,
 });
 
 function Profile() {
+  const navigate = useNavigate();
+  const { user, loading } = useAuth();
+  const [profile, setProfile] = useState<{ display_name: string | null; avatar_url: string | null } | null>(null);
+
+  useEffect(() => {
+    if (!loading && !user) navigate({ to: "/auth" });
+  }, [loading, user, navigate]);
+
+  useEffect(() => {
+    if (!user) return;
+    supabase.from("profiles").select("display_name, avatar_url").eq("id", user.id).maybeSingle()
+      .then(({ data }) => setProfile(data));
+  }, [user]);
+
+  const name = profile?.display_name ?? user?.email?.split("@")[0] ?? "Guest";
+  const initial = name[0]?.toUpperCase() ?? "?";
+
+  async function signOut() {
+    await supabase.auth.signOut();
+    navigate({ to: "/auth" });
+  }
+
   return (
     <MobileFrame>
       <ScreenHeader
