@@ -94,8 +94,38 @@ function Profile() {
         </div>
       </div>
 
+      {/* Backup mode toggle */}
+      <div className="mx-6 mt-6 rounded-2xl border border-border bg-surface p-4 shadow-soft">
+        <div className="flex items-start gap-3">
+          <div className={`h-10 w-10 rounded-2xl flex items-center justify-center shrink-0 ${backupOn ? "gold-gradient text-gold-foreground" : "bg-muted text-muted-foreground"}`}>
+            <Shield className="h-5 w-5" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2">
+              <div className="text-sm font-semibold">Backup mode</div>
+              {backupOn && <StatusPill tone="success">ON</StatusPill>}
+            </div>
+            <div className="text-xs text-muted-foreground mt-0.5">
+              Get pinged when a minyan within 1 km hits 9/10 and needs you to complete it.
+            </div>
+          </div>
+          <button
+            onClick={toggleBackup}
+            disabled={savingBackup || !profile}
+            aria-label="Toggle backup mode"
+            className={`h-7 w-12 rounded-full relative transition-colors shrink-0 ${backupOn ? "bg-gold" : "bg-muted"} disabled:opacity-50`}
+          >
+            <span
+              className={`absolute top-0.5 h-6 w-6 rounded-full bg-white shadow transition-all ${
+                backupOn ? "left-[22px]" : "left-0.5"
+              }`}
+            />
+          </button>
+        </div>
+      </div>
+
       {/* Trust panel */}
-      <Link to="/trust" className="mx-6 mt-6 rounded-2xl border border-border bg-surface p-4 flex items-center gap-3 shadow-soft block">
+      <Link to="/trust" className="mx-6 mt-4 rounded-2xl border border-border bg-surface p-4 flex items-center gap-3 shadow-soft block">
         <div className="h-10 w-10 rounded-2xl bg-success/15 flex items-center justify-center">
           <Shield className="h-5 w-5 text-success" />
         </div>
