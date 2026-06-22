@@ -219,14 +219,16 @@ function Create() {
               <div className="text-[10px] uppercase tracking-wider text-muted-foreground mt-1">already here</div>
             </div>
             <button
-              onClick={() => setPresent(Math.min(10, present + 1))}
+              onClick={() => setPresent(Math.min(11, present + 1))}
               className="h-10 w-10 rounded-xl gold-gradient text-gold-foreground flex items-center justify-center active:scale-95"
               aria-label="More"
             >
               <Plus className="h-4 w-4" />
             </button>
           </div>
-          <p className="text-[11px] text-muted-foreground mt-2">You + anyone already with you. Minyan needs 10.</p>
+          <p className="text-[11px] text-muted-foreground mt-2">
+            You + anyone already with you. A minyan needs 10, but you can still join a full one.
+          </p>
         </Section>
 
         {/* 5. NUSACH */}
@@ -270,7 +272,7 @@ function Create() {
             </div>
           </div>
           <div className="border-t border-border pt-2 text-[11px] text-muted-foreground space-y-1">
-            <div><span className="font-semibold text-foreground">{prayer}</span> · {when} · {present} here · {Math.max(0, 10 - present)} missing</div>
+            <div><span className="font-semibold text-foreground">{prayer}</span> · {when} · {present} here · {present >= 10 ? "minyan ready" : `${Math.max(0, 10 - present)} missing`}</div>
             <div className="flex items-start gap-1"><MapPin className="h-3 w-3 mt-0.5 shrink-0" /><span className="truncate">{locationSummary}</span></div>
             <div>Nusach: <span className="text-foreground">{nusach}</span></div>
             {comment && <div className="italic">"{comment}"</div>}
