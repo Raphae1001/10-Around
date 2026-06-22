@@ -35,7 +35,11 @@ function Create() {
   const [hotelSpot, setHotelSpot] = useState("");
   // Travel
   const [tripCity, setTripCity] = useState("");
-  const [tripDate, setTripDate] = useState("");
+  const [tripDateStart, setTripDateStart] = useState("");
+  const [tripDateEnd, setTripDateEnd] = useState("");
+  // Scheduled time (Hotel & Travel only — can plan in advance)
+  const [scheduledDate, setScheduledDate] = useState("");
+  const [scheduledTime, setScheduledTime] = useState("");
 
   const prayers = [
     { name: "Shacharit", icon: Sunrise },
@@ -54,7 +58,7 @@ function Create() {
     ctx === "Street" ? street :
     ctx === "Airport" ? [airport, gate && `Gate ${gate}`].filter(Boolean).join(" · ") || "Set airport & gate" :
     ctx === "Hotel" ? [hotelCity, hotelName, hotelSpot].filter(Boolean).join(" · ") || "Set hotel details" :
-    [tripCity, tripDate].filter(Boolean).join(" · ") || "Set city & date";
+    [tripCity, tripDateStart && tripDateEnd ? `${tripDateStart} → ${tripDateEnd}` : tripDateStart].filter(Boolean).join(" · ") || "Set city & dates";
 
   return (
     <MobileFrame>
@@ -144,22 +148,59 @@ function Create() {
             </div>
           )}
           {ctx === "Travel" && (
-            <div className="mt-3 grid grid-cols-2 gap-2">
+            <div className="mt-3 space-y-2">
               <input
                 value={tripCity}
                 onChange={(e) => setTripCity(e.target.value)}
                 placeholder="Destination city"
-                className="rounded-2xl border border-border bg-surface p-3 text-sm outline-none focus:border-gold"
+                className="w-full rounded-2xl border border-border bg-surface p-3 text-sm outline-none focus:border-gold"
               />
-              <input
-                value={tripDate}
-                onChange={(e) => setTripDate(e.target.value)}
-                type="date"
-                className="rounded-2xl border border-border bg-surface p-3 text-sm outline-none focus:border-gold"
-              />
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="text-[10px] uppercase tracking-wider text-muted-foreground ml-1">From</label>
+                  <input
+                    value={tripDateStart}
+                    onChange={(e) => setTripDateStart(e.target.value)}
+                    type="date"
+                    className="w-full rounded-2xl border border-border bg-surface p-3 text-sm outline-none focus:border-gold"
+                  />
+                </div>
+                <div>
+                  <label className="text-[10px] uppercase tracking-wider text-muted-foreground ml-1">To</label>
+                  <input
+                    value={tripDateEnd}
+                    onChange={(e) => setTripDateEnd(e.target.value)}
+                    type="date"
+                    className="w-full rounded-2xl border border-border bg-surface p-3 text-sm outline-none focus:border-gold"
+                  />
+                </div>
+              </div>
             </div>
           )}
         </Section>
+
+        {/* 1b. SCHEDULE — Hotel & Travel only */}
+        {(ctx === "Hotel" || ctx === "Travel") && (
+          <Section step="★" title="Schedule the minyan (date & time)">
+            <div className="grid grid-cols-2 gap-2">
+              <input
+                value={scheduledDate}
+                onChange={(e) => setScheduledDate(e.target.value)}
+                type="date"
+                className="rounded-2xl border border-border bg-surface p-3 text-sm outline-none focus:border-gold"
+              />
+              <input
+                value={scheduledTime}
+                onChange={(e) => setScheduledTime(e.target.value)}
+                type="time"
+                className="rounded-2xl border border-border bg-surface p-3 text-sm outline-none focus:border-gold"
+              />
+            </div>
+            <p className="text-[11px] text-muted-foreground mt-2">
+              Travelers can plan in advance — pick when the minyan starts.
+            </p>
+          </Section>
+        )}
 
         {/* 2. PRAYER */}
         <Section step="2" title="Which prayer?">
@@ -268,12 +309,19 @@ function Create() {
           <div className="flex items-start gap-3">
             <Zap className="h-4 w-4 text-gold mt-0.5 shrink-0" />
             <div className="text-xs leading-snug">
-              <strong className="text-foreground">~38 people</strong> within 1 km will be notified.
+              {ctx === "Street" || ctx === "Airport" ? (
+                <><strong className="text-foreground">~38 people</strong> within 1 km will be notified now.</>
+              ) : (
+                <><strong className="text-foreground">Scheduled minyan</strong> — travelers heading there will see it in advance.</>
+              )}
             </div>
           </div>
           <div className="border-t border-border pt-2 text-[11px] text-muted-foreground space-y-1">
             <div><span className="font-semibold text-foreground">{prayer}</span> · {when} · {present} here · {present >= 10 ? "minyan ready" : `${Math.max(0, 10 - present)} missing`}</div>
             <div className="flex items-start gap-1"><MapPin className="h-3 w-3 mt-0.5 shrink-0" /><span className="truncate">{locationSummary}</span></div>
+            {(ctx === "Hotel" || ctx === "Travel") && (scheduledDate || scheduledTime) && (
+              <div>Scheduled: <span className="text-foreground">{[scheduledDate, scheduledTime].filter(Boolean).join(" · ")}</span></div>
+            )}
             <div>Nusach: <span className="text-foreground">{nusach}</span></div>
             {comment && <div className="italic">"{comment}"</div>}
           </div>
