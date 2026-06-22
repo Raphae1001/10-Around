@@ -38,14 +38,14 @@ function Auth() {
         redirect_uri: window.location.origin + "/home",
       });
       if (result.error) {
-        toast.error("Sign-in failed", { description: (result.error as Error).message });
+        toast.error(t("auth.signInFailed"), { description: (result.error as Error).message });
         setBusy(null);
         return;
       }
       // If redirected, browser is leaving. Otherwise session is set.
       if (!result.redirected) navigate({ to: "/home" });
     } catch (e) {
-      toast.error("Sign-in failed", { description: (e as Error).message });
+      toast.error(t("auth.signInFailed"), { description: (e as Error).message });
       setBusy(null);
     }
   }
@@ -61,14 +61,14 @@ function Auth() {
           options: { emailRedirectTo: `${window.location.origin}/home` },
         });
         if (error) throw error;
-        toast.success("Check your inbox to confirm your email.");
+        toast.success(t("auth.checkInbox"));
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         navigate({ to: "/home" });
       }
     } catch (err) {
-      toast.error("Auth failed", { description: (err as Error).message });
+      toast.error(t("auth.authFailed"), { description: (err as Error).message });
     } finally {
       setBusy(null);
     }
