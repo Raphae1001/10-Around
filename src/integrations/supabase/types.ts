@@ -153,7 +153,6 @@ export type Database = {
           display_name: string | null
           id: string
           language: string | null
-          push_token: string | null
           trust_score: number
           updated_at: string
         }
@@ -165,7 +164,6 @@ export type Database = {
           display_name?: string | null
           id: string
           language?: string | null
-          push_token?: string | null
           trust_score?: number
           updated_at?: string
         }
@@ -177,9 +175,29 @@ export type Database = {
           display_name?: string | null
           id?: string
           language?: string | null
-          push_token?: string | null
           trust_score?: number
           updated_at?: string
+        }
+        Relationships: []
+      }
+      user_push_tokens: {
+        Row: {
+          created_at: string
+          token: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          token: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          token?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
