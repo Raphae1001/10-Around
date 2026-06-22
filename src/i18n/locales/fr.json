@@ -1,21 +1,11 @@
 {
-  "nav": {
-    "home": "Accueil",
-    "map": "Carte",
-    "create": "Créer",
-    "profile": "Profil"
-  },
+  "nav": { "home": "Accueil", "map": "Carte", "create": "Créer", "profile": "Profil" },
   "common": {
-    "back": "Retour",
-    "cancel": "Annuler",
-    "save": "Enregistrer",
-    "loading": "Chargement…",
-    "retry": "Réessayer",
-    "signOut": "Se déconnecter",
-    "settings": "Paramètres",
-    "directions": "Itinéraire",
-    "later": "Plus tard",
-    "search": "Rechercher…"
+    "back": "Retour", "cancel": "Annuler", "save": "Enregistrer", "loading": "Chargement…",
+    "retry": "Réessayer", "signOut": "Se déconnecter", "settings": "Paramètres",
+    "directions": "Itinéraire", "later": "Plus tard", "search": "Rechercher…",
+    "skip": "Passer", "continue": "Continuer", "yes": "Oui", "no": "Non",
+    "open": "Ouvert", "join": "Rejoindre", "go": "Y aller", "live": "LIVE"
   },
   "auth": {
     "welcome": "Bienvenue sur",
@@ -63,17 +53,8 @@
     "complete": "minyan complet",
     "liveNow": "en cours"
   },
-  "ctx": {
-    "Street": "Rue",
-    "Airport": "Aéroport",
-    "Hotel": "Autres",
-    "Travel": "Voyage"
-  },
-  "prayer": {
-    "shacharit": "Chaharit",
-    "mincha": "Minha",
-    "maariv": "Arvit"
-  },
+  "ctx": { "Street": "Rue", "Airport": "Aéroport", "Hotel": "Autres", "Travel": "Voyage" },
+  "prayer": { "shacharit": "Chaharit", "mincha": "Minha", "maariv": "Arvit" },
   "create": {
     "title": "Lancer un minyan",
     "subtitle": "Remplis les détails — tout le monde les verra",
@@ -91,8 +72,7 @@
     "venuePh": "Lieu (hôtel, shul, appt…)",
     "spotPh": "Spot exact (Lobby, chambre 412, 3e étage…)",
     "destPh": "Ville de destination",
-    "from": "Du",
-    "to": "Au",
+    "from": "Du", "to": "Au",
     "schedule": "Planifier le minyan (date & heure)",
     "scheduleHint": "Les voyageurs peuvent planifier à l'avance — choisis l'heure de début.",
     "whichPrayer": "Quelle prière ?",
@@ -111,9 +91,35 @@
     "needLocationLive": "On a besoin de ta position pour un minyan en direct.",
     "duplicateNearby": "Un autre minyan existe déjà à moins de 200 m",
     "joinInstead": "Rejoins-le plutôt que d'en créer un doublon.",
-    "signInFirst": "Connecte-toi d'abord."
+    "signInFirst": "Connecte-toi d'abord.",
+    "previewNotifyLive": "personnes dans 1 km seront notifiées maintenant.",
+    "previewScheduled": "Minyan planifié",
+    "previewScheduledHint": "les voyageurs le verront à l'avance.",
+    "minyanReady": "minyan prêt — rejoins-nous aussi",
+    "less": "Moins", "more": "Plus",
+    "morning": "Matin", "afternoon": "Après-midi", "evening": "Soir", "custom": "Personnalisé",
+    "now": "Maintenant"
+  },
+  "onboarding": {
+    "welcome": "Bienvenue",
+    "tagline": "Lance un minyan partout, à chaque instant.",
+    "places": "Rue · Aéroport · Hôtel · Partout",
+    "step1Title": "Trouver un minyan",
+    "step1Body": "Vois les minyanim en direct autour de toi sur la carte. Coin de rue, lobby d'hôtel, porte d'embarquement.",
+    "step1Kicker": "Étape 1",
+    "step2Title": "Lancer un minyan",
+    "step2Body": "Un tap pour diffuser. Les Juifs autour sont alertés instantanément. 10 hommes, vous priez.",
+    "step2Kicker": "Étape 2",
+    "step3Title": "Partout, à chaque instant",
+    "step3Body": "Voyages, escales, déplacements pro — ne rate plus jamais une tefilah.",
+    "step3Kicker": "Étape 3",
+    "ready": "Prêt quand tu l'es",
+    "seeHow": "Voir comment ça marche",
+    "join": "Rejoindre le réseau"
   },
   "profile": {
+    "title": "Profil",
+    "guest": "Invité",
     "trust": "Confiance",
     "backupMode": "Mode renfort",
     "backupHint": "Reçois une alerte quand un minyan dans 1 km est à 9/10 et a besoin de toi.",
@@ -122,15 +128,259 @@
     "backupOffToast": "Mode renfort OFF",
     "backupUpdateError": "Impossible de mettre à jour le mode renfort",
     "trustReliability": "Confiance & fiabilité",
-    "trustSub": "Ton taux de présence renforce la communauté",
+    "trustSub": "Ton taux de présence de 98% renforce la communauté",
     "recent": "Participation récente",
     "noHistory": "Aucun minyan pour l'instant — ton historique apparaîtra ici.",
-    "stats": {
-      "minyanim": "Minyanim",
-      "completed": "Complets",
-      "streak": "Série"
+    "stats": { "minyanim": "Minyanim", "completed": "Complets", "streak": "Série" },
+    "badges": "Badges",
+    "badgeMaker": "Bâtisseur",
+    "badgeMakerSub": "25+ minyanim complétés",
+    "badgeTraveler": "Voyageur",
+    "badgeTravelerSub": "12 villes",
+    "badgeTrusted": "Fiable",
+    "badgeTrustedSub": "98% de présence"
+  },
+  "notifications": {
+    "title": "Alertes",
+    "subtitle": "Intelligent, en temps réel",
+    "filters": { "all": "Tout", "urgent": "Urgent", "kaddish": "Kaddish", "confirmed": "Confirmé", "nearby": "Près d'ici" },
+    "snooze": "Reporter",
+    "requestKaddish": "Demander un minyan pour Kaddish",
+    "requestKaddishSub": "Pour yahrzeit, shloshim ou shiva",
+    "open": "Ouvert",
+    "items": {
+      "missing1Title": "Il ne manque qu'1 personne",
+      "missing1Body": "Minha chez Aaron · 4 min à pied · démarre dans 12 min",
+      "missing1Cta": "J'arrive",
+      "missing1Time": "maintenant",
+      "kaddishTitle": "Demande de Kaddish près de toi",
+      "kaddishBody": "Yonatan a besoin d'un minyan pour les shloshim de son père.",
+      "kaddishCta": "Aider à compléter",
+      "kaddishTime": "il y a 3 min",
+      "completesTitle": "Ta présence complète un minyan",
+      "completesBody": "Tu es à 600 m de Park Avenue Shul.",
+      "completesCta": "Rejoindre",
+      "completesTime": "il y a 8 min",
+      "confirmedTitle": "Arvit confirmée",
+      "confirmedBody": "Midtown Chabad a atteint 10 participants confirmés.",
+      "confirmedTime": "il y a 20 min",
+      "startingTitle": "Minyan bientôt",
+      "startingBody": "Chaharit à Lincoln Square dans 25 minutes.",
+      "startingTime": "il y a 1h"
+    }
+  },
+  "share": {
+    "title": "Partager le minyan",
+    "subtitle": "Belle invitation WhatsApp",
+    "group": "Groupe Bayit · 38 membres",
+    "oneMore": "Plus qu'1 personne",
+    "sendWhatsapp": "Envoyer via WhatsApp",
+    "copyText": "Copier le texte",
+    "copied": "Copié",
+    "otherApps": "Autres apps",
+    "smartTargeting": "Ciblage intelligent",
+    "targets": {
+      "bayit": "Groupe Bayit · 38 à proximité",
+      "office": "Minyan du bureau · 12 à moins de 5 min",
+      "family": "Famille · 4 à Manhattan"
     },
-    "badges": "Badges"
+    "back": "Retour au minyan",
+    "messageHeader": "URGENT — Le minyan a besoin de participants",
+    "messageStatus": "Statut : 9/10 — Plus qu'une personne",
+    "messageCta": "Confirme ta présence instantanément via MinyanNow"
+  },
+  "success": {
+    "confirmed": "Minyan confirmé",
+    "oneMoreNeeded": "Plus qu'un…",
+    "communityFormed": "Une communauté vient de se former.",
+    "almostThere": "Presque.",
+    "confirmedBody": "Minha chez Aaron est prête. Le Kaddish sera dit en ton honneur aujourd'hui.",
+    "almostBody": "On prévient les membres autour. Tu sauras dès que c'est confirmé.",
+    "walking": "{{count}} participants en route · ETA 4 min",
+    "openSiddur": "Ouvrir le Siddour · Minha",
+    "getDirections": "Itinéraire",
+    "shareWithGroup": "Partager avec le groupe",
+    "backHome": "Retour à l'accueil"
+  },
+  "map": {
+    "searchPh": "Rechercher ville, synagogue ou adresse",
+    "filters": { "all": "Tout" },
+    "recenter": "Me recentrer",
+    "selected": "Minyan sélectionné",
+    "liveNear": "En direct près de toi",
+    "forming": "{{count}} en formation",
+    "minyanimCount": "{{count}} minyanim",
+    "noNearby": "Aucun minyan autour — sois le premier.",
+    "startHere": "Pas trouvé ? Lance un minyan ici",
+    "unknownSpot": "Lieu inconnu"
+  },
+  "travel": {
+    "title": "Minyan en voyage",
+    "subtitle": "Prie partout. Planifie à l'avance.",
+    "destination": "Destination",
+    "city": "Ville",
+    "arrival": "Arrivée",
+    "departure": "Départ",
+    "nights": "{{count}} nuits",
+    "pickDates": "Choisis des dates valides",
+    "jewsPlanning": "{{count}} juifs prévoient le voyage",
+    "tripVisibility": "Visibilité du voyage",
+    "everyone": "Tous", "everyoneHint": "Tous les membres",
+    "minyanOnly": "Minyan uniquement", "minyanOnlyHint": "Participants",
+    "private": "Privé", "privateHint": "Moi seul",
+    "saveTrip": "Sauver & trouver des minyanim",
+    "tripSaved": "Voyage sauvegardé · mise à jour live",
+    "tripSavedToast": "Voyage à {{city}} enregistré",
+    "tripSavedDesc": "{{nights}} nuits · alerte des minyanim locaux",
+    "pickCity": "Choisis une ville et des dates valides",
+    "duringStay": "Pendant ton séjour",
+    "noDates": "pas de dates",
+    "tabMinyanim": "Minyanim ({{count}})",
+    "tabSynagogues": "Synagogues ({{count}})",
+    "createIn": "Créer un minyan à {{city}}",
+    "createHint": "Choisis heure & lieu · on prévient locaux + voyageurs",
+    "fromHotel": "{{walk}} de l'hôtel",
+    "complete": "complet",
+    "toGo": "{{count}} restants",
+    "alertAt10": "alerte à 10",
+    "in": "Inscrit",
+    "iParticipate": "Je participe",
+    "notifyTitle": "Tu seras alerté dès qu'un minyan atteint 10",
+    "notifyQuiet": "Silencieux pendant Chabbat & Yom Tov à {{city}}.",
+    "completeToast": "Minyan complet — 10 sur 10",
+    "completeDesc": "{{type}} · {{venue}} · tu seras alerté",
+    "inToast": "Tu es inscrit à {{type}} · {{venue}}",
+    "inDesc": "{{confirmed}}/{{needed}} confirmés · alerte à 10"
+  },
+  "traveler": {
+    "mode": "Mode voyageur",
+    "tripIn": "{{city}} · dans 14h",
+    "departs": "départ {{time}}",
+    "stats": { "minyanim": "Minyanim {{city}}", "atAirport": "À l'aéroport", "hotelWalk": "À pied de l'hôtel" },
+    "builtForTrip": "Conçu pour ton voyage",
+    "flight": "Vol", "hotel": "Hôtel", "business": "Pro",
+    "flightCta": "✈ Entre ton numéro de vol — trouve les Juifs à bord",
+    "alongRoute": "Sur ta route",
+    "cities": "{{count}} villes",
+    "noMinyan": "Aucun minyan à {{city}} ?",
+    "noMinyanHint": "Lance-en un. On préviendra tout Juif dans 50 km.",
+    "createRemote": "Créer un minyan distant"
+  },
+  "flight": {
+    "title": "Coordination de vol",
+    "question": "Y a-t-il des Juifs sur ton vol ?",
+    "subtitle": "Entre ton numéro de vol. On te connectera discrètement aux autres membres MinyanNow à bord.",
+    "flightNumber": "Numéro de vol",
+    "departs": "Départ dans {{time}}",
+    "matchFound": "Correspondance trouvée",
+    "membersOnFlight": "{{count}} membres sont sur ton vol",
+    "matchSub": "Assez pour une Arvit spontanée à la porte B22 — ou à l'arrivée.",
+    "neededFor10": "Manque pour 10",
+    "sameHotel": "Même hôtel",
+    "destination": "Destination",
+    "startFlight": "Lancer un minyan de vol",
+    "joinCommunity": "Rejoindre la communauté {{flight}}",
+    "recent": "Vols récents",
+    "onBoard": "{{count}} à bord"
+  },
+  "minyan": {
+    "title": "Minyan chez Aaron",
+    "subtitle": "Minha · dans 12 min",
+    "missing1": "Manque 1",
+    "nusachAri": "Nusach Ari",
+    "dist": "600 m · 4 min à pied",
+    "almostReady": "Presque prêt",
+    "walking": "{{walking}} à pied · {{driving}} en voiture",
+    "averageArrival": "Arrivée moyenne dans 4 min",
+    "organizer": "Organisateur",
+    "hosted": "73 minyanim organisés",
+    "startsAt": "Commence à",
+    "location": "Lieu",
+    "type": "Type",
+    "typeValue": "Ouvert · tous bienvenus · tefillin dispo",
+    "imComing": "J'arrive",
+    "whatsapp": "WhatsApp"
+  },
+  "kaddish": {
+    "title": "Demander un minyan pour Kaddish",
+    "subtitle": "Ta communauté se mobilisera discrètement. Les Juifs autour seront gentiment sollicités pour compléter un minyan en ton honneur.",
+    "forWhom": "Pour qui",
+    "when": "Quand", "whenVal": "Minha · aujourd'hui",
+    "where": "Où", "whereVal": "Ici · 800 m",
+    "personalNote": "Note personnelle (optionnel)",
+    "notePh": "Shloshim · avec toute ma gratitude",
+    "urgent": "DISCRET URGENT",
+    "send": "Envoyer la demande à la communauté",
+    "sharePrivate": "Partager en privé via WhatsApp"
+  },
+  "shabbat": {
+    "mode": "Mode Chabbat",
+    "parasha": "Parashat Vayetzé",
+    "candleLighting": "Allumage des bougies",
+    "endsHavdalah": "Fin du Chabbat {{time}} · Havdala",
+    "yourPlan": "Ton plan de Chabbat",
+    "ratio": "{{done}}/{{total}} validés",
+    "preConfirm": "Pré-confirmer",
+    "notice": "MinyanNow met en pause toutes les notifications en temps réel de l'allumage à Havdala. Coordonne maintenant — repose-toi ensuite.",
+    "preConfirmAll": "Tout pré-confirmer"
+  },
+  "siddur": {
+    "kicker": "Siddour contextuel",
+    "header": "Minha · Nusach Ari",
+    "synced": "Synchronisé avec chez Aaron",
+    "syncedSub": "10/10 confirmés · commencé il y a 2 min",
+    "textSize": "Taille du texte",
+    "transliteration": "Translittération"
+  },
+  "synagogue": {
+    "title": "Park Avenue Shul",
+    "subtitle": "Communauté vérifiée · NYC",
+    "verified": "Vérifié",
+    "address": "50 E 87th St, New York · Ashkenaz",
+    "todaysSchedule": "Horaires d'aujourd'hui",
+    "confirmedReady": "{{count}} confirmés · prêt",
+    "missing": "{{count}}/10 · 2 manquent",
+    "rsvp": "S'inscrire",
+    "confirmed": "Confirmé",
+    "almost": "Presque",
+    "open": "Ouvert",
+    "communityUpdates": "Annonces communauté",
+    "kiddushNote": "Kiddoush parrainé ce Chabbat par la famille Goldstein pour la bar mitzvah de leur fils. Tous bienvenus.",
+    "postedAgo": "Publié il y a 2h"
+  },
+  "trust": {
+    "title": "Confiance & fiabilité",
+    "subtitle": "Comment la communauté te fait confiance",
+    "score": "Score de confiance",
+    "topPercent": "Top 3% de ta communauté",
+    "showRate": "Taux de présence", "showRateSub": "184 sur 188 minyanim honorés",
+    "consistency": "Régularité", "consistencyVal": "12 jours d'affilée", "consistencySub": "Aucune Minha ratée en 3 semaines",
+    "identity": "Identité vérifiée", "identityVal": "ID + téléphone", "identitySub": "Confirmée par 4 membres",
+    "ratings": "Évaluations communauté", "ratingsSub": "73 organisateurs t'ont noté",
+    "howWorks": "Comment la confiance fonctionne",
+    "howWorksBody": "La confiance se construit discrètement — en venant quand tu dis que tu viendras, en aidant à compléter les minyanim, en étant vérifié par ceux qui te connaissent. Jamais d'humiliation publique, juste une reconnaissance silencieuse.",
+    "noBelow": "Aucun score sous 4,0",
+    "anonymous": "Anonyme"
+  },
+  "backup": {
+    "title": "Membre renfort",
+    "subtitle": "Sois le 10e quand ça compte",
+    "heroTitle": "Mode renfort local",
+    "heroBody": "Tu seras alerté uniquement quand un minyan proche est à 9/10 et que le temps presse.",
+    "active": "Actif · à l'écoute dans {{radius}}",
+    "alertRadius": "Rayon d'alerte",
+    "ruleCriticalTitle": "Seulement alertes critiques",
+    "ruleCriticalDesc": "Déclenché à 9/10, ≤10 min restantes.",
+    "ruleQuietTitle": "Heures calmes respectées",
+    "ruleQuietDesc": "Jamais entre 23h et 6h30 local.",
+    "ruleConfirmTitle": "Un tap pour confirmer",
+    "ruleConfirmDesc": "La géoloc valide ton arrivée.",
+    "lastWeek": "Semaine dernière",
+    "saved": "Sauvé",
+    "exampleTitle": "Tu as complété une Minha à Park Avenue.",
+    "exampleDesc": "10e participant · le Kaddish a été dit.",
+    "stayOnCall": "Rester disponible",
+    "activate": "Activer le mode renfort"
   },
   "settings": {
     "title": "Paramètres",
@@ -163,5 +413,48 @@
     "highContrast": "Contraste élevé",
     "reduceMotion": "Réduire les animations",
     "chooseLanguage": "Choisis ta langue"
+  },
+  "confirm": {
+    "organizerTitle": "Le minyan a-t-il commencé ?",
+    "participantTitle": "Es-tu venu au minyan ?",
+    "organizerDesc": "Confirme que « {{place}} » a démarré pour valider les présents.",
+    "participantDesc": "Sois honnête — ta réponse affecte ton score de confiance. Lieu : {{place}}.",
+    "yourMinyan": "ton minyan",
+    "saveError": "Impossible d'enregistrer ta réponse",
+    "trustPlus": "Confiance +2 — merci !",
+    "gotIt": "Compris",
+    "started": "Minyan confirmé démarré",
+    "notStarted": "Marqué comme non démarré"
+  },
+  "privacy": {
+    "title": "Politique de confidentialité",
+    "updated": "Dernière mise à jour : juin 2026",
+    "intro": "MinyanStreet aide les Juifs à trouver ou lancer un minyan partout dans le monde. Nous prenons ta vie privée très au sérieux.",
+    "sections": {
+      "data": {
+        "title": "Données collectées",
+        "body": "Adresse email (connexion), nom et avatar (optionnel), position approximative (uniquement quand tu choisis de la partager pour un minyan), token de notification, score de confiance et historique de participation."
+      },
+      "use": {
+        "title": "Utilisation des données",
+        "body": "Pour t'afficher les minyanim proches, te notifier des demandes urgentes, compter les présents, et maintenir le système de confiance qui fait la fiabilité de la communauté. Nous ne vendons jamais tes données."
+      },
+      "location": {
+        "title": "Localisation",
+        "body": "Ton GPS est utilisé uniquement quand tu ouvres la carte ou lances/rejoins un minyan en direct. Il est partagé avec ce minyan uniquement, jamais diffusé publiquement."
+      },
+      "sharing": {
+        "title": "Partage des données",
+        "body": "Nous ne partageons aucune donnée personnelle avec des tiers, sauf nos prestataires d'infrastructure essentiels (base de données, notifications push, cartes) agissant pour notre compte sous accords stricts."
+      },
+      "retention": {
+        "title": "Conservation & suppression",
+        "body": "Tu peux supprimer ton compte à tout moment depuis les Paramètres. Toutes tes données personnelles et ton historique sont supprimés définitivement sous 30 jours."
+      },
+      "contact": {
+        "title": "Contact",
+        "body": "Une question sur tes données ? Écris à privacy@minyanstreet.app"
+      }
+    }
   }
 }
