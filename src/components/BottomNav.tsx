@@ -1,22 +1,25 @@
 import { Link, useLocation } from "@tanstack/react-router";
+import { useTranslation } from "react-i18next";
 import { Home, Map, Plus, User } from "lucide-react";
 
-type Item = { to: "/home" | "/map" | "/create" | "/profile"; label: string; icon: typeof Home; primary?: boolean };
+type Item = { to: "/home" | "/map" | "/create" | "/profile"; key: "home" | "map" | "create" | "profile"; icon: typeof Home; primary?: boolean };
 const items: Item[] = [
-  { to: "/home", label: "Home", icon: Home },
-  { to: "/map", label: "Map", icon: Map },
-  { to: "/create", label: "Create", icon: Plus, primary: true },
-  { to: "/profile", label: "Profile", icon: User },
+  { to: "/home", key: "home", icon: Home },
+  { to: "/map", key: "map", icon: Map },
+  { to: "/create", key: "create", icon: Plus, primary: true },
+  { to: "/profile", key: "profile", icon: User },
 ];
 
 export function BottomNav() {
+  const { t } = useTranslation();
   const { pathname } = useLocation();
   return (
     <div className="sticky bottom-0 left-0 right-0 px-4 pb-4 pt-2 bg-gradient-to-t from-background via-background to-background/0">
       <nav className="relative bg-surface border border-border rounded-3xl shadow-lift backdrop-blur">
         <ul className="grid grid-cols-4 items-end">
-          {items.map(({ to, label, icon: Icon, primary }) => {
+          {items.map(({ to, key, icon: Icon, primary }) => {
             const active = pathname === to;
+            const label = t(`nav.${key}`);
             if (primary) {
               return (
                 <li key={to} className="flex justify-center -mt-6">
