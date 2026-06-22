@@ -230,6 +230,7 @@ function CtxTile({ id, label, icon: Icon }: { id: Context; label: string; icon: 
 }
 
 function NearbyCard({ m, joined, onJoinRequest }: { m: MinyanRow; joined: boolean; onJoinRequest: () => void }) {
+  const { t } = useTranslation();
   const NEEDED = 10;
   const present = m.present_count ?? 1;
   const missing = Math.max(0, NEEDED - present);
@@ -239,7 +240,8 @@ function NearbyCard({ m, joined, onJoinRequest }: { m: MinyanRow; joined: boolea
   const scheduled = m.scheduled_at ? new Date(m.scheduled_at) : null;
   const whenLabel = scheduled
     ? scheduled.toLocaleString([], { dateStyle: "short", timeStyle: "short" })
-    : "live now";
+    : t("home.liveNow");
+  const prayerLabel = t(`prayer.${m.prayer}`, { defaultValue: m.prayer });
 
   return (
     <div className="bg-surface rounded-2xl border border-border shadow-soft p-4">
@@ -249,14 +251,14 @@ function NearbyCard({ m, joined, onJoinRequest }: { m: MinyanRow; joined: boolea
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-0.5 flex-wrap">
-            <StatusPill tone={complete ? "success" : "gold"}>{m.prayer}</StatusPill>
+            <StatusPill tone={complete ? "success" : "gold"}>{prayerLabel}</StatusPill>
             <span className="text-[11px] text-muted-foreground flex items-center gap-1">
               <Clock className="h-3 w-3" /> {whenLabel}
             </span>
           </div>
-          <h3 className="font-display text-base leading-tight truncate">{m.address ?? "Unknown spot"}</h3>
+          <h3 className="font-display text-base leading-tight truncate">{m.address ?? t("home.unknownSpot")}</h3>
           <p className="text-[11px] text-muted-foreground flex items-center gap-1.5 mt-0.5">
-            <MapPin className="h-3 w-3" /> {m.type} · {m.nusach ?? "Any"}
+            <MapPin className="h-3 w-3" /> {t(`ctx.${m.type}` as const, { defaultValue: m.type })} · {m.nusach ?? "Any"}
           </p>
           {m.message && <p className="text-[11px] mt-1 italic text-urgent">"{m.message}"</p>}
         </div>
@@ -276,18 +278,18 @@ function NearbyCard({ m, joined, onJoinRequest }: { m: MinyanRow; joined: boolea
       <div className="mt-3 flex items-center justify-between text-xs gap-2">
         <span className="flex items-center gap-2 min-w-0">
           <Users className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-          <span className="text-sm font-bold text-foreground">{present} présents</span>
+          <span className="text-sm font-bold text-foreground">{present} {t("home.present")}</span>
           {missing > 0 ? (
-            <span className="text-urgent font-medium truncate">· {missing} manquent</span>
+            <span className="text-urgent font-medium truncate">· {t("home.missing", { count: missing })}</span>
           ) : (
-            <span className="text-success font-medium truncate">· minyan complet</span>
+            <span className="text-success font-medium truncate">· {t("home.complete")}</span>
           )}
         </span>
         <button
           onClick={() => openDirections(m.latitude, m.longitude, m.address ?? undefined)}
           className="shrink-0 h-8 px-3 rounded-full border border-border bg-surface text-[11px] font-semibold flex items-center gap-1 hover:border-gold/60"
         >
-          <Navigation className="h-3 w-3 text-gold" /> Directions
+          <Navigation className="h-3 w-3 text-gold" /> {t("common.directions")}
         </button>
       </div>
       <div className="mt-2 h-1.5 rounded-full bg-muted overflow-hidden">
