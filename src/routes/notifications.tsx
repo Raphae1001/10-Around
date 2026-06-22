@@ -1,58 +1,30 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useTranslation } from "react-i18next";
 import { MobileFrame } from "@/components/MobileFrame";
 import { ScreenHeader, LiveBadge, StatusPill } from "@/components/ui-bits";
 import { Flame, Users, CheckCircle2, Bell, Heart } from "lucide-react";
 
-export const Route = createFileRoute("/notifications")({
-  component: Notifications,
-});
-
-const items = [
-  {
-    icon: Flame, tone: "urgent",
-    title: "Only 1 person missing",
-    body: "Mincha at Aaron's Loft · 4 min walk · starts in 12 min",
-    time: "now", cta: "I'm coming",
-  },
-  {
-    icon: Heart, tone: "urgent",
-    title: "Kaddish request near you",
-    body: "Yonatan needs a minyan for his father's shloshim.",
-    time: "3 min ago", cta: "Help complete",
-  },
-  {
-    icon: Users, tone: "gold",
-    title: "Your presence completes a minyan",
-    body: "You are 0.4 mi away from Park Avenue Shul.",
-    time: "8 min ago", cta: "Join",
-  },
-  {
-    icon: CheckCircle2, tone: "success",
-    title: "Maariv confirmed",
-    body: "Midtown Chabad reached 10 confirmed participants.",
-    time: "20 min ago",
-  },
-  {
-    icon: Bell, tone: "sky",
-    title: "Minyan starting soon",
-    body: "Shacharit at Lincoln Square in 25 minutes.",
-    time: "1h ago",
-  },
-];
+export const Route = createFileRoute("/notifications")({ component: Notifications });
 
 function Notifications() {
+  const { t } = useTranslation();
+  const items = [
+    { icon: Flame, tone: "urgent", titleKey: "missing1Title", bodyKey: "missing1Body", timeKey: "missing1Time", ctaKey: "missing1Cta" },
+    { icon: Heart, tone: "urgent", titleKey: "kaddishTitle", bodyKey: "kaddishBody", timeKey: "kaddishTime", ctaKey: "kaddishCta" },
+    { icon: Users, tone: "gold", titleKey: "completesTitle", bodyKey: "completesBody", timeKey: "completesTime", ctaKey: "completesCta" },
+    { icon: CheckCircle2, tone: "success", titleKey: "confirmedTitle", bodyKey: "confirmedBody", timeKey: "confirmedTime" },
+    { icon: Bell, tone: "sky", titleKey: "startingTitle", bodyKey: "startingBody", timeKey: "startingTime" },
+  ];
+  const filters: Array<keyof typeof t> = ["all", "urgent", "kaddish", "confirmed", "nearby"] as any;
+
   return (
     <MobileFrame>
-      <ScreenHeader
-        title="Alerts"
-        subtitle="Smart, real-time"
-        right={<LiveBadge>LIVE</LiveBadge>}
-      />
+      <ScreenHeader title={t("notifications.title")} subtitle={t("notifications.subtitle")} right={<LiveBadge>{t("common.live")}</LiveBadge>} />
 
       <div className="px-6 flex gap-2 mb-4 overflow-x-auto hide-scrollbar">
-        {["All", "Urgent", "Kaddish", "Confirmed", "Nearby"].map((f, i) => (
+        {(["all", "urgent", "kaddish", "confirmed", "nearby"] as const).map((f, i) => (
           <button key={f} className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-medium border ${i === 0 ? "bg-foreground text-background border-foreground" : "bg-surface border-border"}`}>
-            {f}
+            {t(`notifications.filters.${f}` as any)}
           </button>
         ))}
       </div>
@@ -73,16 +45,16 @@ function Notifications() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2">
-                    <h3 className="text-sm font-semibold leading-tight">{n.title}</h3>
-                    <span className="text-[10px] text-muted-foreground shrink-0">{n.time}</span>
+                    <h3 className="text-sm font-semibold leading-tight">{t(`notifications.items.${n.titleKey}` as any)}</h3>
+                    <span className="text-[10px] text-muted-foreground shrink-0">{t(`notifications.items.${n.timeKey}` as any)}</span>
                   </div>
-                  <p className="text-xs text-muted-foreground mt-1 leading-snug">{n.body}</p>
-                  {n.cta && (
+                  <p className="text-xs text-muted-foreground mt-1 leading-snug">{t(`notifications.items.${n.bodyKey}` as any)}</p>
+                  {n.ctaKey && (
                     <div className="mt-3 flex items-center gap-2">
                       <Link to="/minyan" className={`text-xs font-semibold rounded-xl px-3.5 py-2 ${isUrgent ? "bg-urgent text-white" : "bg-foreground text-background"}`}>
-                        {n.cta}
+                        {t(`notifications.items.${n.ctaKey}` as any)}
                       </Link>
-                      <button className="text-xs text-muted-foreground px-2">Snooze</button>
+                      <button className="text-xs text-muted-foreground px-2">{t("notifications.snooze")}</button>
                     </div>
                   )}
                 </div>
@@ -97,10 +69,10 @@ function Notifications() {
               <Heart className="h-5 w-5 text-gold" />
             </div>
             <div className="flex-1">
-              <div className="text-sm font-semibold">Request a Kaddish minyan</div>
-              <div className="text-xs text-white/60">For yahrzeit, shloshim, or shiva</div>
+              <div className="text-sm font-semibold">{t("notifications.requestKaddish")}</div>
+              <div className="text-xs text-white/60">{t("notifications.requestKaddishSub")}</div>
             </div>
-            <StatusPill tone="gold">Open</StatusPill>
+            <StatusPill tone="gold">{t("notifications.open")}</StatusPill>
           </div>
         </Link>
       </div>

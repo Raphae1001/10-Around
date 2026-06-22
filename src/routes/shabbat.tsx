@@ -1,11 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useTranslation } from "react-i18next";
 import { MobileFrame } from "@/components/MobileFrame";
 import { ScreenHeader, StatusPill } from "@/components/ui-bits";
 import { Sunset, Check, MapPin, Calendar } from "lucide-react";
 
-export const Route = createFileRoute("/shabbat")({
-  component: Shabbat,
-});
+export const Route = createFileRoute("/shabbat")({ component: Shabbat });
 
 const plan = [
   { day: "Fri", label: "Mincha + Kabbalat Shabbat", time: "16:42", place: "Park Avenue Shul", confirmed: true },
@@ -16,17 +15,17 @@ const plan = [
 ];
 
 function Shabbat() {
+  const { t } = useTranslation();
   return (
     <MobileFrame bg="navy">
       <div className="px-6 pt-2 pb-4 flex items-center justify-between">
         <div>
-          <div className="text-[10px] uppercase tracking-[0.25em] text-white/50">Shabbat Mode</div>
-          <h1 className="font-display text-2xl mt-1">Parashat Vayetzei</h1>
+          <div className="text-[10px] uppercase tracking-[0.25em] text-white/50">{t("shabbat.mode")}</div>
+          <h1 className="font-display text-2xl mt-1">{t("shabbat.parasha")}</h1>
         </div>
         <Link to="/home" className="h-9 w-9 rounded-full bg-white/10 flex items-center justify-center">×</Link>
       </div>
 
-      {/* Candle lighting */}
       <div className="mx-6 rounded-3xl bg-white/5 border border-white/10 p-5 backdrop-blur relative overflow-hidden">
         <div className="absolute -right-6 -top-6 h-32 w-32 rounded-full bg-gold/20 blur-2xl" />
         <div className="relative flex items-center gap-4">
@@ -34,20 +33,19 @@ function Shabbat() {
             <Sunset className="h-5 w-5" />
           </div>
           <div>
-            <div className="text-[10px] uppercase tracking-wider text-white/60">Candle lighting</div>
+            <div className="text-[10px] uppercase tracking-wider text-white/60">{t("shabbat.candleLighting")}</div>
             <div className="font-display text-3xl">16:24</div>
-            <div className="text-xs text-white/70">Shabbat ends 17:48 · Havdalah</div>
+            <div className="text-xs text-white/70">{t("shabbat.endsHavdalah", { time: "17:48" })}</div>
           </div>
         </div>
       </div>
 
-      {/* Plan section */}
       <div className="bg-background text-foreground rounded-t-3xl mt-6 flex-1 px-6 pt-6 pb-8">
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-display text-xl flex items-center gap-2">
-            <Calendar className="h-5 w-5 text-gold" /> Your Shabbat plan
+            <Calendar className="h-5 w-5 text-gold" /> {t("shabbat.yourPlan")}
           </h2>
-          <StatusPill tone="success">2/5 set</StatusPill>
+          <StatusPill tone="success">{t("shabbat.ratio", { done: 2, total: 5 })}</StatusPill>
         </div>
 
         <div className="rounded-2xl bg-surface border border-border divide-y divide-border">
@@ -69,21 +67,19 @@ function Shabbat() {
                 </span>
               ) : (
                 <button className="text-xs font-semibold text-gold border border-gold/40 rounded-full px-3 py-1">
-                  Pre-confirm
+                  {t("shabbat.preConfirm")}
                 </button>
               )}
             </div>
           ))}
         </div>
 
-        {/* Notice */}
         <div className="mt-5 rounded-2xl border border-dashed border-border p-4 text-xs text-muted-foreground leading-relaxed">
-          MinyanNow pauses all real-time notifications from candle lighting to Havdalah.
-          Coordinate now — rest then.
+          {t("shabbat.notice")}
         </div>
 
         <button className="mt-5 w-full gold-gradient text-gold-foreground font-semibold py-4 rounded-2xl shadow-glow-gold">
-          Pre-confirm all remaining
+          {t("shabbat.preConfirmAll")}
         </button>
       </div>
     </MobileFrame>

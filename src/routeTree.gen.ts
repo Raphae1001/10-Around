@@ -19,6 +19,7 @@ import { Route as ShareRouteImport } from './routes/share'
 import { Route as ShabbatRouteImport } from './routes/shabbat'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as MinyanRouteImport } from './routes/minyan'
@@ -79,6 +80,11 @@ const SettingsRoute = SettingsRouteImport.update({
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OnboardingRoute = OnboardingRouteImport.update({
@@ -149,6 +155,7 @@ export interface FileRoutesByFullPath {
   '/minyan': typeof MinyanRoute
   '/notifications': typeof NotificationsRoute
   '/onboarding': typeof OnboardingRoute
+  '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
   '/settings': typeof SettingsRoute
   '/shabbat': typeof ShabbatRoute
@@ -172,6 +179,7 @@ export interface FileRoutesByTo {
   '/minyan': typeof MinyanRoute
   '/notifications': typeof NotificationsRoute
   '/onboarding': typeof OnboardingRoute
+  '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
   '/settings': typeof SettingsRoute
   '/shabbat': typeof ShabbatRoute
@@ -196,6 +204,7 @@ export interface FileRoutesById {
   '/minyan': typeof MinyanRoute
   '/notifications': typeof NotificationsRoute
   '/onboarding': typeof OnboardingRoute
+  '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
   '/settings': typeof SettingsRoute
   '/shabbat': typeof ShabbatRoute
@@ -221,6 +230,7 @@ export interface FileRouteTypes {
     | '/minyan'
     | '/notifications'
     | '/onboarding'
+    | '/privacy'
     | '/profile'
     | '/settings'
     | '/shabbat'
@@ -244,6 +254,7 @@ export interface FileRouteTypes {
     | '/minyan'
     | '/notifications'
     | '/onboarding'
+    | '/privacy'
     | '/profile'
     | '/settings'
     | '/shabbat'
@@ -267,6 +278,7 @@ export interface FileRouteTypes {
     | '/minyan'
     | '/notifications'
     | '/onboarding'
+    | '/privacy'
     | '/profile'
     | '/settings'
     | '/shabbat'
@@ -291,6 +303,7 @@ export interface RootRouteChildren {
   MinyanRoute: typeof MinyanRoute
   NotificationsRoute: typeof NotificationsRoute
   OnboardingRoute: typeof OnboardingRoute
+  PrivacyRoute: typeof PrivacyRoute
   ProfileRoute: typeof ProfileRoute
   SettingsRoute: typeof SettingsRoute
   ShabbatRoute: typeof ShabbatRoute
@@ -373,6 +386,13 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/profile'
       preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/onboarding': {
@@ -467,6 +487,7 @@ const rootRouteChildren: RootRouteChildren = {
   MinyanRoute: MinyanRoute,
   NotificationsRoute: NotificationsRoute,
   OnboardingRoute: OnboardingRoute,
+  PrivacyRoute: PrivacyRoute,
   ProfileRoute: ProfileRoute,
   SettingsRoute: SettingsRoute,
   ShabbatRoute: ShabbatRoute,
