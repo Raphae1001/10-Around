@@ -1,60 +1,73 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 import { MobileFrame } from "@/components/MobileFrame";
 import { ScreenHeader } from "@/components/ui-bits";
-import { Bell, Moon, Globe, Lock, MapPin, Accessibility, ChevronRight, Sparkles } from "lucide-react";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { Bell, Moon, Lock, MapPin, Accessibility, ChevronRight, Sparkles } from "lucide-react";
 import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/settings")({
   component: Settings,
 });
 
 function Settings() {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+
+  async function signOut() {
+    await supabase.auth.signOut();
+    navigate({ to: "/auth" });
+  }
+
   return (
     <MobileFrame>
-      <ScreenHeader title="Settings" back />
+      <ScreenHeader title={t("settings.title")} back />
 
       <div className="px-6 space-y-5 pb-8">
-        <Group title="Notifications" icon={Bell}>
-          <Toggle label="Urgent (missing 1-2)" defaultOn />
-          <Toggle label="Kaddish requests nearby" defaultOn />
-          <Toggle label="Minyan confirmed" defaultOn />
-          <Toggle label="Quiet hours · 10 PM – 6 AM" />
+        {/* Language switcher — top because user just asked for it */}
+        <LanguageSwitcher />
+
+        <Group title={t("settings.notifications")} icon={Bell}>
+          <Toggle label={t("settings.urgent")} defaultOn />
+          <Toggle label={t("settings.kaddishNearby")} defaultOn />
+          <Toggle label={t("settings.minyanConfirmed")} defaultOn />
+          <Toggle label={t("settings.quietHours")} />
         </Group>
 
-        <Group title="Nusach preferences" icon={Sparkles}>
-          <Row label="Primary nusach" value="Ashkenaz" />
-          <Row label="Also show" value="Sephard, Nusach Ari" />
+        <Group title={t("settings.nusachPrefs")} icon={Sparkles}>
+          <Row label={t("settings.primaryNusach")} value="Ashkenaz" />
+          <Row label={t("settings.alsoShow")} value="Sephard, Nusach Ari" />
         </Group>
 
-        <Group title="Shabbat & Yom Tov" icon={Moon}>
-          <Toggle label="Auto Shabbat mode (location)" defaultOn />
-          <Toggle label="Mute all alerts on Shabbat" defaultOn />
+        <Group title={t("settings.shabbat")} icon={Moon}>
+          <Toggle label={t("settings.autoShabbat")} defaultOn />
+          <Toggle label={t("settings.muteShabbat")} defaultOn />
         </Group>
 
-        <Group title="Privacy" icon={Lock}>
-          <Toggle label="Show me on the live map" defaultOn />
-          <Toggle label="Share trust score publicly" defaultOn />
-          <Row label="Profile visibility" value="Community only" />
+        <Group title={t("settings.privacy")} icon={Lock}>
+          <Toggle label={t("settings.showOnMap")} defaultOn />
+          <Toggle label={t("settings.shareTrust")} defaultOn />
+          <Row label={t("settings.profileVisibility")} value={t("settings.communityOnly")} />
         </Group>
 
-        <Group title="Location" icon={MapPin}>
-          <Row label="Permission" value="While using app" />
-          <Toggle label="Background updates (traveler)" />
+        <Group title={t("settings.location")} icon={MapPin}>
+          <Row label={t("settings.permission")} value={t("settings.whileUsing")} />
+          <Toggle label={t("settings.bgUpdates")} />
         </Group>
 
-        <Group title="Language" icon={Globe}>
-          <Row label="App language" value="English" />
-          <Row label="Prayer text" value="Hebrew · transliteration" />
+        <Group title={t("settings.accessibility")} icon={Accessibility}>
+          <Toggle label={t("settings.largerText")} />
+          <Toggle label={t("settings.highContrast")} />
+          <Toggle label={t("settings.reduceMotion")} />
         </Group>
 
-        <Group title="Accessibility" icon={Accessibility}>
-          <Toggle label="Larger text" />
-          <Toggle label="High contrast" />
-          <Toggle label="Reduce motion" />
-        </Group>
-
-        <button className="w-full text-center text-sm text-urgent py-4 rounded-2xl border border-border bg-surface">
-          Sign out
+        <button
+          onClick={signOut}
+          className="w-full text-center text-sm text-urgent py-4 rounded-2xl border border-border bg-surface"
+        >
+          {t("common.signOut")}
         </button>
       </div>
     </MobileFrame>
