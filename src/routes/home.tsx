@@ -18,6 +18,9 @@ import { useAuth } from "@/hooks/use-auth";
 import { useGeolocation } from "@/hooks/use-geolocation";
 import { joinMinyan, useNearbyMinyanim, type MinyanRow } from "@/hooks/use-minyanim";
 import { supabase } from "@/integrations/supabase/client";
+import { openDirections } from "@/lib/directions";
+import { downloadIcs } from "@/lib/native";
+import { Navigation } from "lucide-react";
 
 export const Route = createFileRoute("/home")({
   component: Home,
