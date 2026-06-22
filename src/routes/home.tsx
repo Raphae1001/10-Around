@@ -60,6 +60,15 @@ function Home() {
       toast.error("Could not join", { description: error.message });
     } else {
       toast.success("You're in!", { description: pending.address ?? "" });
+      // Add to calendar (downloads .ics on web; iOS opens in Calendar)
+      const start = pending.scheduled_at ? new Date(pending.scheduled_at) : new Date();
+      downloadIcs({
+        title: `Minyan · ${pending.prayer}`,
+        description: pending.message ?? "Minyan via MinyanStreet",
+        location: pending.address ?? undefined,
+        start,
+        durationMinutes: 20,
+      });
       setJustJoined(pending);
       setJoinedIds((s) => new Set(s).add(pending.id));
     }
