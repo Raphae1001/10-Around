@@ -148,22 +148,59 @@ function Create() {
             </div>
           )}
           {ctx === "Travel" && (
-            <div className="mt-3 grid grid-cols-2 gap-2">
+            <div className="mt-3 space-y-2">
               <input
                 value={tripCity}
                 onChange={(e) => setTripCity(e.target.value)}
                 placeholder="Destination city"
-                className="rounded-2xl border border-border bg-surface p-3 text-sm outline-none focus:border-gold"
+                className="w-full rounded-2xl border border-border bg-surface p-3 text-sm outline-none focus:border-gold"
               />
-              <input
-                value={tripDate}
-                onChange={(e) => setTripDate(e.target.value)}
-                type="date"
-                className="rounded-2xl border border-border bg-surface p-3 text-sm outline-none focus:border-gold"
-              />
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="text-[10px] uppercase tracking-wider text-muted-foreground ml-1">From</label>
+                  <input
+                    value={tripDateStart}
+                    onChange={(e) => setTripDateStart(e.target.value)}
+                    type="date"
+                    className="w-full rounded-2xl border border-border bg-surface p-3 text-sm outline-none focus:border-gold"
+                  />
+                </div>
+                <div>
+                  <label className="text-[10px] uppercase tracking-wider text-muted-foreground ml-1">To</label>
+                  <input
+                    value={tripDateEnd}
+                    onChange={(e) => setTripDateEnd(e.target.value)}
+                    type="date"
+                    className="w-full rounded-2xl border border-border bg-surface p-3 text-sm outline-none focus:border-gold"
+                  />
+                </div>
+              </div>
             </div>
           )}
         </Section>
+
+        {/* 1b. SCHEDULE — Hotel & Travel only */}
+        {(ctx === "Hotel" || ctx === "Travel") && (
+          <Section step="★" title="Schedule the minyan (date & time)">
+            <div className="grid grid-cols-2 gap-2">
+              <input
+                value={scheduledDate}
+                onChange={(e) => setScheduledDate(e.target.value)}
+                type="date"
+                className="rounded-2xl border border-border bg-surface p-3 text-sm outline-none focus:border-gold"
+              />
+              <input
+                value={scheduledTime}
+                onChange={(e) => setScheduledTime(e.target.value)}
+                type="time"
+                className="rounded-2xl border border-border bg-surface p-3 text-sm outline-none focus:border-gold"
+              />
+            </div>
+            <p className="text-[11px] text-muted-foreground mt-2">
+              Travelers can plan in advance — pick when the minyan starts.
+            </p>
+          </Section>
+        )}
 
         {/* 2. PRAYER */}
         <Section step="2" title="Which prayer?">
