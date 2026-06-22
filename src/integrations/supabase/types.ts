@@ -217,6 +217,26 @@ export type Database = {
         Args: { lat: number; lng: number; radius_m?: number }
         Returns: number
       }
+      get_my_profile: {
+        Args: never
+        Returns: {
+          avatar_url: string | null
+          backup_mode: boolean
+          backup_radius_m: number
+          created_at: string
+          display_name: string | null
+          id: string
+          language: string | null
+          trust_score: number
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "profiles"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       nearby_minyanim: {
         Args: { lat: number; lng: number; radius_m?: number }
         Returns: {
