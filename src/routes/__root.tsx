@@ -14,6 +14,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Toaster } from "@/components/ui/sonner";
 import { ConfirmationPrompt } from "@/components/ConfirmationPrompt";
 import "@/i18n";
+import { applySavedLang } from "@/i18n";
 
 function NotFoundComponent() {
   return (
