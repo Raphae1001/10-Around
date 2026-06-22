@@ -35,7 +35,11 @@ function Create() {
   const [hotelSpot, setHotelSpot] = useState("");
   // Travel
   const [tripCity, setTripCity] = useState("");
-  const [tripDate, setTripDate] = useState("");
+  const [tripDateStart, setTripDateStart] = useState("");
+  const [tripDateEnd, setTripDateEnd] = useState("");
+  // Scheduled time (Hotel & Travel only — can plan in advance)
+  const [scheduledDate, setScheduledDate] = useState("");
+  const [scheduledTime, setScheduledTime] = useState("");
 
   const prayers = [
     { name: "Shacharit", icon: Sunrise },
