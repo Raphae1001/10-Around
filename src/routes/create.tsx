@@ -58,7 +58,7 @@ function Create() {
     ctx === "Street" ? street :
     ctx === "Airport" ? [airport, gate && `Gate ${gate}`].filter(Boolean).join(" · ") || "Set airport & gate" :
     ctx === "Hotel" ? [hotelCity, hotelName, hotelSpot].filter(Boolean).join(" · ") || "Set hotel details" :
-    [tripCity, tripDate].filter(Boolean).join(" · ") || "Set city & date";
+    [tripCity, tripDateStart && tripDateEnd ? `${tripDateStart} → ${tripDateEnd}` : tripDateStart].filter(Boolean).join(" · ") || "Set city & dates";
 
   return (
     <MobileFrame>
