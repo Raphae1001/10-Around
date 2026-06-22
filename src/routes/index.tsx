@@ -6,7 +6,7 @@ import { MapPin } from "lucide-react";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "MinyanStreet — Start a minyan, anywhere, right now" },
+      { title: "MinyaNow — Start a minyan, anywhere, right now" },
       { name: "description", content: "Create or join a minyan in the street, at the airport, anywhere in the world — in seconds." },
     ],
   }),
