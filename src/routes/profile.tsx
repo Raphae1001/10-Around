@@ -1,13 +1,38 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { MobileFrame } from "@/components/MobileFrame";
 import { ScreenHeader, TrustBadge, StatusPill } from "@/components/ui-bits";
-import { Award, Plane, Flame, Settings, ChevronRight, Shield, CalendarCheck, Users } from "lucide-react";
+import { Award, Plane, Flame, Settings, ChevronRight, Shield, CalendarCheck, Users, LogOut } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/profile")({
   component: Profile,
 });
 
 function Profile() {
+  const navigate = useNavigate();
+  const { user, loading } = useAuth();
+  const [profile, setProfile] = useState<{ display_name: string | null; avatar_url: string | null } | null>(null);
+
+  useEffect(() => {
+    if (!loading && !user) navigate({ to: "/auth" });
+  }, [loading, user, navigate]);
+
+  useEffect(() => {
+    if (!user) return;
+    supabase.from("profiles").select("display_name, avatar_url").eq("id", user.id).maybeSingle()
+      .then(({ data }) => setProfile(data));
+  }, [user]);
+
+  const name = profile?.display_name ?? user?.email?.split("@")[0] ?? "Guest";
+  const initial = name[0]?.toUpperCase() ?? "?";
+
+  async function signOut() {
+    await supabase.auth.signOut();
+    navigate({ to: "/auth" });
+  }
+
   return (
     <MobileFrame>
       <ScreenHeader
@@ -23,10 +48,10 @@ function Profile() {
       <div className="mx-6 rounded-3xl navy-gradient text-white p-5 shadow-lift relative overflow-hidden">
         <div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-gold/20 blur-2xl" />
         <div className="relative flex items-center gap-4">
-          <div className="h-16 w-16 rounded-2xl gold-gradient text-navy flex items-center justify-center text-xl font-bold">D</div>
+          <div className="h-16 w-16 rounded-2xl gold-gradient text-navy flex items-center justify-center text-xl font-bold">{initial}</div>
           <div className="flex-1 min-w-0">
-            <div className="font-display text-xl">David Cohen</div>
-            <div className="text-xs text-white/60">New York · Ashkenaz</div>
+            <div className="font-display text-xl truncate">{name}</div>
+            <div className="text-xs text-white/60 truncate">{user?.email}</div>
             <div className="mt-2 flex items-center gap-2">
               <TrustBadge score={4.9} />
               <StatusPill tone="gold">Verified</StatusPill>
@@ -82,6 +107,16 @@ function Profile() {
             </div>
           ))}
         </div>
+      </div>
+
+      {/* Sign out */}
+      <div className="px-6 pb-10">
+        <button
+          onClick={signOut}
+          className="w-full flex items-center justify-center gap-2 rounded-2xl border border-border bg-surface py-3.5 text-sm font-semibold text-urgent"
+        >
+          <LogOut className="h-4 w-4" /> Sign out
+        </button>
       </div>
     </MobileFrame>
   );

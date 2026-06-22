@@ -1,8 +1,12 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { MobileFrame } from "@/components/MobileFrame";
 import { ScreenHeader } from "@/components/ui-bits";
-import { Sunrise, Sun, Moon, MapPin, Users, Zap, Crosshair, Plane, Building2, Minus, Plus } from "lucide-react";
+import { Sunrise, Sun, Moon, MapPin, Users, Zap, Crosshair, Plane, Building2, Minus, Plus, Loader2 } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
+import { useGeolocation } from "@/hooks/use-geolocation";
+import { supabase } from "@/integrations/supabase/client";
 
 type Context = "Street" | "Airport" | "Hotel" | "Travel";
 
@@ -16,6 +20,15 @@ export const Route = createFileRoute("/create")({
 });
 
 function Create() {
+  const navigate = useNavigate();
+  const { user, loading: authLoading } = useAuth();
+  const { position, request: requestGeo } = useGeolocation(true);
+  const [publishing, setPublishing] = useState(false);
+
+  useEffect(() => {
+    if (!authLoading && !user) navigate({ to: "/auth" });
+  }, [authLoading, user, navigate]);
+
   const { ctx: initialCtx } = Route.useSearch();
   const [ctx, setCtx] = useState<Context>(initialCtx ?? "Street");
   const [prayer, setPrayer] = useState("Mincha");
@@ -329,18 +342,116 @@ function Create() {
       </div>
 
       <div className="sticky bottom-24 px-6 pb-2">
-        <Link
-          to="/success"
-          className="flex items-center justify-center gap-2 w-full gold-gradient text-gold-foreground font-semibold py-5 rounded-2xl shadow-glow-gold text-base"
+        <button
+          onClick={publish}
+          disabled={publishing}
+          className="flex items-center justify-center gap-2 w-full gold-gradient text-gold-foreground font-semibold py-5 rounded-2xl shadow-glow-gold text-base disabled:opacity-60"
         >
-          <Users className="h-5 w-5" /> Publish minyan
-        </Link>
+          {publishing ? <Loader2 className="h-5 w-5 animate-spin" /> : <Users className="h-5 w-5" />}
+          Publish minyan
+        </button>
         <p className="text-center text-[11px] text-muted-foreground mt-2">
-          You'll be notified the moment we reach 10.
+          {ctx === "Street" || ctx === "Airport"
+            ? position
+              ? "Your GPS position will be shared with this minyan only."
+              : "Tap to allow location — needed to publish a street/airport minyan."
+            : "Travelers will see it in advance."}
         </p>
       </div>
     </MobileFrame>
   );
+
+  async function publish() {
+    if (!user) {
+      toast.error("Please sign in first.");
+      navigate({ to: "/auth" });
+      return;
+    }
+    const liveCtx = ctx === "Street" || ctx === "Airport";
+    if (liveCtx && !position) {
+      requestGeo();
+      toast.error("We need your location for a live minyan.");
+      return;
+    }
+    setPublishing(true);
+    try {
+      // Resolve coords
+      let lat: number;
+      let lng: number;
+      if (liveCtx && position) {
+        lat = position.lat;
+        lng = position.lng;
+      } else {
+        // For Hotel/Travel without GPS, use last known or 0/0 placeholder (user types city)
+        lat = position?.lat ?? 0;
+        lng = position?.lng ?? 0;
+      }
+
+      // Compute scheduled_at for Hotel/Travel
+      let scheduled_at: string | null = null;
+      if ((ctx === "Hotel" || ctx === "Travel") && scheduledDate && scheduledTime) {
+        scheduled_at = new Date(`${scheduledDate}T${scheduledTime}`).toISOString();
+      }
+
+      // expires_at: live = 2h, scheduled = scheduled time + 4h, travel range = trip end + 1d
+      const now = Date.now();
+      let expires_at: string;
+      if (liveCtx) {
+        const offsetMin =
+          when === "Now" ? 0 :
+          when.startsWith("+") && when.endsWith("min") ? parseInt(when.replace(/\D/g, "") || "0", 10) :
+          when === "+1 h" ? 60 : 0;
+        expires_at = new Date(now + (offsetMin + 120) * 60 * 1000).toISOString();
+      } else if (scheduled_at) {
+        expires_at = new Date(new Date(scheduled_at).getTime() + 4 * 60 * 60 * 1000).toISOString();
+      } else if (ctx === "Travel" && tripDateEnd) {
+        expires_at = new Date(new Date(tripDateEnd).getTime() + 24 * 60 * 60 * 1000).toISOString();
+      } else {
+        expires_at = new Date(now + 7 * 24 * 60 * 60 * 1000).toISOString();
+      }
+
+      const prayerMap: Record<string, "shacharit" | "mincha" | "maariv"> = {
+        Shacharit: "shacharit",
+        Mincha: "mincha",
+        Maariv: "maariv",
+      };
+
+      const { data: created, error } = await supabase
+        .from("minyanim")
+        .insert({
+          creator_id: user.id,
+          type: ctx.toLowerCase() as "street" | "airport" | "hotel" | "travel",
+          prayer: prayerMap[prayer] ?? "mincha",
+          nusach,
+          message: comment || null,
+          address: locationSummary,
+          latitude: lat,
+          longitude: lng,
+          is_live: liveCtx,
+          scheduled_at,
+          trip_start_date: ctx === "Travel" && tripDateStart ? tripDateStart : null,
+          trip_end_date: ctx === "Travel" && tripDateEnd ? tripDateEnd : null,
+          present_count: present,
+          expires_at,
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      // Add creator as participant
+      await supabase
+        .from("minyan_participants")
+        .insert({ minyan_id: created.id, user_id: user.id });
+
+      toast.success("Minyan published!");
+      navigate({ to: "/success" });
+    } catch (e) {
+      toast.error("Could not publish", { description: (e as Error).message });
+    } finally {
+      setPublishing(false);
+    }
+  }
 }
 
 function Section({ step, title, children }: { step: string; title: string; children: React.ReactNode }) {
