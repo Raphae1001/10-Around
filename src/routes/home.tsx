@@ -1,5 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { MobileFrame } from "@/components/MobileFrame";
 import { ScreenHeader, StatusPill } from "@/components/ui-bits";
@@ -29,6 +30,7 @@ export const Route = createFileRoute("/home")({
 type Context = "Street" | "Airport" | "Hotel" | "Travel";
 
 function Home() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
   const { position, request, error: geoError, loading: geoLoading } = useGeolocation(true);
@@ -57,10 +59,9 @@ function Home() {
     if (!pending || !user) return;
     const { error } = await joinMinyan(pending.id, user.id);
     if (error) {
-      toast.error("Could not join", { description: error.message });
+      toast.error(t("auth.signInFailed"), { description: error.message });
     } else {
-      toast.success("You're in!", { description: pending.address ?? "" });
-      // Add to calendar (downloads .ics on web; iOS opens in Calendar)
+      toast.success(t("home.youreIn"), { description: pending.address ?? "" });
       const start = pending.scheduled_at ? new Date(pending.scheduled_at) : new Date();
       downloadIcs({
         title: `Minyan · ${pending.prayer}`,
@@ -81,7 +82,7 @@ function Home() {
     <MobileFrame>
       <ScreenHeader
         title="MinyanNow"
-        subtitle={position ? "Live within 1 km of you" : "Allow location to see nearby minyanim"}
+        subtitle={position ? t("home.subtitleWithGps") : t("home.subtitleNoGps")}
         right={
           <Link to="/profile" className="h-9 w-9 rounded-full bg-gold/20 flex items-center justify-center text-xs font-semibold">
             {initial}
@@ -99,20 +100,20 @@ function Home() {
             {geoLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Crosshair className="h-3.5 w-3.5 text-gold" />}
             {position
               ? `GPS · ${position.lat.toFixed(3)}, ${position.lng.toFixed(3)}`
-              : geoError ?? "Tap to enable GPS"}
+              : geoError ?? t("home.tapGps")}
           </span>
-          <span className="text-muted-foreground">refresh</span>
+          <span className="text-muted-foreground">{t("home.refresh")}</span>
         </button>
       </div>
 
       {/* Start a minyan tiles */}
       <div className="px-6">
-        <div className="text-[11px] uppercase tracking-wider text-muted-foreground mb-2 font-semibold">Start a minyan — where are you?</div>
+        <div className="text-[11px] uppercase tracking-wider text-muted-foreground mb-2 font-semibold">{t("home.startSection")}</div>
         <div className="grid grid-cols-4 gap-2">
-          <CtxTile id="Street" label="Street" icon={MapPin} />
-          <CtxTile id="Airport" label="Airport" icon={Plane} />
-          <CtxTile id="Hotel" label="Autres" icon={Building2} />
-          <CtxTile id="Travel" label="Travel" icon={Plane} />
+          <CtxTile id="Street" label={t("ctx.Street")} icon={MapPin} />
+          <CtxTile id="Airport" label={t("ctx.Airport")} icon={Plane} />
+          <CtxTile id="Hotel" label={t("ctx.Hotel")} icon={Building2} />
+          <CtxTile id="Travel" label={t("ctx.Travel")} icon={Plane} />
         </div>
       </div>
 
@@ -126,10 +127,10 @@ function Home() {
           <div className="relative flex items-center justify-between gap-4">
             <div className="min-w-0">
               <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] text-white/60">
-                <MapPin className="h-3 w-3 text-gold" /> Right where you stand
+                <MapPin className="h-3 w-3 text-gold" /> {t("home.rightWhereYouStand")}
               </div>
               <h2 className="mt-1.5 font-display text-[26px] leading-[1.05]">
-                Start a minyan<br /><span className="text-gold">right here.</span>
+                {t("home.startCta")}<br /><span className="text-gold">{t("home.rightHere")}</span>
               </h2>
             </div>
             <div className="h-14 w-14 shrink-0 rounded-full gold-gradient text-gold-foreground flex items-center justify-center shadow-glow-gold">
@@ -141,26 +142,26 @@ function Home() {
 
       <div className="px-6 mt-6 mb-2 flex items-end justify-between">
         <div>
-          <h2 className="font-display text-xl">Or join one nearby</h2>
-          <p className="text-xs text-muted-foreground">GPS minyanim within 1 km · plus all scheduled (Autres / Travel)</p>
+          <h2 className="font-display text-xl">{t("home.orJoinNearby")}</h2>
+          <p className="text-xs text-muted-foreground">{t("home.joinHint")}</p>
         </div>
-        <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">live</span>
+        <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">{t("home.live")}</span>
       </div>
 
       <div className="px-6 space-y-3 pb-8">
         {!position && (
           <div className="rounded-2xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
-            Enable location to discover minyanim nearby.
+            {t("home.enableLocation")}
           </div>
         )}
         {position && loading && minyanim.length === 0 && (
           <div className="rounded-2xl border border-border bg-surface p-6 text-center text-sm text-muted-foreground">
-            <Loader2 className="h-4 w-4 animate-spin inline mr-2" /> Loading…
+            <Loader2 className="h-4 w-4 animate-spin inline mr-2" /> {t("common.loading")}
           </div>
         )}
         {position && !loading && minyanim.length === 0 && (
           <div className="rounded-2xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
-            No minyan around you yet. Be the first — tap “Start a minyan” above.
+            {t("home.noneNearby")}
           </div>
         )}
         {minyanim.map((m) => (
@@ -176,20 +177,14 @@ function Home() {
       <AlertDialog open={!!pending} onOpenChange={(o) => !o && setPending(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Will you actually show up?</AlertDialogTitle>
+            <AlertDialogTitle>{t("home.willYouShow")}</AlertDialogTitle>
             <AlertDialogDescription>
-              {pending && (
-                <>
-                  You're committing to <strong>{pending.prayer}</strong> at <strong>{pending.address}</strong>.
-                  <br /><br />
-                  Others count on your presence.
-                </>
-              )}
+              {pending && t("home.commitText", { prayer: pending.prayer, address: pending.address ?? "" })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Not yet</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmJoin}>I commit — count me in</AlertDialogAction>
+            <AlertDialogCancel>{t("home.notYet")}</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmJoin}>{t("home.commit")}</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
@@ -197,20 +192,20 @@ function Home() {
       <AlertDialog open={!!justJoined} onOpenChange={(o) => !o && setJustJoined(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>You're in! Want directions?</AlertDialogTitle>
+            <AlertDialogTitle>{t("home.wantDirections")}</AlertDialogTitle>
             <AlertDialogDescription>
-              {justJoined && <>Open the map to walk to <strong>{justJoined.address}</strong>.</>}
+              {justJoined && t("home.openMapTo", { address: justJoined.address ?? "" })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Later</AlertDialogCancel>
+            <AlertDialogCancel>{t("common.later")}</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => {
                 if (justJoined) openDirections(justJoined.latitude, justJoined.longitude, justJoined.address ?? undefined);
                 setJustJoined(null);
               }}
             >
-              Open directions
+              {t("home.openDirections")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -235,6 +230,7 @@ function CtxTile({ id, label, icon: Icon }: { id: Context; label: string; icon: 
 }
 
 function NearbyCard({ m, joined, onJoinRequest }: { m: MinyanRow; joined: boolean; onJoinRequest: () => void }) {
+  const { t } = useTranslation();
   const NEEDED = 10;
   const present = m.present_count ?? 1;
   const missing = Math.max(0, NEEDED - present);
@@ -244,7 +240,8 @@ function NearbyCard({ m, joined, onJoinRequest }: { m: MinyanRow; joined: boolea
   const scheduled = m.scheduled_at ? new Date(m.scheduled_at) : null;
   const whenLabel = scheduled
     ? scheduled.toLocaleString([], { dateStyle: "short", timeStyle: "short" })
-    : "live now";
+    : t("home.liveNow");
+  const prayerLabel = t(`prayer.${m.prayer}`, { defaultValue: m.prayer });
 
   return (
     <div className="bg-surface rounded-2xl border border-border shadow-soft p-4">
@@ -254,14 +251,14 @@ function NearbyCard({ m, joined, onJoinRequest }: { m: MinyanRow; joined: boolea
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-0.5 flex-wrap">
-            <StatusPill tone={complete ? "success" : "gold"}>{m.prayer}</StatusPill>
+            <StatusPill tone={complete ? "success" : "gold"}>{prayerLabel}</StatusPill>
             <span className="text-[11px] text-muted-foreground flex items-center gap-1">
               <Clock className="h-3 w-3" /> {whenLabel}
             </span>
           </div>
-          <h3 className="font-display text-base leading-tight truncate">{m.address ?? "Unknown spot"}</h3>
+          <h3 className="font-display text-base leading-tight truncate">{m.address ?? t("home.unknownSpot")}</h3>
           <p className="text-[11px] text-muted-foreground flex items-center gap-1.5 mt-0.5">
-            <MapPin className="h-3 w-3" /> {m.type} · {m.nusach ?? "Any"}
+            <MapPin className="h-3 w-3" /> {t(`ctx.${m.type}` as const, { defaultValue: m.type })} · {m.nusach ?? "Any"}
           </p>
           {m.message && <p className="text-[11px] mt-1 italic text-urgent">"{m.message}"</p>}
         </div>
@@ -281,18 +278,18 @@ function NearbyCard({ m, joined, onJoinRequest }: { m: MinyanRow; joined: boolea
       <div className="mt-3 flex items-center justify-between text-xs gap-2">
         <span className="flex items-center gap-2 min-w-0">
           <Users className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-          <span className="text-sm font-bold text-foreground">{present} présents</span>
+          <span className="text-sm font-bold text-foreground">{present} {t("home.present")}</span>
           {missing > 0 ? (
-            <span className="text-urgent font-medium truncate">· {missing} manquent</span>
+            <span className="text-urgent font-medium truncate">· {t("home.missing", { count: missing })}</span>
           ) : (
-            <span className="text-success font-medium truncate">· minyan complet</span>
+            <span className="text-success font-medium truncate">· {t("home.complete")}</span>
           )}
         </span>
         <button
           onClick={() => openDirections(m.latitude, m.longitude, m.address ?? undefined)}
           className="shrink-0 h-8 px-3 rounded-full border border-border bg-surface text-[11px] font-semibold flex items-center gap-1 hover:border-gold/60"
         >
-          <Navigation className="h-3 w-3 text-gold" /> Directions
+          <Navigation className="h-3 w-3 text-gold" /> {t("common.directions")}
         </button>
       </div>
       <div className="mt-2 h-1.5 rounded-full bg-muted overflow-hidden">

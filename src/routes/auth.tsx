@@ -1,5 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { Logo, Wordmark } from "@/components/Logo";
 import { Apple, Loader2, Mail } from "lucide-react";
@@ -11,6 +12,7 @@ export const Route = createFileRoute("/auth")({
 });
 
 function Auth() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [busy, setBusy] = useState<string | null>(null);
   const [mode, setMode] = useState<"choose" | "email">("choose");
@@ -36,14 +38,14 @@ function Auth() {
         redirect_uri: window.location.origin + "/home",
       });
       if (result.error) {
-        toast.error("Sign-in failed", { description: (result.error as Error).message });
+        toast.error(t("auth.signInFailed"), { description: (result.error as Error).message });
         setBusy(null);
         return;
       }
       // If redirected, browser is leaving. Otherwise session is set.
       if (!result.redirected) navigate({ to: "/home" });
     } catch (e) {
-      toast.error("Sign-in failed", { description: (e as Error).message });
+      toast.error(t("auth.signInFailed"), { description: (e as Error).message });
       setBusy(null);
     }
   }
@@ -59,14 +61,14 @@ function Auth() {
           options: { emailRedirectTo: `${window.location.origin}/home` },
         });
         if (error) throw error;
-        toast.success("Check your inbox to confirm your email.");
+        toast.success(t("auth.checkInbox"));
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         navigate({ to: "/home" });
       }
     } catch (err) {
-      toast.error("Auth failed", { description: (err as Error).message });
+      toast.error(t("auth.authFailed"), { description: (err as Error).message });
     } finally {
       setBusy(null);
     }
@@ -78,10 +80,10 @@ function Auth() {
         <div className="flex-1 flex flex-col items-center justify-center px-8 text-center">
           <Logo size={56} />
           <h1 className="mt-6 font-display text-3xl">
-            Welcome to <Wordmark />
+            {t("auth.welcome")} <Wordmark />
           </h1>
           <p className="mt-2 text-sm text-muted-foreground max-w-xs">
-            Sign in to join your community's live minyan network.
+            {t("auth.subtitle")}
           </p>
         </div>
 
@@ -94,7 +96,7 @@ function Auth() {
                 className="flex items-center justify-center gap-3 w-full bg-foreground text-background font-semibold py-4 rounded-2xl shadow-lift disabled:opacity-60"
               >
                 {busy === "apple" ? <Loader2 className="h-5 w-5 animate-spin" /> : <Apple className="h-5 w-5" />}
-                Continue with Apple
+                {t("auth.continueApple")}
               </button>
               <button
                 onClick={() => oauth("google")}
@@ -102,13 +104,13 @@ function Auth() {
                 className="flex items-center justify-center gap-3 w-full bg-surface border border-border font-semibold py-4 rounded-2xl shadow-soft disabled:opacity-60"
               >
                 {busy === "google" ? <Loader2 className="h-5 w-5 animate-spin" /> : <GoogleIcon />}
-                Continue with Google
+                {t("auth.continueGoogle")}
               </button>
               <button
                 onClick={() => setMode("email")}
                 className="flex items-center justify-center gap-3 w-full bg-surface border border-border font-semibold py-4 rounded-2xl shadow-soft"
               >
-                <Mail className="h-5 w-5" /> Continue with email
+                <Mail className="h-5 w-5" /> {t("auth.continueEmail")}
               </button>
             </>
           ) : (
@@ -118,7 +120,7 @@ function Auth() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Email"
+                placeholder={t("auth.email")}
                 className="w-full rounded-2xl border border-border bg-surface p-4 text-sm outline-none focus:border-gold"
               />
               <input
@@ -127,7 +129,7 @@ function Auth() {
                 minLength={6}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Password (min 6 chars)"
+                placeholder={t("auth.password")}
                 className="w-full rounded-2xl border border-border bg-surface p-4 text-sm outline-none focus:border-gold"
               />
               <button
@@ -136,21 +138,21 @@ function Auth() {
                 className="w-full bg-foreground text-background font-semibold py-4 rounded-2xl shadow-lift disabled:opacity-60 flex items-center justify-center gap-2"
               >
                 {busy === "email" && <Loader2 className="h-4 w-4 animate-spin" />}
-                {signupMode ? "Create account" : "Sign in"}
+                {signupMode ? t("auth.createAccount") : t("auth.signIn")}
               </button>
               <div className="flex justify-between text-xs text-muted-foreground pt-1">
-                <button type="button" onClick={() => setMode("choose")}>← Back</button>
+                <button type="button" onClick={() => setMode("choose")}>← {t("common.back")}</button>
                 <button type="button" onClick={() => setSignupMode((s) => !s)} className="underline">
-                  {signupMode ? "I already have an account" : "Create an account"}
+                  {signupMode ? t("auth.haveAccount") : t("auth.noAccount")}
                 </button>
               </div>
             </form>
           )}
 
           <p className="text-[11px] text-muted-foreground text-center pt-4 leading-relaxed">
-            By continuing you agree to our Terms & Privacy.
+            {t("auth.terms")}
             <br />
-            We only share location when you choose to.
+            {t("auth.locationNote")}
           </p>
         </div>
       </div>
