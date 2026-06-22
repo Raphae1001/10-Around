@@ -18,6 +18,9 @@ import { useAuth } from "@/hooks/use-auth";
 import { useGeolocation } from "@/hooks/use-geolocation";
 import { joinMinyan, useNearbyMinyanim, type MinyanRow } from "@/hooks/use-minyanim";
 import { supabase } from "@/integrations/supabase/client";
+import { openDirections } from "@/lib/directions";
+import { downloadIcs } from "@/lib/native";
+import { Navigation } from "lucide-react";
 
 export const Route = createFileRoute("/home")({
   component: Home,
@@ -57,6 +60,15 @@ function Home() {
       toast.error("Could not join", { description: error.message });
     } else {
       toast.success("You're in!", { description: pending.address ?? "" });
+      // Add to calendar (downloads .ics on web; iOS opens in Calendar)
+      const start = pending.scheduled_at ? new Date(pending.scheduled_at) : new Date();
+      downloadIcs({
+        title: `Minyan · ${pending.prayer}`,
+        description: pending.message ?? "Minyan via MinyanStreet",
+        location: pending.address ?? undefined,
+        start,
+        durationMinutes: 20,
+      });
       setJustJoined(pending);
       setJoinedIds((s) => new Set(s).add(pending.id));
     }
@@ -192,8 +204,13 @@ function Home() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Later</AlertDialogCancel>
-            <AlertDialogAction asChild>
-              <Link to="/map" onClick={() => setJustJoined(null)}>Open map</Link>
+            <AlertDialogAction
+              onClick={() => {
+                if (justJoined) openDirections(justJoined.latitude, justJoined.longitude, justJoined.address ?? undefined);
+                setJustJoined(null);
+              }}
+            >
+              Open directions
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -261,16 +278,22 @@ function NearbyCard({ m, joined, onJoinRequest }: { m: MinyanRow; joined: boolea
         </button>
       </div>
 
-      <div className="mt-3 flex items-center justify-between text-xs">
-        <span className="flex items-center gap-2">
-          <Users className="h-3.5 w-3.5 text-muted-foreground" />
+      <div className="mt-3 flex items-center justify-between text-xs gap-2">
+        <span className="flex items-center gap-2 min-w-0">
+          <Users className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
           <span className="text-sm font-bold text-foreground">{present} présents</span>
           {missing > 0 ? (
-            <span className="text-urgent font-medium">· {missing} manquent</span>
+            <span className="text-urgent font-medium truncate">· {missing} manquent</span>
           ) : (
-            <span className="text-success font-medium">· minyan complet</span>
+            <span className="text-success font-medium truncate">· minyan complet</span>
           )}
         </span>
+        <button
+          onClick={() => openDirections(m.latitude, m.longitude, m.address ?? undefined)}
+          className="shrink-0 h-8 px-3 rounded-full border border-border bg-surface text-[11px] font-semibold flex items-center gap-1 hover:border-gold/60"
+        >
+          <Navigation className="h-3 w-3 text-gold" /> Directions
+        </button>
       </div>
       <div className="mt-2 h-1.5 rounded-full bg-muted overflow-hidden">
         <div

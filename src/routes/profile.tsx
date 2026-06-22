@@ -14,7 +14,7 @@ export const Route = createFileRoute("/profile")({
 function Profile() {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
-  const [profile, setProfile] = useState<{ display_name: string | null; avatar_url: string | null; backup_mode: boolean; backup_radius_m: number } | null>(null);
+  const [profile, setProfile] = useState<{ display_name: string | null; avatar_url: string | null; backup_mode: boolean; backup_radius_m: number; trust_score: number } | null>(null);
   const [savingBackup, setSavingBackup] = useState(false);
 
   useEffect(() => {
@@ -23,7 +23,7 @@ function Profile() {
 
   useEffect(() => {
     if (!user) return;
-    supabase.from("profiles").select("display_name, avatar_url, backup_mode, backup_radius_m").eq("id", user.id).maybeSingle()
+    supabase.from("profiles").select("display_name, avatar_url, backup_mode, backup_radius_m, trust_score").eq("id", user.id).maybeSingle()
       .then(({ data }) => setProfile(data as any));
   }, [user]);
 
@@ -72,8 +72,8 @@ function Profile() {
             <div className="font-display text-xl truncate">{name}</div>
             <div className="text-xs text-white/60 truncate">{user?.email}</div>
             <div className="mt-2 flex items-center gap-2">
-              <TrustBadge score={4.9} />
-              <StatusPill tone="gold">Verified</StatusPill>
+              <TrustBadge score={Math.max(0, Math.min(5, (profile?.trust_score ?? 100) / 20))} />
+              <StatusPill tone="gold">Trust {profile?.trust_score ?? 100}</StatusPill>
             </div>
           </div>
         </div>
