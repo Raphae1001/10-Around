@@ -204,8 +204,13 @@ function Home() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Later</AlertDialogCancel>
-            <AlertDialogAction asChild>
-              <Link to="/map" onClick={() => setJustJoined(null)}>Open map</Link>
+            <AlertDialogAction
+              onClick={() => {
+                if (justJoined) openDirections(justJoined.latitude, justJoined.longitude, justJoined.address ?? undefined);
+                setJustJoined(null);
+              }}
+            >
+              Open directions
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
