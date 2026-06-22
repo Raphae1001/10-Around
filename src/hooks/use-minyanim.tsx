@@ -35,7 +35,8 @@ export function useNearbyMinyanim(position: { lat: number; lng: number } | null,
     const ch = supabase
       .channel("minyanim-live")
       .on("postgres_changes", { event: "*", schema: "public", table: "minyanim" }, () => refresh())
-      .on("postgres_changes", { event: "*", schema: "public", table: "minyan_participants" }, () => refresh())
+      // minyan_participants no longer in realtime publication for privacy;
+      // present_count is synced into minyanim by trigger, which we already listen to.
       .subscribe();
     return () => {
       supabase.removeChannel(ch);

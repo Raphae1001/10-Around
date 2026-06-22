@@ -23,8 +23,10 @@ function Profile() {
 
   useEffect(() => {
     if (!user) return;
-    supabase.from("profiles").select("display_name, avatar_url, backup_mode, backup_radius_m, trust_score").eq("id", user.id).maybeSingle()
-      .then(({ data }) => setProfile(data as any));
+    (supabase as any).rpc("get_my_profile").then(({ data }: any) => {
+      // RPC returns a single record (SETOF profiles → first row)
+      setProfile(Array.isArray(data) ? data[0] : data);
+    });
   }, [user]);
 
   const name = profile?.display_name ?? user?.email?.split("@")[0] ?? "Guest";
