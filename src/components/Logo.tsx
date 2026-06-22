@@ -1,7 +1,7 @@
 export function Logo({ size = 56, glow = false }: { size?: number; glow?: boolean }) {
   return (
     <div
-      className={`relative inline-flex items-center justify-center rounded-2xl bg-surface border border-border ${
+      className={`relative inline-flex items-center justify-center rounded-2xl bg-navy ${
         glow ? "shadow-glow-gold" : "shadow-soft"
       }`}
       style={{ width: size, height: size }}
@@ -11,18 +11,17 @@ export function Logo({ size = 56, glow = false }: { size?: number; glow?: boolea
         width={size * 0.62}
         height={size * 0.62}
         fill="none"
-        className="text-navy"
       >
-        {/* Star of David — two interlocking thin triangles */}
+        {/* Star of David — white interlocking triangles */}
         <path
           d="M16 5 L26 22 L6 22 Z"
-          stroke="currentColor"
+          stroke="#ffffff"
           strokeWidth="1.6"
           strokeLinejoin="round"
         />
         <path
           d="M16 27 L6 10 L26 10 Z"
-          stroke="currentColor"
+          stroke="#ffffff"
           strokeWidth="1.6"
           strokeLinejoin="round"
         />
