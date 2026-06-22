@@ -79,14 +79,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "MinyaNow — Start a minyan, anywhere, right now" },
+      { title: "MinyanNow — Start a minyan, anywhere, right now" },
       { name: "description", content: "Create or join a minyan right where you stand — street, airport, hotel, anywhere in the world." },
-      { name: "author", content: "MinyaNow" },
-      { property: "og:title", content: "MinyaNow — Start a minyan, anywhere, right now" },
+      { name: "author", content: "MinyanNow" },
+      { property: "og:title", content: "MinyanNow — Start a minyan, anywhere, right now" },
       { property: "og:description", content: "Create or join a minyan right where you stand — street, airport, hotel, anywhere in the world." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
-      { name: "twitter:title", content: "MinyaNow" },
+      { name: "twitter:title", content: "MinyanNow" },
       { name: "twitter:description", content: "Start a minyan right where you stand — in under 10 seconds." },
     ],
     links: [

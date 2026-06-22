@@ -6,13 +6,13 @@ import { MapPin, Users, Plane, ChevronRight, ArrowRight } from "lucide-react";
 export const Route = createFileRoute("/onboarding")({
   head: () => ({
     meta: [
-      { title: "Welcome to MinyaNow — Start a Minyan Anywhere" },
+      { title: "Welcome to MinyanNow — Start a Minyan Anywhere" },
       {
         name: "description",
         content:
           "Find or start a minyan in seconds — in the street, at the airport, in a hotel, anywhere in the world. 10 Jews, 1 tap.",
       },
-      { property: "og:title", content: "MinyaNow — A minyan, anywhere, in seconds" },
+      { property: "og:title", content: "MinyanNow — A minyan, anywhere, in seconds" },
       {
         property: "og:description",
         content: "Join the global network of Jews who never miss a minyan, wherever they are.",
