@@ -1,5 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { Logo, Wordmark } from "@/components/Logo";
 import { Apple, Loader2, Mail } from "lucide-react";
@@ -11,6 +12,7 @@ export const Route = createFileRoute("/auth")({
 });
 
 function Auth() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [busy, setBusy] = useState<string | null>(null);
   const [mode, setMode] = useState<"choose" | "email">("choose");
