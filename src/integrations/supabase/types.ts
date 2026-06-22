@@ -14,6 +14,44 @@ export type Database = {
   }
   public: {
     Tables: {
+      minyan_confirmations: {
+        Row: {
+          answer: Database["public"]["Enums"]["confirmation_answer"] | null
+          answered_at: string | null
+          asked_at: string
+          id: string
+          minyan_id: string
+          role: Database["public"]["Enums"]["confirmation_role"]
+          user_id: string
+        }
+        Insert: {
+          answer?: Database["public"]["Enums"]["confirmation_answer"] | null
+          answered_at?: string | null
+          asked_at?: string
+          id?: string
+          minyan_id: string
+          role: Database["public"]["Enums"]["confirmation_role"]
+          user_id: string
+        }
+        Update: {
+          answer?: Database["public"]["Enums"]["confirmation_answer"] | null
+          answered_at?: string | null
+          asked_at?: string
+          id?: string
+          minyan_id?: string
+          role?: Database["public"]["Enums"]["confirmation_role"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "minyan_confirmations_minyan_id_fkey"
+            columns: ["minyan_id"]
+            isOneToOne: false
+            referencedRelation: "minyanim"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       minyan_participants: {
         Row: {
           id: string
@@ -116,6 +154,7 @@ export type Database = {
           id: string
           language: string | null
           push_token: string | null
+          trust_score: number
           updated_at: string
         }
         Insert: {
@@ -127,6 +166,7 @@ export type Database = {
           id: string
           language?: string | null
           push_token?: string | null
+          trust_score?: number
           updated_at?: string
         }
         Update: {
@@ -138,6 +178,7 @@ export type Database = {
           id?: string
           language?: string | null
           push_token?: string | null
+          trust_score?: number
           updated_at?: string
         }
         Relationships: []
@@ -147,6 +188,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      answer_confirmation: {
+        Args: {
+          _answer: Database["public"]["Enums"]["confirmation_answer"]
+          _minyan_id: string
+        }
+        Returns: undefined
+      }
       count_minyanim_within: {
         Args: { lat: number; lng: number; radius_m?: number }
         Returns: number
@@ -180,8 +228,15 @@ export type Database = {
           isSetofReturn: true
         }
       }
+      request_confirmations: {
+        Args: { _minyan_id: string }
+        Returns: undefined
+      }
+      trigger_due_confirmations: { Args: never; Returns: number }
     }
     Enums: {
+      confirmation_answer: "yes" | "no"
+      confirmation_role: "organizer" | "participant"
       minyan_prayer: "shacharit" | "mincha" | "arvit" | "maariv" | "other"
       minyan_type: "street" | "airport" | "hotel" | "travel"
     }
@@ -311,6 +366,8 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      confirmation_answer: ["yes", "no"],
+      confirmation_role: ["organizer", "participant"],
       minyan_prayer: ["shacharit", "mincha", "arvit", "maariv", "other"],
       minyan_type: ["street", "airport", "hotel", "travel"],
     },
