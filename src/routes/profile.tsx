@@ -48,10 +48,10 @@ function Profile() {
       <div className="mx-6 rounded-3xl navy-gradient text-white p-5 shadow-lift relative overflow-hidden">
         <div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-gold/20 blur-2xl" />
         <div className="relative flex items-center gap-4">
-          <div className="h-16 w-16 rounded-2xl gold-gradient text-navy flex items-center justify-center text-xl font-bold">D</div>
+          <div className="h-16 w-16 rounded-2xl gold-gradient text-navy flex items-center justify-center text-xl font-bold">{initial}</div>
           <div className="flex-1 min-w-0">
-            <div className="font-display text-xl">David Cohen</div>
-            <div className="text-xs text-white/60">New York · Ashkenaz</div>
+            <div className="font-display text-xl truncate">{name}</div>
+            <div className="text-xs text-white/60 truncate">{user?.email}</div>
             <div className="mt-2 flex items-center gap-2">
               <TrustBadge score={4.9} />
               <StatusPill tone="gold">Verified</StatusPill>
