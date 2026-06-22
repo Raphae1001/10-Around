@@ -12,7 +12,7 @@ const message = `🚨 URGENT — Minyan needs participants
 📍 Aaron's Loft · 225 W 35th St
 🕒 Mincha at 13:30
 📈 Status: 9/10 — Only 1 more person needed
-⚡ Confirm attendance instantly via MinyanStreet
+⚡ Confirm attendance instantly via MinyaNow
 
 https://minyanlive.app/m/aaronloft`;
 
