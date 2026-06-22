@@ -97,10 +97,10 @@ function Home() {
       <div className="px-6">
         <div className="text-[11px] uppercase tracking-wider text-muted-foreground mb-2 font-semibold">Start a minyan — where are you?</div>
         <div className="grid grid-cols-4 gap-2">
-          <CtxTile id="Street" icon={MapPin} />
-          <CtxTile id="Airport" icon={Plane} />
-          <CtxTile id="Hotel" icon={Building2} />
-          <CtxTile id="Travel" icon={Plane} />
+          <CtxTile id="Street" label="Street" icon={MapPin} />
+          <CtxTile id="Airport" label="Airport" icon={Plane} />
+          <CtxTile id="Hotel" label="Autres" icon={Building2} />
+          <CtxTile id="Travel" label="Travel" icon={Plane} />
         </div>
       </div>
 
@@ -130,7 +130,7 @@ function Home() {
       <div className="px-6 mt-6 mb-2 flex items-end justify-between">
         <div>
           <h2 className="font-display text-xl">Or join one nearby</h2>
-          <p className="text-xs text-muted-foreground">Live now · within 1 km · plus scheduled hotel/travel</p>
+          <p className="text-xs text-muted-foreground">GPS minyanim within 1 km · plus all scheduled (Autres / Travel)</p>
         </div>
         <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">live</span>
       </div>
@@ -202,7 +202,7 @@ function Home() {
   );
 }
 
-function CtxTile({ id, icon: Icon }: { id: Context; icon: typeof MapPin }) {
+function CtxTile({ id, label, icon: Icon }: { id: Context; label: string; icon: typeof MapPin }) {
   return (
     <Link
       to="/create"
@@ -212,7 +212,7 @@ function CtxTile({ id, icon: Icon }: { id: Context; icon: typeof MapPin }) {
       <div className="h-9 w-9 rounded-xl bg-muted text-muted-foreground flex items-center justify-center">
         <Icon className="h-4 w-4" />
       </div>
-      <div className="text-xs font-semibold">{id}</div>
+      <div className="text-xs font-semibold">{label}</div>
     </Link>
   );
 }
