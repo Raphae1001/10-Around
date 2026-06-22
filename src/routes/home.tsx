@@ -64,7 +64,7 @@ function Home() {
       const start = pending.scheduled_at ? new Date(pending.scheduled_at) : new Date();
       downloadIcs({
         title: `Minyan · ${pending.prayer}`,
-        description: pending.message ?? "Minyan via MinyaNow",
+        description: pending.message ?? "Minyan via MinyanNow",
         location: pending.address ?? undefined,
         start,
         durationMinutes: 20,
@@ -80,7 +80,7 @@ function Home() {
   return (
     <MobileFrame>
       <ScreenHeader
-        title="MinyaNow"
+        title="MinyanNow"
         subtitle={position ? "Live within 1 km of you" : "Allow location to see nearby minyanim"}
         right={
           <Link to="/profile" className="h-9 w-9 rounded-full bg-gold/20 flex items-center justify-center text-xs font-semibold">
