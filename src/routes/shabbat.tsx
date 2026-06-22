@@ -78,7 +78,7 @@ function Shabbat() {
 
         {/* Notice */}
         <div className="mt-5 rounded-2xl border border-dashed border-border p-4 text-xs text-muted-foreground leading-relaxed">
-          MinyaNow pauses all real-time notifications from candle lighting to Havdalah.
+          MinyanNow pauses all real-time notifications from candle lighting to Havdalah.
           Coordinate now — rest then.
         </div>
 
