@@ -430,21 +430,27 @@ function Create() {
         }
       }
 
-      // Compute scheduled_at for Hotel/Travel
+      // Compute scheduled_at
+      // Live (Street/Airport): "Now" → null, "+X min"/"+1 h" → now + offset
+      // Hotel/Travel: from the date+time pickers
       let scheduled_at: string | null = null;
-      if ((ctx === "Hotel" || ctx === "Travel") && scheduledDate && scheduledTime) {
+      const now = Date.now();
+      if (liveCtx && when !== "Now") {
+        const offsetMin =
+          when === "+1 h" ? 60 :
+          when.startsWith("+") ? parseInt(when.replace(/\D/g, "") || "0", 10) : 0;
+        if (offsetMin > 0) {
+          scheduled_at = new Date(now + offsetMin * 60 * 1000).toISOString();
+        }
+      } else if ((ctx === "Hotel" || ctx === "Travel") && scheduledDate && scheduledTime) {
         scheduled_at = new Date(`${scheduledDate}T${scheduledTime}`).toISOString();
       }
 
-      // expires_at: live = 2h, scheduled = scheduled time + 4h, travel range = trip end + 1d
-      const now = Date.now();
+      // expires_at: live = start + 2h, scheduled = start + 4h, travel range = trip end + 1d
       let expires_at: string;
       if (liveCtx) {
-        const offsetMin =
-          when === "Now" ? 0 :
-          when.startsWith("+") && when.endsWith("min") ? parseInt(when.replace(/\D/g, "") || "0", 10) :
-          when === "+1 h" ? 60 : 0;
-        expires_at = new Date(now + (offsetMin + 120) * 60 * 1000).toISOString();
+        const startMs = scheduled_at ? new Date(scheduled_at).getTime() : now;
+        expires_at = new Date(startMs + 2 * 60 * 60 * 1000).toISOString();
       } else if (scheduled_at) {
         expires_at = new Date(new Date(scheduled_at).getTime() + 4 * 60 * 60 * 1000).toISOString();
       } else if (ctx === "Travel" && tripDateEnd) {
@@ -475,6 +481,7 @@ function Create() {
           trip_start_date: ctx === "Travel" && tripDateStart ? tripDateStart : null,
           trip_end_date: ctx === "Travel" && tripDateEnd ? tripDateEnd : null,
           present_count: present,
+          extra_present: Math.max(0, present - 1),
           expires_at,
         })
         .select()
