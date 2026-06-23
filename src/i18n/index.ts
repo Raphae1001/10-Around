@@ -57,22 +57,22 @@ i18n.on("languageChanged", (lng) => {
 });
 
 // Switch to saved language after mount (client only).
+// Default is English everywhere — we only honor an explicit user choice
+// stored in localStorage. We deliberately ignore navigator.language so the
+// UI stays coherent and predictable for everyone.
 export function applySavedLang() {
   if (!isBrowser) return;
   let saved: string | null = null;
   try {
     saved = localStorage.getItem("minyannow.lang");
   } catch {}
-  if (!saved) {
-    const nav = navigator.language?.split("-")[0];
-    if (nav && SUPPORTED_LANGS.some((l) => l.code === nav)) saved = nav;
-  }
-  if (saved && saved !== i18n.language) {
+  if (saved && SUPPORTED_LANGS.some((l) => l.code === saved) && saved !== i18n.language) {
     i18n.changeLanguage(saved);
   } else {
     syncHtmlAttrs();
   }
 }
+
 
 // Suppress accidental usage of the removed detector import.
 void LanguageDetector;
