@@ -213,6 +213,7 @@ export type Database = {
         }
         Returns: undefined
       }
+      cleanup_expired_minyanim: { Args: never; Returns: undefined }
       count_minyanim_within: {
         Args: { lat: number; lng: number; radius_m?: number }
         Returns: number
