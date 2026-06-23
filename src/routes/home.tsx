@@ -246,22 +246,28 @@ function NearbyCard({ m, joined, onJoinRequest }: { m: MinyanRow; joined: boolea
   return (
     <div className="bg-surface rounded-2xl border border-border shadow-soft p-4">
       <div className="flex items-start gap-3">
-        <div className={`h-11 w-11 rounded-2xl flex items-center justify-center shrink-0 ${complete ? "bg-success/15 text-success" : "bg-gold/10 text-gold"}`}>
-          <PrayerIcon className="h-5 w-5" />
-        </div>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-0.5 flex-wrap">
-            <StatusPill tone={complete ? "success" : "gold"}>{prayerLabel}</StatusPill>
-            <span className="text-[11px] text-muted-foreground flex items-center gap-1">
-              <Clock className="h-3 w-3" /> {whenLabel}
-            </span>
+        <Link
+          to="/minyan"
+          search={{ id: m.id }}
+          className="flex items-start gap-3 flex-1 min-w-0"
+        >
+          <div className={`h-11 w-11 rounded-2xl flex items-center justify-center shrink-0 ${complete ? "bg-success/15 text-success" : "bg-gold/10 text-gold"}`}>
+            <PrayerIcon className="h-5 w-5" />
           </div>
-          <h3 className="font-display text-base leading-tight truncate">{m.address ?? t("home.unknownSpot")}</h3>
-          <p className="text-[11px] text-muted-foreground flex items-center gap-1.5 mt-0.5">
-            <MapPin className="h-3 w-3" /> {t(`ctx.${m.type}` as const, { defaultValue: m.type })} · {m.nusach ?? "Any"}
-          </p>
-          {m.message && <p className="text-[11px] mt-1 italic text-urgent">"{m.message}"</p>}
-        </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-0.5 flex-wrap">
+              <StatusPill tone={complete ? "success" : "gold"}>{prayerLabel}</StatusPill>
+              <span className="text-[11px] text-muted-foreground flex items-center gap-1">
+                <Clock className="h-3 w-3" /> {whenLabel}
+              </span>
+            </div>
+            <h3 className="font-display text-base leading-tight truncate">{m.address ?? t("home.unknownSpot")}</h3>
+            <p className="text-[11px] text-muted-foreground flex items-center gap-1.5 mt-0.5">
+              <MapPin className="h-3 w-3" /> {t(`ctx.${m.type}` as const, { defaultValue: m.type })} · {m.nusach ?? "Any"}
+            </p>
+            {m.message && <p className="text-[11px] mt-1 italic text-urgent">"{m.message}"</p>}
+          </div>
+        </Link>
 
         <button
           onClick={onJoinRequest}
@@ -274,6 +280,7 @@ function NearbyCard({ m, joined, onJoinRequest }: { m: MinyanRow; joined: boolea
           {joined ? <Check className="h-6 w-6" strokeWidth={2.8} /> : <Plus className="h-6 w-6" strokeWidth={2.8} />}
         </button>
       </div>
+
 
       <div className="mt-3 flex items-center justify-between text-xs gap-2">
         <span className="flex items-center gap-2 min-w-0">
