@@ -112,6 +112,20 @@ function Details() {
     else { setJoined(false); toast.success(t("common.cancel")); }
   }
 
+  async function handleCancelMinyan() {
+    if (!minyan) return;
+    if (!confirm(t("minyan.cancelMinyanConfirm"))) return;
+    setBusy(true);
+    const { error } = await supabase.rpc("cancel_my_minyan", { _id: minyan.id });
+    setBusy(false);
+    if (error) {
+      toast.error(t("minyan.cancelTooLate"), { description: error.message });
+    } else {
+      toast.success(t("minyan.cancelledOk"));
+      navigate({ to: "/home" });
+    }
+  }
+
   function handleDirections() {
     if (!minyan) return;
     openDirections(minyan.latitude, minyan.longitude, minyan.address ?? undefined);
@@ -260,7 +274,22 @@ function Row({ icon: Icon, label, value }: any) {
       <div className="flex-1">
         <div className="text-[11px] uppercase tracking-wider text-muted-foreground">{label}</div>
         <div className="text-sm">{value}</div>
+        </div>
+
+        {isOrganizer && startsAt && (startsAt.getTime() - Date.now()) > 15 * 60_000 && (
+          <button
+            disabled={busy}
+            onClick={handleCancelMinyan}
+            className="w-full mt-2 bg-surface border border-urgent text-urgent font-semibold py-3 rounded-2xl text-sm flex items-center justify-center gap-2"
+          >
+            <X className="h-4 w-4" /> {t("minyan.cancelMinyan")}
+          </button>
+        )}
+        {isOrganizer && startsAt && (startsAt.getTime() - Date.now()) <= 15 * 60_000 && (
+          <p className="mt-2 text-[11px] text-center text-muted-foreground">
+            {t("minyan.cancelWindowClosed")}
+          </p>
+        )}
       </div>
-    </div>
   );
 }
