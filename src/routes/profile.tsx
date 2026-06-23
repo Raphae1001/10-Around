@@ -133,7 +133,7 @@ function Profile() {
         <div className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold mb-2">{t("profile.recent")}</div>
         <div className="rounded-2xl border border-border bg-surface divide-y divide-border">
           {recent.length === 0 ? (
-            <div className="p-4 text-xs text-muted-foreground text-center">{t("profile.noRecent", "Aucune participation pour l'instant")}</div>
+            <div className="p-4 text-xs text-muted-foreground text-center">{t("profile.noHistory")}</div>
           ) : recent.map((h) => (
             <div key={h.minyan_id} className="p-3.5 flex items-center gap-3">
               <CalendarCheck className="h-4 w-4 text-success" />
