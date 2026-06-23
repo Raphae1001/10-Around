@@ -8,6 +8,7 @@ import { Sunrise, Sun, Moon, MapPin, Users, Zap, Crosshair, Plane, Building2, Gl
 import { useAuth } from "@/hooks/use-auth";
 import { useGeolocation } from "@/hooks/use-geolocation";
 import { supabase } from "@/integrations/supabase/client";
+import { reverseGeocode } from "@/lib/geocoding";
 
 type Context = "Street" | "Airport" | "Hotel" | "Travel";
 
