@@ -1,13 +1,33 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { MobileFrame } from "@/components/MobileFrame";
 import { ScreenHeader, StatusPill } from "@/components/ui-bits";
 import { Shield, CheckCircle2, Award, TrendingUp, Star } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/trust")({ component: Trust });
 
 function Trust() {
   const { t } = useTranslation();
+  const { user } = useAuth();
+  const [stats, setStats] = useState<{ minyanim_count: number; completed_count: number; streak_days: number; stars: number } | null>(null);
+
+  useEffect(() => {
+    if (!user) return;
+    (supabase as any).rpc("get_my_stats").then(({ data }: any) => {
+      setStats(Array.isArray(data) ? data[0] : data);
+    });
+  }, [user]);
+
+  const stars = Number(stats?.stars ?? 0);
+  const filledStars = Math.round(stars);
+  const minyanim = stats?.minyanim_count ?? 0;
+  const completed = stats?.completed_count ?? 0;
+  const showRate = minyanim > 0 ? Math.round((completed / minyanim) * 100) : 0;
+  const streak = stats?.streak_days ?? 0;
+
   return (
     <MobileFrame>
       <ScreenHeader title={t("trust.title")} subtitle={t("trust.subtitle")} back />
@@ -17,19 +37,21 @@ function Trust() {
         <div className="absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-sky/10 blur-2xl" />
         <div className="relative">
           <div className="text-[10px] uppercase tracking-[0.3em] text-white/50">{t("trust.score")}</div>
-          <div className="font-display text-6xl text-gold mt-2 leading-none">4.9</div>
+          <div className="font-display text-6xl text-gold mt-2 leading-none">{stars.toFixed(1)}</div>
           <div className="flex items-center justify-center gap-0.5 mt-2">
-            {[1,2,3,4,5].map(i => <Star key={i} className="h-4 w-4 text-gold fill-gold" />)}
+            {[1,2,3,4,5].map(i => (
+              <Star key={i} className={`h-4 w-4 ${i <= filledStars ? "text-gold fill-gold" : "text-white/20"}`} />
+            ))}
           </div>
-          <div className="text-xs text-white/60 mt-2">{t("trust.topPercent")}</div>
+          <div className="text-xs text-white/60 mt-2">{minyanim === 0 ? t("trust.noScoreYet") : t("trust.topPercent")}</div>
         </div>
       </div>
 
       <div className="px-6 mt-6 space-y-3">
-        <Pillar icon={CheckCircle2} tone="success" label={t("trust.showRate")} value="98%" bar={98} sub={t("trust.showRateSub")} />
-        <Pillar icon={TrendingUp} tone="gold" label={t("trust.consistency")} value={t("trust.consistencyVal")} bar={86} sub={t("trust.consistencySub")} />
-        <Pillar icon={Shield} tone="sky" label={t("trust.identity")} value={t("trust.identityVal")} bar={100} sub={t("trust.identitySub")} />
-        <Pillar icon={Award} tone="gold" label={t("trust.ratings")} value="4.95 / 5" bar={95} sub={t("trust.ratingsSub")} />
+        <Pillar icon={CheckCircle2} tone="success" label={t("trust.showRate")} value={`${showRate}%`} bar={showRate} sub={`${completed} / ${minyanim}`} />
+        <Pillar icon={TrendingUp} tone="gold" label={t("trust.consistency")} value={`${streak}d`} bar={Math.min(100, streak * 10)} sub={t("trust.consistencySub")} />
+        <Pillar icon={Shield} tone="sky" label={t("trust.identity")} value={user ? t("trust.identityVal") : "—"} bar={user ? 100 : 0} sub={t("trust.identitySub")} />
+        <Pillar icon={Award} tone="gold" label={t("trust.ratings")} value={`${stars.toFixed(2)} / 5`} bar={Math.round(stars * 20)} sub={t("trust.ratingsSub")} />
       </div>
 
       <div className="px-6 mt-6 mb-8">
