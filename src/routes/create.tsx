@@ -1,5 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { MobileFrame } from "@/components/MobileFrame";
 import { ScreenHeader } from "@/components/ui-bits";
@@ -20,6 +21,7 @@ export const Route = createFileRoute("/create")({
 });
 
 function Create() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
   const { position, request: requestGeo } = useGeolocation(true);
@@ -68,11 +70,12 @@ function Create() {
   };
 
   const ctxDisplay: Record<Context, string> = {
-    Street: "Street",
-    Airport: "Airport",
-    Hotel: "Autres",
-    Travel: "Travel",
+    Street: t("ctx.Street"),
+    Airport: t("ctx.Airport"),
+    Hotel: t("ctx.Hotel"),
+    Travel: t("ctx.Travel"),
   };
+
 
   const locationSummary =
     ctx === "Street" ? street :
