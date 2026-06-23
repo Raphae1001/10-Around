@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { MobileFrame } from "@/components/MobileFrame";
 import { ScreenHeader } from "@/components/ui-bits";
-import { Sunrise, Sun, Moon, MapPin, Users, Zap, Crosshair, Plane, Building2, Minus, Plus, Loader2 } from "lucide-react";
+import { Sunrise, Sun, Moon, MapPin, Users, Zap, Crosshair, Plane, Building2, Globe2, Minus, Plus, Loader2 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useGeolocation } from "@/hooks/use-geolocation";
 import { supabase } from "@/integrations/supabase/client";
@@ -89,7 +89,7 @@ function Create() {
         <Section step="1" title="Where are you?">
           <div className="grid grid-cols-4 gap-2">
             {(["Street", "Airport", "Hotel", "Travel"] as Context[]).map((c) => {
-              const Icon = c === "Street" ? MapPin : c === "Airport" ? Plane : c === "Hotel" ? Building2 : Plane;
+              const Icon = c === "Street" ? MapPin : c === "Airport" ? Plane : c === "Hotel" ? Building2 : Globe2;
               const active = ctx === c;
               return (
                 <button
