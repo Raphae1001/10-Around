@@ -309,7 +309,12 @@
     "notFound": "Minyan not found — it may have ended.",
     "expiresAt": "Auto-closes at {{when}}",
     "whatsapp": "Share on WhatsApp",
-    "shareText": "Join my minyan on MinyanNow — {{prayer}} at {{address}} ({{when}}). Open: {{url}}"
+    "shareText": "Join my minyan on MinyanNow — {{prayer}} at {{address}} ({{when}}). Open: {{url}}",
+    "cancelMinyan": "Cancel this minyan",
+    "cancelMinyanConfirm": "Cancel this minyan for everyone? This can't be undone.",
+    "cancelledOk": "Minyan cancelled",
+    "cancelTooLate": "Can't cancel",
+    "cancelWindowClosed": "Cancellation window closed (less than 15 min before start)"
   },
   "kaddish": {
     "title": "Request a minyan for Kaddish",
