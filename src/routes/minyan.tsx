@@ -260,7 +260,7 @@ function Details() {
           </button>
         </div>
 
-        {isOrganizer && startsAt && (startsAt.getTime() - Date.now()) > 10 * 60_000 && (
+        {isOrganizer && startsAt && (startsAt.getTime() - Date.now()) > 20 * 60_000 && (
           <button
             disabled={busy}
             onClick={handleCancelMinyan}
@@ -269,7 +269,7 @@ function Details() {
             <X className="h-4 w-4" /> {t("minyan.cancelMinyan")}
           </button>
         )}
-        {isOrganizer && startsAt && (startsAt.getTime() - Date.now()) <= 10 * 60_000 && (
+        {isOrganizer && startsAt && (startsAt.getTime() - Date.now()) <= 20 * 60_000 && (
           <p className="mt-2 text-[11px] text-center text-muted-foreground">
             {t("minyan.cancelWindowClosed")}
           </p>
