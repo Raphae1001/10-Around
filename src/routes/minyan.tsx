@@ -259,22 +259,6 @@ function Details() {
             <MessageCircle className="h-4 w-4" /> {t("minyan.whatsapp")}
           </button>
         </div>
-      </div>
-
-      {/* keep Link import used for type safety / future use */}
-      <Link to="/home" className="hidden" aria-hidden />
-    </MobileFrame>
-  );
-}
-
-function Row({ icon: Icon, label, value }: any) {
-  return (
-    <div className="p-4 flex items-center gap-3">
-      <Icon className="h-4 w-4 text-muted-foreground" />
-      <div className="flex-1">
-        <div className="text-[11px] uppercase tracking-wider text-muted-foreground">{label}</div>
-        <div className="text-sm">{value}</div>
-        </div>
 
         {isOrganizer && startsAt && (startsAt.getTime() - Date.now()) > 15 * 60_000 && (
           <button
@@ -291,5 +275,22 @@ function Row({ icon: Icon, label, value }: any) {
           </p>
         )}
       </div>
+
+      {/* keep Link import used for type safety / future use */}
+      <Link to="/home" className="hidden" aria-hidden />
+    </MobileFrame>
   );
 }
+
+function Row({ icon: Icon, label, value }: any) {
+  return (
+    <div className="p-4 flex items-center gap-3">
+      <Icon className="h-4 w-4 text-muted-foreground" />
+      <div className="flex-1">
+        <div className="text-[11px] uppercase tracking-wider text-muted-foreground">{label}</div>
+        <div className="text-sm">{value}</div>
+      </div>
+    </div>
+  );
+}
+
