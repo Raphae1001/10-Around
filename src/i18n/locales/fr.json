@@ -53,7 +53,7 @@
     "complete": "minyan complet",
     "liveNow": "en cours"
   },
-  "ctx": { "Street": "Rue", "Airport": "Aéroport", "Hotel": "Autres", "Travel": "Voyage" },
+  "ctx": { "Street": "Rue", "Airport": "Aéroport", "Hotel": "Autres", "Travel": "Étranger" },
   "prayer": { "shacharit": "Chaharit", "mincha": "Minha", "maariv": "Arvit" },
   "create": {
     "title": "Lancer un minyan",

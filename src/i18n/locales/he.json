@@ -53,7 +53,7 @@
     "complete": "מניין מושלם",
     "liveNow": "כעת חי"
   },
-  "ctx": { "Street": "רחוב", "Airport": "שדה תעופה", "Hotel": "אחר", "Travel": "נסיעה" },
+  "ctx": { "Street": "רחוב", "Airport": "שדה תעופה", "Hotel": "אחר", "Travel": "חו״ל" },
   "prayer": { "shacharit": "שחרית", "mincha": "מנחה", "maariv": "מעריב" },
   "create": {
     "title": "התחל מניין",
