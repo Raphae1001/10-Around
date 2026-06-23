@@ -87,6 +87,7 @@ export type Database = {
           created_at: string
           creator_id: string
           expires_at: string
+          extra_present: number
           id: string
           is_live: boolean
           latitude: number
@@ -107,6 +108,7 @@ export type Database = {
           created_at?: string
           creator_id: string
           expires_at?: string
+          extra_present?: number
           id?: string
           is_live?: boolean
           latitude: number
@@ -127,6 +129,7 @@ export type Database = {
           created_at?: string
           creator_id?: string
           expires_at?: string
+          extra_present?: number
           id?: string
           is_live?: boolean
           latitude?: number
@@ -264,6 +267,7 @@ export type Database = {
           created_at: string
           creator_id: string
           expires_at: string
+          extra_present: number
           id: string
           is_live: boolean
           latitude: number
