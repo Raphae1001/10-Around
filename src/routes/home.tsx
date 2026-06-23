@@ -14,7 +14,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { MapPin, Users, Plane, Building2, Plus, Clock, Sunrise, Sun, Moon, Check, Crosshair, Loader2 } from "lucide-react";
+import { MapPin, Users, Plane, Building2, Plus, Clock, Sunrise, Sun, Moon, Check, Crosshair, Loader2, Globe2 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useGeolocation } from "@/hooks/use-geolocation";
 import { joinMinyan, useNearbyMinyanim, type MinyanRow } from "@/hooks/use-minyanim";
@@ -113,7 +113,7 @@ function Home() {
           <CtxTile id="Street" label={t("ctx.Street")} icon={MapPin} />
           <CtxTile id="Airport" label={t("ctx.Airport")} icon={Plane} />
           <CtxTile id="Hotel" label={t("ctx.Hotel")} icon={Building2} />
-          <CtxTile id="Travel" label={t("ctx.Travel")} icon={Plane} />
+          <CtxTile id="Travel" label={t("ctx.Travel")} icon={Globe2} />
         </div>
       </div>
 
