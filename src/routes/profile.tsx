@@ -77,16 +77,17 @@ function Profile() {
             <div className="font-display text-xl truncate">{name}</div>
             <div className="text-xs text-white/60 truncate">{user?.email}</div>
             <div className="mt-2 flex items-center gap-2">
-              <TrustBadge score={Math.max(0, Math.min(5, (profile?.trust_score ?? 100) / 20))} />
-              <StatusPill tone="gold">{t("profile.trust")} {profile?.trust_score ?? 100}</StatusPill>
+              <TrustBadge score={stats?.stars ?? 0} />
+              <StatusPill tone="gold">{t("profile.trust")} {profile?.trust_score ?? 0}</StatusPill>
             </div>
           </div>
         </div>
         <div className="relative grid grid-cols-3 gap-2 mt-5 pt-5 border-t border-white/10 text-center">
-          <Stat label={t("profile.stats.minyanim")} value="184" />
-          <Stat label={t("profile.stats.completed")} value="47" />
-          <Stat label={t("profile.stats.streak")} value="12d" />
+          <Stat label={t("profile.stats.minyanim")} value={String(stats?.minyanim_count ?? 0)} />
+          <Stat label={t("profile.stats.completed")} value={String(stats?.completed_count ?? 0)} />
+          <Stat label={t("profile.stats.streak")} value={`${stats?.streak_days ?? 0}d`} />
         </div>
+
       </div>
 
       <div className="px-6 mt-6">
