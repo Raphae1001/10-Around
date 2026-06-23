@@ -481,6 +481,7 @@ function Create() {
           trip_start_date: ctx === "Travel" && tripDateStart ? tripDateStart : null,
           trip_end_date: ctx === "Travel" && tripDateEnd ? tripDateEnd : null,
           present_count: present,
+          extra_present: Math.max(0, present - 1),
           expires_at,
         })
         .select()
