@@ -237,6 +237,24 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      get_my_recent_participations: {
+        Args: { _limit?: number }
+        Returns: {
+          address: string
+          joined_at: string
+          minyan_id: string
+          prayer: string
+        }[]
+      }
+      get_my_stats: {
+        Args: never
+        Returns: {
+          completed_count: number
+          minyanim_count: number
+          stars: number
+          streak_days: number
+        }[]
+      }
       nearby_minyanim: {
         Args: { lat: number; lng: number; radius_m?: number }
         Returns: {

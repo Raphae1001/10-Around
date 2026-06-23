@@ -15,6 +15,8 @@ function Profile() {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
   const [profile, setProfile] = useState<{ display_name: string | null; avatar_url: string | null; backup_mode: boolean; backup_radius_m: number; trust_score: number } | null>(null);
+  const [stats, setStats] = useState<{ minyanim_count: number; completed_count: number; streak_days: number; stars: number } | null>(null);
+  const [recent, setRecent] = useState<Array<{ minyan_id: string; prayer: string | null; address: string | null; joined_at: string }>>([]);
   const [savingBackup, setSavingBackup] = useState(false);
 
   useEffect(() => {
@@ -26,7 +28,14 @@ function Profile() {
     (supabase as any).rpc("get_my_profile").then(({ data }: any) => {
       setProfile(Array.isArray(data) ? data[0] : data);
     });
+    (supabase as any).rpc("get_my_stats").then(({ data }: any) => {
+      setStats(Array.isArray(data) ? data[0] : data);
+    });
+    (supabase as any).rpc("get_my_recent_participations", { _limit: 5 }).then(({ data }: any) => {
+      setRecent(Array.isArray(data) ? data : []);
+    });
   }, [user]);
+
 
   const name = profile?.display_name ?? user?.email?.split("@")[0] ?? t("profile.guest");
   const initial = name[0]?.toUpperCase() ?? "?";
@@ -68,16 +77,17 @@ function Profile() {
             <div className="font-display text-xl truncate">{name}</div>
             <div className="text-xs text-white/60 truncate">{user?.email}</div>
             <div className="mt-2 flex items-center gap-2">
-              <TrustBadge score={Math.max(0, Math.min(5, (profile?.trust_score ?? 100) / 20))} />
-              <StatusPill tone="gold">{t("profile.trust")} {profile?.trust_score ?? 100}</StatusPill>
+              <TrustBadge score={stats?.stars ?? 0} />
+              <StatusPill tone="gold">{t("profile.trust")} {profile?.trust_score ?? 0}</StatusPill>
             </div>
           </div>
         </div>
         <div className="relative grid grid-cols-3 gap-2 mt-5 pt-5 border-t border-white/10 text-center">
-          <Stat label={t("profile.stats.minyanim")} value="184" />
-          <Stat label={t("profile.stats.completed")} value="47" />
-          <Stat label={t("profile.stats.streak")} value="12d" />
+          <Stat label={t("profile.stats.minyanim")} value={String(stats?.minyanim_count ?? 0)} />
+          <Stat label={t("profile.stats.completed")} value={String(stats?.completed_count ?? 0)} />
+          <Stat label={t("profile.stats.streak")} value={`${stats?.streak_days ?? 0}d`} />
         </div>
+
       </div>
 
       <div className="px-6 mt-6">
@@ -122,23 +132,21 @@ function Profile() {
       <div className="px-6 mt-6 mb-8">
         <div className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold mb-2">{t("profile.recent")}</div>
         <div className="rounded-2xl border border-border bg-surface divide-y divide-border">
-          {[
-            { name: "Mincha · Park Ave Shul", time: "Today, 1:30 PM" },
-            { name: "Maariv · Midtown Chabad", time: "Yesterday, 8:15 PM" },
-            { name: "Shacharit · JFK T4 Chapel", time: "Sunday, 6:45 AM" },
-            { name: "Mincha · Aaron's Loft", time: "Friday, 6:20 PM" },
-          ].map((h, i) => (
-            <div key={i} className="p-3.5 flex items-center gap-3">
+          {recent.length === 0 ? (
+            <div className="p-4 text-xs text-muted-foreground text-center">{t("profile.noRecent", "Aucune participation pour l'instant")}</div>
+          ) : recent.map((h) => (
+            <div key={h.minyan_id} className="p-3.5 flex items-center gap-3">
               <CalendarCheck className="h-4 w-4 text-success" />
               <div className="flex-1 min-w-0">
-                <div className="text-sm truncate">{h.name}</div>
-                <div className="text-[11px] text-muted-foreground">{h.time}</div>
+                <div className="text-sm truncate">{h.prayer ?? "Minyan"}{h.address ? ` · ${h.address}` : ""}</div>
+                <div className="text-[11px] text-muted-foreground">{new Date(h.joined_at).toLocaleString()}</div>
               </div>
               <Users className="h-3.5 w-3.5 text-muted-foreground" />
             </div>
           ))}
         </div>
       </div>
+
 
       <div className="px-6 pb-10">
         <button onClick={signOut} className="w-full flex items-center justify-center gap-2 rounded-2xl border border-border bg-surface py-3.5 text-sm font-semibold text-urgent">
