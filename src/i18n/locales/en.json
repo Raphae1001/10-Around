@@ -314,7 +314,7 @@
     "cancelMinyanConfirm": "Cancel this minyan for everyone? This can't be undone.",
     "cancelledOk": "Minyan cancelled",
     "cancelTooLate": "Can't cancel",
-    "cancelWindowClosed": "Cancellation window closed (less than 10 min before start)"
+    "cancelWindowClosed": "Cancellation window closed (less than 20 min before start)"
   },
   "kaddish": {
     "title": "Request a minyan for Kaddish",
