@@ -132,23 +132,21 @@ function Profile() {
       <div className="px-6 mt-6 mb-8">
         <div className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold mb-2">{t("profile.recent")}</div>
         <div className="rounded-2xl border border-border bg-surface divide-y divide-border">
-          {[
-            { name: "Mincha · Park Ave Shul", time: "Today, 1:30 PM" },
-            { name: "Maariv · Midtown Chabad", time: "Yesterday, 8:15 PM" },
-            { name: "Shacharit · JFK T4 Chapel", time: "Sunday, 6:45 AM" },
-            { name: "Mincha · Aaron's Loft", time: "Friday, 6:20 PM" },
-          ].map((h, i) => (
-            <div key={i} className="p-3.5 flex items-center gap-3">
+          {recent.length === 0 ? (
+            <div className="p-4 text-xs text-muted-foreground text-center">{t("profile.noRecent", "Aucune participation pour l'instant")}</div>
+          ) : recent.map((h) => (
+            <div key={h.minyan_id} className="p-3.5 flex items-center gap-3">
               <CalendarCheck className="h-4 w-4 text-success" />
               <div className="flex-1 min-w-0">
-                <div className="text-sm truncate">{h.name}</div>
-                <div className="text-[11px] text-muted-foreground">{h.time}</div>
+                <div className="text-sm truncate">{h.prayer ?? "Minyan"}{h.address ? ` · ${h.address}` : ""}</div>
+                <div className="text-[11px] text-muted-foreground">{new Date(h.joined_at).toLocaleString()}</div>
               </div>
               <Users className="h-3.5 w-3.5 text-muted-foreground" />
             </div>
           ))}
         </div>
       </div>
+
 
       <div className="px-6 pb-10">
         <button onClick={signOut} className="w-full flex items-center justify-center gap-2 rounded-2xl border border-border bg-surface py-3.5 text-sm font-semibold text-urgent">
