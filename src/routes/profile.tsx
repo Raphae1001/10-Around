@@ -93,9 +93,9 @@ function Profile() {
       <div className="px-6 mt-6">
         <div className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold mb-2">{t("profile.badges")}</div>
         <div className="grid grid-cols-3 gap-3">
-          <Badge icon={Flame} tone="urgent" label={t("profile.badgeMaker")} sub={t("profile.badgeMakerSub")} />
-          <Badge icon={Plane} tone="sky" label={t("profile.badgeTraveler")} sub={t("profile.badgeTravelerSub")} />
-          <Badge icon={Award} tone="gold" label={t("profile.badgeTrusted")} sub={t("profile.badgeTrustedSub")} />
+          <Badge icon={Flame} tone="urgent" label={t("profile.badgeMaker")} sub={`${t("common.completed", { defaultValue: "Completed" })} ${stats?.completed_count ?? 0}`} />
+          <Badge icon={Plane} tone="sky" label={t("profile.badgeTraveler")} sub={`${stats?.minyanim_count ?? 0} ${t("profile.stats.minyanim").toLowerCase()}`} />
+          <Badge icon={Award} tone="gold" label={t("profile.badgeTrusted")} sub={`${(Number(stats?.stars ?? 0)).toFixed(1)} / 5`} />
         </div>
       </div>
 
