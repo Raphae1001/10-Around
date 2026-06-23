@@ -68,11 +68,12 @@ function Create() {
   };
 
   const ctxDisplay: Record<Context, string> = {
-    Street: "Street",
-    Airport: "Airport",
-    Hotel: "Autres",
-    Travel: "Travel",
+    Street: t("ctx.Street"),
+    Airport: t("ctx.Airport"),
+    Hotel: t("ctx.Hotel"),
+    Travel: t("ctx.Travel"),
   };
+
 
   const locationSummary =
     ctx === "Street" ? street :
