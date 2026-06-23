@@ -69,7 +69,8 @@ function Onboarding() {
 
         <div className="relative px-6 pb-10 space-y-3">
           <button onClick={next} className="w-full flex items-center justify-center gap-2 gold-gradient text-gold-foreground font-semibold py-4 rounded-2xl shadow-glow-gold">
-            {step === 0 ? t("onboarding.seeHow") : step === total - 1 ? t("onboarding.join") : t("common.continue")}
+            {step === total - 1 ? t("onboarding.join") : t("common.continue")}
+
             <ArrowRight className="h-4 w-4" />
           </button>
           {step > 0 && (
