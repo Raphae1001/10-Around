@@ -15,6 +15,8 @@ function Profile() {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
   const [profile, setProfile] = useState<{ display_name: string | null; avatar_url: string | null; backup_mode: boolean; backup_radius_m: number; trust_score: number } | null>(null);
+  const [stats, setStats] = useState<{ minyanim_count: number; completed_count: number; streak_days: number; stars: number } | null>(null);
+  const [recent, setRecent] = useState<Array<{ minyan_id: string; prayer: string | null; address: string | null; joined_at: string }>>([]);
   const [savingBackup, setSavingBackup] = useState(false);
 
   useEffect(() => {
@@ -26,7 +28,14 @@ function Profile() {
     (supabase as any).rpc("get_my_profile").then(({ data }: any) => {
       setProfile(Array.isArray(data) ? data[0] : data);
     });
+    (supabase as any).rpc("get_my_stats").then(({ data }: any) => {
+      setStats(Array.isArray(data) ? data[0] : data);
+    });
+    (supabase as any).rpc("get_my_recent_participations", { _limit: 5 }).then(({ data }: any) => {
+      setRecent(Array.isArray(data) ? data : []);
+    });
   }, [user]);
+
 
   const name = profile?.display_name ?? user?.email?.split("@")[0] ?? t("profile.guest");
   const initial = name[0]?.toUpperCase() ?? "?";
