@@ -1,94 +1,254 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 import { MobileFrame } from "@/components/MobileFrame";
-import { ScreenHeader, LiveBadge, StatusPill, TrustBadge } from "@/components/ui-bits";
+import { ScreenHeader, StatusPill } from "@/components/ui-bits";
 import { MapCanvas } from "@/components/MapCanvas";
-import { MapPin, Clock, Navigation2, Share2, Users, Check } from "lucide-react";
+import { MapPin, Clock, Navigation2, Users, Check, Loader2, X, MessageCircle } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/use-auth";
+import { joinMinyan, leaveMinyan, type MinyanRow } from "@/hooks/use-minyanim";
+import { openDirections } from "@/lib/directions";
 
-export const Route = createFileRoute("/minyan")({ component: Details });
+export const Route = createFileRoute("/minyan")({
+  validateSearch: (s: Record<string, unknown>) => ({ id: typeof s.id === "string" ? s.id : undefined }),
+  component: Details,
+});
 
-const people = ["D", "Y", "M", "A", "S", "L", "R", "B", "N"];
+const NEEDED = 10;
+
+function relTime(iso: string | null, t: (k: string, o?: any) => string) {
+  if (!iso) return t("home.liveNow");
+  const diffMin = Math.round((new Date(iso).getTime() - Date.now()) / 60000);
+  if (Math.abs(diffMin) < 1) return t("home.liveNow");
+  if (diffMin > 0) {
+    if (diffMin < 60) return `in ${diffMin} min`;
+    const h = Math.round(diffMin / 60);
+    return `in ${h} h`;
+  }
+  const past = -diffMin;
+  if (past < 60) return `${past} min ago`;
+  return `${Math.round(past / 60)} h ago`;
+}
 
 function Details() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { id } = Route.useSearch();
+  const { user } = useAuth();
+  const [minyan, setMinyan] = useState<MinyanRow | null>(null);
+  const [organizer, setOrganizer] = useState<{ display_name: string | null } | null>(null);
+  const [joined, setJoined] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [busy, setBusy] = useState(false);
+  const [notFound, setNotFound] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function load() {
+      if (!id) { setNotFound(true); setLoading(false); return; }
+      setLoading(true);
+      const { data, error } = await supabase.from("minyanim").select("*").eq("id", id).maybeSingle();
+      if (cancelled) return;
+      if (error) { toast.error(t("minyan.loadFailed")); setLoading(false); return; }
+      if (!data) { setNotFound(true); setLoading(false); return; }
+      setMinyan(data as MinyanRow);
+
+      const { data: prof } = await supabase
+        .from("profiles").select("display_name").eq("id", (data as any).creator_id).maybeSingle();
+      if (!cancelled) setOrganizer(prof as any);
+
+      if (user) {
+        const { data: p } = await supabase
+          .from("minyan_participants").select("id")
+          .eq("minyan_id", id).eq("user_id", user.id).maybeSingle();
+        if (!cancelled) setJoined(!!p);
+      }
+      if (!cancelled) setLoading(false);
+    }
+    load();
+    return () => { cancelled = true; };
+  }, [id, user, t]);
+
+  // Realtime: refresh count when participants change for this minyan
+  useEffect(() => {
+    if (!id) return;
+    const ch = supabase.channel(`minyan-${id}`)
+      .on("postgres_changes", { event: "*", schema: "public", table: "minyanim", filter: `id=eq.${id}` },
+        (payload) => { if (payload.new) setMinyan(payload.new as MinyanRow); })
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [id]);
+
+  const startsAtIso = minyan?.scheduled_at ?? minyan?.created_at ?? null;
+  const startsAt = startsAtIso ? new Date(startsAtIso) : null;
+  const expiresAt = minyan?.expires_at ? new Date(minyan.expires_at) : null;
+  const prayerLabel = minyan ? t(`prayer.${minyan.prayer}`, { defaultValue: minyan.prayer }) : "";
+  const whenLabel = useMemo(() => relTime(minyan?.scheduled_at ?? null, t), [minyan?.scheduled_at, t]);
+
+  const present = minyan?.present_count ?? 0;
+  const missing = Math.max(0, NEEDED - present);
+  const complete = present >= NEEDED;
+  const progress = Math.min(100, (present / NEEDED) * 100);
+
+  const isOrganizer = !!user && !!minyan && minyan.creator_id === user.id;
+
+  async function handleJoin() {
+    if (!minyan || !user) return;
+    setBusy(true);
+    const { error } = await joinMinyan(minyan.id, user.id);
+    setBusy(false);
+    if (error) toast.error(error.message);
+    else { setJoined(true); toast.success(t("minyan.youreIn")); }
+  }
+
+  async function handleLeave() {
+    if (!minyan || !user) return;
+    setBusy(true);
+    const { error } = await leaveMinyan(minyan.id, user.id);
+    setBusy(false);
+    if (error) toast.error(error.message);
+    else { setJoined(false); toast.success(t("common.cancel")); }
+  }
+
+  function handleDirections() {
+    if (!minyan) return;
+    openDirections(minyan.latitude, minyan.longitude, minyan.address ?? undefined);
+  }
+
+  function handleWhatsApp() {
+    if (!minyan) return;
+    const url = typeof window !== "undefined"
+      ? `${window.location.origin}/minyan?id=${minyan.id}`
+      : `https://minyannow.app/minyan?id=${minyan.id}`;
+    const when = startsAt ? startsAt.toLocaleString([], { dateStyle: "short", timeStyle: "short" }) : t("home.liveNow");
+    const text = t("minyan.shareText", {
+      prayer: prayerLabel,
+      address: minyan.address ?? "",
+      when,
+      url,
+    });
+    const wa = `https://wa.me/?text=${encodeURIComponent(text)}`;
+    window.open(wa, "_blank", "noopener,noreferrer");
+  }
+
+  if (loading) {
+    return (
+      <MobileFrame>
+        <ScreenHeader title={t("minyan.title")} back />
+        <div className="flex items-center justify-center py-20 text-muted-foreground text-sm">
+          <Loader2 className="h-4 w-4 animate-spin mr-2" /> {t("common.loading")}
+        </div>
+      </MobileFrame>
+    );
+  }
+
+  if (notFound || !minyan) {
+    return (
+      <MobileFrame>
+        <ScreenHeader title={t("minyan.title")} back />
+        <div className="px-6 py-16 text-center text-sm text-muted-foreground">
+          {t("minyan.notFound")}
+          <div className="mt-6">
+            <button onClick={() => navigate({ to: "/home" })} className="text-gold font-semibold">{t("nav.home")}</button>
+          </div>
+        </div>
+      </MobileFrame>
+    );
+  }
+
+  const orgInitial = (organizer?.display_name?.[0] ?? minyan.address?.[0] ?? "?").toUpperCase();
+  const orgName = isOrganizer ? t("minyan.you") : organizer?.display_name ?? t("minyan.organizer");
+
   return (
     <MobileFrame>
-      <ScreenHeader title={t("minyan.title")} subtitle={t("minyan.subtitle")} back />
+      <ScreenHeader
+        title={minyan.address ?? t("minyan.title")}
+        subtitle={t("minyan.subtitle", { prayer: prayerLabel, when: whenLabel })}
+        back
+      />
 
       <div className="mx-6 rounded-3xl overflow-hidden border border-border shadow-soft">
-        <MapCanvas height="h-40" pins={[{ x: 50, y: 50, tone: "urgent", pulse: true, label: "!", size: "lg" }]}>
-          <div className="absolute top-3 left-3"><LiveBadge>Kaddish</LiveBadge></div>
-        </MapCanvas>
+        <MapCanvas height="h-40" pins={[{ x: 50, y: 50, tone: complete ? "success" : "urgent", pulse: !complete, label: complete ? "✓" : "!", size: "lg" }]} />
       </div>
 
       <div className="px-6 mt-4">
         <div className="flex items-center gap-2 flex-wrap">
-          <StatusPill tone="urgent">{t("minyan.missing1")}</StatusPill>
-          <StatusPill tone="gold">{t("minyan.nusachAri")}</StatusPill>
-          <StatusPill>{t("minyan.dist")}</StatusPill>
+          <StatusPill tone={complete ? "success" : "urgent"}>
+            {complete ? t("minyan.complete") : t("minyan.missing", { count: missing })}
+          </StatusPill>
+          <StatusPill tone="gold">{minyan.nusach ?? t("minyan.nusachAny")}</StatusPill>
+          <StatusPill>{t(`ctx.${minyan.type}` as const, { defaultValue: minyan.type })}</StatusPill>
         </div>
       </div>
 
       <div className="mx-6 mt-4 rounded-2xl bg-surface border border-border p-4 shadow-soft">
         <div className="flex items-center justify-between mb-2">
-          <div className="font-display text-xl"><span className="count-up">9</span>/10</div>
-          <div className="text-xs text-muted-foreground">{t("minyan.almostReady")}</div>
+          <div className="font-display text-xl"><span>{present}</span>/{NEEDED}</div>
+          <div className="text-xs text-muted-foreground">{complete ? t("minyan.complete") : t("minyan.almostReady")}</div>
         </div>
-        <div className="h-2 rounded-full bg-muted overflow-hidden shimmer">
-          <div className="h-full gold-gradient" style={{ width: "90%" }} />
-          <span className="shimmer-bar" />
+        <div className="h-2 rounded-full bg-muted overflow-hidden">
+          <div className={`h-full ${complete ? "bg-success" : "gold-gradient"}`} style={{ width: `${progress}%` }} />
         </div>
-        <div className="mt-3 flex items-center -space-x-2">
-          {people.map((p, i) => (
-            <div key={i} className={`h-8 w-8 rounded-full border-2 border-background flex items-center justify-center text-xs font-bold ${i % 2 ? "bg-sky/40 text-navy" : "gold-gradient text-navy"}`}>{p}</div>
-          ))}
-          <div className="h-8 w-8 rounded-full border-2 border-dashed border-urgent flex items-center justify-center text-urgent text-xs ml-1">?</div>
-        </div>
-
-        <div className="mt-4 -mx-1 rounded-xl bg-muted/60 p-3 flex items-center gap-3">
-          <div className="relative h-8 w-8 rounded-full bg-success/15 flex items-center justify-center">
-            <span className="absolute inset-0 rounded-full bg-success/30 live-pulse-ring text-success" />
-            <Users className="h-4 w-4 text-success relative" />
-          </div>
-          <div className="text-xs leading-tight flex-1">
-            <div className="font-semibold">{t("minyan.walking", { walking: 3, driving: 1 })}</div>
-            <div className="text-muted-foreground">{t("minyan.averageArrival")}</div>
-          </div>
-          <span className="text-[10px] uppercase tracking-wider text-success font-semibold">{t("common.live")}</span>
-        </div>
+        {minyan.message && (
+          <p className="text-xs italic text-muted-foreground mt-3">"{minyan.message}"</p>
+        )}
       </div>
 
       <div className="mx-6 mt-4 rounded-2xl bg-surface border border-border p-4 flex items-center gap-3">
-        <div className="h-11 w-11 rounded-2xl bg-navy text-white flex items-center justify-center font-bold">A</div>
+        <div className="h-11 w-11 rounded-2xl bg-navy text-white flex items-center justify-center font-bold">{orgInitial}</div>
         <div className="flex-1">
-          <div className="text-sm font-semibold">Aaron L. · {t("minyan.organizer")}</div>
-          <div className="text-xs text-muted-foreground flex items-center gap-2">
-            <TrustBadge score={4.95} />
-            <span>· {t("minyan.hosted")}</span>
-          </div>
+          <div className="text-sm font-semibold">{orgName} · {t("minyan.organizer")}</div>
         </div>
         <Check className="h-5 w-5 text-success" />
       </div>
 
       <div className="mx-6 mt-4 rounded-2xl bg-surface border border-border divide-y divide-border">
-        <Row icon={Clock} label={t("minyan.startsAt")} value="1:30 PM" />
-        <Row icon={MapPin} label={t("minyan.location")} value="225 W 35th St · 12th floor" />
-        <Row icon={Users} label={t("minyan.type")} value={t("minyan.typeValue")} />
+        <Row icon={Clock} label={t("minyan.startsAt")} value={startsAt ? startsAt.toLocaleString([], { dateStyle: "short", timeStyle: "short" }) : t("home.liveNow")} />
+        <Row icon={MapPin} label={t("minyan.location")} value={minyan.address ?? "—"} />
+        <Row icon={Users} label={t("minyan.type")} value={t(`ctx.${minyan.type}` as const, { defaultValue: minyan.type })} />
+        {expiresAt && (
+          <Row icon={Clock} label={t("minyan.expiresAt", { when: expiresAt.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) })} value={`${Math.max(0, Math.round((expiresAt.getTime() - Date.now()) / 60000))} min`} />
+        )}
       </div>
 
       <div className="px-6 pt-5 pb-2 space-y-2">
-        <Link to="/success" className="w-full gold-gradient text-gold-foreground font-semibold py-4 rounded-2xl shadow-glow-gold flex items-center justify-center gap-2">
-          <Check className="h-5 w-5" /> {t("minyan.imComing")}
-        </Link>
-        <div className="grid grid-cols-2 gap-2">
-          <button className="bg-surface border border-border font-medium py-3 rounded-2xl text-sm flex items-center justify-center gap-2">
-            <Navigation2 className="h-4 w-4" /> {t("common.directions")}
+        {joined ? (
+          <button
+            disabled={busy}
+            onClick={handleLeave}
+            className="w-full bg-surface border border-urgent text-urgent font-semibold py-4 rounded-2xl flex items-center justify-center gap-2"
+          >
+            <X className="h-5 w-5" /> {t("minyan.cancel")}
           </button>
-          <Link to="/share" className="bg-surface border border-border font-medium py-3 rounded-2xl text-sm flex items-center justify-center gap-2">
-            <Share2 className="h-4 w-4" /> {t("minyan.whatsapp")}
-          </Link>
+        ) : (
+          <button
+            disabled={busy || !user || isOrganizer}
+            onClick={handleJoin}
+            className="w-full gold-gradient text-gold-foreground font-semibold py-4 rounded-2xl shadow-glow-gold flex items-center justify-center gap-2 disabled:opacity-60"
+          >
+            <Check className="h-5 w-5" /> {isOrganizer ? t("minyan.you") : t("minyan.imComing")}
+          </button>
+        )}
+        <div className="grid grid-cols-2 gap-2">
+          <button
+            onClick={handleDirections}
+            className="bg-surface border border-border font-medium py-3 rounded-2xl text-sm flex items-center justify-center gap-2 hover:border-gold/60"
+          >
+            <Navigation2 className="h-4 w-4 text-gold" /> {t("common.directions")}
+          </button>
+          <button
+            onClick={handleWhatsApp}
+            className="bg-[#25D366] text-white font-semibold py-3 rounded-2xl text-sm flex items-center justify-center gap-2"
+          >
+            <MessageCircle className="h-4 w-4" /> {t("minyan.whatsapp")}
+          </button>
         </div>
       </div>
+
+      {/* keep Link import used for type safety / future use */}
+      <Link to="/home" className="hidden" aria-hidden />
     </MobileFrame>
   );
 }
