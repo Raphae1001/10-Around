@@ -22,7 +22,7 @@ function Onboarding() {
   const { t } = useTranslation();
   const [step, setStep] = useState(0);
   const navigate = useNavigate();
-  const total = 4;
+  const total = 3;
 
   const next = () => {
     if (step < total - 1) setStep(step + 1);
@@ -52,24 +52,25 @@ function Onboarding() {
         </div>
 
         <div className="relative flex-1 flex flex-col">
-          {step === 0 && <HeroSlide />}
-          {step === 1 && (
+          {step === 0 && (
             <ContentSlide icon={<MapPin className="h-8 w-8" />} iconClass="gold-gradient text-gold-foreground"
               kicker={t("onboarding.step1Kicker")} title={t("onboarding.step1Title")} body={t("onboarding.step1Body")} />
           )}
-          {step === 2 && (
+          {step === 1 && (
             <ContentSlide icon={<Users className="h-8 w-8" />} iconClass="bg-urgent text-white"
               kicker={t("onboarding.step2Kicker")} title={t("onboarding.step2Title")} body={t("onboarding.step2Body")} />
           )}
-          {step === 3 && (
+          {step === 2 && (
             <ContentSlide icon={<Plane className="h-8 w-8" />} iconClass="bg-sky text-white"
               kicker={t("onboarding.step3Kicker")} title={t("onboarding.step3Title")} body={t("onboarding.step3Body")} final />
           )}
         </div>
 
+
         <div className="relative px-6 pb-10 space-y-3">
           <button onClick={next} className="w-full flex items-center justify-center gap-2 gold-gradient text-gold-foreground font-semibold py-4 rounded-2xl shadow-glow-gold">
-            {step === 0 ? t("onboarding.seeHow") : step === total - 1 ? t("onboarding.join") : t("common.continue")}
+            {step === total - 1 ? t("onboarding.join") : t("common.continue")}
+
             <ArrowRight className="h-4 w-4" />
           </button>
           {step > 0 && (
