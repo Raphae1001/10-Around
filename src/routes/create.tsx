@@ -41,7 +41,21 @@ function Create() {
   const [comment, setComment] = useState("");
 
   // Street
-  const [street, setStreet] = useState("5th Avenue · NYC");
+  const [street, setStreet] = useState("");
+  const [streetAuto, setStreetAuto] = useState(false);
+
+  // Auto-fill exact street name from GPS for Street context
+  useEffect(() => {
+    if (ctx !== "Street" || !position || streetAuto) return;
+    let cancelled = false;
+    reverseGeocode(position.lat, position.lng).then((addr) => {
+      if (!cancelled && addr) {
+        setStreet(addr);
+        setStreetAuto(true);
+      }
+    });
+    return () => { cancelled = true; };
+  }, [ctx, position, streetAuto]);
   // Airport
   const [airport, setAirport] = useState("");
   const [gate, setGate] = useState("");
