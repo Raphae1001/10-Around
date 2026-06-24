@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { MobileFrame } from "@/components/MobileFrame";
 import { GoogleMapCanvas } from "@/components/GoogleMap";
 import { LiveBadge, StatusPill } from "@/components/ui-bits";
