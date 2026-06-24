@@ -1,57 +1,77 @@
-## Goal
 
-Make Share and Navigate always open in a real external app/tab — never inside the Lovable preview iframe / Capacitor webview — and give every Minyan its own shareable URL.
+# MinyanNow — Targeted Production Audit
 
-## Root cause
+Scope locked to: broken flows, Share, Maps navigation, auth & permissions, DB integrity, mobile responsiveness, store readiness, security, TS/build errors, performance. No UI redesign, no branding/text/color changes, no i18n edits.
 
-The buttons themselves don't use `<iframe>` in our code. The `ERR_BLOCKED_BY_RESPONSE` comes from the app running inside the Lovable preview iframe: calls like `window.location.href = "https://maps.google.com/..."` and even some `window.open(...)` end up navigating the iframe, and WhatsApp / Google Maps refuse to be framed.
+## Phase 1 — Static audit (no code changes)
 
-The current `openDirections` is the main offender — it sets `window.location.href` for iOS/Android branches. `shareAny` also falls back to `window.open(wa.me)` which can be blocked by the iframe sandbox.
+1. **Build & types**
+   - `bun run build` and `bunx tsgo --noEmit` → capture every error/warning.
+   - `bunx eslint .` for unused vars/imports/dead code.
+   - `bunx knip` (or manual scan) for unused files, exports, dependencies in `package.json`.
+2. **Routes & flows** — read all 28 routes; map each to a user flow (create / join / leave / share / navigate / auth / profile / chat / travel / kaddish / shabbat / siddur / synagogue / notifications / backup / onboarding / deep-link).
+3. **Supabase**
+   - `supabase--linter` for RLS, exposed columns, missing indexes.
+   - Inspect every `public.*` table: RLS enabled? Policies scoped to `auth.uid()`? `service_role`/`authenticated` GRANTs present? PII exposure?
+   - Inspect RPCs for `SECURITY DEFINER` + `search_path` hygiene.
+   - Identify missing indexes on `minyanim(location)`, `minyan_participants(minyan_id,user_id)`, `chat_messages(thread_id, created_at)`, `travel_presence(city_key, date_start, date_end)`.
+4. **Share + Maps regression check** — Playwright on localhost:8080, restore Supabase session, open a real `/minyan/$id`, click Share and Navigate, assert a real `_blank` navigation (no iframe, no `ERR_BLOCKED_BY_RESPONSE`), screenshot result. Re-test on the published origin URL inside the iframe.
+5. **Auth** — verify `_authenticated` gate, OAuth redirect, sign-out hygiene (cancelQueries → clear → signOut → navigate), `attachSupabaseAuth` registered.
+6. **Responsive** — Playwright at 375×812 (iPhone), 412×915 (Android), 768×1024 (iPad), 1280×800 (laptop), 1920×1080 (desktop). Screenshot home, create, minyan details, map, chat, profile. Flag overflow, hidden CTAs, tap targets <44px, `h-screen` vs `h-dvh`.
+7. **Performance** — bundle analyze (`vite build --mode production` + size report), flag chunks >250KB, identify `useEffect`+`fetch` patterns that should be loaders, unnecessary realtime channels.
+8. **Security** — scan for: hardcoded secrets, `dangerouslySetInnerHTML`, unvalidated form input, `window.location.href = userInput`, missing zod validation on `create.tsx`/`profile.tsx`/`travel.tsx`/`flight.tsx`, exposed service role usage from client.
+9. **Capacitor / store readiness** — review `capacitor.config.ts`, `IOS_BUILD.md`, `public/manifest.webmanifest`. Check bundle id, app name, icons (1024 iOS, 512 Android adaptive), splash, permissions (location, camera), privacy policy route, `NSLocationWhenInUseUsageDescription` strings, deep-link associated domains, version/build numbers.
 
-## Fix — Share
+## Phase 2 — Auto-fix Critical & High only
 
-Rewrite `src/lib/share.ts`:
+Will only touch what the audit flags. Expected categories:
 
-1. **Capacitor native share** first (when `Capacitor.isNativePlatform()`), via `@capacitor/share`.
-2. **`navigator.share(...)`** when available (mobile browsers, Safari, modern Chrome desktop).
-3. **WhatsApp fallback** — `wa.me/?text=...` on desktop, `whatsapp://send?text=...` on mobile.
-4. **Final fallback** — copy to clipboard + toast showing the copied link.
+- **Critical**
+  - Any TS/build error blocking deploy.
+  - Any RLS gap allowing cross-user reads/writes on `profiles`, `minyanim`, `minyan_participants`, `chat_messages`, `travel_presence`, `user_push_tokens`.
+  - Missing GRANTs on public tables causing PostgREST permission errors.
+  - Client-side admin/service-role usage (should not exist; confirm).
+  - Share/Navigate iframe regressions (already fixed; verify no regressions).
+  - Auth gate gaps (public route calling `requireSupabaseAuth` loader; missing `attachSupabaseAuth`).
+- **High**
+  - `confirm()` browser dialog in `minyan.tsx` cancel flow → replace with existing shadcn `AlertDialog` (functional, not visual redesign).
+  - Missing zod validation on create/profile forms where invalid data can reach the DB.
+  - Missing DB indexes on hot query paths.
+  - `h-screen` → `h-dvh` where it causes mobile cutoffs.
+  - Icon-only buttons missing `aria-label` on primary CTAs.
+  - `useEffect` data fetches in route components that race on unmount (add cancellation if missing).
+  - Sign-out missing `cancelQueries`/`clear` (per `tanstack-auth-guards`).
+  - PWA/Capacitor blockers: missing icon, missing privacy URL, missing bundle id, etc.
 
-All external opens go through one helper `openExternal(url)` that:
-- Creates a transient `<a href target="_blank" rel="noopener noreferrer">`, appends to `document.body`, `.click()`s, then removes it. This is the only reliable way to escape the preview iframe under a user gesture.
-- For custom-scheme URLs (`whatsapp://`) uses `window.top.location.href` with a fallback timer.
-- Never touches `api.whatsapp.com`.
+Medium/Low (dead code, unused deps, minor a11y, micro-perf) will be **listed in the report**, not auto-fixed, per your scoping.
 
-Share payload built from minyan: title, date, time, address, "need N more", deep link `https://global-minyan-connect.lovable.app/minyan/{id}` (uses published origin, not preview origin).
+## Phase 3 — Verification
 
-## Fix — Navigate
+- `bun run build` clean.
+- `bunx tsgo --noEmit` clean.
+- Playwright smoke for: sign-in → create minyan → view details → join → leave → share (assert external nav) → navigate (assert Google Maps URL) → sign out.
+- Multi-viewport screenshots saved under `/tmp/browser/audit/`.
+- Supabase linter clean (or each remaining warning explained).
 
-Rewrite `src/lib/directions.ts`:
+## Phase 4 — Final report
 
-- If `lat,lng`: `https://www.google.com/maps/dir/?api=1&destination=LAT,LNG`
-- Else address: `https://www.google.com/maps/search/?api=1&query=ENCODED`
-- Open via the same `openExternal()` helper (anchor + `_blank` + `noopener,noreferrer`).
-- Remove all `window.location.href = ...` and custom-scheme attempts (`comgooglemaps://`, `geo:`, `maps://`) — Google Maps universal links already hand off to the native app on iOS/Android when installed.
+A single markdown report including:
 
-## Deep links per Minyan
+- Issue list grouped by severity (Critical / High / Medium / Low) with file:line refs.
+- Every change made in Phase 2, with rationale.
+- Screenshots from Playwright runs.
+- Readiness scores out of 100 for **Web**, **PWA**, **Apple App Store**, **Google Play**, with the concrete blockers behind any score <90.
 
-Today the route is `/minyan?id=...`. Add a true path-param route:
+## Out of scope (per your instructions)
 
-- Create `src/routes/minyan.$id.tsx` (URL `/minyan/{id}`) that reads `id` from `Route.useParams()` and renders the same `Details` component (extracted/shared with `minyan.tsx`).
-- Keep the old `/minyan?id=...` working as a redirect to `/minyan/{id}` for back-compat.
-- Share links always use `https://global-minyan-connect.lovable.app/minyan/{id}`.
+- No visual redesign, no color/font/copy/branding changes.
+- No i18n JSON edits.
+- No new features.
+- No Medium/Low auto-fixes (listed only).
+- No DB schema changes beyond GRANTs / RLS / indexes required to close Critical/High findings.
 
-## Cleanup
+## Technical notes
 
-- Update `src/routes/minyan.tsx`, `src/routes/home.tsx`, `src/routes/map.tsx`, `src/routes/travel-city.$cityKey.tsx`, `src/routes/maps-test.tsx` to use the new helpers (signatures stay the same: `openDirections(lat,lng,label?)`, `shareAny({title,text,url})`).
-- Keep `maps-test.tsx` as a diagnostic page but simplify it to show only the two canonical URLs and an "Open external" button using the new helper.
-
-## Verification
-
-- Run the dev preview in Playwright headless and confirm clicking Share / Navigate triggers a new top-level window (`page.expect_popup()`) with the expected URL — no `ERR_BLOCKED_BY_RESPONSE`.
-- Open `/minyan/{realId}` directly and confirm the details render.
-
-## Out of scope
-
-- Capacitor build config / store submission (the helpers are compatible; actual native build is a separate task).
-- Phone-number-specific WhatsApp share (we share to "any contact", per spec).
+- DB changes go through `supabase--migration` (one migration per concern) and require your approval before running.
+- Playwright runs use the managed Supabase session env vars; if `LOVABLE_BROWSER_AUTH_STATUS` is `signed_out` I'll pause and ask you to sign in once in the preview, then resume.
+- Estimated turns: ~6–10 depending on how many Critical/High findings surface.
