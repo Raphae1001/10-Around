@@ -268,26 +268,29 @@ function Create() {
               </div>
             </Section>
 
-            <Section step="3" title="Starting in…">
-              <div className="flex gap-2 overflow-x-auto hide-scrollbar -mx-1 px-1">
-                {["Now", "+5 min", "+10 min", "+15 min", "+30 min", "+1 h"].map((t) => {
-                  const a = when === t;
-                  return (
-                    <button
-                      key={t}
-                      onClick={() => setWhen(t)}
-                      className={`shrink-0 rounded-2xl px-4 py-3 text-sm font-semibold border transition-all ${
-                        a
-                          ? "gold-gradient text-gold-foreground border-transparent shadow-glow-gold"
-                          : "bg-surface border-border text-muted-foreground"
-                      }`}
-                    >
-                      {t}
-                    </button>
-                  );
-                })}
-              </div>
-            </Section>
+            {/* "Starting in…" only for live contexts (Street/Airport). Hotel has its own schedule. */}
+            {(ctx === "Street" || ctx === "Airport") && (
+              <Section step="3" title="Starting in…">
+                <div className="flex gap-2 overflow-x-auto hide-scrollbar -mx-1 px-1">
+                  {["Now", "+5 min", "+10 min", "+15 min", "+30 min", "+1 h"].map((t) => {
+                    const a = when === t;
+                    return (
+                      <button
+                        key={t}
+                        onClick={() => setWhen(t)}
+                        className={`shrink-0 rounded-2xl px-4 py-3 text-sm font-semibold border transition-all ${
+                          a
+                            ? "gold-gradient text-gold-foreground border-transparent shadow-glow-gold"
+                            : "bg-surface border-border text-muted-foreground"
+                        }`}
+                      >
+                        {t}
+                      </button>
+                    );
+                  })}
+                </div>
+              </Section>
+            )}
 
             <Section step="4" title="How many of us are already here?">
               <div className="flex items-center justify-between rounded-2xl border border-border bg-surface p-3">
