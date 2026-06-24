@@ -169,35 +169,23 @@ function Create() {
           )}
           {ctx === "Hotel" && (
             <div className="mt-3 space-y-2">
-              <div className="grid grid-cols-2 gap-2">
-                <input
-                  value={hotelCity}
-                  onChange={(e) => setHotelCity(e.target.value)}
-                  placeholder="City"
-                  className="rounded-2xl border border-border bg-surface p-3 text-sm outline-none focus:border-gold"
-                />
-                <input
-                  value={hotelName}
-                  onChange={(e) => setHotelName(e.target.value)}
-                  placeholder="Venue (hotel, shul, apt…)"
-                  className="rounded-2xl border border-border bg-surface p-3 text-sm outline-none focus:border-gold"
-                />
-              </div>
-              <input
-                value={hotelSpot}
-                onChange={(e) => setHotelSpot(e.target.value)}
-                placeholder="Exact spot (Lobby, room 412, 3rd floor…)"
-                className="w-full rounded-2xl border border-border bg-surface p-3 text-sm outline-none focus:border-gold"
+              <AddressAutocomplete
+                value={hotelAddress}
+                onChange={setHotelAddress}
+                onPick={setHotelPick}
+                placeholder="Address (hotel, shul, apartment…)"
               />
+              <p className="text-[11px] text-muted-foreground">Type a place — pick it from the suggestions to lock the exact spot on the map.</p>
             </div>
           )}
           {ctx === "Travel" && (
             <div className="mt-3 space-y-2">
-              <input
+              <AddressAutocomplete
                 value={tripCity}
-                onChange={(e) => setTripCity(e.target.value)}
+                onChange={setTripCity}
+                onPick={setTripPick}
                 placeholder="Destination city"
-                className="w-full rounded-2xl border border-border bg-surface p-3 text-sm outline-none focus:border-gold"
+                citiesOnly
               />
               <div className="grid grid-cols-2 gap-2">
                 <div>
@@ -219,9 +207,24 @@ function Create() {
                   />
                 </div>
               </div>
+              {tripPick?.city && tripDateStart && tripDateEnd && (
+                <div className="rounded-2xl border border-gold/30 bg-gold/5 p-3 flex items-center gap-3">
+                  <Users className="h-4 w-4 text-gold" />
+                  <div className="text-xs leading-snug">
+                    {tripPeers === null ? (
+                      <>Checking who else is heading to <strong>{tripPick.city}</strong>…</>
+                    ) : tripPeers === 0 ? (
+                      <>You'd be the first traveler registered in <strong>{tripPick.city}</strong> for these dates.</>
+                    ) : (
+                      <><strong className="text-foreground">{tripPeers}</strong> other traveler{tripPeers > 1 ? "s" : ""} already in <strong>{tripPick.city}</strong> on overlapping dates — together: <strong>{tripPeers + 1}/10</strong>.</>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </Section>
+
 
         {/* 1b. SCHEDULE — Hotel & Travel only */}
         {(ctx === "Hotel" || ctx === "Travel") && (
