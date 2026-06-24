@@ -3,17 +3,47 @@ import { useTranslation } from "react-i18next";
 import { MobileFrame } from "@/components/MobileFrame";
 import { Check, Navigation2, Share2, BookOpen, Footprints } from "lucide-react";
 import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
-export const Route = createFileRoute("/success")({ component: Success });
+export const Route = createFileRoute("/success")({
+  validateSearch: (s: Record<string, unknown>) => ({ id: typeof s.id === "string" ? s.id : undefined }),
+  component: Success,
+});
+
+const NEEDED = 10;
 
 function Success() {
   const { t } = useTranslation();
-  const [count, setCount] = useState(9);
+  const { id } = Route.useSearch();
+  const [present, setPresent] = useState<number | null>(null);
+  const [address, setAddress] = useState<string | null>(null);
+  const [prayer, setPrayer] = useState<string | null>(null);
+
   useEffect(() => {
-    const tt = setTimeout(() => setCount(10), 600);
-    return () => clearTimeout(tt);
-  }, []);
-  const confirmed = count === 10;
+    if (!id) return;
+    let cancelled = false;
+    async function load() {
+      const { data } = await supabase
+        .from("minyanim")
+        .select("present_count,address,prayer")
+        .eq("id", id!)
+        .maybeSingle();
+      if (cancelled || !data) return;
+      setPresent((data as any).present_count ?? 0);
+      setAddress((data as any).address ?? null);
+      setPrayer((data as any).prayer ?? null);
+    }
+    load();
+    const ch = supabase.channel(`success-${id}`)
+      .on("postgres_changes", { event: "*", schema: "public", table: "minyanim", filter: `id=eq.${id}` },
+        (payload) => { if (payload.new) setPresent(((payload.new as any).present_count ?? 0)); })
+      .subscribe();
+    return () => { cancelled = true; supabase.removeChannel(ch); };
+  }, [id]);
+
+  const count = present ?? 0;
+  const confirmed = count >= NEEDED;
+  const prayerLabel = prayer ? t(`prayer.${prayer}`, { defaultValue: prayer }) : "";
 
   return (
     <MobileFrame bg="navy" showNav={false}>
@@ -32,7 +62,7 @@ function Success() {
 
         <div className="relative mt-8">
           <div className="font-display text-6xl text-gold leading-none count-up" key={count}>
-            {count}<span className="text-white/40">/10</span>
+            {count}<span className="text-white/40">/{NEEDED}</span>
           </div>
           <div className="text-xs uppercase tracking-[0.3em] text-white/50 mt-3">
             {confirmed ? t("success.confirmed") : t("success.oneMoreNeeded")}
@@ -43,30 +73,21 @@ function Success() {
           {confirmed ? t("success.communityFormed") : t("success.almostThere")}
         </h1>
         <p className="text-sm text-white/70 mt-3 max-w-xs leading-relaxed">
-          {confirmed ? t("success.confirmedBody") : t("success.almostBody")}
+          {address && prayerLabel
+            ? `${prayerLabel} · ${address}`
+            : confirmed ? t("success.confirmedBody") : t("success.almostBody")}
         </p>
 
-        {confirmed && (
+        {count > 0 && (
           <div className="mt-8 flex items-center -space-x-2">
-            {["D","Y","M","A","S","L","R","B","N","C"].map((p, i) => (
+            {Array.from({ length: Math.min(count, NEEDED) }).map((_, i) => (
               <div key={i} className={`h-9 w-9 rounded-full border-2 border-navy flex items-center justify-center text-xs font-bold ${i % 2 ? "bg-sky/40 text-navy" : "gold-gradient text-navy"}`}>
-                {p}
+                •
               </div>
             ))}
           </div>
         )}
       </div>
-
-      {confirmed && (
-        <div className="relative mx-6 mt-6 rounded-2xl bg-white/5 border border-white/10 p-3 flex items-center gap-3">
-          <Footprints className="h-4 w-4 text-gold shrink-0" />
-          <div className="text-xs text-white/80 flex-1">{t("success.walking", { count: 3 })}</div>
-          <span className="relative inline-flex h-2 w-2">
-            <span className="absolute inset-0 rounded-full bg-success opacity-60 live-pulse-ring" />
-            <span className="relative inline-block h-2 w-2 rounded-full bg-success" />
-          </span>
-        </div>
-      )}
 
       <div className="px-6 pb-10 pt-6 space-y-3 relative">
         {confirmed && (
@@ -74,7 +95,7 @@ function Success() {
             <BookOpen className="h-5 w-5" /> {t("success.openSiddur")}
           </Link>
         )}
-        <Link to="/minyan" className={`flex items-center justify-center gap-2 w-full font-semibold py-4 rounded-2xl ${confirmed ? "bg-white/10 text-white border border-white/15" : "gold-gradient text-gold-foreground shadow-glow-gold"}`}>
+        <Link to="/minyan" search={id ? { id } : undefined} className={`flex items-center justify-center gap-2 w-full font-semibold py-4 rounded-2xl ${confirmed ? "bg-white/10 text-white border border-white/15" : "gold-gradient text-gold-foreground shadow-glow-gold"}`}>
           <Navigation2 className="h-5 w-5" /> {t("success.getDirections")}
         </Link>
         <Link to="/share" className="flex items-center justify-center gap-2 w-full text-white/70 text-sm py-2">
