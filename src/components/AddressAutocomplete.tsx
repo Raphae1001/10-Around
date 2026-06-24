@@ -87,18 +87,19 @@ function Inner({ value, onChange, onPick, placeholder, citiesOnly, className }: 
     };
   }, [value, placesLib, citiesOnly]);
 
-  async function handlePick(s: google.maps.places.AutocompleteSuggestion) {
+  async function handlePick(s: any) {
     if (!s.placePrediction) return;
     const place = s.placePrediction.toPlace();
     await place.fetchFields({ fields: ["formattedAddress", "location", "addressComponents", "displayName"] });
     const addr = place.formattedAddress ?? place.displayName ?? s.placePrediction.text?.text ?? "";
-    const comps = place.addressComponents ?? [];
+    const comps: any[] = place.addressComponents ?? [];
     const city =
-      comps.find((c) => c.types.includes("locality"))?.longText ??
-      comps.find((c) => c.types.includes("postal_town"))?.longText ??
-      comps.find((c) => c.types.includes("administrative_area_level_2"))?.longText ??
+      comps.find((c: any) => c.types.includes("locality"))?.longText ??
+      comps.find((c: any) => c.types.includes("postal_town"))?.longText ??
+      comps.find((c: any) => c.types.includes("administrative_area_level_2"))?.longText ??
       null;
-    const country = comps.find((c) => c.types.includes("country"))?.longText ?? null;
+    const country = comps.find((c: any) => c.types.includes("country"))?.longText ?? null;
+
     onChange(addr);
     onPick({
       address: addr,
