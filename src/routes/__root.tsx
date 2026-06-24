@@ -131,19 +131,18 @@ function RootComponent() {
   useEffect(() => { applySavedLang(); }, []);
   useEffect(() => {
     // Fire-and-forget analytics page_view on every route change. No-ops
-    // when analytics is disabled or not configured.
+    // when analytics is disabled or not configured. Lazy-imported so the
+    // analytics module never blocks initial bundle.
+    let unsub: (() => void) | undefined;
     let cancelled = false;
     void import("@/lib/analytics").then(({ pageView }) => {
       if (cancelled) return;
       pageView(router.state.location.pathname);
-      const unsub = router.subscribe("onResolved", () => {
+      unsub = router.subscribe("onResolved", () => {
         pageView(router.state.location.pathname);
       });
-      // store cleanup
-      (cleanup as { fn?: () => void }).fn = unsub;
     });
-    const cleanup: { fn?: () => void } = {};
-    return () => { cancelled = true; cleanup.fn?.(); };
+    return () => { cancelled = true; unsub?.(); };
   }, [router]);
 
   return (
