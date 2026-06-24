@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "Read peers in same city overlapping" ON public.travel_presence;
