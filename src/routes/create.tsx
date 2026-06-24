@@ -428,6 +428,7 @@ function Create() {
         });
         if (error) throw error;
 
+        void import("@/lib/analytics").then(({ track }) => track("create_minyan", { type: "travel" }));
         toast.success(`Created in ${cityLabel}`);
         navigate({ to: "/travel-city/$cityKey", params: { cityKey } });
       } catch (e) {
@@ -533,6 +534,7 @@ function Create() {
         .from("minyan_participants")
         .insert({ minyan_id: created.id, user_id: user.id });
 
+      void import("@/lib/analytics").then(({ track }) => track("create_minyan", { type: ctx.toLowerCase(), prayer: prayer.toLowerCase(), scheduled: Boolean(scheduled_at) }));
       toast.success("Minyan published!");
       navigate({ to: "/success", search: { id: created.id } });
     } catch (e) {
