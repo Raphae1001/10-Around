@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import { BottomNav } from "./BottomNav";
+import { LegalFooter } from "./LegalFooter";
 
 interface Props {
   children: ReactNode;
@@ -19,6 +20,7 @@ export function MobileFrame({ children, showNav = true, bg = "default", classNam
       >
         <div className="flex-1 flex flex-col">{children}</div>
         {showNav && <BottomNav />}
+        <LegalFooter />
       </div>
     </div>
   );
