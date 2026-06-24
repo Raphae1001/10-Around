@@ -249,8 +249,8 @@ function Create() {
         </Section>
 
 
-        {/* 1b. SCHEDULE — Hotel & Travel only */}
-        {(ctx === "Hotel" || ctx === "Travel") && (
+        {/* 1b. SCHEDULE — Hotel only (Travel uses trip dates) */}
+        {ctx === "Hotel" && (
           <Section step="★" title="Schedule the minyan (date & time)">
             <div className="grid grid-cols-2 gap-2">
               <input
@@ -272,106 +272,106 @@ function Create() {
           </Section>
         )}
 
-        {/* 2. PRAYER */}
-        <Section step="2" title="Which prayer?">
-          <div className="grid grid-cols-3 gap-2">
-            {prayers.map(({ name, icon: Icon }) => {
-              const active = prayer === name;
-              return (
+        {/* PRAYER / WHEN / HOW MANY / NUSACH — hidden for Travel */}
+        {ctx !== "Travel" && (
+          <>
+            <Section step="2" title="Which prayer?">
+              <div className="grid grid-cols-3 gap-2">
+                {prayers.map(({ name, icon: Icon }) => {
+                  const active = prayer === name;
+                  return (
+                    <button
+                      key={name}
+                      onClick={() => setPrayer(name)}
+                      className={`flex flex-col items-center gap-2 py-4 rounded-2xl border transition-all ${
+                        active ? "border-gold bg-gold/10 shadow-soft" : "border-border bg-surface"
+                      }`}
+                    >
+                      <Icon className={`h-5 w-5 ${active ? "text-gold" : "text-muted-foreground"}`} />
+                      <span className="text-xs font-semibold">{name}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </Section>
+
+            <Section step="3" title="Starting in…">
+              <div className="flex gap-2 overflow-x-auto hide-scrollbar -mx-1 px-1">
+                {["Now", "+5 min", "+10 min", "+15 min", "+30 min", "+1 h"].map((t) => {
+                  const a = when === t;
+                  return (
+                    <button
+                      key={t}
+                      onClick={() => setWhen(t)}
+                      className={`shrink-0 rounded-2xl px-4 py-3 text-sm font-semibold border transition-all ${
+                        a
+                          ? "gold-gradient text-gold-foreground border-transparent shadow-glow-gold"
+                          : "bg-surface border-border text-muted-foreground"
+                      }`}
+                    >
+                      {t}
+                    </button>
+                  );
+                })}
+              </div>
+            </Section>
+
+            <Section step="4" title="How many of us are already here?">
+              <div className="flex items-center justify-between rounded-2xl border border-border bg-surface p-3">
                 <button
-                  key={name}
-                  onClick={() => setPrayer(name)}
-                  className={`flex flex-col items-center gap-2 py-4 rounded-2xl border transition-all ${
-                    active ? "border-gold bg-gold/10 shadow-soft" : "border-border bg-surface"
-                  }`}
+                  onClick={() => setPresent(Math.max(1, present - 1))}
+                  className="h-10 w-10 rounded-xl bg-muted flex items-center justify-center active:scale-95"
+                  aria-label="Less"
                 >
-                  <Icon className={`h-5 w-5 ${active ? "text-gold" : "text-muted-foreground"}`} />
-                  <span className="text-xs font-semibold">{name}</span>
+                  <Minus className="h-4 w-4" />
                 </button>
-              );
-            })}
-          </div>
-        </Section>
-
-        {/* 3. WHEN */}
-        <Section step="3" title="Starting in…">
-          <div className="flex gap-2 overflow-x-auto hide-scrollbar -mx-1 px-1">
-            {(ctx === "Travel" ? ["Morning", "Afternoon", "Evening", "Custom"] : ["Now", "+5 min", "+10 min", "+15 min", "+30 min", "+1 h"]).map((t) => {
-              const a = when === t;
-              return (
+                <div className="text-center">
+                  <div className="font-display text-3xl leading-none">{present}</div>
+                  <div className="text-[10px] uppercase tracking-wider text-muted-foreground mt-1">already here</div>
+                </div>
                 <button
-                  key={t}
-                  onClick={() => setWhen(t)}
-                  className={`shrink-0 rounded-2xl px-4 py-3 text-sm font-semibold border transition-all ${
-                    a
-                      ? "gold-gradient text-gold-foreground border-transparent shadow-glow-gold"
-                      : "bg-surface border-border text-muted-foreground"
-                  }`}
+                  onClick={() => setPresent(present + 1)}
+                  className="h-10 w-10 rounded-xl gold-gradient text-gold-foreground flex items-center justify-center active:scale-95"
+                  aria-label="More"
                 >
-                  {t}
+                  <Plus className="h-4 w-4" />
                 </button>
-              );
-            })}
-          </div>
-        </Section>
+              </div>
+              <p className="text-[11px] text-muted-foreground mt-2">
+                You + anyone already with you. A minyan needs 10, but you can still join a full one.
+              </p>
+            </Section>
 
-        {/* 4. HOW MANY */}
-        <Section step="4" title="How many of us are already here?">
-          <div className="flex items-center justify-between rounded-2xl border border-border bg-surface p-3">
-            <button
-              onClick={() => setPresent(Math.max(1, present - 1))}
-              className="h-10 w-10 rounded-xl bg-muted flex items-center justify-center active:scale-95"
-              aria-label="Less"
-            >
-              <Minus className="h-4 w-4" />
-            </button>
-            <div className="text-center">
-              <div className="font-display text-3xl leading-none">{present}</div>
-              <div className="text-[10px] uppercase tracking-wider text-muted-foreground mt-1">already here</div>
-            </div>
-            <button
-              onClick={() => setPresent(present + 1)}
-              className="h-10 w-10 rounded-xl gold-gradient text-gold-foreground flex items-center justify-center active:scale-95"
-              aria-label="More"
-            >
-              <Plus className="h-4 w-4" />
-            </button>
-          </div>
-          <p className="text-[11px] text-muted-foreground mt-2">
-            You + anyone already with you. A minyan needs 10, but you can still join a full one.
-          </p>
-        </Section>
+            <Section step="5" title="Nusach">
+              <div className="flex gap-2 flex-wrap">
+                {["Any", "Ashkenaz", "Sephard", "Nusach Ari", "Edot Mizrach"].map((n) => {
+                  const a = nusach === n;
+                  return (
+                    <button
+                      key={n}
+                      onClick={() => setNusach(n)}
+                      className={`rounded-full px-3.5 py-2 text-xs font-medium border ${
+                        a ? "bg-foreground text-background border-foreground" : "bg-surface border-border"
+                      }`}
+                    >
+                      {n}
+                    </button>
+                  );
+                })}
+              </div>
+            </Section>
+          </>
+        )}
 
-        {/* 5. NUSACH */}
-        <Section step="5" title="Nusach">
-          <div className="flex gap-2 flex-wrap">
-            {["Any", "Ashkenaz", "Sephard", "Nusach Ari", "Edot Mizrach"].map((n) => {
-              const a = nusach === n;
-              return (
-                <button
-                  key={n}
-                  onClick={() => setNusach(n)}
-                  className={`rounded-full px-3.5 py-2 text-xs font-medium border ${
-                    a ? "bg-foreground text-background border-foreground" : "bg-surface border-border"
-                  }`}
-                >
-                  {n}
-                </button>
-              );
-            })}
-          </div>
-        </Section>
-
-        {/* 6. COMMENT */}
-        <Section step="6" title="Comment (optional)">
+        <Section step={ctx === "Travel" ? "2" : "6"} title={ctx === "Travel" ? "A note for fellow travelers (optional)" : "Comment (optional)"}>
           <textarea
-            rows={2}
+            rows={ctx === "Travel" ? 3 : 2}
             value={comment}
             onChange={(e) => setComment(e.target.value)}
-            placeholder="Kaddish · Yahrzeit · bring tefillin…"
+            placeholder={ctx === "Travel" ? "Where you'll stay, your shul preference, kosher tips…" : "Kaddish · Yahrzeit · bring tefillin…"}
             className="w-full rounded-2xl border border-border bg-surface p-3 text-sm outline-none focus:border-gold"
           />
-          <p className="text-[10px] text-muted-foreground mt-1">Visible to everyone notified.</p>
+          <p className="text-[10px] text-muted-foreground mt-1">{ctx === "Travel" ? "Shared in the city chat with other travelers." : "Visible to everyone notified."}</p>
         </Section>
 
         {/* Preview */}
