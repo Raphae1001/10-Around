@@ -34,6 +34,7 @@ function ChatsPage() {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [threads, setThreads] = useState<ThreadRow[] | null>(null);
+  const [cities, setCities] = useState<TravelCity[] | null>(null);
 
   useEffect(() => {
     if (!authLoading && !user) navigate({ to: "/auth" });
@@ -42,28 +43,30 @@ function ChatsPage() {
   useEffect(() => {
     if (!user) return;
     let cancelled = false;
-    (async () => {
-      const { data, error } = await supabase.rpc("my_chat_threads");
-      if (!cancelled && !error) setThreads((data ?? []) as ThreadRow[]);
-      if (error) setThreads([]);
-    })();
+    const loadAll = async () => {
+      const [{ data: t }, { data: c }] = await Promise.all([
+        supabase.rpc("my_chat_threads"),
+        supabase.rpc("my_travel_cities"),
+      ]);
+      if (cancelled) return;
+      setThreads((t ?? []) as ThreadRow[]);
+      setCities((c ?? []) as TravelCity[]);
+    };
+    loadAll();
 
     const channel = supabase
       .channel("chats-list")
-      .on("postgres_changes", { event: "*", schema: "public", table: "chat_messages" }, async () => {
-        const { data } = await supabase.rpc("my_chat_threads");
-        if (!cancelled) setThreads((data ?? []) as ThreadRow[]);
-      })
-      .on("postgres_changes", { event: "*", schema: "public", table: "chat_thread_members" }, async () => {
-        const { data } = await supabase.rpc("my_chat_threads");
-        if (!cancelled) setThreads((data ?? []) as ThreadRow[]);
-      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "chat_messages" }, loadAll)
+      .on("postgres_changes", { event: "*", schema: "public", table: "chat_thread_members" }, loadAll)
+      .on("postgres_changes", { event: "*", schema: "public", table: "travel_presence" }, loadAll)
       .subscribe();
     return () => {
       cancelled = true;
       supabase.removeChannel(channel);
     };
   }, [user]);
+
+  const fmt = (s: string) => new Date(s).toLocaleDateString(undefined, { day: "2-digit", month: "short" });
 
   return (
     <MobileFrame>
