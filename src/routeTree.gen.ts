@@ -23,6 +23,7 @@ import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as MinyanRouteImport } from './routes/minyan'
+import { Route as MapsTestRouteImport } from './routes/maps-test'
 import { Route as MapRouteImport } from './routes/map'
 import { Route as KaddishRouteImport } from './routes/kaddish'
 import { Route as HomeRouteImport } from './routes/home'
@@ -105,6 +106,11 @@ const MinyanRoute = MinyanRouteImport.update({
   path: '/minyan',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MapsTestRoute = MapsTestRouteImport.update({
+  id: '/maps-test',
+  path: '/maps-test',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MapRoute = MapRouteImport.update({
   id: '/map',
   path: '/map',
@@ -172,6 +178,7 @@ export interface FileRoutesByFullPath {
   '/home': typeof HomeRoute
   '/kaddish': typeof KaddishRoute
   '/map': typeof MapRoute
+  '/maps-test': typeof MapsTestRoute
   '/minyan': typeof MinyanRoute
   '/notifications': typeof NotificationsRoute
   '/onboarding': typeof OnboardingRoute
@@ -199,6 +206,7 @@ export interface FileRoutesByTo {
   '/home': typeof HomeRoute
   '/kaddish': typeof KaddishRoute
   '/map': typeof MapRoute
+  '/maps-test': typeof MapsTestRoute
   '/minyan': typeof MinyanRoute
   '/notifications': typeof NotificationsRoute
   '/onboarding': typeof OnboardingRoute
@@ -227,6 +235,7 @@ export interface FileRoutesById {
   '/home': typeof HomeRoute
   '/kaddish': typeof KaddishRoute
   '/map': typeof MapRoute
+  '/maps-test': typeof MapsTestRoute
   '/minyan': typeof MinyanRoute
   '/notifications': typeof NotificationsRoute
   '/onboarding': typeof OnboardingRoute
@@ -256,6 +265,7 @@ export interface FileRouteTypes {
     | '/home'
     | '/kaddish'
     | '/map'
+    | '/maps-test'
     | '/minyan'
     | '/notifications'
     | '/onboarding'
@@ -283,6 +293,7 @@ export interface FileRouteTypes {
     | '/home'
     | '/kaddish'
     | '/map'
+    | '/maps-test'
     | '/minyan'
     | '/notifications'
     | '/onboarding'
@@ -310,6 +321,7 @@ export interface FileRouteTypes {
     | '/home'
     | '/kaddish'
     | '/map'
+    | '/maps-test'
     | '/minyan'
     | '/notifications'
     | '/onboarding'
@@ -338,6 +350,7 @@ export interface RootRouteChildren {
   HomeRoute: typeof HomeRoute
   KaddishRoute: typeof KaddishRoute
   MapRoute: typeof MapRoute
+  MapsTestRoute: typeof MapsTestRoute
   MinyanRoute: typeof MinyanRoute
   NotificationsRoute: typeof NotificationsRoute
   OnboardingRoute: typeof OnboardingRoute
@@ -455,6 +468,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MinyanRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/maps-test': {
+      id: '/maps-test'
+      path: '/maps-test'
+      fullPath: '/maps-test'
+      preLoaderRoute: typeof MapsTestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/map': {
       id: '/map'
       path: '/map'
@@ -546,6 +566,7 @@ const rootRouteChildren: RootRouteChildren = {
   HomeRoute: HomeRoute,
   KaddishRoute: KaddishRoute,
   MapRoute: MapRoute,
+  MapsTestRoute: MapsTestRoute,
   MinyanRoute: MinyanRoute,
   NotificationsRoute: NotificationsRoute,
   OnboardingRoute: OnboardingRoute,
