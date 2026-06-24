@@ -52,6 +52,7 @@ function Profile() {
       setProfile({ ...profile, backup_mode: !next });
       toast.error(t("profile.backupUpdateError"), { description: error.message });
     } else {
+      void import("@/lib/analytics").then(({ track }) => track("update_profile", { field: "backup_mode" }));
       toast.success(next ? t("profile.backupOnToast") : t("profile.backupOffToast"));
     }
   }
@@ -60,6 +61,7 @@ function Profile() {
     // Full reload after sign-out: clears every in-memory cache (TanStack
     // Query, realtime channels, route data) and prevents the back button
     // from restoring authenticated shells from cached hydration.
+    void import("@/lib/analytics").then(({ track }) => track("sign_out"));
     try { await supabase.auth.signOut(); } catch { /* ignore — we reload anyway */ }
     if (typeof window !== "undefined") {
       window.location.assign("/auth");
