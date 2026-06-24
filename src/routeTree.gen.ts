@@ -33,6 +33,7 @@ import { Route as ChatRouteImport } from './routes/chat'
 import { Route as BackupRouteImport } from './routes/backup'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as TravelCityCityKeyRouteImport } from './routes/travel-city.$cityKey'
 
 const TrustRoute = TrustRouteImport.update({
   id: '/trust',
@@ -154,6 +155,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TravelCityCityKeyRoute = TravelCityCityKeyRouteImport.update({
+  id: '/travel-city/$cityKey',
+  path: '/travel-city/$cityKey',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -180,6 +186,7 @@ export interface FileRoutesByFullPath {
   '/travel': typeof TravelRoute
   '/traveler': typeof TravelerRoute
   '/trust': typeof TrustRoute
+  '/travel-city/$cityKey': typeof TravelCityCityKeyRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -206,6 +213,7 @@ export interface FileRoutesByTo {
   '/travel': typeof TravelRoute
   '/traveler': typeof TravelerRoute
   '/trust': typeof TrustRoute
+  '/travel-city/$cityKey': typeof TravelCityCityKeyRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -233,6 +241,7 @@ export interface FileRoutesById {
   '/travel': typeof TravelRoute
   '/traveler': typeof TravelerRoute
   '/trust': typeof TrustRoute
+  '/travel-city/$cityKey': typeof TravelCityCityKeyRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -261,6 +270,7 @@ export interface FileRouteTypes {
     | '/travel'
     | '/traveler'
     | '/trust'
+    | '/travel-city/$cityKey'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -287,6 +297,7 @@ export interface FileRouteTypes {
     | '/travel'
     | '/traveler'
     | '/trust'
+    | '/travel-city/$cityKey'
   id:
     | '__root__'
     | '/'
@@ -313,6 +324,7 @@ export interface FileRouteTypes {
     | '/travel'
     | '/traveler'
     | '/trust'
+    | '/travel-city/$cityKey'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -340,6 +352,7 @@ export interface RootRouteChildren {
   TravelRoute: typeof TravelRoute
   TravelerRoute: typeof TravelerRoute
   TrustRoute: typeof TrustRoute
+  TravelCityCityKeyRoute: typeof TravelCityCityKeyRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -512,6 +525,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/travel-city/$cityKey': {
+      id: '/travel-city/$cityKey'
+      path: '/travel-city/$cityKey'
+      fullPath: '/travel-city/$cityKey'
+      preLoaderRoute: typeof TravelCityCityKeyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -540,6 +560,7 @@ const rootRouteChildren: RootRouteChildren = {
   TravelRoute: TravelRoute,
   TravelerRoute: TravelerRoute,
   TrustRoute: TrustRoute,
+  TravelCityCityKeyRoute: TravelCityCityKeyRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

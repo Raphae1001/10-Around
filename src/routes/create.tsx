@@ -446,17 +446,8 @@ function Create() {
         });
         if (error) throw error;
 
-        // Find the city chat thread we were just added to and open it
-        const { data: th } = await supabase
-          .from("chat_threads")
-          .select("id")
-          .eq("kind", "travel_city")
-          .eq("city_key", cityKey)
-          .maybeSingle();
-
         toast.success(`You're registered in ${tripPick.city}!`);
-        if (th?.id) navigate({ to: "/chat", search: { id: th.id } });
-        else navigate({ to: "/chats" });
+        navigate({ to: "/travel-city/$cityKey", params: { cityKey } });
       } catch (e) {
         toast.error("Could not register", { description: (e as Error).message });
       } finally {
