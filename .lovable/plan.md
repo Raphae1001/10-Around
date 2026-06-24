@@ -1,33 +1,57 @@
-## What you're seeing on the screenshots
+## Goal
 
-**Google Maps & WhatsApp "blocked" pages** — these are NOT bugs in the app. The error `ERR_BLOCKED_BY_RESPONSE` means **your network / browser / extension is blocking those domains** (`www.google.com` and `api.whatsapp.com`). The URLs the app generates are 100% correct (you can see the parameters are valid in your address bar). Same links open normally on a phone or any unrestricted network.
+Make Share and Navigate always open in a real external app/tab — never inside the Lovable preview iframe / Capacitor webview — and give every Minyan its own shareable URL.
 
-### What to check on your side (nothing to send me)
-1. Try the same link on your **phone (mobile data, not WiFi)** — it should open Google Maps / WhatsApp directly.
-2. If the phone works but the laptop doesn't → it's your **WiFi / company network / DNS / parental control / ad-blocker / privacy extension** blocking Google + WhatsApp domains.
-3. Common culprits to disable and retry: **uBlock Origin, AdGuard, Privacy Badger, Brave Shields, NextDNS, Pi-hole, school/office firewall, VPN with strict filtering**.
-4. If you only need it to work for users on normal networks → **it already works**. No code fix possible from our side; we can't bypass a network-level block.
+## Root cause
 
-## What I will change in the app (fixes to your actual report)
+The buttons themselves don't use `<iframe>` in our code. The `ERR_BLOCKED_BY_RESPONSE` comes from the app running inside the Lovable preview iframe: calls like `window.location.href = "https://maps.google.com/..."` and even some `window.open(...)` end up navigating the iframe, and WhatsApp / Google Maps refuse to be framed.
 
-### 1. Cancel button on the Home "Your destinations" cards
-Right now you can only cancel from inside the city page. I'll add a small **trash icon** on each destination card on `/home` (next to the chat icon) that prompts for confirmation, deletes your `travel_presence` for that city, and refreshes the list.
+The current `openDirections` is the main offender — it sets `window.location.href` for iOS/Android branches. `shareAny` also falls back to `window.open(wa.me)` which can be blocked by the iframe sandbox.
 
-### 2. WhatsApp share — switch to a more compatible URL
-- Replace `https://api.whatsapp.com/send?text=...` and `https://wa.me/?text=...` with the **native share sheet first** (`navigator.share` on mobile = opens the OS share menu including WhatsApp, Messages, Telegram, Mail…), and fall back to `wa.me` only on desktop where native share is unavailable.
-- This avoids the `api.whatsapp.com` block you saw and gives users every share target their phone supports.
+## Fix — Share
 
-### 3. Google Maps directions — add a safer fallback
-- Keep the universal `google.com/maps/dir/?...` URL (works for 99% of users).
-- On mobile, attempt the **native scheme** first (`comgooglemaps://` on iOS if installed, otherwise `geo:` on Android, otherwise Apple Maps `maps://`), so users never hit `www.google.com` in their browser at all.
-- Still nothing we can do if the user's network blocks Google entirely — but most users will now bypass the browser hit.
+Rewrite `src/lib/share.ts`:
 
-## Files to edit
-- `src/routes/home.tsx` — add trash icon + cancel handler on each destination card.
-- `src/lib/share.ts` — prefer native share, wa.me fallback only on desktop.
-- `src/lib/directions.ts` — try native maps scheme on mobile, then universal URL fallback.
+1. **Capacitor native share** first (when `Capacitor.isNativePlatform()`), via `@capacitor/share`.
+2. **`navigator.share(...)`** when available (mobile browsers, Safari, modern Chrome desktop).
+3. **WhatsApp fallback** — `wa.me/?text=...` on desktop, `whatsapp://send?text=...` on mobile.
+4. **Final fallback** — copy to clipboard + toast showing the copied link.
 
-## What I need from you
-Nothing to send. Just confirm:
-- **a)** test one of those blocked links on your phone with mobile data — does it open?
-- **b)** should I go ahead with the 3 app changes above?
+All external opens go through one helper `openExternal(url)` that:
+- Creates a transient `<a href target="_blank" rel="noopener noreferrer">`, appends to `document.body`, `.click()`s, then removes it. This is the only reliable way to escape the preview iframe under a user gesture.
+- For custom-scheme URLs (`whatsapp://`) uses `window.top.location.href` with a fallback timer.
+- Never touches `api.whatsapp.com`.
+
+Share payload built from minyan: title, date, time, address, "need N more", deep link `https://global-minyan-connect.lovable.app/minyan/{id}` (uses published origin, not preview origin).
+
+## Fix — Navigate
+
+Rewrite `src/lib/directions.ts`:
+
+- If `lat,lng`: `https://www.google.com/maps/dir/?api=1&destination=LAT,LNG`
+- Else address: `https://www.google.com/maps/search/?api=1&query=ENCODED`
+- Open via the same `openExternal()` helper (anchor + `_blank` + `noopener,noreferrer`).
+- Remove all `window.location.href = ...` and custom-scheme attempts (`comgooglemaps://`, `geo:`, `maps://`) — Google Maps universal links already hand off to the native app on iOS/Android when installed.
+
+## Deep links per Minyan
+
+Today the route is `/minyan?id=...`. Add a true path-param route:
+
+- Create `src/routes/minyan.$id.tsx` (URL `/minyan/{id}`) that reads `id` from `Route.useParams()` and renders the same `Details` component (extracted/shared with `minyan.tsx`).
+- Keep the old `/minyan?id=...` working as a redirect to `/minyan/{id}` for back-compat.
+- Share links always use `https://global-minyan-connect.lovable.app/minyan/{id}`.
+
+## Cleanup
+
+- Update `src/routes/minyan.tsx`, `src/routes/home.tsx`, `src/routes/map.tsx`, `src/routes/travel-city.$cityKey.tsx`, `src/routes/maps-test.tsx` to use the new helpers (signatures stay the same: `openDirections(lat,lng,label?)`, `shareAny({title,text,url})`).
+- Keep `maps-test.tsx` as a diagnostic page but simplify it to show only the two canonical URLs and an "Open external" button using the new helper.
+
+## Verification
+
+- Run the dev preview in Playwright headless and confirm clicking Share / Navigate triggers a new top-level window (`page.expect_popup()`) with the expected URL — no `ERR_BLOCKED_BY_RESPONSE`.
+- Open `/minyan/{realId}` directly and confirm the details render.
+
+## Out of scope
+
+- Capacitor build config / store submission (the helpers are compatible; actual native build is a separate task).
+- Phone-number-specific WhatsApp share (we share to "any contact", per spec).
