@@ -14,7 +14,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { MapPin, Users, Plane, Building2, Plus, Clock, Sunrise, Sun, Moon, Check, Crosshair, Loader2, Globe2, MessageCircle } from "lucide-react";
+import { MapPin, Users, Plane, Building2, Plus, Clock, Sunrise, Sun, Moon, Check, Crosshair, Loader2, Globe2, MessageCircle, Trash2 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useGeolocation } from "@/hooks/use-geolocation";
 import { joinMinyan, useNearbyMinyanim, type MinyanRow } from "@/hooks/use-minyanim";
@@ -57,12 +57,31 @@ function Home() {
   }, [user, minyanim]);
 
   // Load user's travel destinations
-  useEffect(() => {
+  const loadTravelCities = () => {
     if (!user) return;
     supabase.rpc("my_travel_cities").then(({ data }) => {
-      if (data) setTravelCities(data as typeof travelCities);
+      setTravelCities((data ?? []) as typeof travelCities);
     });
+  };
+  useEffect(() => {
+    loadTravelCities();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
+
+  const cancelTravelCity = async (cityKey: string, label: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!user) return;
+    if (!confirm(`Cancel your trip to ${label}?`)) return;
+    const { error } = await supabase
+      .from("travel_presence")
+      .delete()
+      .eq("user_id", user.id)
+      .eq("city_key", cityKey);
+    if (error) { toast.error(error.message); return; }
+    toast.success("Trip cancelled");
+    setTravelCities((s) => s.filter((c) => c.city_key !== cityKey));
+  };
 
   const confirmJoin = async () => {
     if (!pending || !user) return;
@@ -156,21 +175,32 @@ function Home() {
             {travelCities.map((c) => {
               const fmt = (s: string) => new Date(s).toLocaleDateString(undefined, { day: "2-digit", month: "short" });
               return (
-                <Link
+                <div
                   key={c.city_key}
-                  to="/travel-city/$cityKey"
-                  params={{ cityKey: c.city_key }}
                   className="flex items-center gap-3 rounded-2xl border border-border bg-surface p-3 hover:border-gold/60"
                 >
-                  <div className="h-10 w-10 rounded-2xl gold-gradient text-gold-foreground flex items-center justify-center shrink-0">
-                    <Globe2 className="h-5 w-5" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-sm font-semibold truncate">{c.city_label}</div>
-                    <div className="text-[11px] text-muted-foreground">{fmt(c.date_start)} → {fmt(c.date_end)} · {c.peer_count} traveler{c.peer_count === 1 ? "" : "s"}</div>
-                  </div>
-                  {c.thread_id && <MessageCircle className="h-4 w-4 text-gold shrink-0" />}
-                </Link>
+                  <Link
+                    to="/travel-city/$cityKey"
+                    params={{ cityKey: c.city_key }}
+                    className="flex-1 min-w-0 flex items-center gap-3"
+                  >
+                    <div className="h-10 w-10 rounded-2xl gold-gradient text-gold-foreground flex items-center justify-center shrink-0">
+                      <Globe2 className="h-5 w-5" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm font-semibold truncate">{c.city_label}</div>
+                      <div className="text-[11px] text-muted-foreground">{fmt(c.date_start)} → {fmt(c.date_end)} · {c.peer_count} traveler{c.peer_count === 1 ? "" : "s"}</div>
+                    </div>
+                    {c.thread_id && <MessageCircle className="h-4 w-4 text-gold shrink-0" />}
+                  </Link>
+                  <button
+                    onClick={(e) => cancelTravelCity(c.city_key, c.city_label, e)}
+                    className="h-8 w-8 rounded-full bg-destructive/10 text-destructive flex items-center justify-center active:scale-95 shrink-0"
+                    aria-label={`Cancel trip to ${c.city_label}`}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
               );
             })}
           </div>
