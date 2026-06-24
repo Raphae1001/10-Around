@@ -412,24 +412,6 @@ function Create() {
         lng = position?.lng ?? 0;
       }
 
-      // Block creating a duplicate live minyan within 200m of an existing one
-      if (liveCtx) {
-        const { data: nearbyCount, error: rpcErr } = await supabase.rpc("count_minyanim_within", {
-          lat,
-          lng,
-          radius_m: 200,
-        });
-        if (rpcErr) throw rpcErr;
-        if ((nearbyCount ?? 0) > 0) {
-          toast.error("Another minyan already exists within 200 m", {
-            description: "Join it instead of starting a duplicate.",
-          });
-          setPublishing(false);
-          navigate({ to: "/home" });
-          return;
-        }
-      }
-
       // Compute scheduled_at
       // Live (Street/Airport): "Now" → null, "+X min"/"+1 h" → now + offset
       // Hotel/Travel: from the date+time pickers
@@ -445,6 +427,26 @@ function Create() {
       } else if ((ctx === "Hotel" || ctx === "Travel") && scheduledDate && scheduledTime) {
         scheduled_at = new Date(`${scheduledDate}T${scheduledTime}`).toISOString();
       }
+
+      // Block creating a nearby live minyan only if an existing one starts within 30 min of this one
+      if (liveCtx) {
+        const startIso = scheduled_at ?? new Date(now).toISOString();
+        const { data: nearbyCount, error: rpcErr } = await supabase.rpc("count_minyanim_within", {
+          lat,
+          lng,
+          radius_m: 200,
+          _start: startIso,
+        });
+        if (rpcErr) throw rpcErr;
+        if ((nearbyCount ?? 0) > 0) {
+          toast.error("Another minyan starts within 30 min nearby", {
+            description: "Pick a start time at least 30 min apart, or join the existing one.",
+          });
+          setPublishing(false);
+          return;
+        }
+      }
+
 
       // expires_at: live = start + 2h, scheduled = start + 4h, travel range = trip end + 1d
       let expires_at: string;
