@@ -269,13 +269,13 @@ function NearbyCard({ m, joined, onJoinRequest }: { m: MinyanRow; joined: boolea
             <div className="flex items-center gap-2 mb-0.5 flex-wrap">
               <StatusPill tone={complete ? "success" : "gold"}>{prayerLabel}</StatusPill>
               {scheduled && (
-                <span className="text-[11px] font-semibold text-gold flex items-center gap-1">
-                  <Clock className="h-3 w-3" /> {timeOnly} · {countdown}
+                <span className="text-sm font-bold text-gold flex items-center gap-1.5">
+                  <Clock className="h-4 w-4" /> {timeOnly} · {countdown}
                 </span>
               )}
               {!scheduled && (
-                <span className="text-[11px] font-semibold text-success flex items-center gap-1">
-                  <Clock className="h-3 w-3" /> {countdown}
+                <span className="text-sm font-bold text-success flex items-center gap-1.5">
+                  <Clock className="h-4 w-4" /> {countdown}
                 </span>
               )}
             </div>
