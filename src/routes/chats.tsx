@@ -66,8 +66,6 @@ function ChatsPage() {
     };
   }, [user]);
 
-  const fmt = (s: string) => new Date(s).toLocaleDateString(undefined, { day: "2-digit", month: "short" });
-
   return (
     <MobileFrame>
       <ScreenHeader title="Chats" back />
