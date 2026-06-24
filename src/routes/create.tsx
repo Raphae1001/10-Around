@@ -61,17 +61,20 @@ function Create() {
   // Airport
   const [airport, setAirport] = useState("");
   const [gate, setGate] = useState("");
-  // Hotel
-  const [hotelCity, setHotelCity] = useState("");
-  const [hotelName, setHotelName] = useState("");
-  const [hotelSpot, setHotelSpot] = useState("");
-  // Travel
+  // Hotel / "Other" — single address field with autocomplete
+  const [hotelAddress, setHotelAddress] = useState("");
+  const [hotelPick, setHotelPick] = useState<AddressPick | null>(null);
+  // Travel / "Abroad" — destination city autocomplete
   const [tripCity, setTripCity] = useState("");
+  const [tripPick, setTripPick] = useState<AddressPick | null>(null);
   const [tripDateStart, setTripDateStart] = useState("");
   const [tripDateEnd, setTripDateEnd] = useState("");
   // Scheduled time (Hotel & Travel only — can plan in advance)
   const [scheduledDate, setScheduledDate] = useState("");
   const [scheduledTime, setScheduledTime] = useState("");
+  // Counts other travelers heading to the same city in overlapping dates
+  const [tripPeers, setTripPeers] = useState<number | null>(null);
+
 
   const prayers = [
     { name: "Shacharit", icon: Sunrise },
