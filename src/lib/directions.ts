@@ -31,5 +31,6 @@ export function openDirections(
   label?: string,
 ) {
   const { web } = buildDirectionsUrls(lat, lng, label);
+  void import("@/lib/analytics").then(({ track }) => track("open_maps", { has_coords: typeof lat === "number" && typeof lng === "number" }));
   openExternal(web);
 }

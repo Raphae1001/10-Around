@@ -71,6 +71,7 @@ export function shareWhatsApp(text: string, url?: string) {
  *  Order: Capacitor native sheet → navigator.share → WhatsApp deep link → clipboard. */
 export async function shareAny(opts: { title?: string; text: string; url?: string }) {
   const full = opts.url ? `${opts.text}\n${opts.url}` : opts.text;
+  void import("@/lib/analytics").then(({ track }) => track("share_minyan"));
 
   // 1) Capacitor native share sheet (iOS/Android app).
   if (Capacitor.isNativePlatform()) {

@@ -127,7 +127,23 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const router = useRouter();
   useEffect(() => { applySavedLang(); }, []);
+  useEffect(() => {
+    // Fire-and-forget analytics page_view on every route change. No-ops
+    // when analytics is disabled or not configured. Lazy-imported so the
+    // analytics module never blocks initial bundle.
+    let unsub: (() => void) | undefined;
+    let cancelled = false;
+    void import("@/lib/analytics").then(({ pageView }) => {
+      if (cancelled) return;
+      pageView(router.state.location.pathname);
+      unsub = router.subscribe("onResolved", () => {
+        pageView(router.state.location.pathname);
+      });
+    });
+    return () => { cancelled = true; unsub?.(); };
+  }, [router]);
 
   return (
     <QueryClientProvider client={queryClient}>

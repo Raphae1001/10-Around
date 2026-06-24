@@ -122,6 +122,7 @@ function Details() {
     if (error) {
       toast.error(t("minyan.cancelTooLate"), { description: error.message });
     } else {
+      void import("@/lib/analytics").then(({ track }) => track("cancel_minyan", { minyan_id: minyan.id }));
       toast.success(t("minyan.cancelledOk"));
       navigate({ to: "/home" });
     }
@@ -152,6 +153,7 @@ function Details() {
       toast.error("Join the minyan first to access the group chat.", { description: error?.message });
       return;
     }
+    void import("@/lib/analytics").then(({ track }) => track("open_chat", { minyan_id: minyan.id }));
     navigate({ to: "/chat", search: { id: tid as string } });
   }
 

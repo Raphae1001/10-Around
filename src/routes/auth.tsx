@@ -6,6 +6,7 @@ import { Logo, Wordmark } from "@/components/Logo";
 import { Apple, Loader2, Mail } from "lucide-react";
 import { lovable } from "@/integrations/lovable/index";
 import { supabase } from "@/integrations/supabase/client";
+import { track } from "@/lib/analytics";
 
 export const Route = createFileRoute("/auth")({
   component: Auth,
@@ -33,6 +34,7 @@ function Auth() {
 
   async function oauth(provider: "google" | "apple") {
     setBusy(provider);
+    track("sign_in", { method: provider });
     try {
       const result = await lovable.auth.signInWithOAuth(provider, {
         redirect_uri: window.location.origin + "/home",
@@ -61,10 +63,12 @@ function Auth() {
           options: { emailRedirectTo: `${window.location.origin}/home` },
         });
         if (error) throw error;
+        track("sign_up", { method: "email" });
         toast.success(t("auth.checkInbox"));
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
+        track("sign_in", { method: "email" });
         navigate({ to: "/home" });
       }
     } catch (err) {
