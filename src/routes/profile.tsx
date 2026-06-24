@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { MobileFrame } from "@/components/MobileFrame";
 import { ScreenHeader, TrustBadge, StatusPill } from "@/components/ui-bits";
-import { Award, Plane, Flame, Settings, ChevronRight, Shield, CalendarCheck, Users, LogOut } from "lucide-react";
+import { Award, Plane, Flame, Settings, ChevronRight, Shield, CalendarCheck, Users, LogOut, MessageCircle } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -125,6 +125,17 @@ function Profile() {
         <div className="flex-1">
           <div className="text-sm font-semibold">{t("profile.trustReliability")}</div>
           <div className="text-xs text-muted-foreground">{t("profile.trustSub")}</div>
+        </div>
+        <ChevronRight className="h-4 w-4 text-muted-foreground" />
+      </Link>
+
+      <Link to="/chats" className="mx-6 mt-3 rounded-2xl border border-border bg-surface p-4 flex items-center gap-3 shadow-soft block">
+        <div className="h-10 w-10 rounded-2xl bg-navy/10 flex items-center justify-center">
+          <MessageCircle className="h-5 w-5 text-navy" />
+        </div>
+        <div className="flex-1">
+          <div className="text-sm font-semibold">Group chats</div>
+          <div className="text-xs text-muted-foreground">Talk with your minyan and fellow travelers</div>
         </div>
         <ChevronRight className="h-4 w-4 text-muted-foreground" />
       </Link>
