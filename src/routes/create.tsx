@@ -359,7 +359,7 @@ function Create() {
           <div className="border-t border-border pt-2 text-[11px] text-muted-foreground space-y-1">
             <div><span className="font-semibold text-foreground">{prayer}</span> · {when} · {present} here · {present >= 10 ? "minyan ready — join us too" : `${Math.max(0, 10 - present)} missing`}</div>
             <div className="flex items-start gap-1"><MapPin className="h-3 w-3 mt-0.5 shrink-0" /><span className="truncate">{locationSummary}</span></div>
-            {(ctx === "Hotel" || ctx === "Travel") && (scheduledDate || scheduledTime) && (
+            {ctx === "Hotel" && (scheduledDate || scheduledTime) && (
               <div>Scheduled: <span className="text-foreground">{[scheduledDate, scheduledTime].filter(Boolean).join(" · ")}</span></div>
             )}
             <div>Nusach: <span className="text-foreground">{nusach}</span></div>
@@ -414,8 +414,8 @@ function Create() {
           city_key: cityKey,
           city_label: cityLabel,
           address: tripPick?.address ?? tripCity,
-          latitude: tripPick.lat ?? null,
-          longitude: tripPick.lng ?? null,
+          latitude: tripPick?.lat ?? null,
+          longitude: tripPick?.lng ?? null,
           date_start: tripDateStart,
           date_end: tripDateEnd,
           note: comment || null,
