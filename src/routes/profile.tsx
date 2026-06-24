@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { MobileFrame } from "@/components/MobileFrame";
 import { ScreenHeader, TrustBadge, StatusPill } from "@/components/ui-bits";
-import { Award, Plane, Flame, Settings, ChevronRight, Shield, CalendarCheck, Users, LogOut } from "lucide-react";
+import { Award, Plane, Flame, Settings, ChevronRight, Shield, CalendarCheck, Users, LogOut, MessageCircle } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 
