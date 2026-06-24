@@ -20,7 +20,7 @@ function Privacy() {
   const sections = ["data", "use", "location", "sharing", "retention", "contact"] as const;
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-dvh bg-background text-foreground">
       <div className="max-w-2xl mx-auto px-6 py-10">
         <Link to="/" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-6">
           <ChevronLeft className="h-4 w-4" /> {t("common.back")}
