@@ -2,9 +2,18 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { MobileFrame } from "@/components/MobileFrame";
 import { ScreenHeader } from "@/components/ui-bits";
-import { MessageCircle, Users, MapPin, ChevronRight, Loader2 } from "lucide-react";
+import { MessageCircle, Users, MapPin, ChevronRight, Loader2, Globe2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
+
+type TravelCity = {
+  city_key: string;
+  city_label: string;
+  date_start: string;
+  date_end: string;
+  peer_count: number;
+  thread_id: string | null;
+};
 
 export const Route = createFileRoute("/chats")({
   component: ChatsPage,
