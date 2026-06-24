@@ -49,7 +49,7 @@ function ChatsPage() {
         supabase.rpc("my_travel_cities"),
       ]);
       if (cancelled) return;
-      setThreads((t ?? []) as ThreadRow[]);
+      setThreads(((t ?? []) as ThreadRow[]).filter((thread) => thread.kind !== "travel_city"));
       setCities((c ?? []) as TravelCity[]);
     };
     loadAll();
