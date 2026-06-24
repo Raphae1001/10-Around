@@ -63,10 +63,12 @@ function Auth() {
           options: { emailRedirectTo: `${window.location.origin}/home` },
         });
         if (error) throw error;
+        track("sign_up", { method: "email" });
         toast.success(t("auth.checkInbox"));
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
+        track("sign_in", { method: "email" });
         navigate({ to: "/home" });
       }
     } catch (err) {
