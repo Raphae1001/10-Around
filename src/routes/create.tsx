@@ -96,6 +96,29 @@ function Create() {
     Travel: t("ctx.Travel"),
   };
 
+  // Count overlapping travel minyanim in same city
+  useEffect(() => {
+    if (ctx !== "Travel" || !tripPick?.city || !tripDateStart || !tripDateEnd) {
+      setTripPeers(null);
+      return;
+    }
+    let cancelled = false;
+    setTripPeers(null);
+    (async () => {
+      const { count } = await supabase
+        .from("minyanim")
+        .select("id", { count: "exact", head: true })
+        .eq("type", "travel")
+        .ilike("address", `%${tripPick.city}%`)
+        .lte("trip_start_date", tripDateEnd)
+        .gte("trip_end_date", tripDateStart);
+      if (!cancelled) setTripPeers(count ?? 0);
+    })();
+    return () => { cancelled = true; };
+  }, [ctx, tripPick?.city, tripDateStart, tripDateEnd]);
+
+
+
 
   const locationSummary =
     ctx === "Street" ? street :
