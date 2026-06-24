@@ -127,7 +127,24 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const router = useRouter();
   useEffect(() => { applySavedLang(); }, []);
+  useEffect(() => {
+    // Fire-and-forget analytics page_view on every route change. No-ops
+    // when analytics is disabled or not configured.
+    let cancelled = false;
+    void import("@/lib/analytics").then(({ pageView }) => {
+      if (cancelled) return;
+      pageView(router.state.location.pathname);
+      const unsub = router.subscribe("onResolved", () => {
+        pageView(router.state.location.pathname);
+      });
+      // store cleanup
+      (cleanup as { fn?: () => void }).fn = unsub;
+    });
+    const cleanup: { fn?: () => void } = {};
+    return () => { cancelled = true; cleanup.fn?.(); };
+  }, [router]);
 
   return (
     <QueryClientProvider client={queryClient}>
