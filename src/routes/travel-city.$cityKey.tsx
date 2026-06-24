@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate, useParams } from "@tanstack/react-r
 import { useEffect, useState } from "react";
 import { MobileFrame } from "@/components/MobileFrame";
 import { ScreenHeader } from "@/components/ui-bits";
-import { MapPin, MessageCircle, Users, Loader2, CalendarDays } from "lucide-react";
+import { MessageCircle, Users, Loader2, CalendarDays } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
@@ -94,14 +94,14 @@ function TravelCityPage() {
         back
       />
       <div className="px-6 pb-8 space-y-4">
-        <div className="rounded-2xl border border-border bg-surface p-4 flex items-center justify-between">
+        <div className="rounded-2xl border border-border bg-surface p-4 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-2xl gold-gradient text-gold-foreground flex items-center justify-center">
               <Users className="h-5 w-5" />
             </div>
             <div>
-              <div className="text-sm font-semibold">{peers ? peers.length : "…"} traveler{peers && peers.length === 1 ? "" : "s"}</div>
-              <div className="text-xs text-muted-foreground">in <span className="text-foreground">{cityLabel}</span> on overlapping dates</div>
+              <div className="text-sm font-semibold">{cityLabel || "City"}</div>
+              <div className="text-xs text-muted-foreground">{peers ? peers.length : "…"} person{peers && peers.length === 1 ? "" : "s"}</div>
             </div>
           </div>
           {threadId && (
@@ -110,7 +110,7 @@ function TravelCityPage() {
               search={{ id: threadId }}
               className="rounded-full bg-navy text-white px-3 py-2 text-xs font-semibold flex items-center gap-1.5"
             >
-              <MessageCircle className="h-4 w-4" /> Group chat
+               <MessageCircle className="h-4 w-4" /> Chat
             </Link>
           )}
         </div>
@@ -145,10 +145,6 @@ function TravelCityPage() {
             ))}
           </ul>
         )}
-
-        <div className="text-[11px] text-muted-foreground text-center flex items-center justify-center gap-1">
-          <MapPin className="h-3 w-3" /> Only visible to travelers in the same city on overlapping dates.
-        </div>
       </div>
     </MobileFrame>
   );
