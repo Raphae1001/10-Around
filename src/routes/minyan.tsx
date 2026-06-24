@@ -100,7 +100,7 @@ function Details() {
     const { error } = await joinMinyan(minyan.id, user.id);
     setBusy(false);
     if (error) toast.error(error.message);
-    else { setJoined(true); toast.success(t("minyan.youreIn")); }
+    else { setJoined(true); toast.success(t("minyan.youreIn")); navigate({ to: "/success", search: { id: minyan.id } }); }
   }
 
   async function handleLeave() {
