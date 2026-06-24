@@ -495,7 +495,7 @@ function Create() {
         .insert({ minyan_id: created.id, user_id: user.id });
 
       toast.success("Minyan published!");
-      navigate({ to: "/success" });
+      navigate({ to: "/success", search: { id: created.id } });
     } catch (e) {
       toast.error("Could not publish", { description: (e as Error).message });
     } finally {
