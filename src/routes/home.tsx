@@ -24,6 +24,7 @@ import { downloadIcs } from "@/lib/native";
 import { Navigation } from "lucide-react";
 
 export const Route = createFileRoute("/home")({
+  ssr: false,
   component: Home,
 });
 
