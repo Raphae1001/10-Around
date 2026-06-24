@@ -13,9 +13,9 @@ export function MobileFrame({ children, showNav = true, bg = "default", classNam
     bg === "navy" ? "navy-gradient text-white" : bg === "map" ? "map-tile" : "bg-background";
 
   return (
-    <div className="min-h-screen w-full bg-muted/40 flex items-stretch justify-center">
+    <div className="min-h-dvh w-full bg-muted/40 flex items-stretch justify-center">
       <div
-        className={`relative w-full min-h-screen ${bgClass} ${className} flex flex-col overflow-hidden max-w-[440px] sm:max-w-[520px] md:max-w-[640px] lg:max-w-[860px] xl:max-w-[1100px] md:my-6 md:min-h-[calc(100vh-3rem)] md:rounded-3xl md:shadow-2xl`}
+        className={`relative w-full min-h-dvh ${bgClass} ${className} flex flex-col overflow-hidden max-w-[440px] sm:max-w-[520px] md:max-w-[640px] lg:max-w-[860px] xl:max-w-[1100px] md:my-6 md:min-h-[calc(100dvh-3rem)] md:rounded-3xl md:shadow-2xl`}
       >
         <div className="flex-1 flex flex-col">{children}</div>
         {showNav && <BottomNav />}

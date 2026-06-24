@@ -75,8 +75,8 @@ function Auth() {
   }
 
   return (
-    <div className="min-h-screen w-full bg-muted/40 flex items-stretch justify-center">
-      <div className="relative w-full max-w-[440px] min-h-screen bg-background flex flex-col">
+    <div className="min-h-dvh w-full bg-muted/40 flex items-stretch justify-center">
+      <div className="relative w-full max-w-[440px] min-h-dvh bg-background flex flex-col">
         <div className="flex-1 flex flex-col items-center justify-center px-8 text-center">
           <Logo size={56} />
           <h1 className="mt-6 font-display text-3xl">
