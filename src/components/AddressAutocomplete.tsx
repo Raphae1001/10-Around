@@ -42,12 +42,13 @@ export function AddressAutocomplete(props: Props) {
 }
 
 function Inner({ value, onChange, onPick, placeholder, citiesOnly, className }: Props) {
-  const placesLib = useMapsLibrary("places");
-  const [suggestions, setSuggestions] = useState<google.maps.places.AutocompleteSuggestion[]>([]);
+  const placesLib = useMapsLibrary("places") as any;
+  const [suggestions, setSuggestions] = useState<any[]>([]);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const sessionTokenRef = useRef<google.maps.places.AutocompleteSessionToken | null>(null);
+  const sessionTokenRef = useRef<any>(null);
   const debounceRef = useRef<number | null>(null);
+
   const lastQueryRef = useRef<string>("");
 
   useEffect(() => {
