@@ -378,22 +378,16 @@ export type Database = {
       get_my_profile: {
         Args: never
         Returns: {
-          avatar_url: string | null
+          avatar_url: string
           backup_mode: boolean
           backup_radius_m: number
           created_at: string
-          display_name: string | null
+          display_name: string
           id: string
-          language: string | null
+          language: string
           trust_score: number
           updated_at: string
-        }
-        SetofOptions: {
-          from: "*"
-          to: "profiles"
-          isOneToOne: true
-          isSetofReturn: false
-        }
+        }[]
       }
       get_my_recent_participations: {
         Args: { _limit?: number }
