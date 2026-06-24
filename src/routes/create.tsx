@@ -9,6 +9,8 @@ import { useAuth } from "@/hooks/use-auth";
 import { useGeolocation } from "@/hooks/use-geolocation";
 import { supabase } from "@/integrations/supabase/client";
 import { reverseGeocode } from "@/lib/geocoding";
+import { AddressAutocomplete, type AddressPick } from "@/components/AddressAutocomplete";
+
 
 type Context = "Street" | "Airport" | "Hotel" | "Travel";
 
