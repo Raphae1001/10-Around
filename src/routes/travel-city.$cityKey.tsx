@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate, useParams } from "@tanstack/react-r
 import { useEffect, useState } from "react";
 import { MobileFrame } from "@/components/MobileFrame";
 import { ScreenHeader } from "@/components/ui-bits";
-import { MessageCircle, Users, Loader2, CalendarDays, Share2 } from "lucide-react";
+import { MessageCircle, Users, Loader2, CalendarDays, Share2, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
@@ -112,6 +112,19 @@ function TravelCityPage() {
     load();
   }
 
+  async function cancelTrip() {
+    if (!user) return;
+    if (!confirm(`Cancel your trip to ${cityLabel || cityKey}? You'll be removed from the group chat.`)) return;
+    const { error } = await supabase
+      .from("travel_presence")
+      .delete()
+      .eq("user_id", user.id)
+      .eq("city_key", cityKey);
+    if (error) { toast.error(error.message); return; }
+    toast.success("Trip cancelled");
+    navigate({ to: "/home" });
+  }
+
   function shareCity() {
     const dates = myStart && myEnd ? ` (${fmtDate(myStart)} → ${fmtDate(myEnd)})` : "";
     shareWhatsApp(
@@ -154,13 +167,20 @@ function TravelCityPage() {
           </div>
         </div>
 
-        {!registered && (
+        {!registered ? (
           <div className="rounded-2xl border border-dashed border-gold/60 bg-gold/5 p-4 text-sm">
             <p className="mb-2">Register your dates here to join the group chat and let others know you're around.</p>
             <button onClick={registerMe} className="rounded-full gold-gradient text-gold-foreground px-4 py-2 text-xs font-bold">
               Register me (next 7 days)
             </button>
           </div>
+        ) : (
+          <button
+            onClick={cancelTrip}
+            className="w-full rounded-2xl border border-destructive/40 bg-destructive/5 text-destructive py-3 text-sm font-semibold flex items-center justify-center gap-2 active:scale-[0.99]"
+          >
+            <Trash2 className="h-4 w-4" /> Cancel this trip
+          </button>
         )}
 
         {peers === null ? (
