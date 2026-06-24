@@ -438,11 +438,18 @@ function Create() {
       if (liveCtx && position) {
         lat = position.lat;
         lng = position.lng;
+      } else if (ctx === "Hotel" && hotelPick?.lat != null && hotelPick?.lng != null) {
+        lat = hotelPick.lat;
+        lng = hotelPick.lng;
+      } else if (ctx === "Travel" && tripPick?.lat != null && tripPick?.lng != null) {
+        lat = tripPick.lat;
+        lng = tripPick.lng;
       } else {
-        // For Hotel/Travel without GPS, use last known or 0/0 placeholder (user types city)
+        // Fallback to last known
         lat = position?.lat ?? 0;
         lng = position?.lng ?? 0;
       }
+
 
       // Compute scheduled_at
       // Live (Street/Airport): "Now" → null, "+X min"/"+1 h" → now + offset
