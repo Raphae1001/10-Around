@@ -12,7 +12,9 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TrustRouteImport } from './routes/trust'
 import { Route as TravelerRouteImport } from './routes/traveler'
 import { Route as TravelRouteImport } from './routes/travel'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SynagogueRouteImport } from './routes/synagogue'
+import { Route as SupportRouteImport } from './routes/support'
 import { Route as SuccessRouteImport } from './routes/success'
 import { Route as SiddurRouteImport } from './routes/siddur'
 import { Route as ShareRouteImport } from './routes/share'
@@ -52,9 +54,19 @@ const TravelRoute = TravelRouteImport.update({
   path: '/travel',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SynagogueRoute = SynagogueRouteImport.update({
   id: '/synagogue',
   path: '/synagogue',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SupportRoute = SupportRouteImport.update({
+  id: '/support',
+  path: '/support',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SuccessRoute = SuccessRouteImport.update({
@@ -195,7 +207,9 @@ export interface FileRoutesByFullPath {
   '/share': typeof ShareRoute
   '/siddur': typeof SiddurRoute
   '/success': typeof SuccessRoute
+  '/support': typeof SupportRoute
   '/synagogue': typeof SynagogueRoute
+  '/terms': typeof TermsRoute
   '/travel': typeof TravelRoute
   '/traveler': typeof TravelerRoute
   '/trust': typeof TrustRoute
@@ -224,7 +238,9 @@ export interface FileRoutesByTo {
   '/share': typeof ShareRoute
   '/siddur': typeof SiddurRoute
   '/success': typeof SuccessRoute
+  '/support': typeof SupportRoute
   '/synagogue': typeof SynagogueRoute
+  '/terms': typeof TermsRoute
   '/travel': typeof TravelRoute
   '/traveler': typeof TravelerRoute
   '/trust': typeof TrustRoute
@@ -254,7 +270,9 @@ export interface FileRoutesById {
   '/share': typeof ShareRoute
   '/siddur': typeof SiddurRoute
   '/success': typeof SuccessRoute
+  '/support': typeof SupportRoute
   '/synagogue': typeof SynagogueRoute
+  '/terms': typeof TermsRoute
   '/travel': typeof TravelRoute
   '/traveler': typeof TravelerRoute
   '/trust': typeof TrustRoute
@@ -285,7 +303,9 @@ export interface FileRouteTypes {
     | '/share'
     | '/siddur'
     | '/success'
+    | '/support'
     | '/synagogue'
+    | '/terms'
     | '/travel'
     | '/traveler'
     | '/trust'
@@ -314,7 +334,9 @@ export interface FileRouteTypes {
     | '/share'
     | '/siddur'
     | '/success'
+    | '/support'
     | '/synagogue'
+    | '/terms'
     | '/travel'
     | '/traveler'
     | '/trust'
@@ -343,7 +365,9 @@ export interface FileRouteTypes {
     | '/share'
     | '/siddur'
     | '/success'
+    | '/support'
     | '/synagogue'
+    | '/terms'
     | '/travel'
     | '/traveler'
     | '/trust'
@@ -373,7 +397,9 @@ export interface RootRouteChildren {
   ShareRoute: typeof ShareRoute
   SiddurRoute: typeof SiddurRoute
   SuccessRoute: typeof SuccessRoute
+  SupportRoute: typeof SupportRoute
   SynagogueRoute: typeof SynagogueRoute
+  TermsRoute: typeof TermsRoute
   TravelRoute: typeof TravelRoute
   TravelerRoute: typeof TravelerRoute
   TrustRoute: typeof TrustRoute
@@ -403,11 +429,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TravelRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/synagogue': {
       id: '/synagogue'
       path: '/synagogue'
       fullPath: '/synagogue'
       preLoaderRoute: typeof SynagogueRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/support': {
+      id: '/support'
+      path: '/support'
+      fullPath: '/support'
+      preLoaderRoute: typeof SupportRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/success': {
@@ -607,7 +647,9 @@ const rootRouteChildren: RootRouteChildren = {
   ShareRoute: ShareRoute,
   SiddurRoute: SiddurRoute,
   SuccessRoute: SuccessRoute,
+  SupportRoute: SupportRoute,
   SynagogueRoute: SynagogueRoute,
+  TermsRoute: TermsRoute,
   TravelRoute: TravelRoute,
   TravelerRoute: TravelerRoute,
   TrustRoute: TrustRoute,
