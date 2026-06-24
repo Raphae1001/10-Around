@@ -57,8 +57,15 @@ function Profile() {
   }
 
   async function signOut() {
-    await supabase.auth.signOut();
-    navigate({ to: "/auth" });
+    // Full reload after sign-out: clears every in-memory cache (TanStack
+    // Query, realtime channels, route data) and prevents the back button
+    // from restoring authenticated shells from cached hydration.
+    try { await supabase.auth.signOut(); } catch { /* ignore — we reload anyway */ }
+    if (typeof window !== "undefined") {
+      window.location.assign("/auth");
+    } else {
+      navigate({ to: "/auth", replace: true });
+    }
   }
 
   return (
