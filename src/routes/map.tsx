@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { MobileFrame } from "@/components/MobileFrame";
 import { GoogleMapCanvas } from "@/components/GoogleMap";
 import { LiveBadge, StatusPill } from "@/components/ui-bits";
@@ -9,6 +9,7 @@ import { useNearbyMinyanim, type MinyanRow } from "@/hooks/use-minyanim";
 import { openDirections } from "@/lib/directions";
 
 export const Route = createFileRoute("/map")({
+  validateSearch: (s: Record<string, unknown>) => ({ id: typeof s.id === "string" ? s.id : undefined }),
   component: LiveMap,
 });
 
@@ -16,9 +17,11 @@ const FALLBACK = { lat: 40.7588, lng: -73.9857 }; // Midtown NYC
 
 function LiveMap() {
   const navigate = useNavigate();
+  const { id: focusId } = Route.useSearch();
   const { position, request } = useGeolocation(true);
   const { data: minyanim } = useNearbyMinyanim(position, 5000);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(focusId ?? null);
+  useEffect(() => { if (focusId) setSelectedId(focusId); }, [focusId]);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<string>("All");
 

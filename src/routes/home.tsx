@@ -238,8 +238,19 @@ function NearbyCard({ m, joined, onJoinRequest }: { m: MinyanRow; joined: boolea
   const PrayerIcon = m.prayer === "shacharit" ? Sunrise : m.prayer === "mincha" ? Sun : Moon;
   const progress = Math.min(100, (present / NEEDED) * 100);
   const scheduled = m.scheduled_at ? new Date(m.scheduled_at) : null;
-  const whenLabel = scheduled
-    ? scheduled.toLocaleString([], { dateStyle: "short", timeStyle: "short" })
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    if (!scheduled) return;
+    const i = setInterval(() => setNow(Date.now()), 30_000);
+    return () => clearInterval(i);
+  }, [scheduled?.getTime()]);
+  const diffMin = scheduled ? Math.round((scheduled.getTime() - now) / 60000) : 0;
+  const timeOnly = scheduled ? scheduled.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "";
+  const countdown = scheduled
+    ? diffMin > 0
+      ? diffMin < 60 ? t("home.inMin", { count: diffMin, defaultValue: "in {{count}} min" }) : t("home.inHour", { count: Math.round(diffMin / 60), defaultValue: "in {{count}} h" })
+      : diffMin === 0 ? t("home.startingNow", { defaultValue: "starting now" })
+      : t("home.startedAgo", { count: -diffMin, defaultValue: "started {{count}} min ago" })
     : t("home.liveNow");
   const prayerLabel = t(`prayer.${m.prayer}`, { defaultValue: m.prayer });
 
@@ -257,9 +268,16 @@ function NearbyCard({ m, joined, onJoinRequest }: { m: MinyanRow; joined: boolea
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-0.5 flex-wrap">
               <StatusPill tone={complete ? "success" : "gold"}>{prayerLabel}</StatusPill>
-              <span className="text-[11px] text-muted-foreground flex items-center gap-1">
-                <Clock className="h-3 w-3" /> {whenLabel}
-              </span>
+              {scheduled && (
+                <span className="text-[11px] font-semibold text-gold flex items-center gap-1">
+                  <Clock className="h-3 w-3" /> {timeOnly} · {countdown}
+                </span>
+              )}
+              {!scheduled && (
+                <span className="text-[11px] font-semibold text-success flex items-center gap-1">
+                  <Clock className="h-3 w-3" /> {countdown}
+                </span>
+              )}
             </div>
             <h3 className="font-display text-base leading-tight truncate">{m.address ?? t("home.unknownSpot")}</h3>
             <p className="text-[11px] text-muted-foreground flex items-center gap-1.5 mt-0.5">
