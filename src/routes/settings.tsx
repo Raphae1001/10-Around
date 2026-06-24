@@ -16,8 +16,12 @@ function Settings() {
   const navigate = useNavigate();
 
   async function signOut() {
-    await supabase.auth.signOut();
-    navigate({ to: "/auth" });
+    try { await supabase.auth.signOut(); } catch { /* ignore — we reload anyway */ }
+    if (typeof window !== "undefined") {
+      window.location.assign("/auth");
+    } else {
+      navigate({ to: "/auth", replace: true });
+    }
   }
 
   return (
