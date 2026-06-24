@@ -253,10 +253,11 @@ function Details() {
             <Navigation2 className="h-4 w-4 text-gold" /> {t("common.directions")}
           </button>
           <button
-            onClick={handleWhatsApp}
-            className="bg-[#25D366] text-white font-semibold py-3 rounded-2xl text-sm flex items-center justify-center gap-2"
+            onClick={handleOpenChat}
+            disabled={!joined && !isOrganizer}
+            className="bg-navy text-white font-semibold py-3 rounded-2xl text-sm flex items-center justify-center gap-2 disabled:opacity-50"
           >
-            <MessageCircle className="h-4 w-4" /> {t("minyan.whatsapp")}
+            <MessageCircle className="h-4 w-4" /> Group chat
           </button>
         </div>
 

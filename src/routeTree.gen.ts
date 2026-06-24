@@ -29,6 +29,7 @@ import { Route as HomeRouteImport } from './routes/home'
 import { Route as FlightRouteImport } from './routes/flight'
 import { Route as CreateRouteImport } from './routes/create'
 import { Route as ChatsRouteImport } from './routes/chats'
+import { Route as ChatRouteImport } from './routes/chat'
 import { Route as BackupRouteImport } from './routes/backup'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
@@ -133,6 +134,11 @@ const ChatsRoute = ChatsRouteImport.update({
   path: '/chats',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ChatRoute = ChatRouteImport.update({
+  id: '/chat',
+  path: '/chat',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BackupRoute = BackupRouteImport.update({
   id: '/backup',
   path: '/backup',
@@ -153,6 +159,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/backup': typeof BackupRoute
+  '/chat': typeof ChatRoute
   '/chats': typeof ChatsRoute
   '/create': typeof CreateRoute
   '/flight': typeof FlightRoute
@@ -178,6 +185,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/backup': typeof BackupRoute
+  '/chat': typeof ChatRoute
   '/chats': typeof ChatsRoute
   '/create': typeof CreateRoute
   '/flight': typeof FlightRoute
@@ -204,6 +212,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/backup': typeof BackupRoute
+  '/chat': typeof ChatRoute
   '/chats': typeof ChatsRoute
   '/create': typeof CreateRoute
   '/flight': typeof FlightRoute
@@ -231,6 +240,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/backup'
+    | '/chat'
     | '/chats'
     | '/create'
     | '/flight'
@@ -256,6 +266,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/backup'
+    | '/chat'
     | '/chats'
     | '/create'
     | '/flight'
@@ -281,6 +292,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/backup'
+    | '/chat'
     | '/chats'
     | '/create'
     | '/flight'
@@ -307,6 +319,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
   BackupRoute: typeof BackupRoute
+  ChatRoute: typeof ChatRoute
   ChatsRoute: typeof ChatsRoute
   CreateRoute: typeof CreateRoute
   FlightRoute: typeof FlightRoute
@@ -471,6 +484,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ChatsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/chat': {
+      id: '/chat'
+      path: '/chat'
+      fullPath: '/chat'
+      preLoaderRoute: typeof ChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/backup': {
       id: '/backup'
       path: '/backup'
@@ -499,6 +519,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
   BackupRoute: BackupRoute,
+  ChatRoute: ChatRoute,
   ChatsRoute: ChatsRoute,
   CreateRoute: CreateRoute,
   FlightRoute: FlightRoute,
