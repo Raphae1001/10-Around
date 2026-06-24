@@ -47,13 +47,21 @@ export function useNearbyMinyanim(position: { lat: number; lng: number } | null,
 }
 
 export async function joinMinyan(minyanId: string, userId: string) {
-  return supabase.from("minyan_participants").insert({ minyan_id: minyanId, user_id: userId });
+  const result = await supabase.from("minyan_participants").insert({ minyan_id: minyanId, user_id: userId });
+  if (!result.error) {
+    void import("@/lib/analytics").then(({ track }) => track("join_minyan", { minyan_id: minyanId }));
+  }
+  return result;
 }
 
 export async function leaveMinyan(minyanId: string, userId: string) {
-  return supabase
+  const result = await supabase
     .from("minyan_participants")
     .delete()
     .eq("minyan_id", minyanId)
     .eq("user_id", userId);
+  if (!result.error) {
+    void import("@/lib/analytics").then(({ track }) => track("leave_minyan", { minyan_id: minyanId }));
+  }
+  return result;
 }
