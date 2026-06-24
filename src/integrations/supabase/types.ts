@@ -14,6 +14,99 @@ export type Database = {
   }
   public: {
     Tables: {
+      chat_messages: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          thread_id: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          thread_id: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          thread_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_messages_thread_id_fkey"
+            columns: ["thread_id"]
+            isOneToOne: false
+            referencedRelation: "chat_threads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chat_thread_members: {
+        Row: {
+          joined_at: string
+          thread_id: string
+          user_id: string
+        }
+        Insert: {
+          joined_at?: string
+          thread_id: string
+          user_id: string
+        }
+        Update: {
+          joined_at?: string
+          thread_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_thread_members_thread_id_fkey"
+            columns: ["thread_id"]
+            isOneToOne: false
+            referencedRelation: "chat_threads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chat_threads: {
+        Row: {
+          city_key: string | null
+          created_at: string
+          id: string
+          kind: string
+          minyan_id: string | null
+          title: string | null
+        }
+        Insert: {
+          city_key?: string | null
+          created_at?: string
+          id?: string
+          kind: string
+          minyan_id?: string | null
+          title?: string | null
+        }
+        Update: {
+          city_key?: string | null
+          created_at?: string
+          id?: string
+          kind?: string
+          minyan_id?: string | null
+          title?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_threads_minyan_id_fkey"
+            columns: ["minyan_id"]
+            isOneToOne: false
+            referencedRelation: "minyanim"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       minyan_confirmations: {
         Row: {
           answer: Database["public"]["Enums"]["confirmation_answer"] | null
@@ -232,6 +325,7 @@ export type Database = {
             }
             Returns: number
           }
+      ensure_minyan_chat: { Args: { _minyan_id: string }; Returns: string }
       get_my_profile: {
         Args: never
         Returns: {
@@ -270,6 +364,20 @@ export type Database = {
           streak_days: number
         }[]
       }
+      is_chat_member: { Args: { _thread_id: string }; Returns: boolean }
+      my_chat_threads: {
+        Args: never
+        Returns: {
+          city_key: string
+          id: string
+          kind: string
+          last_at: string
+          last_message: string
+          member_count: number
+          minyan_id: string
+          title: string
+        }[]
+      }
       nearby_minyanim: {
         Args: { lat: number; lng: number; radius_m?: number }
         Returns: {
@@ -300,6 +408,7 @@ export type Database = {
           isSetofReturn: true
         }
       }
+      normalize_city: { Args: { _addr: string }; Returns: string }
       request_confirmations: {
         Args: { _minyan_id: string }
         Returns: undefined
