@@ -2,10 +2,11 @@ import { createFileRoute, Link, useNavigate, useParams } from "@tanstack/react-r
 import { useEffect, useState } from "react";
 import { MobileFrame } from "@/components/MobileFrame";
 import { ScreenHeader } from "@/components/ui-bits";
-import { MessageCircle, Users, Loader2, CalendarDays } from "lucide-react";
+import { MessageCircle, Users, Loader2, CalendarDays, Share2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
+import { shareWhatsApp, appOrigin } from "@/lib/share";
 
 export const Route = createFileRoute("/travel-city/$cityKey")({
   component: TravelCityPage,
@@ -30,61 +31,94 @@ function TravelCityPage() {
   const [myEnd, setMyEnd] = useState<string | null>(null);
   const [peers, setPeers] = useState<Peer[] | null>(null);
   const [threadId, setThreadId] = useState<string | null>(null);
+  const [registered, setRegistered] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !user) navigate({ to: "/auth" });
   }, [authLoading, user, navigate]);
 
-  useEffect(() => {
+  async function load() {
     if (!user) return;
-    let cancelled = false;
-    (async () => {
-      // Load my presence in this city (to know the date window)
-      const { data: mine } = await supabase
-        .from("travel_presence")
-        .select("city_label,date_start,date_end")
-        .eq("user_id", user.id)
-        .eq("city_key", cityKey)
-        .order("date_start", { ascending: true });
+    const { data: mine } = await supabase
+      .from("travel_presence")
+      .select("city_label,date_start,date_end")
+      .eq("user_id", user.id)
+      .eq("city_key", cityKey)
+      .order("date_start", { ascending: true });
 
-      if (!mine || mine.length === 0) {
-        if (!cancelled) {
-          toast.error("You're not registered in this city.");
-          navigate({ to: "/chats" });
-        }
-        return;
-      }
-      const dStart = mine[0].date_start;
-      const dEnd = mine[mine.length - 1].date_end;
-      if (cancelled) return;
+    let dStart: string;
+    let dEnd: string;
+    if (mine && mine.length > 0) {
+      setRegistered(true);
       setCityLabel(mine[0].city_label);
-      setMyStart(dStart);
-      setMyEnd(dEnd);
-
-      const { data: peerData, error } = await supabase.rpc("list_city_peers", {
-        _city_key: cityKey,
-        _from: dStart,
-        _to: dEnd,
-      });
-      if (!cancelled) {
-        if (error) toast.error(error.message);
-        else setPeers((peerData ?? []) as Peer[]);
-      }
-
-      const { data: th } = await supabase
-        .from("chat_threads")
-        .select("id")
-        .eq("kind", "travel_city")
+      dStart = mine[0].date_start;
+      dEnd = mine[mine.length - 1].date_end;
+    } else {
+      setRegistered(false);
+      // wide default window so the page is browseable
+      const today = new Date();
+      const in60 = new Date(today.getTime() + 60 * 86400_000);
+      dStart = today.toISOString().slice(0, 10);
+      dEnd = in60.toISOString().slice(0, 10);
+      // Try to pick a nice label from any presence in this city
+      const { data: any1 } = await supabase
+        .from("travel_presence")
+        .select("city_label")
         .eq("city_key", cityKey)
+        .limit(1)
         .maybeSingle();
-      if (!cancelled) setThreadId(th?.id ?? null);
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [user, cityKey, navigate]);
+      setCityLabel(any1?.city_label ?? cityKey);
+    }
+    setMyStart(dStart);
+    setMyEnd(dEnd);
+
+    const { data: peerData, error } = await supabase.rpc("list_city_peers", {
+      _city_key: cityKey,
+      _from: dStart,
+      _to: dEnd,
+    });
+    if (error) toast.error(error.message);
+    else setPeers((peerData ?? []) as Peer[]);
+
+    const { data: th } = await supabase
+      .from("chat_threads")
+      .select("id")
+      .eq("kind", "travel_city")
+      .eq("city_key", cityKey)
+      .maybeSingle();
+    setThreadId(th?.id ?? null);
+  }
+
+  useEffect(() => {
+    load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, cityKey]);
 
   const fmtDate = (s: string) => new Date(s).toLocaleDateString(undefined, { day: "2-digit", month: "short" });
+
+  async function registerMe() {
+    if (!user) return;
+    const today = new Date().toISOString().slice(0, 10);
+    const in7 = new Date(Date.now() + 7 * 86400_000).toISOString().slice(0, 10);
+    const { error } = await supabase.from("travel_presence").insert({
+      user_id: user.id,
+      city_key: cityKey,
+      city_label: cityLabel || cityKey,
+      date_start: today,
+      date_end: in7,
+    });
+    if (error) { toast.error(error.message); return; }
+    toast.success("Registered — you can chat now");
+    load();
+  }
+
+  function shareCity() {
+    const dates = myStart && myEnd ? ` (${fmtDate(myStart)} → ${fmtDate(myEnd)})` : "";
+    shareWhatsApp(
+      `I'll be in ${cityLabel}${dates}. Join me on MinyanNow to coordinate a minyan.`,
+      `${appOrigin()}/travel-city/${encodeURIComponent(cityKey)}`,
+    );
+  }
 
   return (
     <MobileFrame>
@@ -104,21 +138,37 @@ function TravelCityPage() {
               <div className="text-xs text-muted-foreground">{peers ? peers.length : "…"} person{peers && peers.length === 1 ? "" : "s"}</div>
             </div>
           </div>
-          {threadId && (
-            <Link
-              to="/chat"
-              search={{ id: threadId }}
-              className="rounded-full bg-navy text-white px-3 py-2 text-xs font-semibold flex items-center gap-1.5"
-            >
-               <MessageCircle className="h-4 w-4" /> Chat
-            </Link>
-          )}
+          <div className="flex items-center gap-2">
+            <button onClick={shareCity} className="rounded-full border border-border bg-surface px-3 py-2 text-xs font-semibold flex items-center gap-1.5">
+              <Share2 className="h-4 w-4" /> Share
+            </button>
+            {threadId ? (
+              <Link
+                to="/chat"
+                search={{ id: threadId }}
+                className="rounded-full bg-navy text-white px-3 py-2 text-xs font-semibold flex items-center gap-1.5"
+              >
+                 <MessageCircle className="h-4 w-4" /> Chat
+              </Link>
+            ) : null}
+          </div>
         </div>
+
+        {!registered && (
+          <div className="rounded-2xl border border-dashed border-gold/60 bg-gold/5 p-4 text-sm">
+            <p className="mb-2">Register your dates here to join the group chat and let others know you're around.</p>
+            <button onClick={registerMe} className="rounded-full gold-gradient text-gold-foreground px-4 py-2 text-xs font-bold">
+              Register me (next 7 days)
+            </button>
+          </div>
+        )}
 
         {peers === null ? (
           <div className="flex items-center justify-center py-10 text-muted-foreground">
             <Loader2 className="h-5 w-5 animate-spin" />
           </div>
+        ) : peers.length === 0 ? (
+          <p className="text-center text-sm text-muted-foreground py-6">No one registered here yet.</p>
         ) : (
           <ul className="space-y-2">
             {peers.map((p) => (
@@ -149,3 +199,4 @@ function TravelCityPage() {
     </MobileFrame>
   );
 }
+
