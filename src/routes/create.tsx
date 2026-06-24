@@ -423,6 +423,48 @@ function Create() {
       navigate({ to: "/auth" });
       return;
     }
+
+    // ===== TRAVEL: register a city presence (not a minyan) =====
+    if (ctx === "Travel") {
+      if (!tripPick?.city || !tripDateStart || !tripDateEnd) {
+        toast.error("Pick a city and your travel dates.");
+        return;
+      }
+      setPublishing(true);
+      try {
+        const cityKey = (tripPick.city ?? "").trim().toLowerCase();
+        const { error } = await supabase.from("travel_presence").insert({
+          user_id: user.id,
+          city_key: cityKey,
+          city_label: tripPick.city,
+          address: tripPick.address ?? tripCity,
+          latitude: tripPick.lat ?? null,
+          longitude: tripPick.lng ?? null,
+          date_start: tripDateStart,
+          date_end: tripDateEnd,
+          note: comment || null,
+        });
+        if (error) throw error;
+
+        // Find the city chat thread we were just added to and open it
+        const { data: th } = await supabase
+          .from("chat_threads")
+          .select("id")
+          .eq("kind", "travel_city")
+          .eq("city_key", cityKey)
+          .maybeSingle();
+
+        toast.success(`You're registered in ${tripPick.city}!`);
+        if (th?.id) navigate({ to: "/chat", search: { id: th.id } });
+        else navigate({ to: "/chats" });
+      } catch (e) {
+        toast.error("Could not register", { description: (e as Error).message });
+      } finally {
+        setPublishing(false);
+      }
+      return;
+    }
+
     const liveCtx = ctx === "Street" || ctx === "Airport";
     if (liveCtx && !position) {
       requestGeo();
@@ -440,19 +482,11 @@ function Create() {
       } else if (ctx === "Hotel" && hotelPick?.lat != null && hotelPick?.lng != null) {
         lat = hotelPick.lat;
         lng = hotelPick.lng;
-      } else if (ctx === "Travel" && tripPick?.lat != null && tripPick?.lng != null) {
-        lat = tripPick.lat;
-        lng = tripPick.lng;
       } else {
-        // Fallback to last known
         lat = position?.lat ?? 0;
         lng = position?.lng ?? 0;
       }
 
-
-      // Compute scheduled_at
-      // Live (Street/Airport): "Now" → null, "+X min"/"+1 h" → now + offset
-      // Hotel/Travel: from the date+time pickers
       let scheduled_at: string | null = null;
       const now = Date.now();
       if (liveCtx && when !== "Now") {
@@ -462,11 +496,10 @@ function Create() {
         if (offsetMin > 0) {
           scheduled_at = new Date(now + offsetMin * 60 * 1000).toISOString();
         }
-      } else if ((ctx === "Hotel" || ctx === "Travel") && scheduledDate && scheduledTime) {
+      } else if (ctx === "Hotel" && scheduledDate && scheduledTime) {
         scheduled_at = new Date(`${scheduledDate}T${scheduledTime}`).toISOString();
       }
 
-      // Block creating a nearby live minyan only if an existing one starts within 30 min of this one
       if (liveCtx) {
         const startIso = scheduled_at ?? new Date(now).toISOString();
         const { data: nearbyCount, error: rpcErr } = await supabase.rpc("count_minyanim_within", {
@@ -485,16 +518,12 @@ function Create() {
         }
       }
 
-
-      // expires_at: live = start + 2h, scheduled = start + 4h, travel range = trip end + 1d
       let expires_at: string;
       if (liveCtx) {
         const startMs = scheduled_at ? new Date(scheduled_at).getTime() : now;
         expires_at = new Date(startMs + 2 * 60 * 60 * 1000).toISOString();
       } else if (scheduled_at) {
         expires_at = new Date(new Date(scheduled_at).getTime() + 4 * 60 * 60 * 1000).toISOString();
-      } else if (ctx === "Travel" && tripDateEnd) {
-        expires_at = new Date(new Date(tripDateEnd).getTime() + 24 * 60 * 60 * 1000).toISOString();
       } else {
         expires_at = new Date(now + 7 * 24 * 60 * 60 * 1000).toISOString();
       }
@@ -509,7 +538,7 @@ function Create() {
         .from("minyanim")
         .insert({
           creator_id: user.id,
-          type: ctx.toLowerCase() as "street" | "airport" | "hotel" | "travel",
+          type: ctx.toLowerCase() as "street" | "airport" | "hotel",
           prayer: prayerMap[prayer] ?? "mincha",
           nusach,
           message: comment || null,
@@ -518,8 +547,6 @@ function Create() {
           longitude: lng,
           is_live: liveCtx,
           scheduled_at,
-          trip_start_date: ctx === "Travel" && tripDateStart ? tripDateStart : null,
-          trip_end_date: ctx === "Travel" && tripDateEnd ? tripDateEnd : null,
           present_count: present,
           extra_present: Math.max(0, present - 1),
           expires_at,
@@ -529,7 +556,6 @@ function Create() {
 
       if (error) throw error;
 
-      // Add creator as participant
       await supabase
         .from("minyan_participants")
         .insert({ minyan_id: created.id, user_id: user.id });
@@ -542,6 +568,7 @@ function Create() {
       setPublishing(false);
     }
   }
+}
 }
 
 function Section({ step, title, children }: { step: string; title: string; children: React.ReactNode }) {
