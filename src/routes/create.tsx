@@ -189,7 +189,10 @@ function Create() {
             <div className="mt-3 space-y-2">
               <AddressAutocomplete
                 value={tripCity}
-                onChange={setTripCity}
+                onChange={(value) => {
+                  setTripCity(value);
+                  setTripPick(null);
+                }}
                 onPick={setTripPick}
                 placeholder="Destination city"
                 citiesOnly
