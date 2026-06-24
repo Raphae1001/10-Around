@@ -100,8 +100,9 @@ function Create() {
   const locationSummary =
     ctx === "Street" ? street :
     ctx === "Airport" ? [airport, gate && `Gate ${gate}`].filter(Boolean).join(" · ") || "Set airport & gate" :
-    ctx === "Hotel" ? [hotelCity, hotelName, hotelSpot].filter(Boolean).join(" · ") || "Set venue details" :
+    ctx === "Hotel" ? (hotelAddress || "Set the address") :
     [tripCity, tripDateStart && tripDateEnd ? `${tripDateStart} → ${tripDateEnd}` : tripDateStart].filter(Boolean).join(" · ") || "Set city & dates";
+
 
   return (
     <MobileFrame>
