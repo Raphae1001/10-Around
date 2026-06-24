@@ -38,6 +38,7 @@ function Home() {
   const [pending, setPending] = useState<MinyanRow | null>(null);
   const [justJoined, setJustJoined] = useState<MinyanRow | null>(null);
   const [joinedIds, setJoinedIds] = useState<Set<string>>(new Set());
+  const [travelCities, setTravelCities] = useState<Array<{ city_key: string; city_label: string; date_start: string; date_end: string; peer_count: number; thread_id: string | null }>>([]);
 
   useEffect(() => {
     if (!authLoading && !user) navigate({ to: "/auth" });
@@ -54,6 +55,14 @@ function Home() {
         if (data) setJoinedIds(new Set(data.map((r) => r.minyan_id)));
       });
   }, [user, minyanim]);
+
+  // Load user's travel destinations
+  useEffect(() => {
+    if (!user) return;
+    supabase.rpc("my_travel_cities").then(({ data }) => {
+      if (data) setTravelCities(data as typeof travelCities);
+    });
+  }, [user]);
 
   const confirmJoin = async () => {
     if (!pending || !user) return;
