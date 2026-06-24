@@ -96,7 +96,7 @@ function Create() {
     Travel: t("ctx.Travel"),
   };
 
-  // Count overlapping travel minyanim in same city
+  // Count travelers already registered in same city + overlapping dates
   useEffect(() => {
     if (ctx !== "Travel" || !tripPick?.city || !tripDateStart || !tripDateEnd) {
       setTripPeers(null);
@@ -105,14 +105,13 @@ function Create() {
     let cancelled = false;
     setTripPeers(null);
     (async () => {
-      const { count } = await supabase
-        .from("minyanim")
-        .select("id", { count: "exact", head: true })
-        .eq("type", "travel")
-        .ilike("address", `%${tripPick.city}%`)
-        .lte("trip_start_date", tripDateEnd)
-        .gte("trip_end_date", tripDateStart);
-      if (!cancelled) setTripPeers(count ?? 0);
+      const cityKey = tripPick.city.trim().toLowerCase();
+      const { data } = await supabase.rpc("count_travelers_in_city", {
+        _city_key: cityKey,
+        _from: tripDateStart,
+        _to: tripDateEnd,
+      });
+      if (!cancelled) setTripPeers(Number(data ?? 0));
     })();
     return () => { cancelled = true; };
   }, [ctx, tripPick?.city, tripDateStart, tripDateEnd]);
