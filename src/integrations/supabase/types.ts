@@ -418,6 +418,18 @@ export type Database = {
         Returns: string
       }
       is_chat_member: { Args: { _thread_id: string }; Returns: boolean }
+      list_city_peers: {
+        Args: { _city_key: string; _from: string; _to: string }
+        Returns: {
+          avatar_url: string
+          date_end: string
+          date_start: string
+          display_name: string
+          is_me: boolean
+          note: string
+          user_id: string
+        }[]
+      }
       my_chat_threads: {
         Args: never
         Returns: {
@@ -429,6 +441,17 @@ export type Database = {
           member_count: number
           minyan_id: string
           title: string
+        }[]
+      }
+      my_travel_cities: {
+        Args: never
+        Returns: {
+          city_key: string
+          city_label: string
+          date_end: string
+          date_start: string
+          peer_count: number
+          thread_id: string
         }[]
       }
       nearby_minyanim: {
