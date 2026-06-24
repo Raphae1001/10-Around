@@ -74,6 +74,7 @@ https://minyanlive.app/m/aaronloft`;
           </button>
         </div>
 
+        <div className="mt-4 rounded-2xl border border-border bg-surface p-4">
           <div className="text-[11px] uppercase tracking-wider text-muted-foreground mb-2">{t("share.smartTargeting")}</div>
           <div className="space-y-2 text-sm">
             {(["bayit", "office", "family"] as const).map((g) => (
