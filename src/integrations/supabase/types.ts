@@ -276,6 +276,51 @@ export type Database = {
         }
         Relationships: []
       }
+      travel_presence: {
+        Row: {
+          address: string | null
+          city_key: string
+          city_label: string
+          created_at: string
+          date_end: string
+          date_start: string
+          id: string
+          latitude: number | null
+          longitude: number | null
+          note: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          address?: string | null
+          city_key: string
+          city_label: string
+          created_at?: string
+          date_end: string
+          date_start: string
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          note?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          address?: string | null
+          city_key?: string
+          city_label?: string
+          created_at?: string
+          date_end?: string
+          date_start?: string
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          note?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_push_tokens: {
         Row: {
           created_at: string
@@ -325,6 +370,10 @@ export type Database = {
             }
             Returns: number
           }
+      count_travelers_in_city: {
+        Args: { _city_key: string; _from: string; _to: string }
+        Returns: number
+      }
       ensure_minyan_chat: { Args: { _minyan_id: string }; Returns: string }
       get_my_profile: {
         Args: never
@@ -363,6 +412,10 @@ export type Database = {
           stars: number
           streak_days: number
         }[]
+      }
+      get_or_create_minyan_chat: {
+        Args: { _minyan_id: string }
+        Returns: string
       }
       is_chat_member: { Args: { _thread_id: string }; Returns: boolean }
       my_chat_threads: {
