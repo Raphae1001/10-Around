@@ -218,10 +218,20 @@ export type Database = {
       }
       cancel_my_minyan: { Args: { _id: string }; Returns: undefined }
       cleanup_expired_minyanim: { Args: never; Returns: undefined }
-      count_minyanim_within: {
-        Args: { lat: number; lng: number; radius_m?: number }
-        Returns: number
-      }
+      count_minyanim_within:
+        | {
+            Args: { lat: number; lng: number; radius_m?: number }
+            Returns: number
+          }
+        | {
+            Args: {
+              _start?: string
+              lat: number
+              lng: number
+              radius_m?: number
+            }
+            Returns: number
+          }
       get_my_profile: {
         Args: never
         Returns: {
