@@ -4,6 +4,8 @@ import { MobileFrame } from "@/components/MobileFrame";
 import { ScreenHeader } from "@/components/ui-bits";
 import { Copy, Send, MessageCircle, Check } from "lucide-react";
 import { useState } from "react";
+import { shareAny, shareWhatsApp } from "@/lib/share";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/share")({ component: Share });
 
@@ -48,19 +50,26 @@ https://minyanlive.app/m/aaronloft`;
       </div>
 
       <div className="px-6 mt-5 space-y-2">
-        <button className="w-full font-semibold py-4 rounded-2xl flex items-center justify-center gap-2 text-white shadow-lift" style={{ background: "#25D366" }}>
+        <button
+          onClick={() => shareWhatsApp(message)}
+          className="w-full font-semibold py-4 rounded-2xl flex items-center justify-center gap-2 text-white shadow-lift" style={{ background: "#25D366" }}>
           <MessageCircle className="h-5 w-5" /> {t("share.sendWhatsapp")}
         </button>
 
         <div className="grid grid-cols-2 gap-2">
           <button
-            onClick={() => { setCopied(true); setTimeout(() => setCopied(false), 1400); }}
+            onClick={async () => {
+              try { await navigator.clipboard.writeText(message); setCopied(true); setTimeout(() => setCopied(false), 1400); }
+              catch { toast("Copie impossible", { description: message }); }
+            }}
             className="bg-surface border border-border font-medium py-3 rounded-2xl text-sm flex items-center justify-center gap-2"
           >
             {copied ? <Check className="h-4 w-4 text-success" /> : <Copy className="h-4 w-4" />}
             {copied ? t("share.copied") : t("share.copyText")}
           </button>
-          <button className="bg-surface border border-border font-medium py-3 rounded-2xl text-sm flex items-center justify-center gap-2">
+          <button
+            onClick={() => shareAny({ title: "MinyanNow", text: message })}
+            className="bg-surface border border-border font-medium py-3 rounded-2xl text-sm flex items-center justify-center gap-2">
             <Send className="h-4 w-4" /> {t("share.otherApps")}
           </button>
         </div>

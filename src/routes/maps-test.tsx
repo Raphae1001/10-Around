@@ -62,10 +62,7 @@ function MapsTest() {
           <div className="space-y-3">
             <h2 className="font-semibold">URLs générées</h2>
             {([
-              ["Google Maps (web)", urls.web],
-              ["iOS Google Maps app", urls.iosGoogle],
-              ["iOS Apple Maps", urls.iosApple],
-              ["Android geo:", urls.androidGeo],
+              ["Google Maps (universal)", urls.web],
             ] as const).map(([name, url]) => (
               <div key={name} className="border rounded p-2 space-y-2 bg-card">
                 <div className="text-xs font-medium">{name}</div>

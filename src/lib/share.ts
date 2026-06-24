@@ -1,13 +1,25 @@
-/** Share helpers: native share sheet first, wa.me fallback, clipboard last.
- *  We never use api.whatsapp.com (often blocked by ad-blockers/firewalls). */
-import { nativeShare } from "@/lib/native";
+/**
+ * Share helpers: native Capacitor share → Web Share API → WhatsApp deep
+ * link → clipboard fallback. Never uses api.whatsapp.com and never tries
+ * to render WhatsApp inside the app.
+ */
+import { Capacitor } from "@capacitor/core";
 import { toast } from "sonner";
+import { openExternal } from "@/lib/external";
 
 const PUBLISHED_ORIGIN = "https://global-minyan-connect.lovable.app";
 
+/** Origin to use when generating shareable links. Always prefer the
+ *  published domain so links don't point at the preview iframe. */
 export function appOrigin(): string {
-  if (typeof window !== "undefined" && window.location?.origin) {
-    return window.location.origin;
+  if (typeof window !== "undefined") {
+    const host = window.location?.hostname ?? "";
+    // Use the current origin only for the real published domain or a
+    // custom domain. Inside the Lovable preview iframe use the published
+    // URL so shared links work for everyone.
+    if (host && !host.includes("lovableproject.com") && !host.includes("lovable.dev") && !host.includes("id-preview--")) {
+      return window.location.origin;
+    }
   }
   return PUBLISHED_ORIGIN;
 }
@@ -32,33 +44,46 @@ async function copyToClipboard(text: string): Promise<boolean> {
   } catch { return false; }
 }
 
-/** wa.me deep-link (never api.whatsapp.com). */
+function isMobileUA(): boolean {
+  if (typeof navigator === "undefined") return false;
+  return /android|iphone|ipad|ipod/i.test(navigator.userAgent || "");
+}
+
+/** WhatsApp share — wa.me on desktop, whatsapp:// deep link on mobile.
+ *  Never uses api.whatsapp.com. */
 export function shareWhatsApp(text: string, url?: string) {
   const full = url ? `${text}\n${url}` : text;
-  const wa = `https://wa.me/?text=${encodeURIComponent(full)}`;
-  if (typeof window !== "undefined") {
-    const w = window.open(wa, "_blank", "noopener,noreferrer");
-    if (!w) {
-      void copyToClipboard(full).then((ok) => {
-        toast(ok ? "Lien copié dans le presse-papiers" : "Impossible de partager", {
-          description: ok ? full : "Copie manuelle requise",
-        });
+  const encoded = encodeURIComponent(full);
+  const target = isMobileUA()
+    ? `whatsapp://send?text=${encoded}`
+    : `https://wa.me/?text=${encoded}`;
+  const ok = openExternal(target);
+  if (!ok) {
+    void copyToClipboard(full).then((copied) => {
+      toast(copied ? "Lien copié" : "Partage indisponible", {
+        description: copied ? full : "Copiez ce lien manuellement : " + full,
       });
-    }
+    });
   }
 }
 
-/** Preferred share entry point. Tries OS-native → Web Share → wa.me → clipboard. */
+/** Preferred share entry point.
+ *  Order: Capacitor native sheet → navigator.share → WhatsApp deep link → clipboard. */
 export async function shareAny(opts: { title?: string; text: string; url?: string }) {
   const full = opts.url ? `${opts.text}\n${opts.url}` : opts.text;
 
-  // 1) Native (Capacitor) share — OS share sheet on iOS/Android.
-  try {
-    await nativeShare(opts);
-    return;
-  } catch { /* fall through */ }
+  // 1) Capacitor native share sheet (iOS/Android app).
+  if (Capacitor.isNativePlatform()) {
+    try {
+      const { Share } = await import("@capacitor/share");
+      await Share.share({ title: opts.title, text: opts.text, url: opts.url });
+      return;
+    } catch (e) {
+      if ((e as { message?: string })?.message?.toLowerCase().includes("cancel")) return;
+    }
+  }
 
-  // 2) Web Share API — mobile + modern desktop.
+  // 2) Web Share API (mobile browsers, Safari, modern Chrome desktop).
   const nav = typeof navigator !== "undefined"
     ? (navigator as Navigator & { share?: (d: ShareData) => Promise<void> })
     : null;
@@ -67,20 +92,19 @@ export async function shareAny(opts: { title?: string; text: string; url?: strin
       await nav.share({ title: opts.title, text: opts.text, url: opts.url });
       return;
     } catch (e) {
-      // user cancelled? bail silently
       if ((e as DOMException)?.name === "AbortError") return;
-      /* otherwise fall through */
+      // otherwise fall through to WhatsApp / clipboard
     }
   }
 
-  // 3) wa.me deep-link (never api.whatsapp.com)
-  try {
-    const wa = `https://wa.me/?text=${encodeURIComponent(full)}`;
-    const w = window.open(wa, "_blank", "noopener,noreferrer");
-    if (w) return;
-  } catch { /* fall through */ }
+  // 3) WhatsApp deep link (wa.me on desktop, whatsapp:// on mobile).
+  const encoded = encodeURIComponent(full);
+  const wa = isMobileUA()
+    ? `whatsapp://send?text=${encoded}`
+    : `https://wa.me/?text=${encoded}`;
+  if (openExternal(wa)) return;
 
-  // 4) Last resort: copy to clipboard + toast.
+  // 4) Clipboard fallback.
   const ok = await copyToClipboard(full);
   toast(ok ? "Lien copié dans le presse-papiers" : "Partage indisponible", {
     description: ok ? full : "Copiez ce lien manuellement : " + full,

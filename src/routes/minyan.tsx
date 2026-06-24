@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { joinMinyan, leaveMinyan, type MinyanRow } from "@/hooks/use-minyanim";
 import { openDirections } from "@/lib/directions";
+import { shareAny, appOrigin } from "@/lib/share";
 
 export const Route = createFileRoute("/minyan")({
   validateSearch: (s: Record<string, unknown>) => ({ id: typeof s.id === "string" ? s.id : undefined }),
@@ -133,9 +134,7 @@ function Details() {
 
   function handleWhatsApp() {
     if (!minyan) return;
-    const url = typeof window !== "undefined"
-      ? `${window.location.origin}/minyan?id=${minyan.id}`
-      : `https://minyannow.app/minyan?id=${minyan.id}`;
+    const url = `${appOrigin()}/minyan/${minyan.id}`;
     const when = startsAt ? startsAt.toLocaleString([], { dateStyle: "short", timeStyle: "short" }) : t("home.liveNow");
     const text = t("minyan.shareText", {
       prayer: prayerLabel,
@@ -143,8 +142,7 @@ function Details() {
       when,
       url,
     });
-    const wa = `https://wa.me/?text=${encodeURIComponent(text)}`;
-    window.open(wa, "_blank", "noopener,noreferrer");
+    void shareAny({ title: `MinyanNow — ${prayerLabel}`, text, url });
   }
 
   async function handleOpenChat() {
