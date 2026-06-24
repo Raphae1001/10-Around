@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { MobileFrame } from "@/components/MobileFrame";
 import { ScreenHeader } from "@/components/ui-bits";
-import { MessageCircle, Users, MapPin, ChevronRight, Loader2, Globe2 } from "lucide-react";
+import { MessageCircle, Users, MapPin, ChevronRight, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 
@@ -70,20 +70,17 @@ function ChatsPage() {
 
   return (
     <MobileFrame>
-      <ScreenHeader title="Your chats" subtitle="Talk with your minyan and fellow travelers" back />
+      <ScreenHeader title="Chats" back />
       <div className="px-6 pb-8 space-y-5">
         {cities && cities.length > 0 && (
           <div>
-            <div className="text-[11px] uppercase tracking-wider text-muted-foreground mb-2 font-semibold flex items-center gap-1.5">
-              <Globe2 className="h-3 w-3" /> Your travel cities
-            </div>
             <ul className="space-y-2">
               {cities.map((c) => (
                 <li key={c.city_key}>
                   <Link
                     to="/travel-city/$cityKey"
                     params={{ cityKey: c.city_key }}
-                    className="flex items-center gap-3 rounded-2xl border border-border bg-surface p-3 hover:border-gold/60 transition-colors"
+                    className="flex items-center gap-3 rounded-2xl border border-border bg-surface p-4 hover:border-gold/60 transition-colors"
                   >
                     <div className="h-11 w-11 rounded-2xl gold-gradient text-gold-foreground flex items-center justify-center">
                       <MapPin className="h-5 w-5" />
@@ -91,7 +88,7 @@ function ChatsPage() {
                     <div className="flex-1 min-w-0">
                       <div className="text-sm font-semibold truncate">{c.city_label}</div>
                       <div className="text-xs text-muted-foreground">
-                        {c.peer_count} traveler{c.peer_count === 1 ? "" : "s"} · {fmt(c.date_start)} → {fmt(c.date_end)}
+                        {c.peer_count} person{c.peer_count === 1 ? "" : "s"}
                       </div>
                     </div>
                     <ChevronRight className="h-4 w-4 text-muted-foreground" />
@@ -109,7 +106,7 @@ function ChatsPage() {
             <MessageCircle className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
             <div className="text-sm font-semibold">No chats yet</div>
             <p className="text-xs text-muted-foreground mt-1">
-              Join a minyan or register a trip — a group chat opens automatically.
+              Create an Abroad city to organize with people there.
             </p>
           </div>
         ) : (
