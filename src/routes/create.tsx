@@ -105,7 +105,7 @@ function Create() {
     let cancelled = false;
     setTripPeers(null);
     (async () => {
-      const cityKey = tripPick.city.trim().toLowerCase();
+      const cityKey = (tripPick.city ?? "").trim().toLowerCase();
       const { data } = await supabase.rpc("count_travelers_in_city", {
         _city_key: cityKey,
         _from: tripDateStart,
