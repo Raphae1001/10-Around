@@ -149,18 +149,14 @@ function Details() {
 
   async function handleOpenChat() {
     if (!minyan || !user) return;
-    const { data: th } = await supabase
-      .from("chat_threads")
-      .select("id")
-      .eq("kind", "minyan")
-      .eq("minyan_id", minyan.id)
-      .maybeSingle();
-    if (th?.id) {
-      navigate({ to: "/chat", search: { id: th.id } });
-    } else {
-      toast.error("Join the minyan first to access the group chat.");
+    const { data: tid, error } = await supabase.rpc("get_or_create_minyan_chat", { _minyan_id: minyan.id });
+    if (error || !tid) {
+      toast.error("Join the minyan first to access the group chat.", { description: error?.message });
+      return;
     }
+    navigate({ to: "/chat", search: { id: tid as string } });
   }
+
 
 
   if (loading) {
