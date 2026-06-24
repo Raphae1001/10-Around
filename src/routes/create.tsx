@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { MobileFrame } from "@/components/MobileFrame";
 import { ScreenHeader } from "@/components/ui-bits";
-import { Sunrise, Sun, Moon, MapPin, Users, Zap, Crosshair, Plane, Building2, Globe2, Minus, Plus, Loader2 } from "lucide-react";
+import { Sunrise, Sun, Moon, MapPin, Users, Crosshair, Plane, Building2, Globe2, Minus, Plus, Loader2 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useGeolocation } from "@/hooks/use-geolocation";
 import { supabase } from "@/integrations/supabase/client";
@@ -27,7 +27,7 @@ function Create() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
-  const { position, request: requestGeo } = useGeolocation(true);
+  const { position, request: requestGeo } = useGeolocation(false);
   const [publishing, setPublishing] = useState(false);
 
   useEffect(() => {
@@ -72,10 +72,6 @@ function Create() {
   // Scheduled time (Hotel & Travel only — can plan in advance)
   const [scheduledDate, setScheduledDate] = useState("");
   const [scheduledTime, setScheduledTime] = useState("");
-  // Counts other travelers heading to the same city in overlapping dates
-  const [tripPeers, setTripPeers] = useState<number | null>(null);
-
-
   const prayers = [
     { name: "Shacharit", icon: Sunrise },
     { name: "Mincha", icon: Sun },
@@ -86,7 +82,7 @@ function Create() {
     Street: "On the street, right now",
     Airport: "At the airport before my flight",
     Hotel: "Hotel, synagogue, apartment… anywhere scheduled",
-    Travel: "For a future trip",
+    Travel: "Destination city, not your current location",
   };
 
   const ctxDisplay: Record<Context, string> = {
@@ -96,26 +92,11 @@ function Create() {
     Travel: t("ctx.Travel"),
   };
 
-  // Count travelers already registered in same city + overlapping dates
   useEffect(() => {
-    if (ctx !== "Travel" || !tripPick?.city || !tripDateStart || !tripDateEnd) {
-      setTripPeers(null);
-      return;
-    }
-    let cancelled = false;
-    setTripPeers(null);
-    (async () => {
-      const cityKey = (tripPick.city ?? "").trim().toLowerCase();
-      const { data } = await supabase.rpc("count_travelers_in_city", {
-        _city_key: cityKey,
-        _from: tripDateStart,
-        _to: tripDateEnd,
-      });
-      if (!cancelled) setTripPeers(Number(data ?? 0));
-    })();
-    return () => { cancelled = true; };
-  }, [ctx, tripPick?.city, tripDateStart, tripDateEnd]);
+    if (ctx === "Street" && !position) requestGeo();
+  }, [ctx, position, requestGeo]);
 
+  const tripCityLabel = getTravelCityLabel(tripPick, tripCity);
 
 
 
@@ -123,16 +104,20 @@ function Create() {
     ctx === "Street" ? street :
     ctx === "Airport" ? [airport, gate && `Gate ${gate}`].filter(Boolean).join(" · ") || "Set airport & gate" :
     ctx === "Hotel" ? (hotelAddress || "Set the address") :
-    [tripCity, tripDateStart && tripDateEnd ? `${tripDateStart} → ${tripDateEnd}` : tripDateStart].filter(Boolean).join(" · ") || "Set city & dates";
+    [tripCityLabel || tripCity, tripDateStart && tripDateEnd ? `${tripDateStart} → ${tripDateEnd}` : tripDateStart].filter(Boolean).join(" · ") || "Set city & dates";
 
 
   return (
     <MobileFrame>
-      <ScreenHeader title="Start a minyan" subtitle="Fill in the details — everyone will see them" back />
+      <ScreenHeader
+        title={ctx === "Travel" ? "Abroad" : "Start a minyan"}
+        subtitle={ctx === "Travel" ? "Create" : "Fill in the details — everyone will see them"}
+        back
+      />
 
       <div className="px-6 space-y-5 pb-4">
         {/* 1. WHERE */}
-        <Section step="1" title="Where are you?">
+        <Section step="1" title={ctx === "Travel" ? "Where will you be?" : "Where are you?"}>
           <div className="grid grid-cols-4 gap-2">
             {(["Street", "Airport", "Hotel", "Travel"] as Context[]).map((c) => {
               const Icon = c === "Street" ? MapPin : c === "Airport" ? Plane : c === "Hotel" ? Building2 : Globe2;
@@ -204,7 +189,10 @@ function Create() {
             <div className="mt-3 space-y-2">
               <AddressAutocomplete
                 value={tripCity}
-                onChange={setTripCity}
+                onChange={(value) => {
+                  setTripCity(value);
+                  setTripPick(null);
+                }}
                 onPick={setTripPick}
                 placeholder="Destination city"
                 citiesOnly
@@ -229,20 +217,6 @@ function Create() {
                   />
                 </div>
               </div>
-              {tripPick?.city && tripDateStart && tripDateEnd && (
-                <div className="rounded-2xl border border-gold/30 bg-gold/5 p-3 flex items-center gap-3">
-                  <Users className="h-4 w-4 text-gold" />
-                  <div className="text-xs leading-snug">
-                    {tripPeers === null ? (
-                      <>Checking who else is heading to <strong>{tripPick.city}</strong>…</>
-                    ) : tripPeers === 0 ? (
-                      <>You'd be the first traveler registered in <strong>{tripPick.city}</strong> for these dates.</>
-                    ) : (
-                      <><strong className="text-foreground">{tripPeers}</strong> other traveler{tripPeers > 1 ? "s" : ""} already in <strong>{tripPick.city}</strong> on overlapping dates — together: <strong>{tripPeers + 1}/10</strong>.</>
-                    )}
-                  </div>
-                </div>
-              )}
             </div>
           )}
         </Section>
@@ -362,7 +336,7 @@ function Create() {
           </>
         )}
 
-        <Section step={ctx === "Travel" ? "2" : "6"} title={ctx === "Travel" ? "A note for fellow travelers (optional)" : "Comment (optional)"}>
+        <Section step={ctx === "Travel" ? "2" : "6"} title={ctx === "Travel" ? "Comment (optional)" : "Comment (optional)"}>
           <textarea
             rows={ctx === "Travel" ? 3 : 2}
             value={comment}
@@ -370,13 +344,13 @@ function Create() {
             placeholder={ctx === "Travel" ? "Where you'll stay, your shul preference, kosher tips…" : "Kaddish · Yahrzeit · bring tefillin…"}
             className="w-full rounded-2xl border border-border bg-surface p-3 text-sm outline-none focus:border-gold"
           />
-          <p className="text-[10px] text-muted-foreground mt-1">{ctx === "Travel" ? "Shared in the city chat with other travelers." : "Visible to everyone notified."}</p>
+          {ctx !== "Travel" && <p className="text-[10px] text-muted-foreground mt-1">Visible to everyone notified.</p>}
         </Section>
 
         {/* Preview */}
-        <div className="rounded-2xl bg-navy/[0.04] border border-border p-4 space-y-2">
+        {ctx !== "Travel" && <div className="rounded-2xl bg-navy/[0.04] border border-border p-4 space-y-2">
           <div className="flex items-start gap-3">
-            <Zap className="h-4 w-4 text-gold mt-0.5 shrink-0" />
+            <Users className="h-4 w-4 text-gold mt-0.5 shrink-0" />
             <div className="text-xs leading-snug">
               {ctx === "Street" || ctx === "Airport" ? (
                 <><strong className="text-foreground">~38 people</strong> within 1 km will be notified now.</>
@@ -388,13 +362,13 @@ function Create() {
           <div className="border-t border-border pt-2 text-[11px] text-muted-foreground space-y-1">
             <div><span className="font-semibold text-foreground">{prayer}</span> · {when} · {present} here · {present >= 10 ? "minyan ready — join us too" : `${Math.max(0, 10 - present)} missing`}</div>
             <div className="flex items-start gap-1"><MapPin className="h-3 w-3 mt-0.5 shrink-0" /><span className="truncate">{locationSummary}</span></div>
-            {(ctx === "Hotel" || ctx === "Travel") && (scheduledDate || scheduledTime) && (
+            {ctx === "Hotel" && (scheduledDate || scheduledTime) && (
               <div>Scheduled: <span className="text-foreground">{[scheduledDate, scheduledTime].filter(Boolean).join(" · ")}</span></div>
             )}
             <div>Nusach: <span className="text-foreground">{nusach}</span></div>
             {comment && <div className="italic">"{comment}"</div>}
           </div>
-        </div>
+        </div>}
       </div>
 
       <div className="sticky bottom-24 px-6 pb-2">
@@ -404,15 +378,15 @@ function Create() {
           className="flex items-center justify-center gap-2 w-full gold-gradient text-gold-foreground font-semibold py-5 rounded-2xl shadow-glow-gold text-base disabled:opacity-60"
         >
           {publishing ? <Loader2 className="h-5 w-5 animate-spin" /> : <Users className="h-5 w-5" />}
-          Publish minyan
+          {ctx === "Travel" ? "Create" : "Publish minyan"}
         </button>
-        <p className="text-center text-[11px] text-muted-foreground mt-2">
+        {ctx !== "Travel" && <p className="text-center text-[11px] text-muted-foreground mt-2">
           {ctx === "Street" || ctx === "Airport"
             ? position
               ? "Your GPS position will be shared with this minyan only."
               : "Tap to allow location — needed to publish a street/airport minyan."
             : "Travelers will see it in advance."}
-        </p>
+        </p>}
       </div>
     </MobileFrame>
   );
@@ -426,27 +400,32 @@ function Create() {
 
     // ===== TRAVEL: register a city presence (not a minyan) =====
     if (ctx === "Travel") {
-      if (!tripPick?.city || !tripDateStart || !tripDateEnd) {
+      const cityLabel = getTravelCityLabel(tripPick, tripCity);
+      if (!cityLabel || !tripDateStart || !tripDateEnd) {
         toast.error("Pick a city and your travel dates.");
+        return;
+      }
+      if (tripDateEnd < tripDateStart) {
+        toast.error("Pick valid dates.");
         return;
       }
       setPublishing(true);
       try {
-        const cityKey = (tripPick.city ?? "").trim().toLowerCase();
+        const cityKey = cityLabel.trim().toLowerCase();
         const { error } = await supabase.from("travel_presence").insert({
           user_id: user.id,
           city_key: cityKey,
-          city_label: tripPick.city,
-          address: tripPick.address ?? tripCity,
-          latitude: tripPick.lat ?? null,
-          longitude: tripPick.lng ?? null,
+          city_label: cityLabel,
+          address: tripPick?.address ?? tripCity,
+          latitude: tripPick?.lat ?? null,
+          longitude: tripPick?.lng ?? null,
           date_start: tripDateStart,
           date_end: tripDateEnd,
           note: comment || null,
         });
         if (error) throw error;
 
-        toast.success(`You're registered in ${tripPick.city}!`);
+        toast.success(`Created in ${cityLabel}`);
         navigate({ to: "/travel-city/$cityKey", params: { cityKey } });
       } catch (e) {
         toast.error("Could not register", { description: (e as Error).message });
@@ -559,6 +538,11 @@ function Create() {
       setPublishing(false);
     }
   }
+}
+
+
+function getTravelCityLabel(pick: AddressPick | null, raw: string) {
+  return (pick?.city || raw.split(",")[0] || "").trim();
 }
 
 
