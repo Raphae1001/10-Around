@@ -183,9 +183,9 @@ function Details() {
         back
       />
 
-      <div className="mx-6 rounded-3xl overflow-hidden border border-border shadow-soft">
+      <Link to="/map" search={{ id: minyan.id }} className="mx-6 block rounded-3xl overflow-hidden border border-border shadow-soft hover:border-gold/60 transition-colors">
         <MapCanvas height="h-40" pins={[{ x: 50, y: 50, tone: complete ? "success" : "urgent", pulse: !complete, label: complete ? "✓" : "!", size: "lg" }]} />
-      </div>
+      </Link>
 
       <div className="px-6 mt-4">
         <div className="flex items-center gap-2 flex-wrap">
