@@ -14,7 +14,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { MapPin, Users, Plane, Building2, Plus, Clock, Sunrise, Sun, Moon, Check, Crosshair, Loader2, Globe2 } from "lucide-react";
+import { MapPin, Users, Plane, Building2, Plus, Clock, Sunrise, Sun, Moon, Check, Crosshair, Loader2, Globe2, MessageCircle } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useGeolocation } from "@/hooks/use-geolocation";
 import { joinMinyan, useNearbyMinyanim, type MinyanRow } from "@/hooks/use-minyanim";
