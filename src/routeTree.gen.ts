@@ -35,6 +35,7 @@ import { Route as BackupRouteImport } from './routes/backup'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TravelCityCityKeyRouteImport } from './routes/travel-city.$cityKey'
+import { Route as MinyanIdRouteImport } from './routes/minyan.$id'
 
 const TrustRoute = TrustRouteImport.update({
   id: '/trust',
@@ -166,6 +167,11 @@ const TravelCityCityKeyRoute = TravelCityCityKeyRouteImport.update({
   path: '/travel-city/$cityKey',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MinyanIdRoute = MinyanIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => MinyanRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -179,7 +185,7 @@ export interface FileRoutesByFullPath {
   '/kaddish': typeof KaddishRoute
   '/map': typeof MapRoute
   '/maps-test': typeof MapsTestRoute
-  '/minyan': typeof MinyanRoute
+  '/minyan': typeof MinyanRouteWithChildren
   '/notifications': typeof NotificationsRoute
   '/onboarding': typeof OnboardingRoute
   '/privacy': typeof PrivacyRoute
@@ -193,6 +199,7 @@ export interface FileRoutesByFullPath {
   '/travel': typeof TravelRoute
   '/traveler': typeof TravelerRoute
   '/trust': typeof TrustRoute
+  '/minyan/$id': typeof MinyanIdRoute
   '/travel-city/$cityKey': typeof TravelCityCityKeyRoute
 }
 export interface FileRoutesByTo {
@@ -207,7 +214,7 @@ export interface FileRoutesByTo {
   '/kaddish': typeof KaddishRoute
   '/map': typeof MapRoute
   '/maps-test': typeof MapsTestRoute
-  '/minyan': typeof MinyanRoute
+  '/minyan': typeof MinyanRouteWithChildren
   '/notifications': typeof NotificationsRoute
   '/onboarding': typeof OnboardingRoute
   '/privacy': typeof PrivacyRoute
@@ -221,6 +228,7 @@ export interface FileRoutesByTo {
   '/travel': typeof TravelRoute
   '/traveler': typeof TravelerRoute
   '/trust': typeof TrustRoute
+  '/minyan/$id': typeof MinyanIdRoute
   '/travel-city/$cityKey': typeof TravelCityCityKeyRoute
 }
 export interface FileRoutesById {
@@ -236,7 +244,7 @@ export interface FileRoutesById {
   '/kaddish': typeof KaddishRoute
   '/map': typeof MapRoute
   '/maps-test': typeof MapsTestRoute
-  '/minyan': typeof MinyanRoute
+  '/minyan': typeof MinyanRouteWithChildren
   '/notifications': typeof NotificationsRoute
   '/onboarding': typeof OnboardingRoute
   '/privacy': typeof PrivacyRoute
@@ -250,6 +258,7 @@ export interface FileRoutesById {
   '/travel': typeof TravelRoute
   '/traveler': typeof TravelerRoute
   '/trust': typeof TrustRoute
+  '/minyan/$id': typeof MinyanIdRoute
   '/travel-city/$cityKey': typeof TravelCityCityKeyRoute
 }
 export interface FileRouteTypes {
@@ -280,6 +289,7 @@ export interface FileRouteTypes {
     | '/travel'
     | '/traveler'
     | '/trust'
+    | '/minyan/$id'
     | '/travel-city/$cityKey'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -308,6 +318,7 @@ export interface FileRouteTypes {
     | '/travel'
     | '/traveler'
     | '/trust'
+    | '/minyan/$id'
     | '/travel-city/$cityKey'
   id:
     | '__root__'
@@ -336,6 +347,7 @@ export interface FileRouteTypes {
     | '/travel'
     | '/traveler'
     | '/trust'
+    | '/minyan/$id'
     | '/travel-city/$cityKey'
   fileRoutesById: FileRoutesById
 }
@@ -351,7 +363,7 @@ export interface RootRouteChildren {
   KaddishRoute: typeof KaddishRoute
   MapRoute: typeof MapRoute
   MapsTestRoute: typeof MapsTestRoute
-  MinyanRoute: typeof MinyanRoute
+  MinyanRoute: typeof MinyanRouteWithChildren
   NotificationsRoute: typeof NotificationsRoute
   OnboardingRoute: typeof OnboardingRoute
   PrivacyRoute: typeof PrivacyRoute
@@ -552,8 +564,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TravelCityCityKeyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/minyan/$id': {
+      id: '/minyan/$id'
+      path: '/$id'
+      fullPath: '/minyan/$id'
+      preLoaderRoute: typeof MinyanIdRouteImport
+      parentRoute: typeof MinyanRoute
+    }
   }
 }
+
+interface MinyanRouteChildren {
+  MinyanIdRoute: typeof MinyanIdRoute
+}
+
+const MinyanRouteChildren: MinyanRouteChildren = {
+  MinyanIdRoute: MinyanIdRoute,
+}
+
+const MinyanRouteWithChildren =
+  MinyanRoute._addFileChildren(MinyanRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -567,7 +597,7 @@ const rootRouteChildren: RootRouteChildren = {
   KaddishRoute: KaddishRoute,
   MapRoute: MapRoute,
   MapsTestRoute: MapsTestRoute,
-  MinyanRoute: MinyanRoute,
+  MinyanRoute: MinyanRouteWithChildren,
   NotificationsRoute: NotificationsRoute,
   OnboardingRoute: OnboardingRoute,
   PrivacyRoute: PrivacyRoute,
