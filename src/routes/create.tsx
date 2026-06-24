@@ -9,6 +9,8 @@ import { useAuth } from "@/hooks/use-auth";
 import { useGeolocation } from "@/hooks/use-geolocation";
 import { supabase } from "@/integrations/supabase/client";
 import { reverseGeocode } from "@/lib/geocoding";
+import { AddressAutocomplete, type AddressPick } from "@/components/AddressAutocomplete";
+
 
 type Context = "Street" | "Airport" | "Hotel" | "Travel";
 
@@ -59,17 +61,20 @@ function Create() {
   // Airport
   const [airport, setAirport] = useState("");
   const [gate, setGate] = useState("");
-  // Hotel
-  const [hotelCity, setHotelCity] = useState("");
-  const [hotelName, setHotelName] = useState("");
-  const [hotelSpot, setHotelSpot] = useState("");
-  // Travel
+  // Hotel / "Other" — single address field with autocomplete
+  const [hotelAddress, setHotelAddress] = useState("");
+  const [hotelPick, setHotelPick] = useState<AddressPick | null>(null);
+  // Travel / "Abroad" — destination city autocomplete
   const [tripCity, setTripCity] = useState("");
+  const [tripPick, setTripPick] = useState<AddressPick | null>(null);
   const [tripDateStart, setTripDateStart] = useState("");
   const [tripDateEnd, setTripDateEnd] = useState("");
   // Scheduled time (Hotel & Travel only — can plan in advance)
   const [scheduledDate, setScheduledDate] = useState("");
   const [scheduledTime, setScheduledTime] = useState("");
+  // Counts other travelers heading to the same city in overlapping dates
+  const [tripPeers, setTripPeers] = useState<number | null>(null);
+
 
   const prayers = [
     { name: "Shacharit", icon: Sunrise },
@@ -91,12 +96,36 @@ function Create() {
     Travel: t("ctx.Travel"),
   };
 
+  // Count overlapping travel minyanim in same city
+  useEffect(() => {
+    if (ctx !== "Travel" || !tripPick?.city || !tripDateStart || !tripDateEnd) {
+      setTripPeers(null);
+      return;
+    }
+    let cancelled = false;
+    setTripPeers(null);
+    (async () => {
+      const { count } = await supabase
+        .from("minyanim")
+        .select("id", { count: "exact", head: true })
+        .eq("type", "travel")
+        .ilike("address", `%${tripPick.city}%`)
+        .lte("trip_start_date", tripDateEnd)
+        .gte("trip_end_date", tripDateStart);
+      if (!cancelled) setTripPeers(count ?? 0);
+    })();
+    return () => { cancelled = true; };
+  }, [ctx, tripPick?.city, tripDateStart, tripDateEnd]);
+
+
+
 
   const locationSummary =
     ctx === "Street" ? street :
     ctx === "Airport" ? [airport, gate && `Gate ${gate}`].filter(Boolean).join(" · ") || "Set airport & gate" :
-    ctx === "Hotel" ? [hotelCity, hotelName, hotelSpot].filter(Boolean).join(" · ") || "Set venue details" :
+    ctx === "Hotel" ? (hotelAddress || "Set the address") :
     [tripCity, tripDateStart && tripDateEnd ? `${tripDateStart} → ${tripDateEnd}` : tripDateStart].filter(Boolean).join(" · ") || "Set city & dates";
+
 
   return (
     <MobileFrame>
@@ -163,35 +192,23 @@ function Create() {
           )}
           {ctx === "Hotel" && (
             <div className="mt-3 space-y-2">
-              <div className="grid grid-cols-2 gap-2">
-                <input
-                  value={hotelCity}
-                  onChange={(e) => setHotelCity(e.target.value)}
-                  placeholder="City"
-                  className="rounded-2xl border border-border bg-surface p-3 text-sm outline-none focus:border-gold"
-                />
-                <input
-                  value={hotelName}
-                  onChange={(e) => setHotelName(e.target.value)}
-                  placeholder="Venue (hotel, shul, apt…)"
-                  className="rounded-2xl border border-border bg-surface p-3 text-sm outline-none focus:border-gold"
-                />
-              </div>
-              <input
-                value={hotelSpot}
-                onChange={(e) => setHotelSpot(e.target.value)}
-                placeholder="Exact spot (Lobby, room 412, 3rd floor…)"
-                className="w-full rounded-2xl border border-border bg-surface p-3 text-sm outline-none focus:border-gold"
+              <AddressAutocomplete
+                value={hotelAddress}
+                onChange={setHotelAddress}
+                onPick={setHotelPick}
+                placeholder="Address (hotel, shul, apartment…)"
               />
+              <p className="text-[11px] text-muted-foreground">Type a place — pick it from the suggestions to lock the exact spot on the map.</p>
             </div>
           )}
           {ctx === "Travel" && (
             <div className="mt-3 space-y-2">
-              <input
+              <AddressAutocomplete
                 value={tripCity}
-                onChange={(e) => setTripCity(e.target.value)}
+                onChange={setTripCity}
+                onPick={setTripPick}
                 placeholder="Destination city"
-                className="w-full rounded-2xl border border-border bg-surface p-3 text-sm outline-none focus:border-gold"
+                citiesOnly
               />
               <div className="grid grid-cols-2 gap-2">
                 <div>
@@ -213,9 +230,24 @@ function Create() {
                   />
                 </div>
               </div>
+              {tripPick?.city && tripDateStart && tripDateEnd && (
+                <div className="rounded-2xl border border-gold/30 bg-gold/5 p-3 flex items-center gap-3">
+                  <Users className="h-4 w-4 text-gold" />
+                  <div className="text-xs leading-snug">
+                    {tripPeers === null ? (
+                      <>Checking who else is heading to <strong>{tripPick.city}</strong>…</>
+                    ) : tripPeers === 0 ? (
+                      <>You'd be the first traveler registered in <strong>{tripPick.city}</strong> for these dates.</>
+                    ) : (
+                      <><strong className="text-foreground">{tripPeers}</strong> other traveler{tripPeers > 1 ? "s" : ""} already in <strong>{tripPick.city}</strong> on overlapping dates — together: <strong>{tripPeers + 1}/10</strong>.</>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </Section>
+
 
         {/* 1b. SCHEDULE — Hotel & Travel only */}
         {(ctx === "Hotel" || ctx === "Travel") && (
@@ -406,11 +438,18 @@ function Create() {
       if (liveCtx && position) {
         lat = position.lat;
         lng = position.lng;
+      } else if (ctx === "Hotel" && hotelPick?.lat != null && hotelPick?.lng != null) {
+        lat = hotelPick.lat;
+        lng = hotelPick.lng;
+      } else if (ctx === "Travel" && tripPick?.lat != null && tripPick?.lng != null) {
+        lat = tripPick.lat;
+        lng = tripPick.lng;
       } else {
-        // For Hotel/Travel without GPS, use last known or 0/0 placeholder (user types city)
+        // Fallback to last known
         lat = position?.lat ?? 0;
         lng = position?.lng ?? 0;
       }
+
 
       // Compute scheduled_at
       // Live (Street/Airport): "Now" → null, "+X min"/"+1 h" → now + offset
