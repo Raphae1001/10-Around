@@ -247,8 +247,10 @@ export type Database = {
           backup_radius_m: number
           created_at: string
           display_name: string | null
+          first_name: string | null
           id: string
           language: string | null
+          last_name: string | null
           trust_score: number
           updated_at: string
         }
@@ -258,8 +260,10 @@ export type Database = {
           backup_radius_m?: number
           created_at?: string
           display_name?: string | null
+          first_name?: string | null
           id: string
           language?: string | null
+          last_name?: string | null
           trust_score?: number
           updated_at?: string
         }
@@ -269,8 +273,10 @@ export type Database = {
           backup_radius_m?: number
           created_at?: string
           display_name?: string | null
+          first_name?: string | null
           id?: string
           language?: string | null
+          last_name?: string | null
           trust_score?: number
           updated_at?: string
         }
@@ -383,8 +389,10 @@ export type Database = {
           backup_radius_m: number
           created_at: string
           display_name: string
+          first_name: string
           id: string
           language: string
+          last_name: string
           trust_score: number
           updated_at: string
         }[]
