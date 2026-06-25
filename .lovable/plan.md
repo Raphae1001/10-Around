@@ -1,105 +1,131 @@
-I will fix the native iOS OAuth flow end-to-end so Capacitor receives the Supabase session instead of leaving the user on the hosted website.
+## Goal
 
-Implementation plan:
+Replace the OAuth/email sign-in screen with a 10-second name-only onboarding. Keep everything else (DB, RLS, minyan/chat/notifications/profile logic) untouched by giving each device a **real Supabase user** — provisioned via **Supabase Anonymous Authentication** — so `auth.uid()` continues to work exactly like today.
 
-1. Replace web-style OAuth in native builds
-  - Detect `Capacitor.isNativePlatform()` on the auth screen.
-  - For Google/Apple in native mode, call Supabase `signInWithOAuth` directly with:
-    - `redirectTo: "minyannow://auth/callback"`
-    - `skipBrowserRedirect: true`
-  - Open the returned OAuth URL with `@capacitor/browser` instead of `window.location` or Lovable’s web OAuth broker.
-  - Keep the existing Lovable OAuth flow only for normal hosted web usage.
-2. Harden Supabase client for native OAuth
-  - Configure Supabase Auth with:
-    - `flowType: "pkce"`
-    - `detectSessionInUrl: true`
-    - `persistSession: true`
-    - `autoRefreshToken: true`
-  - Add a Capacitor-compatible storage adapter using `@capacitor/preferences` for native builds, falling back to `localStorage` on web.
-  - This preserves the PKCE code verifier and final session while Safari/Browser is open.
-3. Add Capacitor deep-link callback handling
-  - Register `App.addListener("appUrlOpen", ...)` as early as possible in the app shell.
-  - Also check `App.getLaunchUrl()` for cold-start callbacks.
-  - Handle `minyannow://auth/callback?...` and equivalent universal-link callbacks.
-  - Extract `code`, exchange it using `supabase.auth.exchangeCodeForSession(code)`, close the Capacitor Browser, restore the session, and navigate to `/home`.
-  - Handle implicit/token fallback if Supabase/provider returns tokens in the hash.
-4. Add an `/auth/callback` route
-  - Support hosted/universal-link callbacks at `https://global-minyan-connect.lovable.app/auth/callback`.
-  - On native, convert that universal link into the same session exchange flow.
-  - On web, let Supabase detect/process the URL and redirect to `/home`.
-5. Browser close and session restoration
-  - Always call `Browser.close()` after a valid OAuth callback on native iOS.
-  - Refresh `supabase.auth.getSession()` after exchange so the app immediately sees the authenticated user.
-  - Navigate inside the native WebView to `/home`, never leaving the user on the website.
-6. Native configuration audit/documentation
-  - Verify `@capacitor/app` and `@capacitor/browser` are installed and used.
-  - Verify `capacitor.config.ts` keeps `ios.scheme = "minyannow"`.
-  - Update `NATIVE_SETUP.md` with exact required iOS files:
-    - `Info.plist` URL Type for `minyannow`
-    - Associated Domains: `applinks:global-minyan-connect.lovable.app`
-    - `AppDelegate.swift` methods forwarding to `ApplicationDelegateProxy.shared` for custom schemes and universal links
-  - Update Supabase dashboard instructions:
-    - Site URL: hosted Lovable URL
-    - Redirect URLs must include `minyannow://auth/callback` and `https://global-minyan-connect.lovable.app/auth/callback`
-7. Limitations I will make explicit
-  - The generated `ios/` folder is not present in this sandbox, so I cannot directly edit `Info.plist` or `AppDelegate.swift` here.
-  - I will provide exact copy/paste native snippets in the repo docs so the generated Xcode project can be configured correctly after `bunx cap sync ios`.  
-    
-  Before implementing the changes, perform a complete audit of the current OAuth flow and identify every place where web-only behavior is still used.
-    Additional requirements:
-    1. Do NOT introduce duplicate authentication flows.  
-    There must be a single shared authentication service with:
-      &nbsp;
-      &nbsp;
-      - Web flow
-      - Native Capacitor flow  
-      selected automatically depending on platform.
-    2. Do not regress the hosted Lovable web application.  
-    Web authentication must continue working exactly as today.
-    3. Verify that session persistence works after:
-      - App restart
-      - App background / foreground
-      - Browser interruption
-      - Device reboot
-    4. Verify OAuth works for:
-      - Google
-      - Apple
-      - Email/password
-      - Existing sessions
-    5. Verify logout clears:
-      - Browser session
-      - Supabase session
-      - Capacitor Preferences
-      - Query cache
-    6. Ensure [Browser.open](http://Browser.open)() cannot be opened twice.
-    7. Ensure multiple rapid taps on Google Sign-In cannot create multiple OAuth requests.
-    8. Ensure appUrlOpen listeners are registered exactly once and cleaned up correctly.
-    9. Verify Browser.close() is executed only after successful session restoration.
-    10. Verify all authentication flows work in:
-    &nbsp;
-    - Hosted web
-    - PWA
-    - iOS Capacitor
-    - Android Capacitor
-    11. Add Playwright (web) and documented manual native test scenarios covering:
-    - Fresh install
-    - Existing session
-    - Expired session
-    - Cancel OAuth
-    - Successful OAuth
-    - Background during OAuth
-    - Deep-link callback
-    - Offline during callback
-    - App killed before callback
-    12. Produce a final report including:
-    - Authentication architecture diagram
-    - Files modified
-    - Security review
-    - Regression risks
-    - Remaining native configuration outside the repository
-    - Final readiness score for:
-      - Web
-      - PWA
-      - iOS
-      - Android
-    Do not ship the implementation until all regression tests pass.
+## Why anonymous auth (recommendation)
+
+- Creates a genuine row in `auth.users` → `handle_new_user` trigger still fires, `profiles` row is created automatically, all existing RLS policies (`auth.uid() = …`) continue to apply unchanged.
+- Session is persisted by Supabase in device storage and auto-refreshed; survives app restarts. Not just localStorage — backed by a real refresh token tied to a backend identity.
+- Zero schema/RLS migrations required. No edge functions needed.
+- Future-proof: if you ever want to add real sign-in, `linkIdentity()` upgrades the anonymous user in place without losing their data.
+
+Alternative considered (device-id table + custom JWT via edge function): rejected — would require new auth surface, custom RLS rewrites, and breaks the "treat it exactly like today's authenticated user" guarantee.
+
+## Preservation audit (confirmed safe)
+
+
+| Area                                                                                           | Impact                                                                                                                       |
+| ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `profiles`, `minyanim`, `minyan_participants`, `chat_*`, `travel_presence`, `user_push_tokens` | No changes. All keyed on `auth.uid()` which anonymous users have.                                                            |
+| RLS policies                                                                                   | No changes. Anonymous users authenticate as role `authenticated`, so every existing `TO authenticated` policy still matches. |
+| `handle_new_user` trigger                                                                      | Fires for anonymous users too → profile auto-created. We update `display_name` right after with First + Last.                |
+| Notifications / push tokens                                                                    | Unchanged — still scoped to `auth.uid()`.                                                                                    |
+| Analytics / moderation / ownership                                                             | Unchanged.                                                                                                                   |
+| Native deep-link OAuth bridge                                                                  | Becomes dead code path, left in place but unused.                                                                            |
+
+
+## Changes
+
+### 1. Backend (single config change, no migration)
+
+- Call `supabase--configure_auth` with `external_anonymous_users_enabled: true` (and keep email/google disabled per existing `configure_social_auth` setup).
+- No SQL migration needed. Optional tiny cleanup later if desired, but not in this pass.
+
+### 2. New onboarding flow — replace `src/routes/auth.tsx` content
+
+Single screen (reuses existing Logo/Wordmark styling):
+
+- "Welcome to MinyanNow" + subtitle "Please tell us a little about yourself."
+- Inputs: **First Name**, **Last Name** (required, trimmed).
+- Two permission rows with toggle-style buttons:
+  - **Enable Location** → calls existing `use-geolocation` permission request (or `navigator.geolocation.getCurrentPosition` / Capacitor Geolocation on native). Shows ✓ when granted.
+  - **Enable Notifications** → on web: `Notification.requestPermission()`; on native: existing push-token registration path used in `user_push_tokens`. Shows ✓ when granted.
+  - Both are optional (user can continue without granting; we just record the state).
+- Primary **Continue** button:
+  1. `supabase.auth.signInAnonymously()` → creates user + session.
+  2. Wait for `handle_new_user` trigger (session is already returned synchronously, profile lands within the same request).
+  3. `supabase.from('profiles').update({ display_name: \`${first} ${last} }).eq('id', user.id)`.
+  4. If notifications granted on native, register the push token into `user_push_tokens` (same code path used today).
+  5. Track `onboard_complete` analytics event.
+  6. `navigate({ to: '/home' })`.
+
+Route `/auth` itself stays as the file path so existing redirects (`navigate({to:'/auth'})`, deep links, `_authenticated` gate) keep working — it just renders the new onboarding instead of OAuth buttons. Returning users with a valid session are redirected to `/home` on mount (existing logic preserved).
+
+### 3. Profile screen — display-only cleanup (`src/routes/profile.tsx`)
+
+- Show First + Last (split from `display_name`) instead of email.
+- Remove the email line under the name.
+- Remove the "Sign out" button (no auth to sign out of) — replace with a smaller "Edit profile" entry that opens a tiny inline editor updating `display_name`.
+- Keep everything else (stats, trust, recent, backup toggle, settings link) unchanged.
+- Settings screen's sign-out button: hide it. Account deletion stays (still calls `account.functions.ts`).
+
+### 4. Splash (`src/routes/index.tsx`)
+
+- "Get started" CTA now routes to `/auth` (the new onboarding) when no session exists, `/home` when a session exists. Already roughly the case — verify and adjust one redirect.
+
+### 5. Native auth code
+
+- `src/lib/native-auth.ts`, `auth.callback.tsx`, `auth.native-start.tsx`: left in place but not invoked. No risk; can be deleted in a follow-up.
+
+## Files touched
+
+- `src/routes/auth.tsx` — rewritten as onboarding screen.
+- `src/routes/profile.tsx` — name display, remove email + sign-out, add edit name.
+- `src/routes/settings.tsx` — hide sign-out row.
+- `src/routes/index.tsx` — verify CTA target.
+- `src/i18n/locales/*.json` — new keys: `onboarding.welcome`, `onboarding.firstName`, `onboarding.lastName`, `onboarding.enableLocation`, `onboarding.enableNotifications`, `onboarding.continue`. (English first, others can copy English as fallback.)
+- One `configure_auth` tool call to enable anonymous sign-ins.
+
+## Out of scope (untouched, per your instructions)
+
+Minyan create/join/leave, chats, notifications delivery, location queries, analytics events (beyond one new event), reports, moderation, admin, settings (except hiding sign-out), profile functionality (only displayed info changes), all UI outside onboarding/profile.
+
+## Open question
+
+Do you want **first/last stored as two separate columns** in `profiles` (small migration adding `first_name` / `last_name`), or keep using the existing `display_name` field as `"First Last"` (zero migration, split on display)? I recommend the latter — simpler, no schema change, fully reversible.  
+  
+This proposal looks great.
+
+I only have a few small changes before implementation:
+
+1. Please store `first_name` and `last_name` as two separate columns in `profiles` instead of only using `display_name`.
+
+I think this is the better long-term architecture for search, sorting, personalization, notifications, and future features. `display_name` can simply be generated from those fields when needed.
+
+2. Please keep a way to reset the anonymous account.
+
+Instead of a “Sign out” button, add something like:
+
+- Reset this device
+- Start over
+
+This should clear the anonymous session and local data so another person can start fresh on the same device.
+
+3. Validate the onboarding form.
+
+- First name required
+- Last name required
+- Trim whitespace
+- Minimum length
+- Maximum reasonable length
+- Disable Continue until the form is valid
+
+4. Make the onboarding feel premium.
+
+Instead of looking like a login page, make it feel like a welcome screen.
+
+For example:
+
+“Welcome to MinyanNow”
+
+“Let’s create your profile. This only takes a few seconds.”
+
+Then:
+
+- First Name
+- Last Name
+- Enable Notifications
+- Enable Location
+- Continue
+
+Everything else looks exactly like what I want.
