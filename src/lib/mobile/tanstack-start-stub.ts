@@ -71,5 +71,3 @@ export const createStart = (() => ({
 })) as unknown as (...args: unknown[]) => unknown;
 
 export default { createServerFn, useServerFn, createMiddleware, getRequest, createStart };
-
-export default { createServerFn, useServerFn, createMiddleware };
