@@ -6,6 +6,7 @@ import { Logo, Wordmark } from "@/components/Logo";
 import { Loader2, MapPin, Bell, Check } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { track } from "@/lib/analytics";
+import { getCurrentPosition, registerPushNotifications, isNative } from "@/lib/native";
 
 export const Route = createFileRoute("/auth")({
   component: Onboarding,
@@ -40,21 +41,38 @@ function Onboarding() {
 
   async function requestLocation() {
     if (locOk) return;
-    if (typeof navigator === "undefined" || !navigator.geolocation) {
-      toast.error("Location not available on this device");
-      return;
+    // Native uses @capacitor/geolocation (real iOS/Android permission prompt
+    // backed by NSLocationWhenInUseUsageDescription / ACCESS_FINE_LOCATION).
+    // Web falls back to navigator.geolocation. Single source of truth.
+    const pos = await getCurrentPosition();
+    if (pos) {
+      setLocOk(true);
+    } else {
+      toast.error("Location permission denied");
     }
-    navigator.geolocation.getCurrentPosition(
-      () => setLocOk(true),
-      () => toast.error("Location permission denied"),
-      { timeout: 8000 }
-    );
   }
 
   async function requestNotifications() {
     if (notifOk) return;
+    if (isNative()) {
+      // Real iOS/Android push permission + APNs/FCM registration.
+      // The token is persisted to user_push_tokens once the user has a
+      // Supabase session (anonymous sign-in happens on Continue), so we
+      // stash it in a module-scoped ref and flush after sign-in.
+      try {
+        await registerPushNotifications((token) => {
+          pendingPushToken = token;
+        });
+        setNotifOk(true);
+      } catch (e) {
+        toast.error("Notifications permission denied", {
+          description: (e as Error).message,
+        });
+      }
+      return;
+    }
+    // Web fallback
     if (typeof window === "undefined" || !("Notification" in window)) {
-      // Native shell handles push elsewhere; mark as accepted so user can move on.
       setNotifOk(true);
       return;
     }
