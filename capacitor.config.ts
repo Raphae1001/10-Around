@@ -9,7 +9,10 @@ const OAUTH_BRIDGE_HOST = "global-minyan-connect.lovable.app";
 const config: CapacitorConfig = {
   appId: "app.lovable.minyannow",
   appName: "MinyanNow",
-  webDir: "dist",
+  // SPA build for Capacitor lives in `dist-mobile/` (see vite.mobile.config.ts
+  // and `npm run build:mobile`). The default `dist/` is the SSR/Nitro output
+  // used by the hosted web deployment and does NOT contain an index.html.
+  webDir: "dist-mobile",
   // Allow the in-app WebView to briefly navigate to the OAuth bridge during
   // sign-in. Everything else (Google Maps, WhatsApp, tel:, mailto:) opens in
   // the system handler.
