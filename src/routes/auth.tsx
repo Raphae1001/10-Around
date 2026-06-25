@@ -111,6 +111,17 @@ function Onboarding() {
         console.warn("profile update failed", upErr);
       }
 
+      // Persist the push token now that the anonymous user exists. RLS on
+      // user_push_tokens scopes inserts to auth.uid() = user_id.
+      if (pendingPushToken) {
+        const tok = pendingPushToken;
+        pendingPushToken = null;
+        const { error: pushErr } = await supabase
+          .from("user_push_tokens")
+          .upsert({ user_id: data.user.id, token: tok } as any);
+        if (pushErr) console.warn("push token persist failed", pushErr);
+      }
+
       track("sign_up", { method: "anonymous" });
       navigate({ to: "/home" });
     } catch (e) {
