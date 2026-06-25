@@ -11,23 +11,23 @@ Google Play Developer Program Policies (as of 2026).
 
 | Guideline | Status | Notes |
 |---|---|---|
-| 5.1.1(v) Account deletion | ✅ | Settings → Delete Account, hard-deletes via `deleteMyAccount` server fn |
-| 4.8 Sign in with Apple parity | ⚠️ | Required — Google sign-in is offered, so Sign in with Apple must be enabled in Xcode capabilities |
+| 5.1.1(v) Account deletion | ✅ | Settings → Reset this device + Delete Account, hard-deletes via `deleteMyAccount` server fn |
+| 4.8 Sign in with Apple parity | ✅ | N/A — MinyanNow uses anonymous-only onboarding (Prénom + Nom). No Google / Apple / email / OAuth offered, so 4.8 does not apply. |
 | 4.0 Design — minimum functionality | ✅ | Live minyan creation/joining is non-trivial native functionality |
 | 2.1 App completeness | ✅ | All routes load; no placeholder screens |
 | 2.3.1 Hidden features | ✅ | No |
 | 2.5.4 Multitasking apps | ✅ | No background location, no background audio |
-| 5.1.1 Permission strings | ⚠️ | Add to Info.plist before submission (see IOS_READINESS.md) |
-| 5.1.2 Data collection minimization | ✅ | Only email + foreground location collected |
+| 5.1.1 Permission strings | ⚠️ | `NSLocationWhenInUseUsageDescription` MUST be in Info.plist before submission (see IOS_READINESS.md) |
+| 5.1.2 Data collection minimization | ✅ | Only first/last name + foreground location collected. No email, no password. |
 | 5.4 VPN apps | N/A | |
 | 1.4.1 Physical harm | ✅ | App provides religious functionality, not medical/safety guidance |
 
 ### Known rejection risks
 
-1. **Missing Sign in with Apple capability.** App Review 4.8 requires Sign in with Apple when any third-party SSO is offered. Enable in Xcode → Signing & Capabilities → "+ Capability" → Sign in with Apple. The lovable broker already supports Apple, so no code change is needed.
-2. **Missing permission strings.** Without `NSLocationWhenInUseUsageDescription`, the app crashes when requesting location. Use the strings in IOS_READINESS.md.
-3. **Privacy nutrition label inaccurate.** Must declare email + location + optional analytics. See IOS_READINESS.md.
-4. **`limitsNavigationsToAppBoundDomains: true`** is already set — required when loading remote web content in 2026+. ✅
+1. **Missing permission strings.** Without `NSLocationWhenInUseUsageDescription`, the app crashes when requesting location. Use the strings in IOS_READINESS.md.
+2. **Privacy nutrition label.** Declare: first/last name (linked to user), coarse/precise location (foreground only), optional analytics. No email or auth credentials.
+3. **`limitsNavigationsToAppBoundDomains: true`** is already set — required when loading remote web content in 2026+. ✅
+4. **No `server.url` in `capacitor.config.ts`.** The app loads `dist-mobile/` from disk so it is a true native app, not a webview wrapper (guideline 4.2). Do not re-add `server.url`.
 
 ---
 
