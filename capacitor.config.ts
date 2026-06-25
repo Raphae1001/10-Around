@@ -22,7 +22,11 @@ const config: CapacitorConfig = {
     allowNavigation: [OAUTH_BRIDGE_HOST],
   },
   ios: {
-    contentInset: "always",
+    // `automatic` lets WKWebView manage safe-area + keyboard insets in a
+    // single native pass. Combined with Keyboard.resize="native" below,
+    // this prevents the "freeze after first keystroke" bug where the body
+    // is re-laid out mid-input and WKWebView loses its input session.
+    contentInset: "automatic",
     backgroundColor: "#ffffff",
     limitsNavigationsToAppBoundDomains: true,
     // Custom URL scheme used for OAuth deep-link callback + share intents.
@@ -49,7 +53,12 @@ const config: CapacitorConfig = {
       backgroundColor: "#ffffff",
     },
     Keyboard: {
-      resize: "body",
+      // `native` = iOS adjusts the WebView frame itself; the DOM is never
+      // resized mid-typing. `body` and `ionic` mutate `document.body`
+      // height on focus, which on iOS 17+/18 detaches the WKWebView input
+      // session after the first character and freezes all subsequent
+      // taps/keys. Do NOT change this back to "body".
+      resize: "native",
       resizeOnFullScreen: true,
     },
   },
