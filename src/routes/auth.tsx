@@ -3,179 +3,166 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { Logo, Wordmark } from "@/components/Logo";
-import { Apple, Loader2, Mail } from "lucide-react";
-import { lovable } from "@/integrations/lovable/index";
+import { Loader2, MapPin, Bell, Check } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { track } from "@/lib/analytics";
-import { isNative, nativeOAuthSignIn } from "@/lib/native-auth";
 
 export const Route = createFileRoute("/auth")({
-  component: Auth,
+  component: Onboarding,
 });
 
-function Auth() {
+function Onboarding() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [busy, setBusy] = useState<string | null>(null);
-  const [mode, setMode] = useState<"choose" | "email">("choose");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [signupMode, setSignupMode] = useState(false);
+  const [first, setFirst] = useState("");
+  const [last, setLast] = useState("");
+  const [locOk, setLocOk] = useState(false);
+  const [notifOk, setNotifOk] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [checking, setChecking] = useState(true);
 
-  // Already signed in? Go home.
+  // Already signed in? Skip onboarding.
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/home" });
+      if (data.session) {
+        navigate({ to: "/home" });
+      } else {
+        setChecking(false);
+      }
     });
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => {
-      if (s) navigate({ to: "/home" });
-    });
-    return () => sub.subscription.unsubscribe();
   }, [navigate]);
 
-  async function oauth(provider: "google" | "apple") {
-    if (busy) return; // hard-block rapid double taps
-    setBusy(provider);
-    track("sign_in", { method: provider });
-    try {
-      // Native (iOS / Android Capacitor shell): bypass the Lovable broker —
-      // it relies on popup + postMessage which the WebView cannot provide.
-      // Use Supabase directly, open the auth URL in SFSafariViewController /
-      // Chrome Custom Tab, and let the appUrlOpen listener restore the
-      // session via the minyannow://auth/callback deep link.
-      if (isNative()) {
-        const { error } = await nativeOAuthSignIn(provider);
-        if (error) {
-          toast.error(t("auth.signInFailed"), { description: error.message });
-          setBusy(null);
-          return;
-        }
-        // Don't navigate — the deep-link listener takes us to /home once the
-        // session lands. Keep the button in its loading state.
-        return;
-      }
+  const firstT = first.trim();
+  const lastT = last.trim();
+  const valid =
+    firstT.length >= 2 && firstT.length <= 40 &&
+    lastT.length >= 2 && lastT.length <= 40;
 
-      const result = await lovable.auth.signInWithOAuth(provider, {
-        redirect_uri: window.location.origin + "/auth/callback",
-      });
-      if (result.error) {
-        toast.error(t("auth.signInFailed"), { description: (result.error as Error).message });
-        setBusy(null);
-        return;
-      }
-      // If redirected, browser is leaving. Otherwise session is set.
-      if (!result.redirected) navigate({ to: "/home" });
-    } catch (e) {
-      toast.error(t("auth.signInFailed"), { description: (e as Error).message });
-      setBusy(null);
+  async function requestLocation() {
+    if (locOk) return;
+    if (typeof navigator === "undefined" || !navigator.geolocation) {
+      toast.error("Location not available on this device");
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      () => setLocOk(true),
+      () => toast.error("Location permission denied"),
+      { timeout: 8000 }
+    );
+  }
+
+  async function requestNotifications() {
+    if (notifOk) return;
+    if (typeof window === "undefined" || !("Notification" in window)) {
+      // Native shell handles push elsewhere; mark as accepted so user can move on.
+      setNotifOk(true);
+      return;
+    }
+    try {
+      const r = await Notification.requestPermission();
+      if (r === "granted") setNotifOk(true);
+      else toast.error("Notifications permission denied");
+    } catch {
+      setNotifOk(true);
     }
   }
 
-  async function emailSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setBusy("email");
+  async function onContinue() {
+    if (!valid || busy) return;
+    setBusy(true);
     try {
-      if (signupMode) {
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: { emailRedirectTo: `${window.location.origin}/home` },
-        });
-        if (error) throw error;
-        track("sign_up", { method: "email" });
-        toast.success(t("auth.checkInbox"));
-      } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
-        track("sign_in", { method: "email" });
-        navigate({ to: "/home" });
+      const { data, error } = await supabase.auth.signInAnonymously({
+        options: { data: { first_name: firstT, last_name: lastT, full_name: `${firstT} ${lastT}` } },
+      });
+      if (error || !data.user) throw error ?? new Error("No user returned");
+
+      // Persist names. The handle_new_user trigger created the profile row.
+      const display = `${firstT} ${lastT}`;
+      const { error: upErr } = await supabase
+        .from("profiles")
+        .update({ first_name: firstT, last_name: lastT, display_name: display } as any)
+        .eq("id", data.user.id);
+      if (upErr) {
+        // Non-fatal; user can edit later.
+        console.warn("profile update failed", upErr);
       }
-    } catch (err) {
-      toast.error(t("auth.authFailed"), { description: (err as Error).message });
-    } finally {
-      setBusy(null);
+
+      track("sign_up", { method: "anonymous" });
+      navigate({ to: "/home" });
+    } catch (e) {
+      toast.error("Couldn't create your profile", { description: (e as Error).message });
+      setBusy(false);
     }
+  }
+
+  if (checking) {
+    return (
+      <div className="min-h-dvh w-full bg-muted/40 flex items-center justify-center">
+        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+      </div>
+    );
   }
 
   return (
     <div className="min-h-dvh w-full bg-muted/40 flex items-stretch justify-center">
       <div className="relative w-full max-w-[440px] min-h-dvh bg-background flex flex-col">
-        <div className="flex-1 flex flex-col items-center justify-center px-8 text-center">
+        <div className="px-8 pt-14 pb-6 text-center">
           <Logo size={56} />
           <h1 className="mt-6 font-display text-3xl">
             {t("auth.welcome")} <Wordmark />
           </h1>
-          <p className="mt-2 text-sm text-muted-foreground max-w-xs">
-            {t("auth.subtitle")}
+          <p className="mt-3 text-sm text-muted-foreground max-w-xs mx-auto leading-relaxed">
+            Let's create your profile. This only takes a few seconds.
           </p>
         </div>
 
-        <div className="px-6 pb-10 space-y-3">
-          {mode === "choose" ? (
-            <>
-              <button
-                onClick={() => oauth("apple")}
-                disabled={!!busy}
-                className="flex items-center justify-center gap-3 w-full bg-foreground text-background font-semibold py-4 rounded-2xl shadow-lift disabled:opacity-60"
-              >
-                {busy === "apple" ? <Loader2 className="h-5 w-5 animate-spin" /> : <Apple className="h-5 w-5" />}
-                {t("auth.continueApple")}
-              </button>
-              <button
-                onClick={() => oauth("google")}
-                disabled={!!busy}
-                className="flex items-center justify-center gap-3 w-full bg-surface border border-border font-semibold py-4 rounded-2xl shadow-soft disabled:opacity-60"
-              >
-                {busy === "google" ? <Loader2 className="h-5 w-5 animate-spin" /> : <GoogleIcon />}
-                {t("auth.continueGoogle")}
-              </button>
-              <button
-                onClick={() => setMode("email")}
-                className="flex items-center justify-center gap-3 w-full bg-surface border border-border font-semibold py-4 rounded-2xl shadow-soft"
-              >
-                <Mail className="h-5 w-5" /> {t("auth.continueEmail")}
-              </button>
-            </>
-          ) : (
-            <form onSubmit={emailSubmit} className="space-y-3">
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder={t("auth.email")}
-                className="w-full rounded-2xl border border-border bg-surface p-4 text-sm outline-none focus:border-gold"
-              />
-              <input
-                type="password"
-                required
-                minLength={6}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder={t("auth.password")}
-                className="w-full rounded-2xl border border-border bg-surface p-4 text-sm outline-none focus:border-gold"
-              />
-              <button
-                type="submit"
-                disabled={!!busy}
-                className="w-full bg-foreground text-background font-semibold py-4 rounded-2xl shadow-lift disabled:opacity-60 flex items-center justify-center gap-2"
-              >
-                {busy === "email" && <Loader2 className="h-4 w-4 animate-spin" />}
-                {signupMode ? t("auth.createAccount") : t("auth.signIn")}
-              </button>
-              <div className="flex justify-between text-xs text-muted-foreground pt-1">
-                <button type="button" onClick={() => setMode("choose")}>← {t("common.back")}</button>
-                <button type="button" onClick={() => setSignupMode((s) => !s)} className="underline">
-                  {signupMode ? t("auth.haveAccount") : t("auth.noAccount")}
-                </button>
-              </div>
-            </form>
-          )}
+        <div className="flex-1 px-6 space-y-5">
+          <div className="space-y-3">
+            <Field
+              label="First name"
+              value={first}
+              onChange={setFirst}
+              placeholder="e.g. David"
+              autoComplete="given-name"
+            />
+            <Field
+              label="Last name"
+              value={last}
+              onChange={setLast}
+              placeholder="e.g. Cohen"
+              autoComplete="family-name"
+            />
+          </div>
 
+          <div className="space-y-2 pt-2">
+            <PermRow
+              icon={MapPin}
+              label="Enable location"
+              hint="Find minyanim around you"
+              ok={locOk}
+              onClick={requestLocation}
+            />
+            <PermRow
+              icon={Bell}
+              label="Enable notifications"
+              hint="Get alerts when a minyan is close"
+              ok={notifOk}
+              onClick={requestNotifications}
+            />
+          </div>
+        </div>
+
+        <div className="px-6 pb-10 pt-4">
+          <button
+            onClick={onContinue}
+            disabled={!valid || busy}
+            className="w-full bg-foreground text-background font-semibold py-4 rounded-2xl shadow-lift disabled:opacity-50 flex items-center justify-center gap-2"
+          >
+            {busy && <Loader2 className="h-4 w-4 animate-spin" />}
+            Continue
+          </button>
           <p className="text-[11px] text-muted-foreground text-center pt-4 leading-relaxed">
-            {t("auth.terms")}
-            <br />
-            {t("auth.locationNote")}
+            By continuing you agree to our Terms & Privacy.
           </p>
         </div>
       </div>
@@ -183,13 +170,49 @@ function Auth() {
   );
 }
 
-function GoogleIcon() {
+function Field({
+  label, value, onChange, placeholder, autoComplete,
+}: { label: string; value: string; onChange: (v: string) => void; placeholder?: string; autoComplete?: string }) {
   return (
-    <svg viewBox="0 0 24 24" className="h-5 w-5">
-      <path
-        fill="#EA4335"
-        d="M12 10.2v3.9h5.5c-.2 1.4-1.7 4.1-5.5 4.1-3.3 0-6-2.7-6-6s2.7-6 6-6c1.9 0 3.1.8 3.8 1.5l2.6-2.5C16.7 3.6 14.6 2.6 12 2.6 6.8 2.6 2.6 6.8 2.6 12s4.2 9.4 9.4 9.4c5.4 0 9-3.8 9-9.1 0-.6-.1-1.1-.2-1.6H12z"
+    <label className="block">
+      <span className="text-xs font-medium text-muted-foreground">{label}</span>
+      <input
+        type="text"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        autoComplete={autoComplete}
+        maxLength={40}
+        className="mt-1 w-full rounded-2xl border border-border bg-surface p-4 text-sm outline-none focus:border-gold"
       />
-    </svg>
+    </label>
+  );
+}
+
+function PermRow({
+  icon: Icon, label, hint, ok, onClick,
+}: { icon: any; label: string; hint: string; ok: boolean; onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`w-full flex items-center gap-3 rounded-2xl border p-4 text-left transition ${
+        ok ? "border-success/40 bg-success/5" : "border-border bg-surface"
+      }`}
+    >
+      <div className={`h-10 w-10 rounded-2xl flex items-center justify-center shrink-0 ${
+        ok ? "bg-success/15 text-success" : "bg-muted text-muted-foreground"
+      }`}>
+        <Icon className="h-5 w-5" />
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="text-sm font-semibold">{label}</div>
+        <div className="text-xs text-muted-foreground">{hint}</div>
+      </div>
+      {ok ? (
+        <Check className="h-5 w-5 text-success" />
+      ) : (
+        <span className="text-xs font-semibold text-gold">Enable</span>
+      )}
+    </button>
   );
 }
