@@ -12,6 +12,12 @@ export const Route = createFileRoute("/auth")({
   component: Onboarding,
 });
 
+// Module-scoped buffer for the push token. The user grants notification
+// permission BEFORE signing in (so there's no auth.uid() yet to write to
+// user_push_tokens). We stash the token here and flush it after the
+// anonymous sign-in succeeds in onContinue().
+let pendingPushToken: string | null = null;
+
 function Onboarding() {
   const { t } = useTranslation();
   const navigate = useNavigate();
