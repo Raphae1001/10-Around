@@ -114,7 +114,7 @@ function Home() {
     setPending(null);
   };
 
-  const initial = useMemo(() => (user?.email?.[0] ?? "?").toUpperCase(), [user]);
+  const initial = useMemo(() => ((firstName?.[0] ?? user?.email?.[0]) ?? "?").toUpperCase(), [firstName, user]);
 
   return (
     <MobileFrame>
