@@ -141,7 +141,7 @@ function Settings() {
           onClick={signOut}
           className="w-full text-center text-sm text-urgent py-4 rounded-2xl border border-border bg-surface"
         >
-          {t("common.signOut")}
+          Reset this device
         </button>
 
         <button
