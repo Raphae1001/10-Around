@@ -51,16 +51,35 @@ function Settings() {
   async function handleDelete() {
     if (confirmText !== "DELETE") return;
     setDeleting(true);
+    // Safety net so the spinner never spins forever if the network hangs.
+    const timeout = setTimeout(() => {
+      setDeleting(false);
+      toast.error("Delete timed out. Please try again.");
+    }, 15000);
     try {
-      await deleteAccountFn();
+      // Prefer the edge function (works in both web + Capacitor SPA).
+      // Fall back to the server fn only if invoke fails entirely.
+      let ok = false;
+      try {
+        const { data, error } = await supabase.functions.invoke("delete-account", { body: {} });
+        if (!error && (data?.ok ?? true)) ok = true;
+        else if (error) throw error;
+      } catch (invokeErr) {
+        // Fallback for the SSR/web build that still has the real server fn.
+        try { await deleteAccountFn(); ok = true; } catch { throw invokeErr; }
+      }
+      if (!ok) throw new Error("Delete failed");
       track("delete_account");
       try { await queryClient.cancelQueries(); } catch {}
       try { queryClient.clear(); } catch {}
       try { await supabase.auth.signOut(); } catch {}
+      try { localStorage.clear(); } catch {}
+      clearTimeout(timeout);
       toast.success("Account deleted");
       if (typeof window !== "undefined") window.location.assign("/auth");
       else navigate({ to: "/auth", replace: true });
     } catch (e) {
+      clearTimeout(timeout);
       toast.error("Could not delete account", { description: (e as Error).message });
       setDeleting(false);
     }
