@@ -24,16 +24,19 @@ export default defineConfig({
     tsconfigPaths(),
   ],
   resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "src"),
-      // The Capacitor SPA build has no TanStack Start plugin → no server
-      // runtime. Alias the package to a thin stub that proxies createServerFn
-      // calls to the hosted Lovable site.
-      "@tanstack/react-start": path.resolve(
-        __dirname,
-        "src/lib/mobile/tanstack-start-stub.ts",
-      ),
-    },
+    alias: [
+      { find: "@", replacement: path.resolve(__dirname, "src") },
+      // Redirect every `@tanstack/react-start` subpath (incl. /server,
+      // /server-entry, etc.) to the SPA stub. The native shell has no
+      // server runtime; createServerFn calls proxy to the hosted site.
+      {
+        find: /^@tanstack\/react-start(\/.*)?$/,
+        replacement: path.resolve(
+          __dirname,
+          "src/lib/mobile/tanstack-start-stub.ts",
+        ),
+      },
+    ],
   },
   build: {
     outDir: "dist-mobile",
