@@ -19,24 +19,13 @@ export function useAuth() {
       setLoading(false);
     });
 
-    // 2) If the URL carries an OAuth callback (hash with access_token, or
-    //    PKCE ?code=), let the listener resolve — don't race it with
-    //    getSession() which can return null mid-parse on iOS Safari.
-    const url =
-      typeof window !== "undefined"
-        ? window.location.hash + window.location.search
-        : "";
-    const hasOAuthCallback =
-      url.includes("access_token=") || url.includes("code=");
-
-    if (!hasOAuthCallback) {
-      supabase.auth.getSession().then(({ data }) => {
-        if (!mounted) return;
-        setSession(data.session);
-        setUser(data.session?.user ?? null);
-        setLoading(false);
-      });
-    }
+    // Anonymous-only auth: no OAuth callback parsing needed.
+    supabase.auth.getSession().then(({ data }) => {
+      if (!mounted) return;
+      setSession(data.session);
+      setUser(data.session?.user ?? null);
+      setLoading(false);
+    });
 
     // Safety net: never stay loading forever
     const timeout = setTimeout(() => {
