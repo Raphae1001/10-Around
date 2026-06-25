@@ -63,6 +63,7 @@ function Profile() {
     // from restoring authenticated shells from cached hydration.
     void import("@/lib/analytics").then(({ track }) => track("sign_out"));
     try { await supabase.auth.signOut(); } catch { /* ignore — we reload anyway */ }
+    try { const { nativeAuthClear } = await import("@/lib/native-auth"); await nativeAuthClear(); } catch {}
     if (typeof window !== "undefined") {
       window.location.assign("/auth");
     } else {

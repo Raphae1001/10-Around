@@ -7,6 +7,7 @@ import { Apple, Loader2, Mail } from "lucide-react";
 import { lovable } from "@/integrations/lovable/index";
 import { supabase } from "@/integrations/supabase/client";
 import { track } from "@/lib/analytics";
+import { isNative, nativeOAuthSignIn } from "@/lib/native-auth";
 
 export const Route = createFileRoute("/auth")({
   component: Auth,
@@ -33,11 +34,29 @@ function Auth() {
   }, [navigate]);
 
   async function oauth(provider: "google" | "apple") {
+    if (busy) return; // hard-block rapid double taps
     setBusy(provider);
     track("sign_in", { method: provider });
     try {
+      // Native (iOS / Android Capacitor shell): bypass the Lovable broker —
+      // it relies on popup + postMessage which the WebView cannot provide.
+      // Use Supabase directly, open the auth URL in SFSafariViewController /
+      // Chrome Custom Tab, and let the appUrlOpen listener restore the
+      // session via the minyannow://auth/callback deep link.
+      if (isNative()) {
+        const { error } = await nativeOAuthSignIn(provider);
+        if (error) {
+          toast.error(t("auth.signInFailed"), { description: error.message });
+          setBusy(null);
+          return;
+        }
+        // Don't navigate — the deep-link listener takes us to /home once the
+        // session lands. Keep the button in its loading state.
+        return;
+      }
+
       const result = await lovable.auth.signInWithOAuth(provider, {
-        redirect_uri: window.location.origin + "/home",
+        redirect_uri: window.location.origin + "/auth/callback",
       });
       if (result.error) {
         toast.error(t("auth.signInFailed"), { description: (result.error as Error).message });

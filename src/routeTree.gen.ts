@@ -38,6 +38,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TravelCityCityKeyRouteImport } from './routes/travel-city.$cityKey'
 import { Route as MinyanIdRouteImport } from './routes/minyan.$id'
+import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 
 const TrustRoute = TrustRouteImport.update({
   id: '/trust',
@@ -184,10 +185,15 @@ const MinyanIdRoute = MinyanIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => MinyanRoute,
 } as any)
+const AuthCallbackRoute = AuthCallbackRouteImport.update({
+  id: '/callback',
+  path: '/callback',
+  getParentRoute: () => AuthRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/auth': typeof AuthRoute
+  '/auth': typeof AuthRouteWithChildren
   '/backup': typeof BackupRoute
   '/chat': typeof ChatRoute
   '/chats': typeof ChatsRoute
@@ -213,12 +219,13 @@ export interface FileRoutesByFullPath {
   '/travel': typeof TravelRoute
   '/traveler': typeof TravelerRoute
   '/trust': typeof TrustRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/minyan/$id': typeof MinyanIdRoute
   '/travel-city/$cityKey': typeof TravelCityCityKeyRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/auth': typeof AuthRoute
+  '/auth': typeof AuthRouteWithChildren
   '/backup': typeof BackupRoute
   '/chat': typeof ChatRoute
   '/chats': typeof ChatsRoute
@@ -244,13 +251,14 @@ export interface FileRoutesByTo {
   '/travel': typeof TravelRoute
   '/traveler': typeof TravelerRoute
   '/trust': typeof TrustRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/minyan/$id': typeof MinyanIdRoute
   '/travel-city/$cityKey': typeof TravelCityCityKeyRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/auth': typeof AuthRoute
+  '/auth': typeof AuthRouteWithChildren
   '/backup': typeof BackupRoute
   '/chat': typeof ChatRoute
   '/chats': typeof ChatsRoute
@@ -276,6 +284,7 @@ export interface FileRoutesById {
   '/travel': typeof TravelRoute
   '/traveler': typeof TravelerRoute
   '/trust': typeof TrustRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/minyan/$id': typeof MinyanIdRoute
   '/travel-city/$cityKey': typeof TravelCityCityKeyRoute
 }
@@ -309,6 +318,7 @@ export interface FileRouteTypes {
     | '/travel'
     | '/traveler'
     | '/trust'
+    | '/auth/callback'
     | '/minyan/$id'
     | '/travel-city/$cityKey'
   fileRoutesByTo: FileRoutesByTo
@@ -340,6 +350,7 @@ export interface FileRouteTypes {
     | '/travel'
     | '/traveler'
     | '/trust'
+    | '/auth/callback'
     | '/minyan/$id'
     | '/travel-city/$cityKey'
   id:
@@ -371,13 +382,14 @@ export interface FileRouteTypes {
     | '/travel'
     | '/traveler'
     | '/trust'
+    | '/auth/callback'
     | '/minyan/$id'
     | '/travel-city/$cityKey'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AuthRoute: typeof AuthRoute
+  AuthRoute: typeof AuthRouteWithChildren
   BackupRoute: typeof BackupRoute
   ChatRoute: typeof ChatRoute
   ChatsRoute: typeof ChatsRoute
@@ -611,8 +623,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MinyanIdRouteImport
       parentRoute: typeof MinyanRoute
     }
+    '/auth/callback': {
+      id: '/auth/callback'
+      path: '/callback'
+      fullPath: '/auth/callback'
+      preLoaderRoute: typeof AuthCallbackRouteImport
+      parentRoute: typeof AuthRoute
+    }
   }
 }
+
+interface AuthRouteChildren {
+  AuthCallbackRoute: typeof AuthCallbackRoute
+}
+
+const AuthRouteChildren: AuthRouteChildren = {
+  AuthCallbackRoute: AuthCallbackRoute,
+}
+
+const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
 interface MinyanRouteChildren {
   MinyanIdRoute: typeof MinyanIdRoute
@@ -627,7 +656,7 @@ const MinyanRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AuthRoute: AuthRoute,
+  AuthRoute: AuthRouteWithChildren,
   BackupRoute: BackupRoute,
   ChatRoute: ChatRoute,
   ChatsRoute: ChatsRoute,
@@ -658,13 +687,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
