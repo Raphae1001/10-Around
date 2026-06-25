@@ -114,7 +114,7 @@ function Profile() {
           <div className="h-16 w-16 rounded-2xl gold-gradient text-navy flex items-center justify-center text-xl font-bold">{initial}</div>
           <div className="flex-1 min-w-0">
             <div className="font-display text-xl truncate">{name}</div>
-            <div className="text-xs text-white/60 truncate">{user?.email}</div>
+            <button onClick={startEdit} className="text-xs text-gold underline mt-0.5">Edit profile</button>
             <div className="mt-2 flex items-center gap-2">
               <TrustBadge score={stats?.stars ?? 0} />
               <StatusPill tone="gold">{t("profile.trust")} {profile?.trust_score ?? 0}</StatusPill>
