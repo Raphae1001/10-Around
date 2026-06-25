@@ -1,31 +1,32 @@
 import type { CapacitorConfig } from "@capacitor/cli";
 
-const PROD_HOST = "global-minyan-connect.lovable.app";
+// True native app: Capacitor loads the bundled web build from disk (webDir).
+// We do NOT set server.url — that would make the app a website wrapper and
+// Apple rejects those under guideline 4.2. The hosted Lovable site is used
+// ONLY as the HTTPS OAuth bridge at /auth/callback, never as the app shell.
+const OAUTH_BRIDGE_HOST = "global-minyan-connect.lovable.app";
 
 const config: CapacitorConfig = {
   appId: "app.lovable.minyannow",
   appName: "MinyanNow",
-  // v1 wraps the published Lovable web app — instant updates without
-  // re-submitting to the App Store / Play Store for UI tweaks.
   webDir: "dist",
+  // Allow the in-app WebView to briefly navigate to the OAuth bridge during
+  // sign-in. Everything else (Google Maps, WhatsApp, tel:, mailto:) opens in
+  // the system handler.
   server: {
-    url: `https://${PROD_HOST}`,
-    cleartext: false,
-    // WebView is restricted to our published origin. Off-origin links
-    // (Google Maps, WhatsApp, tel:, mailto:) open in the system handler.
-    allowNavigation: [PROD_HOST],
+    androidScheme: "https",
+    iosScheme: "https",
+    allowNavigation: [OAUTH_BRIDGE_HOST],
   },
   ios: {
     contentInset: "always",
     backgroundColor: "#ffffff",
-    // Required by App Review for production; HTTPS-only.
     limitsNavigationsToAppBoundDomains: true,
-    // Custom URL scheme used for OAuth callbacks + share intents.
+    // Custom URL scheme used for OAuth deep-link callback + share intents.
     scheme: "minyannow",
   },
   android: {
     backgroundColor: "#ffffff",
-    // Allow Google sign-in to surface the Chrome Custom Tab.
     allowMixedContent: false,
   },
   plugins: {
