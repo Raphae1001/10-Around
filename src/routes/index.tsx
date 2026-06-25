@@ -1,7 +1,8 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Logo, Wordmark } from "@/components/Logo";
 import { useEffect, useState } from "react";
 import { MapPin } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -14,11 +15,35 @@ export const Route = createFileRoute("/")({
 });
 
 function Splash() {
+  const navigate = useNavigate();
   const [show, setShow] = useState(false);
+  const [checking, setChecking] = useState(true);
+
+  // Skip the marketing splash entirely if the user already has a session
+  // (typical for returning users after the first onboarding). Redirect runs
+  // before paint so there's no visible flash.
   useEffect(() => {
+    let cancelled = false;
+    supabase.auth.getSession().then(({ data }) => {
+      if (cancelled) return;
+      if (data.session) {
+        navigate({ to: "/home", replace: true });
+      } else {
+        setChecking(false);
+      }
+    });
+    return () => { cancelled = true; };
+  }, [navigate]);
+
+  useEffect(() => {
+    if (checking) return;
     const t = setTimeout(() => setShow(true), 200);
     return () => clearTimeout(t);
-  }, []);
+  }, [checking]);
+
+  if (checking) {
+    return <div className="min-h-dvh w-full bg-[#0a0e1f]" />;
+  }
   return (
     <div className="min-h-dvh w-full bg-muted/40 flex items-stretch justify-center">
       <div className="relative w-full max-w-[440px] min-h-dvh navy-gradient text-white overflow-hidden flex flex-col">
