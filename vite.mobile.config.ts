@@ -26,6 +26,13 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "src"),
+      // The Capacitor SPA build has no TanStack Start plugin → no server
+      // runtime. Alias the package to a thin stub that proxies createServerFn
+      // calls to the hosted Lovable site.
+      "@tanstack/react-start": path.resolve(
+        __dirname,
+        "src/lib/mobile/tanstack-start-stub.ts",
+      ),
     },
   },
   build: {
