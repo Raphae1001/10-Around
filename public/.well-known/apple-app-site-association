@@ -1,0 +1,20 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "TEAMID.app.lovable.minyannow",
+        "paths": [
+          "/minyan/*",
+          "/travel-city/*",
+          "/share/*",
+          "/auth/callback",
+          "NOT /api/*"
+        ]
+      }
+    ]
+  },
+  "webcredentials": {
+    "apps": ["TEAMID.app.lovable.minyannow"]
+  }
+}
