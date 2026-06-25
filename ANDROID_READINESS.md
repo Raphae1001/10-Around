@@ -5,7 +5,7 @@
 - `appId`: `app.lovable.minyannow` (= Android `applicationId`)
 - `appName`: `MinyanNow`
 - `android.backgroundColor`: `#ffffff`
-- `server.url` + `server.allowNavigation`: scoped to the published domain
+- `server.url`: **not set** — the app loads `dist-mobile/` from disk (true native app)
 
 ## Package name & versioning
 
