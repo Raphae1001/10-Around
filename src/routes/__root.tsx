@@ -130,6 +130,15 @@ function RootComponent() {
   const router = useRouter();
   useEffect(() => { applySavedLang(); }, []);
   useEffect(() => {
+    // Register the Capacitor deep-link listener exactly once at app boot.
+    // Handles both warm `appUrlOpen` events (Browser→app handoff after
+    // OAuth) and the cold-start launch URL when iOS opens the app fresh
+    // via a minyannow:// link. No-op on web.
+    void import("@/lib/native-auth").then(({ ensureDeepLinkListener }) => {
+      void ensureDeepLinkListener();
+    });
+  }, []);
+  useEffect(() => {
     // Fire-and-forget analytics page_view on every route change. No-ops
     // when analytics is disabled or not configured. Lazy-imported so the
     // analytics module never blocks initial bundle.
