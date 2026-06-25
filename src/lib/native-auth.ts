@@ -97,6 +97,15 @@ export async function nativeOAuthSignIn(
 
     const { Browser } = await import("@capacitor/browser");
     try { await Browser.close(); } catch { /* nothing was open */ }
+    // Clear inFlight if the user dismisses the auth sheet without completing
+    // OAuth — otherwise repeated taps would be ignored until app restart.
+    // Registered once per sign-in attempt; the success path also resets it.
+    try {
+      const sub = await Browser.addListener("browserFinished", () => {
+        inFlight = false;
+        void sub.remove();
+      });
+    } catch { /* listener unsupported on this platform */ }
     await Browser.open({
       url: data.url,
       windowName: "_self",
