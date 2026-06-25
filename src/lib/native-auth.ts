@@ -70,12 +70,35 @@ export async function nativeOAuthSignIn(
   try {
     await ensureDeepLinkListener();
 
-    const url = `${HTTPS_NATIVE_START}?provider=${encodeURIComponent(provider)}`;
+    // Ask Supabase for the provider authorization URL WITHOUT redirecting the
+    // WebView. We open it ourselves in ASWebAuthenticationSession / Chrome
+    // Custom Tab, so no hosted Lovable page is ever rendered to the user.
+    //
+    // Supabase will redirect Google/Apple → HTTPS_REDIRECT_BRIDGE
+    // (`/auth/callback?native=1`), which immediately bounces to
+    // `minyannow://auth/callback#…` and our appUrlOpen handler restores the
+    // session. The user only ever sees the official provider sheet.
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo: HTTPS_REDIRECT_BRIDGE,
+        skipBrowserRedirect: true,
+      },
+    });
+
+    if (error || !data?.url) {
+      inFlight = false;
+      return {
+        error:
+          error ??
+          new Error("Provider did not return an authorization URL"),
+      };
+    }
 
     const { Browser } = await import("@capacitor/browser");
     try { await Browser.close(); } catch { /* nothing was open */ }
     await Browser.open({
-      url,
+      url: data.url,
       windowName: "_self",
       presentationStyle: "fullscreen",
     });
