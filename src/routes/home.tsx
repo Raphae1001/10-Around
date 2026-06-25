@@ -40,6 +40,15 @@ function Home() {
   const [justJoined, setJustJoined] = useState<MinyanRow | null>(null);
   const [joinedIds, setJoinedIds] = useState<Set<string>>(new Set());
   const [travelCities, setTravelCities] = useState<Array<{ city_key: string; city_label: string; date_start: string; date_end: string; peer_count: number; thread_id: string | null }>>([]);
+  const [firstName, setFirstName] = useState<string>("");
+
+  useEffect(() => {
+    if (!user) return;
+    supabase.rpc("get_my_profile").then(({ data }) => {
+      const row = Array.isArray(data) ? data[0] : data;
+      if (row?.first_name) setFirstName(row.first_name as string);
+    });
+  }, [user]);
 
   useEffect(() => {
     if (!authLoading && !user) navigate({ to: "/auth" });
