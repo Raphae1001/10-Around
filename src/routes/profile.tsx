@@ -200,9 +200,38 @@ function Profile() {
 
       <div className="px-6 pb-10">
         <button onClick={signOut} className="w-full flex items-center justify-center gap-2 rounded-2xl border border-border bg-surface py-3.5 text-sm font-semibold text-urgent">
-          <LogOut className="h-4 w-4" /> {t("common.signOut")}
+          <LogOut className="h-4 w-4" /> Reset this device
         </button>
+        <p className="text-[11px] text-muted-foreground text-center mt-2">
+          Clears your local profile so another person can start fresh on this device.
+        </p>
       </div>
+
+      {editing && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 p-4" onClick={() => !savingName && setEditing(false)}>
+          <div className="w-full max-w-sm rounded-3xl bg-background p-5 shadow-lift" onClick={(e) => e.stopPropagation()}>
+            <div className="font-display text-lg mb-3">Edit profile</div>
+            <label className="block mb-3">
+              <span className="text-xs font-medium text-muted-foreground">First name</span>
+              <input value={editFirst} onChange={(e) => setEditFirst(e.target.value)} maxLength={40}
+                className="mt-1 w-full rounded-2xl border border-border bg-surface p-3 text-sm outline-none focus:border-gold" />
+            </label>
+            <label className="block mb-4">
+              <span className="text-xs font-medium text-muted-foreground">Last name</span>
+              <input value={editLast} onChange={(e) => setEditLast(e.target.value)} maxLength={40}
+                className="mt-1 w-full rounded-2xl border border-border bg-surface p-3 text-sm outline-none focus:border-gold" />
+            </label>
+            <div className="flex gap-2">
+              <button onClick={() => setEditing(false)} disabled={savingName}
+                className="flex-1 rounded-2xl border border-border py-3 text-sm font-semibold">Cancel</button>
+              <button onClick={saveName} disabled={savingName}
+                className="flex-1 rounded-2xl bg-foreground text-background py-3 text-sm font-semibold disabled:opacity-60">
+                {savingName ? "Saving…" : "Save"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </MobileFrame>
   );
 }
