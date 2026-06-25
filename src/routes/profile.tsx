@@ -14,7 +14,11 @@ function Profile() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { user, loading } = useAuth();
-  const [profile, setProfile] = useState<{ display_name: string | null; avatar_url: string | null; backup_mode: boolean; backup_radius_m: number; trust_score: number } | null>(null);
+  const [profile, setProfile] = useState<{ display_name: string | null; first_name: string | null; last_name: string | null; avatar_url: string | null; backup_mode: boolean; backup_radius_m: number; trust_score: number } | null>(null);
+  const [editing, setEditing] = useState(false);
+  const [editFirst, setEditFirst] = useState("");
+  const [editLast, setEditLast] = useState("");
+  const [savingName, setSavingName] = useState(false);
   const [stats, setStats] = useState<{ minyanim_count: number; completed_count: number; streak_days: number; stars: number } | null>(null);
   const [recent, setRecent] = useState<Array<{ minyan_id: string; prayer: string | null; address: string | null; joined_at: string }>>([]);
   const [savingBackup, setSavingBackup] = useState(false);
@@ -37,9 +41,34 @@ function Profile() {
   }, [user]);
 
 
-  const name = profile?.display_name ?? user?.email?.split("@")[0] ?? t("profile.guest");
+  const first = profile?.first_name ?? "";
+  const last = profile?.last_name ?? "";
+  const name = (first || last) ? `${first} ${last}`.trim() : (profile?.display_name ?? t("profile.guest"));
   const initial = name[0]?.toUpperCase() ?? "?";
   const backupOn = profile?.backup_mode ?? false;
+
+  function startEdit() {
+    setEditFirst(first);
+    setEditLast(last);
+    setEditing(true);
+  }
+
+  async function saveName() {
+    if (!user || !profile) return;
+    const f = editFirst.trim(); const l = editLast.trim();
+    if (f.length < 2 || l.length < 2) {
+      toast.error("First and last name are required");
+      return;
+    }
+    setSavingName(true);
+    const display = `${f} ${l}`;
+    const { error } = await supabase.from("profiles").update({ first_name: f, last_name: l, display_name: display } as any).eq("id", user.id);
+    setSavingName(false);
+    if (error) { toast.error("Couldn't save name", { description: error.message }); return; }
+    setProfile({ ...profile, first_name: f, last_name: l, display_name: display });
+    setEditing(false);
+    void import("@/lib/analytics").then(({ track }) => track("update_profile", { field: "name" }));
+  }
 
   async function toggleBackup() {
     if (!user || !profile) return;
@@ -85,7 +114,7 @@ function Profile() {
           <div className="h-16 w-16 rounded-2xl gold-gradient text-navy flex items-center justify-center text-xl font-bold">{initial}</div>
           <div className="flex-1 min-w-0">
             <div className="font-display text-xl truncate">{name}</div>
-            <div className="text-xs text-white/60 truncate">{user?.email}</div>
+            <button onClick={startEdit} className="text-xs text-gold underline mt-0.5">Edit profile</button>
             <div className="mt-2 flex items-center gap-2">
               <TrustBadge score={stats?.stars ?? 0} />
               <StatusPill tone="gold">{t("profile.trust")} {profile?.trust_score ?? 0}</StatusPill>
@@ -171,9 +200,38 @@ function Profile() {
 
       <div className="px-6 pb-10">
         <button onClick={signOut} className="w-full flex items-center justify-center gap-2 rounded-2xl border border-border bg-surface py-3.5 text-sm font-semibold text-urgent">
-          <LogOut className="h-4 w-4" /> {t("common.signOut")}
+          <LogOut className="h-4 w-4" /> Reset this device
         </button>
+        <p className="text-[11px] text-muted-foreground text-center mt-2">
+          Clears your local profile so another person can start fresh on this device.
+        </p>
       </div>
+
+      {editing && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 p-4" onClick={() => !savingName && setEditing(false)}>
+          <div className="w-full max-w-sm rounded-3xl bg-background p-5 shadow-lift" onClick={(e) => e.stopPropagation()}>
+            <div className="font-display text-lg mb-3">Edit profile</div>
+            <label className="block mb-3">
+              <span className="text-xs font-medium text-muted-foreground">First name</span>
+              <input value={editFirst} onChange={(e) => setEditFirst(e.target.value)} maxLength={40}
+                className="mt-1 w-full rounded-2xl border border-border bg-surface p-3 text-sm outline-none focus:border-gold" />
+            </label>
+            <label className="block mb-4">
+              <span className="text-xs font-medium text-muted-foreground">Last name</span>
+              <input value={editLast} onChange={(e) => setEditLast(e.target.value)} maxLength={40}
+                className="mt-1 w-full rounded-2xl border border-border bg-surface p-3 text-sm outline-none focus:border-gold" />
+            </label>
+            <div className="flex gap-2">
+              <button onClick={() => setEditing(false)} disabled={savingName}
+                className="flex-1 rounded-2xl border border-border py-3 text-sm font-semibold">Cancel</button>
+              <button onClick={saveName} disabled={savingName}
+                className="flex-1 rounded-2xl bg-foreground text-background py-3 text-sm font-semibold disabled:opacity-60">
+                {savingName ? "Saving…" : "Save"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </MobileFrame>
   );
 }
