@@ -25,11 +25,11 @@ import { Capacitor } from "@capacitor/core";
 import { supabase } from "@/integrations/supabase/client";
 
 export const NATIVE_REDIRECT = "minyannow://auth/callback";
-// Public HTTPS bridge — must match Supabase Auth "Additional Redirect URLs".
-// The page at /auth/callback re-emits the fragment/query as a minyannow://
-// deep link, which iOS hands back to the native shell.
-export const HTTPS_REDIRECT_BRIDGE =
-  "https://global-minyan-connect.lovable.app/auth/callback?native=1";
+// Public HTTPS host that runs the Lovable OAuth broker. Native must enter
+// via this origin so the managed Google/Apple client secrets are used.
+export const HTTPS_ORIGIN = "https://global-minyan-connect.lovable.app";
+export const HTTPS_REDIRECT_BRIDGE = `${HTTPS_ORIGIN}/auth/callback?native=1`;
+export const HTTPS_NATIVE_START = `${HTTPS_ORIGIN}/auth/native-start`;
 
 export function isNative(): boolean {
   return Capacitor.isNativePlatform();
@@ -43,15 +43,22 @@ let coldStartChecked = false;
  * Begin a native OAuth sign-in. Idempotent — rapid taps are dropped.
  *
  * Flow:
- *   App  ──signInWithOAuth(skipBrowserRedirect)──►  Supabase
- *   App  ──Browser.open(authUrl)──►                  SFSafariViewController
- *   Provider  ──redirect──►                          https://…/auth/callback?native=1
- *   Callback page  ──location.replace(minyannow://…)──►  iOS
- *   iOS  ──appUrlOpen──►                              App.addListener
- *   App  ──setSession──►                              Supabase  → SIGNED_IN
- *   App  ──Browser.close()──►                         dismiss browser
+ *   App          ──Browser.open(/auth/native-start?provider=…)──►  Lovable broker page
+ *   Broker page  ──lovable.auth.signInWithOAuth──►                 Google / Apple
+ *   Provider     ──redirect──►                                     /auth/callback?native=1
+ *   Callback     ──location.replace(minyannow://…)──►              iOS / Android
+ *   OS           ──appUrlOpen──►                                   App.addListener
+ *   App          ──setSession──►                                   Supabase  → SIGNED_IN
+ *   App          ──Browser.close()──►                              dismiss browser
+ *
+ * NB: we deliberately do NOT call `supabase.auth.signInWithOAuth` here.
+ * That path hits Supabase `/authorize` directly, which on Lovable Cloud has
+ * no Google client secret configured and returns `missing OAuth secret`.
+ * The broker holds the managed secret.
  */
-export async function nativeOAuthSignIn(provider: "google" | "apple"): Promise<{ error: Error | null }> {
+export async function nativeOAuthSignIn(
+  provider: "google" | "apple",
+): Promise<{ error: Error | null }> {
   if (!isNative()) {
     return { error: new Error("nativeOAuthSignIn called outside Capacitor") };
   }
@@ -63,24 +70,12 @@ export async function nativeOAuthSignIn(provider: "google" | "apple"): Promise<{
   try {
     await ensureDeepLinkListener();
 
-    const { data, error } = await supabase.auth.signInWithOAuth({
-      provider,
-      options: {
-        redirectTo: HTTPS_REDIRECT_BRIDGE,
-        skipBrowserRedirect: true,
-      },
-    });
-
-    if (error || !data?.url) {
-      inFlight = false;
-      return { error: (error as Error | null) ?? new Error("OAuth init failed") };
-    }
+    const url = `${HTTPS_NATIVE_START}?provider=${encodeURIComponent(provider)}`;
 
     const { Browser } = await import("@capacitor/browser");
-    // Make sure no stale browser session is open before we start a new one.
     try { await Browser.close(); } catch { /* nothing was open */ }
     await Browser.open({
-      url: data.url,
+      url,
       windowName: "_self",
       presentationStyle: "fullscreen",
     });
@@ -91,6 +86,10 @@ export async function nativeOAuthSignIn(provider: "google" | "apple"): Promise<{
     return { error: err instanceof Error ? err : new Error(String(err)) };
   }
 }
+
+// Re-export for any caller still referencing the old name.
+export { supabase as _supabase };
+
 
 /**
  * Register the `appUrlOpen` listener exactly once. Also processes the cold
