@@ -34,26 +34,22 @@ function makeCallable<TData, TResult>(
   };
 }
 
-interface ServerFnBuilder<TData, TResult> {
-  inputValidator: <TNext>(_v: unknown) => ServerFnBuilder<TNext, TResult>;
-  middleware: (_m: unknown) => ServerFnBuilder<TData, TResult>;
-  handler: (_h: Handler<TData, TResult>) => (data?: TData) => Promise<TResult>;
-}
+// Loose typing on purpose — this stub mirrors the runtime surface only.
+type AnyBuilder = {
+  inputValidator: (_v: unknown) => AnyBuilder;
+  middleware: (_m: unknown) => AnyBuilder;
+  handler: (_h: (...args: unknown[]) => unknown) => (data?: unknown) => Promise<unknown>;
+};
 
-export function createServerFn<TResult = unknown>(opts: { method?: string } = {}) {
+export function createServerFn(opts: { method?: string } = {}): AnyBuilder {
   const method = opts.method ?? "POST";
-  // We don't know the function's exported name at runtime, so we encode it
-  // when `.handler()` is called via Function.name of the returned binding.
-  // Callers always assign the result to a `const`, so we fall back to a
-  // generated id that the hosted server cannot route — meaning server fns
-  // invoked from native always go through the bundled hosted route by the
-  // exported binding's name (resolved via the import map at build time).
-  const builder = (currentName = "anonymous"): ServerFnBuilder<unknown, TResult> => ({
-    inputValidator: () => builder(currentName) as ServerFnBuilder<unknown, TResult>,
-    middleware: () => builder(currentName),
-    handler: () => makeCallable<unknown, TResult>(currentName, method),
-  });
-  return builder() as ServerFnBuilder<unknown, TResult>;
+  const name = "anonymous";
+  const builder: AnyBuilder = {
+    inputValidator: () => builder,
+    middleware: () => builder,
+    handler: () => makeCallable(name, method),
+  };
+  return builder;
 }
 
 export function useServerFn<TFn extends (...args: never[]) => unknown>(fn: TFn): TFn {
