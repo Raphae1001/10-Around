@@ -38,7 +38,6 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TravelCityCityKeyRouteImport } from './routes/travel-city.$cityKey'
 import { Route as MinyanIdRouteImport } from './routes/minyan.$id'
-import { Route as AuthNativeStartRouteImport } from './routes/auth.native-start'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 
 const TrustRoute = TrustRouteImport.update({
@@ -186,11 +185,6 @@ const MinyanIdRoute = MinyanIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => MinyanRoute,
 } as any)
-const AuthNativeStartRoute = AuthNativeStartRouteImport.update({
-  id: '/native-start',
-  path: '/native-start',
-  getParentRoute: () => AuthRoute,
-} as any)
 const AuthCallbackRoute = AuthCallbackRouteImport.update({
   id: '/callback',
   path: '/callback',
@@ -226,7 +220,6 @@ export interface FileRoutesByFullPath {
   '/traveler': typeof TravelerRoute
   '/trust': typeof TrustRoute
   '/auth/callback': typeof AuthCallbackRoute
-  '/auth/native-start': typeof AuthNativeStartRoute
   '/minyan/$id': typeof MinyanIdRoute
   '/travel-city/$cityKey': typeof TravelCityCityKeyRoute
 }
@@ -259,7 +252,6 @@ export interface FileRoutesByTo {
   '/traveler': typeof TravelerRoute
   '/trust': typeof TrustRoute
   '/auth/callback': typeof AuthCallbackRoute
-  '/auth/native-start': typeof AuthNativeStartRoute
   '/minyan/$id': typeof MinyanIdRoute
   '/travel-city/$cityKey': typeof TravelCityCityKeyRoute
 }
@@ -293,7 +285,6 @@ export interface FileRoutesById {
   '/traveler': typeof TravelerRoute
   '/trust': typeof TrustRoute
   '/auth/callback': typeof AuthCallbackRoute
-  '/auth/native-start': typeof AuthNativeStartRoute
   '/minyan/$id': typeof MinyanIdRoute
   '/travel-city/$cityKey': typeof TravelCityCityKeyRoute
 }
@@ -328,7 +319,6 @@ export interface FileRouteTypes {
     | '/traveler'
     | '/trust'
     | '/auth/callback'
-    | '/auth/native-start'
     | '/minyan/$id'
     | '/travel-city/$cityKey'
   fileRoutesByTo: FileRoutesByTo
@@ -361,7 +351,6 @@ export interface FileRouteTypes {
     | '/traveler'
     | '/trust'
     | '/auth/callback'
-    | '/auth/native-start'
     | '/minyan/$id'
     | '/travel-city/$cityKey'
   id:
@@ -394,7 +383,6 @@ export interface FileRouteTypes {
     | '/traveler'
     | '/trust'
     | '/auth/callback'
-    | '/auth/native-start'
     | '/minyan/$id'
     | '/travel-city/$cityKey'
   fileRoutesById: FileRoutesById
@@ -635,13 +623,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MinyanIdRouteImport
       parentRoute: typeof MinyanRoute
     }
-    '/auth/native-start': {
-      id: '/auth/native-start'
-      path: '/native-start'
-      fullPath: '/auth/native-start'
-      preLoaderRoute: typeof AuthNativeStartRouteImport
-      parentRoute: typeof AuthRoute
-    }
     '/auth/callback': {
       id: '/auth/callback'
       path: '/callback'
@@ -654,12 +635,10 @@ declare module '@tanstack/react-router' {
 
 interface AuthRouteChildren {
   AuthCallbackRoute: typeof AuthCallbackRoute
-  AuthNativeStartRoute: typeof AuthNativeStartRoute
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
   AuthCallbackRoute: AuthCallbackRoute,
-  AuthNativeStartRoute: AuthNativeStartRoute,
 }
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
