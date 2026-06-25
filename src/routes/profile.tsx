@@ -41,9 +41,34 @@ function Profile() {
   }, [user]);
 
 
-  const name = profile?.display_name ?? user?.email?.split("@")[0] ?? t("profile.guest");
+  const first = profile?.first_name ?? "";
+  const last = profile?.last_name ?? "";
+  const name = (first || last) ? `${first} ${last}`.trim() : (profile?.display_name ?? t("profile.guest"));
   const initial = name[0]?.toUpperCase() ?? "?";
   const backupOn = profile?.backup_mode ?? false;
+
+  function startEdit() {
+    setEditFirst(first);
+    setEditLast(last);
+    setEditing(true);
+  }
+
+  async function saveName() {
+    if (!user || !profile) return;
+    const f = editFirst.trim(); const l = editLast.trim();
+    if (f.length < 2 || l.length < 2) {
+      toast.error("First and last name are required");
+      return;
+    }
+    setSavingName(true);
+    const display = `${f} ${l}`;
+    const { error } = await supabase.from("profiles").update({ first_name: f, last_name: l, display_name: display } as any).eq("id", user.id);
+    setSavingName(false);
+    if (error) { toast.error("Couldn't save name", { description: error.message }); return; }
+    setProfile({ ...profile, first_name: f, last_name: l, display_name: display });
+    setEditing(false);
+    void import("@/lib/analytics").then(({ track }) => track("update_profile", { field: "name" }));
+  }
 
   async function toggleBackup() {
     if (!user || !profile) return;
