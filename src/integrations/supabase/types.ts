@@ -360,6 +360,10 @@ export type Database = {
         }
         Returns: undefined
       }
+      can_join_chat_thread: {
+        Args: { _thread_id: string; _user_id: string }
+        Returns: boolean
+      }
       cancel_my_minyan: { Args: { _id: string }; Returns: undefined }
       cleanup_expired_minyanim: { Args: never; Returns: undefined }
       count_minyanim_within:
