@@ -61,4 +61,15 @@ export const createMiddleware = (() => ({
   client: () => ({ handler: () => ({}) }),
 })) as unknown as (...args: unknown[]) => unknown;
 
+// Subpath shims (`/server`, `/server-entry`) — never invoked in the SPA, but
+// must exist so the module resolves.
+export const getRequest = (): Request => {
+  throw new Error("getRequest() is not available in the native SPA build");
+};
+export const createStart = (() => ({
+  /* noop in SPA */
+})) as unknown as (...args: unknown[]) => unknown;
+
+export default { createServerFn, useServerFn, createMiddleware, getRequest, createStart };
+
 export default { createServerFn, useServerFn, createMiddleware };
