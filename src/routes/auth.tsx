@@ -6,10 +6,17 @@ import { Logo, Wordmark } from "@/components/Logo";
 import { Loader2, MapPin, Bell, Check } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { track } from "@/lib/analytics";
+import { getCurrentPosition, registerPushNotifications, isNative } from "@/lib/native";
 
 export const Route = createFileRoute("/auth")({
   component: Onboarding,
 });
+
+// Module-scoped buffer for the push token. The user grants notification
+// permission BEFORE signing in (so there's no auth.uid() yet to write to
+// user_push_tokens). We stash the token here and flush it after the
+// anonymous sign-in succeeds in onContinue().
+let pendingPushToken: string | null = null;
 
 function Onboarding() {
   const { t } = useTranslation();
@@ -40,21 +47,38 @@ function Onboarding() {
 
   async function requestLocation() {
     if (locOk) return;
-    if (typeof navigator === "undefined" || !navigator.geolocation) {
-      toast.error("Location not available on this device");
-      return;
+    // Native uses @capacitor/geolocation (real iOS/Android permission prompt
+    // backed by NSLocationWhenInUseUsageDescription / ACCESS_FINE_LOCATION).
+    // Web falls back to navigator.geolocation. Single source of truth.
+    const pos = await getCurrentPosition();
+    if (pos) {
+      setLocOk(true);
+    } else {
+      toast.error("Location permission denied");
     }
-    navigator.geolocation.getCurrentPosition(
-      () => setLocOk(true),
-      () => toast.error("Location permission denied"),
-      { timeout: 8000 }
-    );
   }
 
   async function requestNotifications() {
     if (notifOk) return;
+    if (isNative()) {
+      // Real iOS/Android push permission + APNs/FCM registration.
+      // The token is persisted to user_push_tokens once the user has a
+      // Supabase session (anonymous sign-in happens on Continue), so we
+      // stash it in a module-scoped ref and flush after sign-in.
+      try {
+        await registerPushNotifications((token) => {
+          pendingPushToken = token;
+        });
+        setNotifOk(true);
+      } catch (e) {
+        toast.error("Notifications permission denied", {
+          description: (e as Error).message,
+        });
+      }
+      return;
+    }
+    // Web fallback
     if (typeof window === "undefined" || !("Notification" in window)) {
-      // Native shell handles push elsewhere; mark as accepted so user can move on.
       setNotifOk(true);
       return;
     }
@@ -85,6 +109,17 @@ function Onboarding() {
       if (upErr) {
         // Non-fatal; user can edit later.
         console.warn("profile update failed", upErr);
+      }
+
+      // Persist the push token now that the anonymous user exists. RLS on
+      // user_push_tokens scopes inserts to auth.uid() = user_id.
+      if (pendingPushToken) {
+        const tok = pendingPushToken;
+        pendingPushToken = null;
+        const { error: pushErr } = await supabase
+          .from("user_push_tokens")
+          .upsert({ user_id: data.user.id, token: tok } as any);
+        if (pushErr) console.warn("push token persist failed", pushErr);
       }
 
       track("sign_up", { method: "anonymous" });

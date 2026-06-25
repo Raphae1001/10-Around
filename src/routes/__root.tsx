@@ -76,7 +76,27 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   );
 }
 
-export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+// Detect Capacitor at module init. On native, the WKWebView/Android WebView
+// injects `window.Capacitor` BEFORE our bundle runs, so this check is safe
+// even though it executes at import time. On SSR (no `window`) and on plain
+// web (no `Capacitor` global), this is false.
+//
+// Why this matters: `shellComponent` renders a full <html><head><body> shell
+// around the app. That is required for TanStack Start SSR (the dist/ build).
+// But the Capacitor SPA build (dist-mobile/) already has its own index.html
+// with <html>/<head>/<body>, so rendering the shell would nest a second
+// <html>/<body> inside <div id="root">. The malformed DOM breaks the iOS
+// Keyboard plugin and freezes inputs after the first keystroke.
+const IS_CAPACITOR_RUNTIME =
+  typeof window !== "undefined" &&
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  !!(window as any).Capacitor &&
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (window as any).Capacitor.isNativePlatform?.() === true;
+
+const rootRouteOptions: Parameters<
+  ReturnType<typeof createRootRouteWithContext<{ queryClient: QueryClient }>>
+>[0] = {
   head: () => ({
     meta: [
       { charSet: "utf-8" },
@@ -105,11 +125,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
     ],
   }),
-  shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
   errorComponent: ErrorComponent,
-});
+};
+
+if (!IS_CAPACITOR_RUNTIME) {
+  rootRouteOptions.shellComponent = RootShell;
+}
+
+export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
+  rootRouteOptions,
+);
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
@@ -129,15 +156,6 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
   useEffect(() => { applySavedLang(); }, []);
-  useEffect(() => {
-    // Register the Capacitor deep-link listener exactly once at app boot.
-    // Handles both warm `appUrlOpen` events (Browser→app handoff after
-    // OAuth) and the cold-start launch URL when iOS opens the app fresh
-    // via a minyannow:// link. No-op on web.
-    void import("@/lib/native-auth").then(({ ensureDeepLinkListener }) => {
-      void ensureDeepLinkListener();
-    });
-  }, []);
   useEffect(() => {
     // Fire-and-forget analytics page_view on every route change. No-ops
     // when analytics is disabled or not configured. Lazy-imported so the

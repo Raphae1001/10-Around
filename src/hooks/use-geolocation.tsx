@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { getCurrentPosition } from "@/lib/native";
 
 export type GeoPosition = { lat: number; lng: number; accuracy?: number };
 
@@ -17,36 +18,32 @@ export function useGeolocation(autoRequest = true) {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const request = useCallback(() => {
-    if (typeof navigator === "undefined" || !("geolocation" in navigator)) {
-      setError("Geolocation not supported");
-      return;
-    }
+  const request = useCallback(async () => {
     setLoading(true);
-    navigator.geolocation.getCurrentPosition(
-      (p) => {
-        const pos: GeoPosition = {
-          lat: p.coords.latitude,
-          lng: p.coords.longitude,
-          accuracy: p.coords.accuracy,
-        };
-        setPosition(pos);
-        setError(null);
+    try {
+      // Single source of truth: native uses @capacitor/geolocation (which
+      // handles iOS/Android permission prompts), web falls back to
+      // navigator.geolocation. See src/lib/native.ts.
+      const pos = await getCurrentPosition();
+      if (!pos) {
+        setError("Location unavailable");
         setLoading(false);
-        try {
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(pos));
-        } catch {}
-      },
-      (err) => {
-        setError(err.message);
-        setLoading(false);
-      },
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 },
-    );
+        return;
+      }
+      setPosition(pos);
+      setError(null);
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(pos));
+      } catch {}
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Location error");
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   useEffect(() => {
-    if (autoRequest && !position) request();
+    if (autoRequest && !position) void request();
   }, [autoRequest, position, request]);
 
   return { position, error, loading, request };
