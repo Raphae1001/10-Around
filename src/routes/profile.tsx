@@ -14,7 +14,11 @@ function Profile() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { user, loading } = useAuth();
-  const [profile, setProfile] = useState<{ display_name: string | null; avatar_url: string | null; backup_mode: boolean; backup_radius_m: number; trust_score: number } | null>(null);
+  const [profile, setProfile] = useState<{ display_name: string | null; first_name: string | null; last_name: string | null; avatar_url: string | null; backup_mode: boolean; backup_radius_m: number; trust_score: number } | null>(null);
+  const [editing, setEditing] = useState(false);
+  const [editFirst, setEditFirst] = useState("");
+  const [editLast, setEditLast] = useState("");
+  const [savingName, setSavingName] = useState(false);
   const [stats, setStats] = useState<{ minyanim_count: number; completed_count: number; streak_days: number; stars: number } | null>(null);
   const [recent, setRecent] = useState<Array<{ minyan_id: string; prayer: string | null; address: string | null; joined_at: string }>>([]);
   const [savingBackup, setSavingBackup] = useState(false);
