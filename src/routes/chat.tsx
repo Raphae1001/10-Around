@@ -92,11 +92,19 @@ function ChatPage() {
     const content = text.trim();
     if (!content || !user || !id) return;
     setSending(true);
-    const { error } = await supabase.from("chat_messages").insert({ thread_id: id, user_id: user.id, content });
+    const { data: inserted, error } = await supabase
+      .from("chat_messages")
+      .insert({ thread_id: id, user_id: user.id, content })
+      .select("id,user_id,content,created_at")
+      .single();
     setSending(false);
     if (error) {
       toast.error("Could not send", { description: error.message });
       return;
+    }
+    if (inserted) {
+      setMessages((prev) => (prev.some((p) => p.id === inserted.id) ? prev : [...prev, inserted as Msg]));
+      await loadProfiles([inserted.user_id]);
     }
     setText("");
   }
