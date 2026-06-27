@@ -7,11 +7,11 @@
 //
 // `createServerFn` returns an object with a `.inputValidator().handler()`
 // chain (matching the real API surface) that produces an async callable. In
-// the native shell that callable POSTs to the hosted Lovable site so server
+// the native shell that callable POSTs to the hosted web app so server
 // functions still work end-to-end. `useServerFn` just returns the callable.
 import { useMemo } from "react";
 
-const SERVER_BASE = "https://global-minyan-connect.lovable.app";
+const SERVER_BASE = import.meta.env.VITE_APP_URL as string | undefined;
 
 type Handler<TData, TResult> = (ctx: { data: TData }) => Promise<TResult> | TResult;
 
@@ -20,6 +20,9 @@ function makeCallable<TData, TResult>(
   method: string,
 ): (data?: TData) => Promise<TResult> {
   return async (data?: TData) => {
+    if (!SERVER_BASE) {
+      throw new Error("VITE_APP_URL is not configured — set it to your production web URL");
+    }
     const url = `${SERVER_BASE}/_serverFn/${name}`;
     const res = await fetch(url, {
       method,

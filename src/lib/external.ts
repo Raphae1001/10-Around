@@ -4,7 +4,7 @@
  *
  * Strategy: create a transient <a target="_blank" rel="noopener noreferrer">
  * and click it. This bypasses popup blockers better than window.open and,
- * crucially, escapes the Lovable preview iframe (where window.open() can
+ * crucially, escapes preview iframes (where window.open() can
  * be intercepted and end up navigating the iframe itself, which then
  * triggers ERR_BLOCKED_BY_RESPONSE for sites like maps.google.com or
  * web.whatsapp.com that refuse to be framed).

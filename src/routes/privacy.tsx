@@ -70,7 +70,7 @@ const LEGAL_SECTIONS: { icon: typeof UserPlus; title: string; body: React.ReactN
     body: (
       <>
         Account data, minyan records, and chat messages are stored on secure managed Postgres infrastructure
-        (Lovable Cloud / Supabase) protected by row-level security. Data is encrypted in transit (HTTPS) and at
+        (Supabase) protected by row-level security. Data is encrypted in transit (HTTPS) and at
         rest. Live minyanim are automatically deleted 40 minutes after their start time; travel presence is
         deleted at the end of your travel window.
       </>

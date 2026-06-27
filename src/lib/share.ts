@@ -7,21 +7,18 @@ import { Capacitor } from "@capacitor/core";
 import { toast } from "sonner";
 import { openExternal } from "@/lib/external";
 
-const PUBLISHED_ORIGIN = "https://global-minyan-connect.lovable.app";
+/** Fallback origin for share links when no custom domain is configured yet. */
+const DEFAULT_ORIGIN = import.meta.env.VITE_APP_URL as string | undefined;
 
-/** Origin to use when generating shareable links. Always prefer the
- *  published domain so links don't point at the preview iframe. */
+/** Origin to use when generating shareable links. */
 export function appOrigin(): string {
   if (typeof window !== "undefined") {
     const host = window.location?.hostname ?? "";
-    // Use the current origin only for the real published domain or a
-    // custom domain. Inside the Lovable preview iframe use the published
-    // URL so shared links work for everyone.
-    if (host && !host.includes("lovableproject.com") && !host.includes("lovable.dev") && !host.includes("id-preview--")) {
+    if (host && host !== "localhost" && !host.startsWith("127.0.0.1")) {
       return window.location.origin;
     }
   }
-  return PUBLISHED_ORIGIN;
+  return DEFAULT_ORIGIN ?? (typeof window !== "undefined" ? window.location.origin : "");
 }
 
 async function copyToClipboard(text: string): Promise<boolean> {
