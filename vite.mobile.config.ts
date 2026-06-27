@@ -5,6 +5,7 @@
 // Do NOT merge them — the TanStack Start plugin is SSR-only and does not emit an index.html.
 import { defineConfig, loadEnv } from "vite";
 import path from "node:path";
+import { renameSync } from "node:fs";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import tsconfigPaths from "vite-tsconfig-paths";
@@ -18,6 +19,15 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [
+      {
+        name: "rename-mobile-index-html",
+        closeBundle() {
+          renameSync(
+            path.resolve(__dirname, "dist-mobile/index.mobile.html"),
+            path.resolve(__dirname, "dist-mobile/index.html"),
+          );
+        },
+      },
       TanStackRouterVite({
         target: "react",
         autoCodeSplitting: true,
@@ -49,6 +59,11 @@ export default defineConfig(({ mode }) => {
       emptyOutDir: true,
       target: "es2020",
       sourcemap: false,
+      rollupOptions: {
+        input: {
+          index: path.resolve(__dirname, "index.mobile.html"),
+        },
+      },
     },
   };
 });
