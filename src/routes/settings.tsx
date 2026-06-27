@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { MobileFrame } from "@/components/MobileFrame";
 import { ScreenHeader } from "@/components/ui-bits";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
-import { Bell, Moon, Lock, MapPin, Accessibility, ChevronDown, Sparkles, BarChart3, Trash2, Loader2 } from "lucide-react";
+import { Bell, Lock, MapPin, Accessibility, ChevronDown, Sparkles, BarChart3, Trash2, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -112,11 +112,6 @@ function Settings() {
             defaultValue="Sephard, Nusach Ari"
             options={["None", "Sephard", "Nusach Ari", "Sephard, Nusach Ari", "All"]}
           />
-        </Group>
-
-        <Group title={t("settings.shabbat")} icon={Moon}>
-          <Toggle storageKey="shabbat.auto" label={t("settings.autoShabbat")} defaultOn />
-          <Toggle storageKey="shabbat.mute" label={t("settings.muteShabbat")} defaultOn />
         </Group>
 
         <Group title={t("settings.privacy")} icon={Lock}>
