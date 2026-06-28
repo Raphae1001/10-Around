@@ -5,16 +5,15 @@
 ### 1. Build & archive
 
 ```bash
-bun install
-bun run build
-bunx cap sync ios
-bunx cap open ios
+npm install
+npm run cap:sync
+npm run cap:ios
 ```
 
 In Xcode:
-1. Select target **App** → Signing & Capabilities → set Team, verify Bundle ID `app.lovable.minyannow`
-2. Add capabilities: Push Notifications, Sign in with Apple
-3. Open `Info.plist` and add the strings from `IOS_READINESS.md`
+1. Select target **App** → Signing & Capabilities → set Team, verify Bundle ID `com.minyannow.app`
+2. Add capability: **Push Notifications** (anonymous auth — no Sign in with Apple required)
+3. `Info.plist` already includes location usage string (see `IOS_READINESS.md`)
 4. Top bar → device selector → **Any iOS Device (arm64)**
 5. Product → Archive
 6. Wait for Organizer to open

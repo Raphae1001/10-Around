@@ -2,14 +2,14 @@
 
 ## Capacitor config (already set)
 
-- `appId`: `app.lovable.minyannow` (= Android `applicationId`)
+- `appId`: `com.minyannow.app` (= Android `applicationId`)
 - `appName`: `MinyanNow`
 - `android.backgroundColor`: `#ffffff`
 - `server.url`: **not set** — the app loads `dist-mobile/` from disk (true native app)
 
 ## Package name & versioning
 
-- `applicationId` in `android/app/build.gradle`: `app.lovable.minyannow`
+- `applicationId` in `android/app/build.gradle`: `com.minyannow.app`
 - `versionCode`: integer, increment every upload
 - `versionName`: human-readable string (e.g. `1.0.0`)
 
@@ -40,7 +40,7 @@ To make share URLs open the app on Android:
      <action android:name="android.intent.action.VIEW" />
      <category android:name="android.intent.category.DEFAULT" />
      <category android:name="android.intent.category.BROWSABLE" />
-     <data android:scheme="https" android:host="global-minyan-connect.lovable.app" />
+     <data android:scheme="https" android:host="minyan-now-18mb.vercel.app" />
    </intent-filter>
    ```
 2. Host `/.well-known/assetlinks.json` on the published domain with the SHA-256 fingerprint of the signing key.
@@ -55,14 +55,14 @@ Provide:
 - Background: solid color or simple gradient (use `#FFFFFF` or the brand color)
 
 Lovable generates icons under `android/app/src/main/res/mipmap-*`. Run
-`bunx cap sync android` after replacing them.
+`npm run cap:sync` after replacing them.
 
 ## Play Store metadata
 
-- Privacy policy URL: `https://global-minyan-connect.lovable.app/privacy`
+- Privacy policy URL: `https://minyan-now-18mb.vercel.app/privacy`
 - Support email: `support@minyannow.com`
-- Support website: `https://global-minyan-connect.lovable.app/support`
-- Account deletion URL (Play requires this): `https://global-minyan-connect.lovable.app/support#account-assistance--deletion` (or the dedicated Settings page when signed in)
+- Support website: `https://minyan-now-18mb.vercel.app/support`
+- Account deletion URL (Play requires this): `https://minyan-now-18mb.vercel.app/settings` (Delete Account in-app)
 - Category: Lifestyle
 - Content rating: Everyone
 
@@ -82,7 +82,7 @@ via Settings → Delete Account.
 
 ## Pre-submission checklist
 
-- [ ] Run `bunx cap sync android` after every web build
+- [ ] Run `npm run cap:sync` after every web build
 - [ ] Generate signed AAB (`./gradlew bundleRelease`)
 - [ ] Test on a real Android device (location, notifications post-13, share intent, Google Maps deep link)
 - [ ] 512×512 icon (no transparency)

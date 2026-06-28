@@ -3,13 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>   MinyanNow uses your location to help you find minyanim near you.
-
-   MinyanNow uses your location to help you find minyanim near you.
-
-   MinyanNow uses your location to help you find minyanim near you.
-
-MinyanNow uses your location to help you find minyanim near you.</string>
+	<string>MinyanNow uses your location to help you find minyanim near you.</string>
 	<key>CAPACITOR_DEBUG</key>
 	<string>$(CAPACITOR_DEBUG)</string>
 	<key>CFBundleDevelopmentRegion</key>
