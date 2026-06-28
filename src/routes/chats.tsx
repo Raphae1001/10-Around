@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { MobileFrame } from "@/components/MobileFrame";
-import { ScreenHeader } from "@/components/ui-bits";
+import { ScreenHeader, EmptyState } from "@/components/ui-bits";
 import { MessageCircle, Users, MapPin, ChevronRight, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
@@ -100,13 +100,11 @@ function ChatsPage() {
         {threads === null ? (
           <div className="flex items-center justify-center py-16 text-muted-foreground"><Loader2 className="h-5 w-5 animate-spin" /></div>
         ) : threads.length === 0 && (!cities || cities.length === 0) ? (
-          <div className="rounded-2xl border border-border bg-surface p-6 text-center">
-            <MessageCircle className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-            <div className="text-sm font-semibold">No chats yet</div>
-            <p className="text-xs text-muted-foreground mt-1">
-              Create an Abroad city to organize with people there.
-            </p>
-          </div>
+          <EmptyState
+            icon={MessageCircle}
+            title="No chats yet"
+            description="Create an Abroad city to organize with people there."
+          />
         ) : (
           <ul className="space-y-2">
             {threads.map((t) => (

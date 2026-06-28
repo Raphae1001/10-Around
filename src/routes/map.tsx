@@ -2,8 +2,8 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { MobileFrame } from "@/components/MobileFrame";
 import { GoogleMapCanvas } from "@/components/GoogleMap";
-import { LiveBadge, StatusPill } from "@/components/ui-bits";
-import { Search, Locate, Filter, Navigation, Plus, Sunrise, Sun, Moon, X, ChevronUp } from "lucide-react";
+import { LiveBadge, StatusPill, EmptyState } from "@/components/ui-bits";
+import { Search, Locate, Filter, Navigation, Plus, Sunrise, Sun, Moon, X, ChevronUp, MapPin } from "lucide-react";
 import { useGeolocation } from "@/hooks/use-geolocation";
 import { useNearbyMinyanim, type MinyanRow } from "@/hooks/use-minyanim";
 import { openDirections } from "@/lib/directions";
@@ -72,7 +72,7 @@ function LiveMap() {
   return (
     <MobileFrame bg="map">
       <div className="px-4 pt-2">
-        <div className="bg-surface/95 backdrop-blur rounded-2xl shadow-lift border border-border p-2 flex items-center gap-2">
+        <div className="bg-surface/95 backdrop-blur rounded-2xl shadow-card border border-border p-2 flex items-center gap-2 transition-colors focus-within:border-gold">
           <div className="h-9 w-9 rounded-xl bg-muted flex items-center justify-center shrink-0">
             <Search className="h-4 w-4 text-muted-foreground" />
           </div>
@@ -91,8 +91,8 @@ function LiveMap() {
             <button
               key={f}
               onClick={() => setFilter(f)}
-              className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-medium border ${
-                filter === f ? "bg-foreground text-background border-foreground" : "bg-surface/90 border-border"
+              className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-medium border transition-colors ${
+                filter === f ? "bg-foreground text-background border-foreground" : "bg-surface/90 border-border hover:border-gold/50"
               }`}
             >
               {f}
@@ -130,7 +130,7 @@ function LiveMap() {
         <div className="absolute top-3 right-3 flex flex-col gap-2 z-10">
           <button
             onClick={(e) => { e.stopPropagation(); request(); }}
-            className="h-10 w-10 rounded-xl bg-surface/95 border border-border shadow-soft flex items-center justify-center"
+            className="h-10 w-10 rounded-xl bg-surface/90 backdrop-blur border border-border shadow-card flex items-center justify-center transition-transform active:scale-95"
             aria-label="Recenter on me"
           >
             <Locate className="h-4 w-4 text-sky" />
@@ -138,7 +138,13 @@ function LiveMap() {
         </div>
 
         <div className="absolute top-3 left-3 z-10">
-          <LiveBadge>{filtered.length} LIVE</LiveBadge>
+          {filtered.length > 0 ? (
+            <LiveBadge>{filtered.length} LIVE</LiveBadge>
+          ) : (
+            <span className="inline-flex items-center rounded-full bg-surface/90 backdrop-blur px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground shadow-card border border-border">
+              0 live
+            </span>
+          )}
         </div>
 
         {/* Bottom sheet — draggable, collapsible, fully dismissible. */}
@@ -181,18 +187,17 @@ function LiveMap() {
                     {selected ? selected.address ?? "Unknown spot" : `${filtered.length} minyanim`}
                   </p>
                 </div>
-                <StatusPill tone="gold">
-                  {filtered.filter((m) => (m.present_count ?? 1) < 10).length} forming
-                </StatusPill>
+                {(() => {
+                  const forming = filtered.filter((m) => (m.present_count ?? 1) < 10).length;
+                  return <StatusPill tone={forming > 0 ? "gold" : "default"}>{forming} forming</StatusPill>;
+                })()}
               </div>
               <div className="space-y-2 flex-1 overflow-y-auto hide-scrollbar">
                 {(selected ? [selected] : filtered).slice(0, sheet === "expanded" ? 20 : 2).map((m) => (
                   <MapCard key={m.id} m={m} active={selectedId === m.id} onSelect={() => handlePinSelect(m.id)} />
                 ))}
                 {filtered.length === 0 && (
-                  <div className="text-center text-xs text-muted-foreground py-4">
-                    No minyanim around — be the first.
-                  </div>
+                  <EmptyState icon={MapPin} title="No minyanim around — be the first." />
                 )}
                 <button
                   onClick={() => navigate({ to: "/create", search: { ctx: "Street" } })}

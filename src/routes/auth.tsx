@@ -141,9 +141,12 @@ function Onboarding() {
   return (
     <div className="min-h-dvh w-full bg-muted/40 flex items-stretch justify-center">
       <div className="relative w-full max-w-[440px] min-h-dvh bg-background flex flex-col">
-        <div className="px-8 pt-14 pb-6 text-center">
-          <Logo size={56} />
-          <h1 className="mt-6 font-display text-3xl">
+        <div className="relative px-8 pt-14 pb-6 text-center">
+          <div className="pointer-events-none absolute left-1/2 top-10 -translate-x-1/2 h-40 w-40 rounded-full bg-gold/10 blur-3xl" />
+          <div className="relative">
+            <Logo size={56} />
+          </div>
+          <h1 className="relative mt-6 font-display text-3xl">
             {t("auth.welcome")} <Wordmark />
           </h1>
           <p className="mt-3 text-sm text-muted-foreground max-w-xs mx-auto leading-relaxed">
@@ -191,7 +194,7 @@ function Onboarding() {
           <button
             onClick={onContinue}
             disabled={!valid || busy}
-            className="w-full bg-foreground text-background font-semibold py-4 rounded-2xl shadow-lift disabled:opacity-50 flex items-center justify-center gap-2"
+            className="w-full gold-gradient text-gold-foreground font-semibold py-4 rounded-2xl shadow-glow-gold transition-transform active:scale-[0.99] disabled:opacity-50 flex items-center justify-center gap-2"
           >
             {busy && <Loader2 className="h-4 w-4 animate-spin" />}
             Continue
@@ -218,7 +221,7 @@ function Field({
         placeholder={placeholder}
         autoComplete={autoComplete}
         maxLength={40}
-        className="mt-1 w-full rounded-2xl border border-border bg-surface p-4 text-sm outline-none focus:border-gold"
+        className="mt-1 w-full rounded-2xl border border-border bg-surface p-4 text-sm outline-none transition-shadow focus:border-gold focus:ring-2 focus:ring-gold/20"
       />
     </label>
   );
