@@ -126,8 +126,8 @@ function Create() {
                 <button
                   key={c}
                   onClick={() => setCtx(c)}
-                  className={`rounded-2xl border p-3 flex flex-col items-center gap-1.5 transition-all ${
-                    active ? "border-gold ring-2 ring-gold/30 bg-gold/5" : "border-border bg-surface"
+                  className={`rounded-2xl border p-3 flex flex-col items-center gap-1.5 transition-all active:scale-[0.97] ${
+                    active ? "border-gold bg-gold-soft shadow-sm" : "border-border bg-surface hover:border-gold/50"
                   }`}
                 >
                   <div className={`h-9 w-9 rounded-xl flex items-center justify-center ${active ? "gold-gradient text-gold-foreground" : "bg-muted text-muted-foreground"}`}>
@@ -256,8 +256,8 @@ function Create() {
                     <button
                       key={name}
                       onClick={() => setPrayer(name)}
-                      className={`flex flex-col items-center gap-2 py-4 rounded-2xl border transition-all ${
-                        active ? "border-gold bg-gold/10 shadow-soft" : "border-border bg-surface"
+                      className={`flex flex-col items-center gap-2 py-4 rounded-2xl border transition-all active:scale-[0.97] ${
+                        active ? "border-gold bg-gold-soft shadow-sm" : "border-border bg-surface hover:border-gold/50"
                       }`}
                     >
                       <Icon className={`h-5 w-5 ${active ? "text-gold" : "text-muted-foreground"}`} />
@@ -281,7 +281,7 @@ function Create() {
                         className={`shrink-0 rounded-2xl px-4 py-3 text-sm font-semibold border transition-all ${
                           a
                             ? "gold-gradient text-gold-foreground border-transparent shadow-glow-gold"
-                            : "bg-surface border-border text-muted-foreground"
+                            : "bg-surface border-border text-muted-foreground hover:border-gold/50"
                         }`}
                       >
                         {t}
@@ -296,7 +296,7 @@ function Create() {
               <div className="flex items-center justify-between rounded-2xl border border-border bg-surface p-3">
                 <button
                   onClick={() => setPresent(Math.max(1, present - 1))}
-                  className="h-10 w-10 rounded-xl bg-muted flex items-center justify-center active:scale-95"
+                  className="h-12 w-12 rounded-xl bg-muted flex items-center justify-center active:scale-95"
                   aria-label="Less"
                 >
                   <Minus className="h-4 w-4" />
@@ -307,7 +307,7 @@ function Create() {
                 </div>
                 <button
                   onClick={() => setPresent(present + 1)}
-                  className="h-10 w-10 rounded-xl gold-gradient text-gold-foreground flex items-center justify-center active:scale-95"
+                  className="h-12 w-12 rounded-xl gold-gradient text-gold-foreground flex items-center justify-center active:scale-95"
                   aria-label="More"
                 >
                   <Plus className="h-4 w-4" />
@@ -326,8 +326,8 @@ function Create() {
                     <button
                       key={n}
                       onClick={() => setNusach(n)}
-                      className={`rounded-full px-3.5 py-2 text-xs font-medium border ${
-                        a ? "bg-foreground text-background border-foreground" : "bg-surface border-border"
+                      className={`rounded-full px-3.5 py-2 text-xs font-medium border transition-colors ${
+                        a ? "bg-foreground text-background border-foreground" : "bg-surface border-border hover:border-gold/50"
                       }`}
                     >
                       {n}
@@ -351,7 +351,7 @@ function Create() {
         </Section>
 
         {/* Preview */}
-        {ctx !== "Travel" && <div className="rounded-2xl bg-navy/[0.04] border border-border p-4">
+        {ctx !== "Travel" && <div className="rounded-2xl bg-gold-soft/40 border border-gold/30 p-4">
           <div className="text-[11px] text-muted-foreground space-y-1">
             <div><span className="font-semibold text-foreground">{prayer}</span> · {when} · {present} here · {present >= 10 ? "minyan ready — join us too" : `${Math.max(0, 10 - present)} missing`}</div>
             <div className="flex items-start gap-1"><MapPin className="h-3 w-3 mt-0.5 shrink-0" /><span className="truncate">{locationSummary}</span></div>
@@ -368,7 +368,7 @@ function Create() {
         <button
           onClick={publish}
           disabled={publishing}
-          className="flex items-center justify-center gap-2 w-full gold-gradient text-gold-foreground font-semibold py-5 rounded-2xl shadow-glow-gold text-base disabled:opacity-60"
+          className="flex items-center justify-center gap-2 w-full gold-gradient text-gold-foreground font-semibold py-5 rounded-2xl shadow-glow-gold text-base transition-transform active:scale-[0.99] disabled:opacity-60"
         >
           {publishing ? <Loader2 className="h-5 w-5 animate-spin" /> : <Users className="h-5 w-5" />}
           {ctx === "Travel" ? "Create" : "Publish minyan"}
@@ -545,7 +545,7 @@ function Section({ step, title, children }: { step: string; title: string; child
   return (
     <div>
       <div className="flex items-center gap-2 mb-2">
-        <span className="h-5 w-5 rounded-full bg-foreground text-background text-[10px] font-bold flex items-center justify-center">{step}</span>
+        <span className="h-5 w-5 rounded-full bg-gold text-gold-foreground text-[10px] font-bold flex items-center justify-center">{step}</span>
         <h3 className="font-display text-sm font-semibold">{title}</h3>
       </div>
       {children}

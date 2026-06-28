@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { MobileFrame } from "@/components/MobileFrame";
 import { ScreenHeader, TrustBadge, StatusPill } from "@/components/ui-bits";
-import { Award, Plane, Flame, Settings, ChevronRight, Shield, CalendarCheck, Users, LogOut, MessageCircle } from "lucide-react";
+import { Award, Plane, Flame, Settings, ChevronRight, Shield, CalendarCheck, Users, LogOut, MessageCircle, Pencil } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -109,12 +109,14 @@ function Profile() {
       } />
 
       <div className="mx-6 rounded-3xl navy-gradient text-white p-5 shadow-lift relative overflow-hidden">
-        <div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-gold/20 blur-2xl" />
+        <div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-gold/30 blur-2xl" />
         <div className="relative flex items-center gap-4">
           <div className="h-16 w-16 rounded-2xl gold-gradient text-navy flex items-center justify-center text-xl font-bold">{initial}</div>
           <div className="flex-1 min-w-0">
             <div className="font-display text-xl truncate">{name}</div>
-            <button onClick={startEdit} className="text-xs text-gold underline mt-0.5">Edit profile</button>
+            <button onClick={startEdit} className="text-xs text-gold font-medium mt-0.5 inline-flex items-center gap-1">
+              <Pencil className="h-3 w-3" /> Edit profile
+            </button>
             <div className="mt-2 flex items-center gap-2">
               <TrustBadge score={stats?.stars ?? 0} />
               <StatusPill tone="gold">{t("profile.trust")} {profile?.trust_score ?? 0}</StatusPill>
@@ -132,9 +134,9 @@ function Profile() {
       <div className="px-6 mt-6">
         <div className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold mb-2">{t("profile.badges")}</div>
         <div className="grid grid-cols-3 gap-3">
-          <Badge icon={Flame} tone="urgent" label={t("profile.badgeMaker")} sub={`${t("common.completed", { defaultValue: "Completed" })} ${stats?.completed_count ?? 0}`} />
-          <Badge icon={Plane} tone="sky" label={t("profile.badgeTraveler")} sub={`${stats?.minyanim_count ?? 0} ${t("profile.stats.minyanim").toLowerCase()}`} />
-          <Badge icon={Award} tone="gold" label={t("profile.badgeTrusted")} sub={`${(Number(stats?.stars ?? 0)).toFixed(1)} / 5`} />
+          <Badge icon={Flame} tone="urgent" locked={(stats?.completed_count ?? 0) === 0} label={t("profile.badgeMaker")} sub={`${t("common.completed", { defaultValue: "Completed" })} ${stats?.completed_count ?? 0}`} />
+          <Badge icon={Plane} tone="sky" locked={(stats?.minyanim_count ?? 0) === 0} label={t("profile.badgeTraveler")} sub={`${stats?.minyanim_count ?? 0} ${t("profile.stats.minyanim").toLowerCase()}`} />
+          <Badge icon={Award} tone="gold" locked={(Number(stats?.stars ?? 0)) === 0} label={t("profile.badgeTrusted")} sub={`${(Number(stats?.stars ?? 0)).toFixed(1)} / 5`} />
         </div>
       </div>
 
@@ -240,15 +242,15 @@ function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div>
       <div className="font-display text-2xl text-gold">{value}</div>
-      <div className="text-[10px] uppercase tracking-wider text-white/60 mt-0.5">{label}</div>
+      <div className="text-[10px] uppercase tracking-wider text-white/50 mt-0.5">{label}</div>
     </div>
   );
 }
 
-function Badge({ icon: Icon, tone, label, sub }: any) {
+function Badge({ icon: Icon, tone, label, sub, locked = false }: any) {
   const toneBg = tone === "urgent" ? "bg-urgent/10 text-urgent" : tone === "sky" ? "sky-gradient text-navy" : "gold-gradient text-gold-foreground";
   return (
-    <div className="rounded-2xl border border-border bg-surface p-3 text-center">
+    <div className={`rounded-2xl border border-border bg-surface p-3 text-center transition-opacity ${locked ? "opacity-50 grayscale" : ""}`}>
       <div className={`mx-auto h-10 w-10 rounded-2xl flex items-center justify-center ${toneBg}`}><Icon className="h-5 w-5" /></div>
       <div className="text-xs font-semibold mt-2">{label}</div>
       <div className="text-[10px] text-muted-foreground">{sub}</div>

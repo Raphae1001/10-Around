@@ -1,6 +1,33 @@
 import { ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
-import { ChevronLeft, Users, Clock, MapPin, Flame, Star } from "lucide-react";
+import { ChevronLeft, Users, Clock, MapPin, Flame, Star, type LucideIcon } from "lucide-react";
+
+export function EmptyState({
+  icon: Icon,
+  title,
+  description,
+  action,
+}: {
+  icon: LucideIcon;
+  title: string;
+  description?: string;
+  action?: ReactNode;
+}) {
+  return (
+    <div className="flex flex-col items-center justify-center text-center gap-3 py-10">
+      <div className="h-14 w-14 rounded-2xl bg-gold-soft text-gold-foreground flex items-center justify-center">
+        <Icon className="h-7 w-7" />
+      </div>
+      <div className="space-y-1">
+        <h3 className="font-display text-base text-foreground">{title}</h3>
+        {description && (
+          <p className="text-sm text-muted-foreground max-w-[260px] mx-auto leading-snug">{description}</p>
+        )}
+      </div>
+      {action}
+    </div>
+  );
+}
 
 export function ScreenHeader({
   title,
@@ -19,7 +46,7 @@ export function ScreenHeader({
         {back && (
           <Link
             to="/home"
-            className="h-9 w-9 rounded-full bg-surface border border-border flex items-center justify-center"
+            className="h-9 w-9 rounded-full bg-surface border border-border shadow-card flex items-center justify-center"
             aria-label="Back"
           >
             <ChevronLeft className="h-5 w-5" />
@@ -89,7 +116,7 @@ export function MinyanCard({ m, compact = false }: { m: Minyan; compact?: boolea
   return (
     <Link
       to="/minyan"
-      className="block bg-surface rounded-2xl border border-border shadow-soft p-4 active:scale-[0.99] transition-transform"
+      className="block bg-surface rounded-2xl border border-border shadow-card p-4 active:scale-[0.99] transition-transform"
     >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">

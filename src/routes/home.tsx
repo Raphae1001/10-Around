@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { MobileFrame } from "@/components/MobileFrame";
-import { ScreenHeader, StatusPill } from "@/components/ui-bits";
+import { ScreenHeader, StatusPill, LiveBadge, EmptyState } from "@/components/ui-bits";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -136,11 +136,12 @@ function Home() {
         >
           <span className="flex items-center gap-2">
             {geoLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Crosshair className="h-3.5 w-3.5 text-gold" />}
+            {position && <span className="h-1.5 w-1.5 rounded-full bg-success shrink-0" aria-hidden />}
             {position
               ? `GPS · ${position.lat.toFixed(3)}, ${position.lng.toFixed(3)}`
               : geoError ?? t("home.tapGps")}
           </span>
-          <span className="text-muted-foreground">{t("home.refresh")}</span>
+          <span className="text-gold font-medium">{t("home.refresh")}</span>
         </button>
       </div>
 
@@ -161,7 +162,7 @@ function Home() {
           search={{ ctx: "Street" }}
           className="relative block rounded-3xl overflow-hidden navy-gradient text-white p-5 shadow-lift active:scale-[0.99] transition-transform"
         >
-          <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-gold/25 blur-3xl" />
+          <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-gold/35 blur-3xl" />
           <div className="relative flex items-center justify-between gap-4">
             <div className="min-w-0">
               <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] text-white/60">
@@ -171,7 +172,7 @@ function Home() {
                 {t("home.startCta")}<br /><span className="text-gold">{t("home.rightHere")}</span>
               </h2>
             </div>
-            <div className="h-14 w-14 shrink-0 rounded-full gold-gradient text-gold-foreground flex items-center justify-center shadow-glow-gold">
+            <div className="h-14 w-14 shrink-0 rounded-full gold-gradient text-gold-foreground flex items-center justify-center shadow-glow-gold float-slow">
               <Plus className="h-7 w-7" strokeWidth={2.6} />
             </div>
           </div>
@@ -223,33 +224,49 @@ function Home() {
           <h2 className="font-display text-xl">{t("home.orJoinNearby")}</h2>
           <p className="text-xs text-muted-foreground">{t("home.joinHint")}</p>
         </div>
-        <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">{t("home.live")}</span>
+        {minyanim.length > 0 ? (
+          <LiveBadge>{t("home.live")}</LiveBadge>
+        ) : (
+          <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">{t("home.live")}</span>
+        )}
       </div>
 
-      <div className="px-6 space-y-3 pb-8">
+      <div className="px-6 pb-8 flex-1 flex flex-col">
         {!position && (
-          <div className="rounded-2xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
-            {t("home.enableLocation")}
+          <div className="flex-1 flex flex-col items-center justify-center">
+            <EmptyState icon={MapPin} title={t("home.enableLocation")} />
           </div>
         )}
         {position && loading && minyanim.length === 0 && (
-          <div className="rounded-2xl border border-border bg-surface p-6 text-center text-sm text-muted-foreground">
+          <div className="flex-1 flex flex-col items-center justify-center text-center text-sm text-muted-foreground py-10">
             <Loader2 className="h-4 w-4 animate-spin inline mr-2" /> {t("common.loading")}
           </div>
         )}
         {position && !loading && minyanim.length === 0 && (
-          <div className="rounded-2xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
-            {t("home.noneNearby")}
+          <div className="flex-1 flex flex-col items-center justify-center">
+            <EmptyState
+              icon={Users}
+              title={t("home.noneNearby")}
+              action={
+                <Link to="/create" search={{ ctx: "Street" }} className="text-gold font-semibold text-sm">
+                  {t("home.startCta")}
+                </Link>
+              }
+            />
           </div>
         )}
-        {minyanim.map((m) => (
-          <NearbyCard
-            key={m.id}
-            m={m}
-            joined={joinedIds.has(m.id)}
-            onJoinRequest={() => setPending(m)}
-          />
-        ))}
+        {minyanim.length > 0 && (
+          <div className="space-y-3">
+            {minyanim.map((m) => (
+              <NearbyCard
+                key={m.id}
+                m={m}
+                joined={joinedIds.has(m.id)}
+                onJoinRequest={() => setPending(m)}
+              />
+            ))}
+          </div>
+        )}
       </div>
 
       <AlertDialog open={!!pending} onOpenChange={(o) => !o && setPending(null)}>
@@ -297,9 +314,9 @@ function CtxTile({ id, label, icon: Icon }: { id: Context; label: string; icon: 
     <Link
       to="/create"
       search={{ ctx: id }}
-      className="rounded-2xl border bg-surface border-border p-3 flex flex-col items-center gap-1.5 transition-all active:scale-[0.97] hover:border-gold/60"
+      className="rounded-2xl border bg-surface border-border p-3 flex flex-col items-center gap-1.5 transition-all active:scale-[0.97] hover:bg-gold-soft/40 hover:border-gold/60"
     >
-      <div className="h-9 w-9 rounded-xl bg-muted text-muted-foreground flex items-center justify-center">
+      <div className="h-9 w-9 rounded-xl bg-gold-soft text-gold-foreground flex items-center justify-center">
         <Icon className="h-4 w-4" />
       </div>
       <div className="text-xs font-semibold">{label}</div>
@@ -333,7 +350,7 @@ function NearbyCard({ m, joined, onJoinRequest }: { m: MinyanRow; joined: boolea
   const prayerLabel = t(`prayer.${m.prayer}`, { defaultValue: m.prayer });
 
   return (
-    <div className="bg-surface rounded-2xl border border-border shadow-soft p-4">
+    <div className="bg-surface rounded-2xl border border-border shadow-card p-4">
       <div className="flex items-start gap-3">
         <Link
           to="/minyan"

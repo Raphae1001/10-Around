@@ -38,7 +38,7 @@ export function BottomNav() {
                 <Link
                   to={to}
                   className={`flex flex-col items-center gap-1 py-3 text-[10px] font-medium transition-colors ${
-                    active ? "text-foreground" : "text-muted-foreground"
+                    active ? "text-gold" : "text-muted-foreground"
                   }`}
                 >
                   <Icon className={`h-5 w-5 ${active ? "" : "opacity-80"}`} strokeWidth={active ? 2.4 : 1.8} />
