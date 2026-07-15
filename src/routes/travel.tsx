@@ -18,8 +18,10 @@ import {
   Sparkles,
 } from "lucide-react";
 import { toast } from "sonner";
+import { guardLegacyScreen } from "@/lib/legacy-route";
 
 export const Route = createFileRoute("/travel")({
+  beforeLoad: guardLegacyScreen,
   component: TravelMinyan,
 });
 
@@ -47,10 +49,54 @@ const SYNAGOGUES = [
 ];
 
 const INITIAL_SCHEDULE: ScheduledMinyan[] = [
-  { id: "m1", date: "Mar 14", time: "06:40", type: "Shacharit", venue: "Great Synagogue", venueType: "Synagogue", nusach: "Sephard", confirmed: 8, needed: 10, joined: false },
-  { id: "m2", date: "Mar 14", time: "19:10", type: "Mincha", venue: "Hotel Rothschild · Lobby", venueType: "Hotel", nusach: "Any", confirmed: 6, needed: 10, joined: false },
-  { id: "m3", date: "Mar 15", time: "06:45", type: "Shacharit", venue: "Beit Yaakov", venueType: "Synagogue", nusach: "Ashkenaz", confirmed: 10, needed: 10, joined: true },
-  { id: "m4", date: "Mar 15", time: "20:00", type: "Maariv", venue: "Allenby Beach Promenade", venueType: "Street", nusach: "Any", confirmed: 4, needed: 10, joined: false },
+  {
+    id: "m1",
+    date: "Mar 14",
+    time: "06:40",
+    type: "Shacharit",
+    venue: "Great Synagogue",
+    venueType: "Synagogue",
+    nusach: "Sephard",
+    confirmed: 8,
+    needed: 10,
+    joined: false,
+  },
+  {
+    id: "m2",
+    date: "Mar 14",
+    time: "19:10",
+    type: "Mincha",
+    venue: "Hotel Rothschild · Lobby",
+    venueType: "Hotel",
+    nusach: "Any",
+    confirmed: 6,
+    needed: 10,
+    joined: false,
+  },
+  {
+    id: "m3",
+    date: "Mar 15",
+    time: "06:45",
+    type: "Shacharit",
+    venue: "Beit Yaakov",
+    venueType: "Synagogue",
+    nusach: "Ashkenaz",
+    confirmed: 10,
+    needed: 10,
+    joined: true,
+  },
+  {
+    id: "m4",
+    date: "Mar 15",
+    time: "20:00",
+    type: "Maariv",
+    venue: "Allenby Beach Promenade",
+    venueType: "Street",
+    nusach: "Any",
+    confirmed: 4,
+    needed: 10,
+    joined: false,
+  },
 ];
 
 function TravelMinyan() {
@@ -148,7 +194,8 @@ function TravelMinyan() {
 
             <div className="mt-3 flex items-center justify-between text-xs text-white/70">
               <span className="flex items-center gap-1.5">
-                <Calendar className="h-3.5 w-3.5" /> {nights > 0 ? `${nights} nights` : "Pick valid dates"}
+                <Calendar className="h-3.5 w-3.5" />{" "}
+                {nights > 0 ? `${nights} nights` : "Pick valid dates"}
               </span>
               <span className="flex items-center gap-1.5">
                 <Users className="h-3.5 w-3.5 text-gold" /> 142 jews planning
@@ -163,9 +210,27 @@ function TravelMinyan() {
             Trip visibility
           </div>
           <div className="grid grid-cols-3 gap-2">
-            <PrivacyTile active={privacy === "public"} onClick={() => setPrivacy("public")} icon={Eye} label="Everyone" hint="All members" />
-            <PrivacyTile active={privacy === "minyan"} onClick={() => setPrivacy("minyan")} icon={EyeOff} label="Minyan only" hint="Participants" />
-            <PrivacyTile active={privacy === "private"} onClick={() => setPrivacy("private")} icon={Lock} label="Private" hint="Only me" />
+            <PrivacyTile
+              active={privacy === "public"}
+              onClick={() => setPrivacy("public")}
+              icon={Eye}
+              label="Everyone"
+              hint="All members"
+            />
+            <PrivacyTile
+              active={privacy === "minyan"}
+              onClick={() => setPrivacy("minyan")}
+              icon={EyeOff}
+              label="Minyan only"
+              hint="Participants"
+            />
+            <PrivacyTile
+              active={privacy === "private"}
+              onClick={() => setPrivacy("private")}
+              icon={Lock}
+              label="Private"
+              hint="Only me"
+            />
           </div>
         </div>
 
@@ -173,7 +238,13 @@ function TravelMinyan() {
           onClick={createTrip}
           className="mt-4 w-full rounded-2xl gold-gradient text-gold-foreground font-semibold py-3.5 shadow-glow-gold active:scale-[0.99] transition-transform flex items-center justify-center gap-2"
         >
-          {tripCreated ? <><Check className="h-4 w-4" /> Trip saved · updating live</> : <>Save trip & find minyanim</>}
+          {tripCreated ? (
+            <>
+              <Check className="h-4 w-4" /> Trip saved · updating live
+            </>
+          ) : (
+            <>Save trip & find minyanim</>
+          )}
         </button>
       </div>
 
@@ -182,7 +253,9 @@ function TravelMinyan() {
         <div className="flex items-center justify-between mb-3">
           <div>
             <h2 className="font-display text-xl">During your stay</h2>
-            <p className="text-xs text-muted-foreground">{city} · {nights > 0 ? `${nights} nights` : "no dates"}</p>
+            <p className="text-xs text-muted-foreground">
+              {city} · {nights > 0 ? `${nights} nights` : "no dates"}
+            </p>
           </div>
           <LiveBadge>Live</LiveBadge>
         </div>
@@ -211,7 +284,9 @@ function TravelMinyan() {
               </div>
               <div className="min-w-0">
                 <div className="font-semibold text-sm">Create a minyan in {city}</div>
-                <div className="text-[11px] text-muted-foreground">Pick a time & spot · we ping locals + travelers</div>
+                <div className="text-[11px] text-muted-foreground">
+                  Pick a time & spot · we ping locals + travelers
+                </div>
               </div>
               <ChevronRight className="h-4 w-4 text-muted-foreground ml-auto" />
             </Link>
@@ -219,13 +294,18 @@ function TravelMinyan() {
         ) : (
           <div className="space-y-2">
             {SYNAGOGUES.map((s) => (
-              <div key={s.id} className="rounded-2xl border border-border bg-surface p-4 flex items-center gap-3">
+              <div
+                key={s.id}
+                className="rounded-2xl border border-border bg-surface p-4 flex items-center gap-3"
+              >
                 <div className="h-10 w-10 rounded-xl bg-sky/30 text-navy flex items-center justify-center">
                   <Building2 className="h-5 w-5" />
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="font-semibold text-sm truncate">{s.name}</div>
-                  <div className="text-[11px] text-muted-foreground truncate">{s.area} · {s.walk} from hotel</div>
+                  <div className="text-[11px] text-muted-foreground truncate">
+                    {s.area} · {s.walk} from hotel
+                  </div>
                 </div>
                 <ChevronRight className="h-4 w-4 text-muted-foreground" />
               </div>
@@ -332,7 +412,9 @@ function ScheduledCard({ m, onJoin }: { m: ScheduledMinyan; onJoin: () => void }
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2 mb-1">
             <StatusPill tone={complete ? "success" : "gold"}>{m.type}</StatusPill>
-            <span className="text-[11px] text-muted-foreground">{m.date} · {m.time}</span>
+            <span className="text-[11px] text-muted-foreground">
+              {m.date} · {m.time}
+            </span>
             {complete && <LiveBadge>10/10</LiveBadge>}
           </div>
           <h3 className="font-display text-base leading-tight truncate">{m.venue}</h3>
@@ -342,14 +424,16 @@ function ScheduledCard({ m, onJoin }: { m: ScheduledMinyan; onJoin: () => void }
         </div>
         <button
           onClick={onJoin}
-          className={`shrink-0 rounded-full px-3.5 py-2 text-xs font-semibold transition active:scale-95 ${
+          className={`shrink-0 rounded-full px-3.5 py-2 text-xs font-semibold transition-all active:scale-[0.97] ${
             m.joined
               ? "bg-success/15 text-success border border-success/30"
               : "gold-gradient text-gold-foreground shadow-glow-gold"
           }`}
         >
           {m.joined ? (
-            <span className="flex items-center gap-1"><Check className="h-3.5 w-3.5" /> In</span>
+            <span className="flex items-center gap-1">
+              <Check className="h-3.5 w-3.5" /> In
+            </span>
           ) : (
             "Je participe"
           )}

@@ -7,8 +7,10 @@ import { Label } from "@/components/ui/label";
 import { buildDirectionsUrls, openDirections } from "@/lib/directions";
 import { shareAny } from "@/lib/share";
 import { toast } from "sonner";
+import { guardLegacyScreen } from "@/lib/legacy-route";
 
 export const Route = createFileRoute("/maps-test")({
+  beforeLoad: guardLegacyScreen,
   head: () => ({ meta: [{ title: "Maps & Share — Diagnostic" }] }),
   component: MapsTest,
 });
@@ -19,13 +21,16 @@ function MapsTest() {
   const [label, setLabel] = useState("Herzliya");
 
   const urls = useMemo(() => {
-    const la = parseFloat(lat), ln = parseFloat(lng);
+    const la = parseFloat(lat),
+      ln = parseFloat(lng);
     if (!isFinite(la) || !isFinite(ln)) return null;
     return buildDirectionsUrls(la, ln, label || undefined);
   }, [lat, lng, label]);
 
   const ua = typeof navigator !== "undefined" ? navigator.userAgent : "";
-  const hasWebShare = typeof navigator !== "undefined" && typeof (navigator as Navigator & { share?: unknown }).share === "function";
+  const hasWebShare =
+    typeof navigator !== "undefined" &&
+    typeof (navigator as Navigator & { share?: unknown }).share === "function";
 
   async function copy(text: string) {
     try {
@@ -41,7 +46,9 @@ function MapsTest() {
       <div className="min-h-screen p-4 space-y-4 overflow-y-auto">
         <h1 className="text-xl font-bold">Maps & Share — Diagnostic</h1>
         <p className="text-xs text-muted-foreground break-all">UA: {ua}</p>
-        <p className="text-xs">navigator.share: <b>{hasWebShare ? "oui" : "non"}</b></p>
+        <p className="text-xs">
+          navigator.share: <b>{hasWebShare ? "oui" : "non"}</b>
+        </p>
 
         <div className="grid grid-cols-2 gap-2">
           <div>
@@ -61,17 +68,19 @@ function MapsTest() {
         {urls && (
           <div className="space-y-3">
             <h2 className="font-semibold">URLs générées</h2>
-            {([
-              ["Google Maps (universal)", urls.web],
-            ] as const).map(([name, url]) => (
+            {([["Google Maps (universal)", urls.web]] as const).map(([name, url]) => (
               <div key={name} className="border rounded p-2 space-y-2 bg-card">
                 <div className="text-xs font-medium">{name}</div>
                 <div className="text-xs break-all font-mono opacity-80">{url}</div>
                 <div className="flex gap-2 flex-wrap">
                   <Button size="sm" asChild>
-                    <a href={url} target="_blank" rel="noopener noreferrer">Ouvrir</a>
+                    <a href={url} target="_blank" rel="noopener noreferrer">
+                      Ouvrir
+                    </a>
                   </Button>
-                  <Button size="sm" variant="outline" onClick={() => copy(url)}>Copier</Button>
+                  <Button size="sm" variant="outline" onClick={() => copy(url)}>
+                    Copier
+                  </Button>
                 </div>
               </div>
             ))}
@@ -89,16 +98,19 @@ function MapsTest() {
           <h2 className="font-semibold">Partage</h2>
           <Button
             className="w-full"
-            onClick={() => shareAny({
-              title: "Test MinyanNow",
-              text: "Minyan test à " + (label || "destination"),
-              url: urls?.web,
-            })}
+            onClick={() =>
+              shareAny({
+                title: "Test MinyanNow",
+                text: "Minyan test à " + (label || "destination"),
+                url: urls?.web,
+              })
+            }
           >
             Tester shareAny()
           </Button>
           <p className="text-xs text-muted-foreground">
-            Si le partage natif n'est pas disponible, le lien sera copié et affiché dans un toast — jamais api.whatsapp.com.
+            Si le partage natif n'est pas disponible, le lien sera copié et affiché dans un toast —
+            jamais api.whatsapp.com.
           </p>
         </div>
       </div>
