@@ -3,15 +3,37 @@ import { useTranslation } from "react-i18next";
 import { MobileFrame } from "@/components/MobileFrame";
 import { ScreenHeader, StatusPill } from "@/components/ui-bits";
 import { Sunset, Check, MapPin, Calendar } from "lucide-react";
+import { guardLegacyScreen } from "@/lib/legacy-route";
 
-export const Route = createFileRoute("/shabbat")({ component: Shabbat });
+export const Route = createFileRoute("/shabbat")({
+  beforeLoad: guardLegacyScreen,
+  component: Shabbat,
+});
 
 const plan = [
-  { day: "Fri", label: "Mincha + Kabbalat Shabbat", time: "16:42", place: "Park Avenue Shul", confirmed: true },
+  {
+    day: "Fri",
+    label: "Mincha + Kabbalat Shabbat",
+    time: "16:42",
+    place: "Park Avenue Shul",
+    confirmed: true,
+  },
   { day: "Fri", label: "Maariv", time: "18:05", place: "Park Avenue Shul", confirmed: true },
   { day: "Sat", label: "Shacharit", time: "9:00", place: "Aaron's Loft", confirmed: false },
-  { day: "Sat", label: "Mincha + Seudah Shlishit", time: "16:20", place: "Park Avenue Shul", confirmed: false },
-  { day: "Sat", label: "Maariv + Havdalah", time: "17:48", place: "Park Avenue Shul", confirmed: false },
+  {
+    day: "Sat",
+    label: "Mincha + Seudah Shlishit",
+    time: "16:20",
+    place: "Park Avenue Shul",
+    confirmed: false,
+  },
+  {
+    day: "Sat",
+    label: "Maariv + Havdalah",
+    time: "17:48",
+    place: "Park Avenue Shul",
+    confirmed: false,
+  },
 ];
 
 function Shabbat() {
@@ -20,10 +42,17 @@ function Shabbat() {
     <MobileFrame bg="navy">
       <div className="px-6 pt-2 pb-4 flex items-center justify-between">
         <div>
-          <div className="text-[10px] uppercase tracking-[0.25em] text-white/50">{t("shabbat.mode")}</div>
+          <div className="text-[10px] uppercase tracking-[0.25em] text-white/50">
+            {t("shabbat.mode")}
+          </div>
           <h1 className="font-display text-2xl mt-1">{t("shabbat.parasha")}</h1>
         </div>
-        <Link to="/home" className="h-9 w-9 rounded-full bg-white/10 flex items-center justify-center">×</Link>
+        <Link
+          to="/home"
+          className="h-9 w-9 rounded-full bg-white/10 flex items-center justify-center"
+        >
+          ×
+        </Link>
       </div>
 
       <div className="mx-6 rounded-3xl bg-white/5 border border-white/10 p-5 backdrop-blur relative overflow-hidden">
@@ -33,9 +62,13 @@ function Shabbat() {
             <Sunset className="h-5 w-5" />
           </div>
           <div>
-            <div className="text-[10px] uppercase tracking-wider text-white/60">{t("shabbat.candleLighting")}</div>
+            <div className="text-[10px] uppercase tracking-wider text-white/60">
+              {t("shabbat.candleLighting")}
+            </div>
             <div className="font-display text-3xl">16:24</div>
-            <div className="text-xs text-white/70">{t("shabbat.endsHavdalah", { time: "17:48" })}</div>
+            <div className="text-xs text-white/70">
+              {t("shabbat.endsHavdalah", { time: "17:48" })}
+            </div>
           </div>
         </div>
       </div>
@@ -52,7 +85,9 @@ function Shabbat() {
           {plan.map((p, i) => (
             <div key={i} className="p-4 flex items-center gap-3">
               <div className="text-center w-10">
-                <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{p.day}</div>
+                <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                  {p.day}
+                </div>
                 <div className="font-display text-base leading-none">{p.time}</div>
               </div>
               <div className="flex-1 min-w-0">
@@ -66,7 +101,7 @@ function Shabbat() {
                   <Check className="h-4 w-4" />
                 </span>
               ) : (
-                <button className="text-xs font-semibold text-gold border border-gold/40 rounded-full px-3 py-1">
+                <button className="text-xs font-semibold text-gold border border-gold/40 rounded-full px-3 py-1 transition-colors hover:border-gold/70 active:scale-[0.97]">
                   {t("shabbat.preConfirm")}
                 </button>
               )}
@@ -74,8 +109,11 @@ function Shabbat() {
           ))}
         </div>
 
-        <div className="mt-5 rounded-2xl border border-dashed border-border p-4 text-xs text-muted-foreground leading-relaxed">
-          {t("shabbat.notice")}
+        <div className="mt-5 flex flex-col items-center text-center gap-3 py-8 px-5 rounded-2xl bg-gold-soft/40 border border-gold/20">
+          <div className="h-14 w-14 rounded-2xl bg-gold-soft text-gold-foreground dark:bg-gold/20 dark:text-gold flex items-center justify-center shrink-0">
+            <Sunset className="h-7 w-7" />
+          </div>
+          <p className="text-sm text-muted-foreground leading-relaxed">{t("shabbat.notice")}</p>
         </div>
 
         <button className="mt-5 w-full gold-gradient text-gold-foreground font-semibold py-4 rounded-2xl shadow-glow-gold">

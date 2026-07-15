@@ -3,13 +3,29 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { MobileFrame } from "@/components/MobileFrame";
 import { GoogleMapCanvas } from "@/components/GoogleMap";
 import { LiveBadge, StatusPill, EmptyState } from "@/components/ui-bits";
-import { Search, Locate, Filter, Navigation, Plus, Sunrise, Sun, Moon, X, ChevronUp, MapPin } from "lucide-react";
+import {
+  Search,
+  Locate,
+  Filter,
+  Navigation,
+  Plus,
+  Sunrise,
+  Sun,
+  Moon,
+  X,
+  ChevronUp,
+  MapPin,
+} from "lucide-react";
 import { useGeolocation } from "@/hooks/use-geolocation";
 import { useNearbyMinyanim, type MinyanRow } from "@/hooks/use-minyanim";
 import { openDirections } from "@/lib/directions";
+import { guardLegacyScreen } from "@/lib/legacy-route";
 
 export const Route = createFileRoute("/map")({
-  validateSearch: (s: Record<string, unknown>) => ({ id: typeof s.id === "string" ? s.id : undefined }),
+  beforeLoad: guardLegacyScreen,
+  validateSearch: (s: Record<string, unknown>) => ({
+    id: typeof s.id === "string" ? s.id : undefined,
+  }),
   component: LiveMap,
 });
 
@@ -24,7 +40,12 @@ function LiveMap() {
   const { position, request } = useGeolocation(true);
   const { data: minyanim, error: minyanError } = useNearbyMinyanim(position, 5000);
   const [selectedId, setSelectedId] = useState<string | null>(focusId ?? null);
-  useEffect(() => { if (focusId) { setSelectedId(focusId); setSheet("expanded"); } }, [focusId]);
+  useEffect(() => {
+    if (focusId) {
+      setSelectedId(focusId);
+      setSheet("expanded");
+    }
+  }, [focusId]);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<string>("All");
   const [sheet, setSheet] = useState<SheetState>("collapsed");
@@ -66,8 +87,7 @@ function LiveMap() {
     setSheet((s) => (s === "expanded" ? "collapsed" : s));
   }
 
-  const sheetHeight =
-    sheet === "expanded" ? "70%" : sheet === "collapsed" ? "180px" : "44px";
+  const sheetHeight = sheet === "expanded" ? "70%" : sheet === "collapsed" ? "180px" : "44px";
 
   return (
     <MobileFrame bg="map">
@@ -92,7 +112,9 @@ function LiveMap() {
               key={f}
               onClick={() => setFilter(f)}
               className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-medium border transition-colors ${
-                filter === f ? "bg-foreground text-background border-foreground" : "bg-surface/90 border-border hover:border-gold/50"
+                filter === f
+                  ? "bg-foreground text-background border-foreground"
+                  : "bg-surface/90 border-border hover:border-gold/50"
               }`}
             >
               {f}
@@ -115,7 +137,12 @@ function LiveMap() {
               lat: m.latitude,
               lng: m.longitude,
               label: String(m.present_count ?? 1),
-              tone: (m.present_count ?? 1) >= 10 ? "success" : (m.present_count ?? 1) >= 9 ? "urgent" : "gold",
+              tone:
+                (m.present_count ?? 1) >= 10
+                  ? "success"
+                  : (m.present_count ?? 1) >= 9
+                    ? "urgent"
+                    : "gold",
               onClick: () => handlePinSelect(m.id),
             }))}
           />
@@ -129,8 +156,11 @@ function LiveMap() {
 
         <div className="absolute top-3 right-3 flex flex-col gap-2 z-10">
           <button
-            onClick={(e) => { e.stopPropagation(); request(); }}
-            className="h-10 w-10 rounded-xl bg-surface/90 backdrop-blur border border-border shadow-card flex items-center justify-center transition-transform active:scale-95"
+            onClick={(e) => {
+              e.stopPropagation();
+              request();
+            }}
+            className="h-10 w-10 rounded-xl bg-surface/90 backdrop-blur border border-border shadow-card flex items-center justify-center transition-transform active:scale-[0.97]"
             aria-label="Recenter on me"
           >
             <Locate className="h-4 w-4 text-sky" />
@@ -162,7 +192,15 @@ function LiveMap() {
           >
             <div className="flex-1 flex justify-center">
               <button
-                onClick={() => setSheet(sheet === "expanded" ? "collapsed" : sheet === "collapsed" ? "expanded" : "collapsed")}
+                onClick={() =>
+                  setSheet(
+                    sheet === "expanded"
+                      ? "collapsed"
+                      : sheet === "collapsed"
+                        ? "expanded"
+                        : "collapsed",
+                  )
+                }
                 aria-label="Toggle sheet"
                 className="h-1.5 w-12 rounded-full bg-muted"
               />
@@ -184,23 +222,36 @@ function LiveMap() {
                     {selected ? "Selected minyan" : "Live near you"}
                   </h2>
                   <p className="text-xs text-muted-foreground truncate">
-                    {selected ? selected.address ?? "Unknown spot" : `${filtered.length} minyanim`}
+                    {selected
+                      ? (selected.address ?? "Unknown spot")
+                      : `${filtered.length} minyanim`}
                   </p>
                 </div>
                 {(() => {
                   const forming = filtered.filter((m) => (m.present_count ?? 1) < 10).length;
-                  return <StatusPill tone={forming > 0 ? "gold" : "default"}>{forming} forming</StatusPill>;
+                  return (
+                    <StatusPill tone={forming > 0 ? "gold" : "default"}>
+                      {forming} forming
+                    </StatusPill>
+                  );
                 })()}
               </div>
               <div className="space-y-2 flex-1 overflow-y-auto hide-scrollbar">
-                {(selected ? [selected] : filtered).slice(0, sheet === "expanded" ? 20 : 2).map((m) => (
-                  <MapCard key={m.id} m={m} active={selectedId === m.id} onSelect={() => handlePinSelect(m.id)} />
-                ))}
+                {(selected ? [selected] : filtered)
+                  .slice(0, sheet === "expanded" ? 20 : 2)
+                  .map((m) => (
+                    <MapCard
+                      key={m.id}
+                      m={m}
+                      active={selectedId === m.id}
+                      onSelect={() => handlePinSelect(m.id)}
+                    />
+                  ))}
                 {filtered.length === 0 && (
                   <EmptyState icon={MapPin} title="No minyanim around — be the first." />
                 )}
                 <button
-                  onClick={() => navigate({ to: "/create", search: { ctx: "Street" } })}
+                  onClick={() => navigate({ to: "/create" })}
                   className="w-full text-center text-sm font-semibold text-gold py-2 flex items-center justify-center gap-1"
                 >
                   <Plus className="h-4 w-4" /> Don't see one? Start a minyan here
@@ -213,7 +264,6 @@ function LiveMap() {
     </MobileFrame>
   );
 }
-
 
 function MapCard({ m, active, onSelect }: { m: MinyanRow; active: boolean; onSelect: () => void }) {
   const Icon = m.prayer === "shacharit" ? Sunrise : m.prayer === "mincha" ? Sun : Moon;
