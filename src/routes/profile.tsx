@@ -305,10 +305,10 @@ function Profile() {
           onClick={signOut}
           className="w-full flex items-center justify-center gap-2 rounded-2xl border border-border bg-surface py-3.5 text-sm font-medium text-muted-foreground active:bg-muted/50 transition-colors"
         >
-          <LogOut className="h-4 w-4" /> {t("profile.resetDevice")}
+          <LogOut className="h-4 w-4" /> {t("common.signOut")}
         </button>
-        <p className="text-[11px] text-muted-foreground text-center -mt-4">
-          {t("profile.resetDeviceHint")}
+        <p className="text-[11px] text-muted-foreground text-center -mt-4 px-4">
+          {t("profile.signOutHint")}
         </p>
       </div>
 

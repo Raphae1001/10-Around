@@ -41,7 +41,7 @@ function Home() {
   const { user, loading: authLoading } = useAuth();
   const { theme, toggle: toggleTheme } = useTheme();
   const { position, loading: geoLoading, request: requestGeo } = useGeolocation(false);
-  const { zones, activeCount, lastUpdatedAt, loading: densityLoading } = useDensity(position);
+  const { zones, activeCount, lastUpdatedAt, loading: densityLoading } = useDensity(position, 1000);
   const { data: allMinyanim } = useNearbyMinyanim(position, 5000);
   const minyanim = useMemo(() => allMinyanim.filter((m) => isLiveOnMap(m)), [allMinyanim]);
   usePresence(position, !!user, user?.id);
@@ -164,28 +164,6 @@ function Home() {
 
   return (
     <MobileFrame bg="map">
-      <ScreenHeader
-        title="MinyanNow"
-        subtitle={position ? t("home.subtitleWithGps") : t("home.subtitleNoGps")}
-        right={
-          <div className="flex items-center gap-2">
-            <button
-              onClick={toggleTheme}
-              aria-label="Toggle dark mode"
-              className="h-8 w-8 rounded-full border border-border bg-surface flex items-center justify-center text-muted-foreground hover:border-gold/50 transition-colors active:scale-[0.97]"
-            >
-              {theme === "dark" ? <SunMedium className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-            </button>
-            <Link
-              to="/profile"
-              className="h-9 w-9 rounded-full bg-gold/20 flex items-center justify-center text-xs font-semibold"
-            >
-              {initial}
-            </Link>
-          </div>
-        }
-      />
-
       <div className="flex-1 relative min-h-0">
         {geoLoading && !position ? (
           <div className="absolute inset-0 flex items-center justify-center bg-background/80 z-10">
@@ -204,6 +182,44 @@ function Home() {
             className="absolute inset-0"
           />
         )}
+
+        <div className="absolute top-0 left-0 right-0 z-50 pointer-events-none">
+          <div className="pointer-events-auto">
+            <ScreenHeader
+              overlay
+              title="MinyanNow"
+              subtitle={position ? t("home.subtitleWithGps") : t("home.subtitleNoGps")}
+              right={
+                <div className="flex items-center gap-2 relative z-50">
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      void tapLight();
+                      toggleTheme();
+                    }}
+                    onPointerDown={(e) => e.stopPropagation()}
+                    aria-label="Toggle dark mode"
+                    className="h-9 w-9 rounded-full border border-border bg-surface/95 flex items-center justify-center text-muted-foreground hover:border-gold/50 transition-colors active:scale-[0.97]"
+                  >
+                    {theme === "dark" ? (
+                      <SunMedium className="h-4 w-4" />
+                    ) : (
+                      <Moon className="h-4 w-4" />
+                    )}
+                  </button>
+                  <Link
+                    to="/profile"
+                    className="h-9 w-9 rounded-full bg-gold/20 flex items-center justify-center text-xs font-semibold"
+                  >
+                    {initial}
+                  </Link>
+                </div>
+              }
+            />
+          </div>
+        </div>
 
         {position && (
           <HomePresenceCard

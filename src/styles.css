@@ -2,7 +2,7 @@
 @source "../src";
 @import "tw-animate-css";
 
-@custom-variant dark (&:is(.dark *));
+@custom-variant dark (&:where(.dark, .dark *));
 
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
@@ -52,6 +52,7 @@
 }
 
 :root {
+  color-scheme: light;
   --radius: 1rem;
   --background: oklch(0.985 0.008 80);
   --foreground: oklch(0.18 0.04 260);
@@ -91,6 +92,7 @@
 }
 
 .dark {
+  color-scheme: dark;
   --background: oklch(0.16 0.03 260);
   --foreground: oklch(0.97 0.01 250);
 
@@ -288,31 +290,12 @@
 @utility sky-gradient {
   background: linear-gradient(160deg, oklch(0.95 0.03 240), oklch(0.88 0.05 240));
 }
+/* Solid map-chrome fallback — no grid (grid looked like a broken map). */
 @utility map-tile {
-  background-color: oklch(0.97 0.012 240);
-  background-image:
-    linear-gradient(oklch(0.9 0.02 240) 1px, transparent 1px),
-    linear-gradient(90deg, oklch(0.9 0.02 240) 1px, transparent 1px),
-    radial-gradient(circle at 20% 30%, oklch(0.92 0.04 240) 0, transparent 40%),
-    radial-gradient(circle at 80% 70%, oklch(0.94 0.03 80 / 0.5) 0, transparent 40%);
-  background-size:
-    32px 32px,
-    32px 32px,
-    100% 100%,
-    100% 100%;
+  background-color: oklch(0.94 0.015 230);
 }
 .dark .map-tile {
-  background-color: oklch(0.18 0.03 260);
-  background-image:
-    linear-gradient(oklch(0.24 0.04 260) 1px, transparent 1px),
-    linear-gradient(90deg, oklch(0.24 0.04 260) 1px, transparent 1px),
-    radial-gradient(circle at 20% 30%, oklch(0.28 0.06 250) 0, transparent 40%),
-    radial-gradient(circle at 80% 70%, oklch(0.4 0.08 80 / 0.25) 0, transparent 40%);
-  background-size:
-    32px 32px,
-    32px 32px,
-    100% 100%,
-    100% 100%;
+  background-color: oklch(0.2 0.03 260);
 }
 
 @utility hide-scrollbar {

@@ -297,6 +297,7 @@
     "groupChatsSub": "Fils de minyan et chats de ville",
     "resetDevice": "Réinitialiser cet appareil",
     "resetDeviceHint": "Efface le profil local pour qu'une autre personne puisse repartir de zéro sur cet appareil.",
+    "signOutHint": "Termine la session sur cet appareil. Pour supprimer définitivement tes données, utilise Supprimer le compte dans Réglages.",
     "firstName": "Prénom",
     "lastName": "Nom",
     "nameRequired": "Le prénom et le nom sont requis",

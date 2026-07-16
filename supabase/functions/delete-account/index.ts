@@ -21,9 +21,18 @@ Deno.serve(async (req) => {
         headers: { ...corsHeaders, "content-type": "application/json" },
       });
     }
+
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
     const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const ANON = Deno.env.get("SUPABASE_ANON_KEY")!;
+    const ANON =
+      Deno.env.get("SUPABASE_ANON_KEY") ?? Deno.env.get("SUPABASE_PUBLISHABLE_KEY") ?? "";
+
+    if (!SUPABASE_URL || !SERVICE_ROLE || !ANON) {
+      return new Response(JSON.stringify({ error: "Server misconfigured" }), {
+        status: 500,
+        headers: { ...corsHeaders, "content-type": "application/json" },
+      });
+    }
 
     const userClient = createClient(SUPABASE_URL, ANON, {
       global: { headers: { Authorization: authHeader } },
@@ -35,7 +44,13 @@ Deno.serve(async (req) => {
         headers: { ...corsHeaders, "content-type": "application/json" },
       });
     }
+
     const admin = createClient(SUPABASE_URL, SERVICE_ROLE);
+
+    // Explicit cleanup before auth delete (CASCADE also covers these).
+    await admin.from("member_presence").delete().eq("user_id", ures.user.id);
+    await admin.from("user_push_tokens").delete().eq("user_id", ures.user.id);
+
     const { error: delErr } = await admin.auth.admin.deleteUser(ures.user.id);
     if (delErr) {
       return new Response(JSON.stringify({ error: delErr.message }), {

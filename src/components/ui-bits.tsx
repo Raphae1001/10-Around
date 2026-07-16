@@ -36,14 +36,23 @@ export function ScreenHeader({
   subtitle,
   back = false,
   right,
+  overlay = false,
 }: {
   title: string;
   subtitle?: string;
   back?: boolean;
   right?: ReactNode;
+  /** Translucent bar over a full-bleed map (no opaque chrome / grid). */
+  overlay?: boolean;
 }) {
   return (
-    <div className="flex items-center justify-between px-6 pt-2 pb-4">
+    <div
+      className={`flex items-center justify-between px-6 pt-2 pb-4 ${
+        overlay
+          ? "bg-gradient-to-b from-background/90 via-background/70 to-transparent backdrop-blur-[2px]"
+          : ""
+      }`}
+    >
       <div className="flex items-center gap-3 min-w-0">
         {back && (
           <Link
