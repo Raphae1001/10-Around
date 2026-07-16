@@ -24,7 +24,12 @@ export function openExternal(url: string): boolean {
       (window.top ?? window).location.href = url;
       return true;
     } catch {
-      try { window.location.href = url; return true; } catch { return false; }
+      try {
+        window.location.href = url;
+        return true;
+      } catch {
+        return false;
+      }
     }
   }
 
@@ -43,6 +48,8 @@ export function openExternal(url: string): boolean {
     try {
       const w = window.open(url, "_blank", "noopener,noreferrer");
       return !!w;
-    } catch { return false; }
+    } catch {
+      return false;
+    }
   }
 }

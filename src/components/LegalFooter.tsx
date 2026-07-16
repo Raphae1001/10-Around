@@ -8,11 +8,17 @@ import { Link } from "@tanstack/react-router";
 export function LegalFooter() {
   return (
     <div className="px-4 pb-3 pt-1 flex items-center justify-center gap-3 text-[10px] text-muted-foreground">
-      <Link to="/privacy" className="hover:text-foreground transition-colors">Privacy</Link>
+      <Link to="/privacy" className="hover:text-foreground transition-colors">
+        Privacy
+      </Link>
       <span aria-hidden>·</span>
-      <Link to="/terms" className="hover:text-foreground transition-colors">Terms</Link>
+      <Link to="/terms" className="hover:text-foreground transition-colors">
+        Terms
+      </Link>
       <span aria-hidden>·</span>
-      <Link to="/support" className="hover:text-foreground transition-colors">Support</Link>
+      <Link to="/support" className="hover:text-foreground transition-colors">
+        Support
+      </Link>
     </div>
   );
 }

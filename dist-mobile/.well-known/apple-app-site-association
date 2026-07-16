@@ -3,7 +3,7 @@
     "apps": [],
     "details": [
       {
-        "appID": "TEAMID.com.minyannow.app",
+        "appID": "44BUT87LCH.com.raphaelkalfon.minyannow",
         "paths": [
           "/minyan/*",
           "/travel-city/*",
@@ -15,6 +15,6 @@
     ]
   },
   "webcredentials": {
-    "apps": ["TEAMID.com.minyannow.app"]
+    "apps": ["44BUT87LCH.com.raphaelkalfon.minyannow"]
   }
 }

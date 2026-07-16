@@ -22,6 +22,7 @@ import { Route as ShabbatRouteImport } from './routes/shabbat'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as PlannedRouteImport } from './routes/planned'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as MinyanRouteImport } from './routes/minyan'
@@ -30,6 +31,8 @@ import { Route as MapRouteImport } from './routes/map'
 import { Route as KaddishRouteImport } from './routes/kaddish'
 import { Route as HomeRouteImport } from './routes/home'
 import { Route as FlightRouteImport } from './routes/flight'
+import { Route as CreateStayRouteImport } from './routes/create-stay'
+import { Route as CreateScheduledRouteImport } from './routes/create-scheduled'
 import { Route as CreateRouteImport } from './routes/create'
 import { Route as ChatsRouteImport } from './routes/chats'
 import { Route as ChatRouteImport } from './routes/chat'
@@ -105,6 +108,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
   path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PlannedRoute = PlannedRouteImport.update({
+  id: '/planned',
+  path: '/planned',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OnboardingRoute = OnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
@@ -143,6 +151,16 @@ const HomeRoute = HomeRouteImport.update({
 const FlightRoute = FlightRouteImport.update({
   id: '/flight',
   path: '/flight',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CreateStayRoute = CreateStayRouteImport.update({
+  id: '/create-stay',
+  path: '/create-stay',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CreateScheduledRoute = CreateScheduledRouteImport.update({
+  id: '/create-scheduled',
+  path: '/create-scheduled',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CreateRoute = CreateRouteImport.update({
@@ -198,6 +216,8 @@ export interface FileRoutesByFullPath {
   '/chat': typeof ChatRoute
   '/chats': typeof ChatsRoute
   '/create': typeof CreateRoute
+  '/create-scheduled': typeof CreateScheduledRoute
+  '/create-stay': typeof CreateStayRoute
   '/flight': typeof FlightRoute
   '/home': typeof HomeRoute
   '/kaddish': typeof KaddishRoute
@@ -206,6 +226,7 @@ export interface FileRoutesByFullPath {
   '/minyan': typeof MinyanRouteWithChildren
   '/notifications': typeof NotificationsRoute
   '/onboarding': typeof OnboardingRoute
+  '/planned': typeof PlannedRoute
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
   '/settings': typeof SettingsRoute
@@ -230,6 +251,8 @@ export interface FileRoutesByTo {
   '/chat': typeof ChatRoute
   '/chats': typeof ChatsRoute
   '/create': typeof CreateRoute
+  '/create-scheduled': typeof CreateScheduledRoute
+  '/create-stay': typeof CreateStayRoute
   '/flight': typeof FlightRoute
   '/home': typeof HomeRoute
   '/kaddish': typeof KaddishRoute
@@ -238,6 +261,7 @@ export interface FileRoutesByTo {
   '/minyan': typeof MinyanRouteWithChildren
   '/notifications': typeof NotificationsRoute
   '/onboarding': typeof OnboardingRoute
+  '/planned': typeof PlannedRoute
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
   '/settings': typeof SettingsRoute
@@ -263,6 +287,8 @@ export interface FileRoutesById {
   '/chat': typeof ChatRoute
   '/chats': typeof ChatsRoute
   '/create': typeof CreateRoute
+  '/create-scheduled': typeof CreateScheduledRoute
+  '/create-stay': typeof CreateStayRoute
   '/flight': typeof FlightRoute
   '/home': typeof HomeRoute
   '/kaddish': typeof KaddishRoute
@@ -271,6 +297,7 @@ export interface FileRoutesById {
   '/minyan': typeof MinyanRouteWithChildren
   '/notifications': typeof NotificationsRoute
   '/onboarding': typeof OnboardingRoute
+  '/planned': typeof PlannedRoute
   '/privacy': typeof PrivacyRoute
   '/profile': typeof ProfileRoute
   '/settings': typeof SettingsRoute
@@ -297,6 +324,8 @@ export interface FileRouteTypes {
     | '/chat'
     | '/chats'
     | '/create'
+    | '/create-scheduled'
+    | '/create-stay'
     | '/flight'
     | '/home'
     | '/kaddish'
@@ -305,6 +334,7 @@ export interface FileRouteTypes {
     | '/minyan'
     | '/notifications'
     | '/onboarding'
+    | '/planned'
     | '/privacy'
     | '/profile'
     | '/settings'
@@ -329,6 +359,8 @@ export interface FileRouteTypes {
     | '/chat'
     | '/chats'
     | '/create'
+    | '/create-scheduled'
+    | '/create-stay'
     | '/flight'
     | '/home'
     | '/kaddish'
@@ -337,6 +369,7 @@ export interface FileRouteTypes {
     | '/minyan'
     | '/notifications'
     | '/onboarding'
+    | '/planned'
     | '/privacy'
     | '/profile'
     | '/settings'
@@ -361,6 +394,8 @@ export interface FileRouteTypes {
     | '/chat'
     | '/chats'
     | '/create'
+    | '/create-scheduled'
+    | '/create-stay'
     | '/flight'
     | '/home'
     | '/kaddish'
@@ -369,6 +404,7 @@ export interface FileRouteTypes {
     | '/minyan'
     | '/notifications'
     | '/onboarding'
+    | '/planned'
     | '/privacy'
     | '/profile'
     | '/settings'
@@ -394,6 +430,8 @@ export interface RootRouteChildren {
   ChatRoute: typeof ChatRoute
   ChatsRoute: typeof ChatsRoute
   CreateRoute: typeof CreateRoute
+  CreateScheduledRoute: typeof CreateScheduledRoute
+  CreateStayRoute: typeof CreateStayRoute
   FlightRoute: typeof FlightRoute
   HomeRoute: typeof HomeRoute
   KaddishRoute: typeof KaddishRoute
@@ -402,6 +440,7 @@ export interface RootRouteChildren {
   MinyanRoute: typeof MinyanRouteWithChildren
   NotificationsRoute: typeof NotificationsRoute
   OnboardingRoute: typeof OnboardingRoute
+  PlannedRoute: typeof PlannedRoute
   PrivacyRoute: typeof PrivacyRoute
   ProfileRoute: typeof ProfileRoute
   SettingsRoute: typeof SettingsRoute
@@ -511,6 +550,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/planned': {
+      id: '/planned'
+      path: '/planned'
+      fullPath: '/planned'
+      preLoaderRoute: typeof PlannedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/onboarding': {
       id: '/onboarding'
       path: '/onboarding'
@@ -565,6 +611,20 @@ declare module '@tanstack/react-router' {
       path: '/flight'
       fullPath: '/flight'
       preLoaderRoute: typeof FlightRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/create-stay': {
+      id: '/create-stay'
+      path: '/create-stay'
+      fullPath: '/create-stay'
+      preLoaderRoute: typeof CreateStayRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/create-scheduled': {
+      id: '/create-scheduled'
+      path: '/create-scheduled'
+      fullPath: '/create-scheduled'
+      preLoaderRoute: typeof CreateScheduledRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/create': {
@@ -661,6 +721,8 @@ const rootRouteChildren: RootRouteChildren = {
   ChatRoute: ChatRoute,
   ChatsRoute: ChatsRoute,
   CreateRoute: CreateRoute,
+  CreateScheduledRoute: CreateScheduledRoute,
+  CreateStayRoute: CreateStayRoute,
   FlightRoute: FlightRoute,
   HomeRoute: HomeRoute,
   KaddishRoute: KaddishRoute,
@@ -669,6 +731,7 @@ const rootRouteChildren: RootRouteChildren = {
   MinyanRoute: MinyanRouteWithChildren,
   NotificationsRoute: NotificationsRoute,
   OnboardingRoute: OnboardingRoute,
+  PlannedRoute: PlannedRoute,
   PrivacyRoute: PrivacyRoute,
   ProfileRoute: ProfileRoute,
   SettingsRoute: SettingsRoute,

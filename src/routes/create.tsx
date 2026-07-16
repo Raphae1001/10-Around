@@ -4,24 +4,48 @@ import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { MobileFrame } from "@/components/MobileFrame";
 import { ScreenHeader } from "@/components/ui-bits";
-import { Sunrise, Sun, Moon, MapPin, Users, Crosshair, Plane, Building2, Globe2, Minus, Plus, Loader2 } from "lucide-react";
+import {
+  Sunrise,
+  Sun,
+  Moon,
+  MapPin,
+  Users,
+  Minus,
+  Plus,
+  Loader2,
+  RotateCcw,
+  Check,
+} from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useGeolocation } from "@/hooks/use-geolocation";
 import { supabase } from "@/integrations/supabase/client";
 import { reverseGeocode } from "@/lib/geocoding";
-import { AddressAutocomplete, type AddressPick } from "@/components/AddressAutocomplete";
-
-
-type Context = "Street" | "Airport" | "Hotel" | "Travel";
 
 export const Route = createFileRoute("/create")({
-  validateSearch: (s: Record<string, unknown>): { ctx?: Context } => ({
-    ctx: (["Street", "Airport", "Hotel", "Travel"] as const).includes(s.ctx as Context)
-      ? (s.ctx as Context)
-      : undefined,
+  validateSearch: (s: Record<string, unknown>): { from?: "map" } => ({
+    from: s.from === "map" ? "map" : undefined,
   }),
   component: Create,
 });
+
+const PRAYER_MAP: Record<string, "shacharit" | "mincha" | "maariv"> = {
+  Shacharit: "shacharit",
+  Mincha: "mincha",
+  Maariv: "maariv",
+};
+
+const PRAYER_DISPLAY: Record<string, string> = {
+  shacharit: "Shacharit",
+  mincha: "Mincha",
+  maariv: "Maariv",
+};
+
+type LastMinyan = {
+  prayer: string;
+  nusach: string;
+  present_count: number | null;
+  message: string | null;
+};
 
 function Create() {
   const { t } = useTranslation();
@@ -34,21 +58,55 @@ function Create() {
     if (!authLoading && !user) navigate({ to: "/auth" });
   }, [authLoading, user, navigate]);
 
-  const { ctx: initialCtx } = Route.useSearch();
-  const [ctx, setCtx] = useState<Context>(initialCtx ?? "Street");
+  const { from } = Route.useSearch();
   const [prayer, setPrayer] = useState("Mincha");
   const [when, setWhen] = useState("Now");
   const [present, setPresent] = useState(3);
   const [nusach, setNusach] = useState("Any");
   const [comment, setComment] = useState("");
-
-  // Street
   const [street, setStreet] = useState("");
   const [streetAuto, setStreetAuto] = useState(false);
+  const [lastMinyan, setLastMinyan] = useState<LastMinyan | null>(null);
+  const [repeated, setRepeated] = useState(false);
 
-  // Auto-fill exact street name from GPS for Street context
   useEffect(() => {
-    if (ctx !== "Street" || !position || streetAuto) return;
+    if (!user) return;
+    let cancelled = false;
+    void supabase
+      .from("minyanim")
+      .select("prayer,nusach,present_count,message")
+      .eq("creator_id", user.id)
+      .eq("type", "street")
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (!cancelled && data) setLastMinyan(data as LastMinyan);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [user]);
+
+  function repeatLast() {
+    if (!lastMinyan) return;
+    setPrayer(PRAYER_DISPLAY[lastMinyan.prayer] ?? "Mincha");
+    setNusach(lastMinyan.nusach || "Any");
+    setPresent(Math.max(1, lastMinyan.present_count ?? 3));
+    setComment(lastMinyan.message ?? "");
+    setRepeated(true);
+  }
+
+  useEffect(() => {
+    if (from === "map") void requestGeo();
+  }, [from, requestGeo]);
+
+  useEffect(() => {
+    if (!position) requestGeo();
+  }, [position, requestGeo]);
+
+  useEffect(() => {
+    if (!position || streetAuto) return;
     let cancelled = false;
     reverseGeocode(position.lat, position.lng).then((addr) => {
       if (!cancelled && addr) {
@@ -56,312 +114,187 @@ function Create() {
         setStreetAuto(true);
       }
     });
-    return () => { cancelled = true; };
-  }, [ctx, position, streetAuto]);
-  // Airport
-  const [airport, setAirport] = useState("");
-  const [gate, setGate] = useState("");
-  // Hotel / "Other" — single address field with autocomplete
-  const [hotelAddress, setHotelAddress] = useState("");
-  const [hotelPick, setHotelPick] = useState<AddressPick | null>(null);
-  // Travel / "Abroad" — destination city autocomplete
-  const [tripCity, setTripCity] = useState("");
-  const [tripPick, setTripPick] = useState<AddressPick | null>(null);
-  const [tripDateStart, setTripDateStart] = useState("");
-  const [tripDateEnd, setTripDateEnd] = useState("");
-  // Scheduled time (Hotel & Travel only — can plan in advance)
-  const [scheduledDate, setScheduledDate] = useState("");
-  const [scheduledTime, setScheduledTime] = useState("");
+    return () => {
+      cancelled = true;
+    };
+  }, [position, streetAuto]);
+
   const prayers = [
     { name: "Shacharit", icon: Sunrise },
     { name: "Mincha", icon: Sun },
     { name: "Maariv", icon: Moon },
   ];
 
-  const ctxLabel: Record<Context, string> = {
-    Street: "On the street, right now",
-    Airport: "At the airport before my flight",
-    Hotel: "Hotel, synagogue, apartment… anywhere scheduled",
-    Travel: "Destination city, not your current location",
-  };
-
-  const ctxDisplay: Record<Context, string> = {
-    Street: t("ctx.Street"),
-    Airport: t("ctx.Airport"),
-    Hotel: t("ctx.Hotel"),
-    Travel: t("ctx.Travel"),
-  };
-
-  useEffect(() => {
-    if (ctx === "Street" && !position) requestGeo();
-  }, [ctx, position, requestGeo]);
-
-  const tripCityLabel = getTravelCityLabel(tripPick, tripCity);
-
-
-
-  const locationSummary =
-    ctx === "Street" ? street :
-    ctx === "Airport" ? [airport, gate && `Gate ${gate}`].filter(Boolean).join(" · ") || "Set airport & gate" :
-    ctx === "Hotel" ? (hotelAddress || "Set the address") :
-    [tripCityLabel || tripCity, tripDateStart && tripDateEnd ? `${tripDateStart} → ${tripDateEnd}` : tripDateStart].filter(Boolean).join(" · ") || "Set city & dates";
-
+  const locationSummary = street || t("create.streetPh");
 
   return (
     <MobileFrame>
-      <ScreenHeader
-        title={ctx === "Travel" ? "Abroad" : "Start a minyan"}
-        subtitle={ctx === "Travel" ? "Create" : "Fill in the details — everyone will see them"}
-        back
-      />
+      <ScreenHeader title={t("create.title")} subtitle={t("create.subtitle")} back />
 
       <div className="px-6 space-y-5 pb-4">
-        {/* 1. WHERE */}
-        <Section step="1" title={ctx === "Travel" ? "Where will you be?" : "Where are you?"}>
-          <div className="grid grid-cols-4 gap-2">
-            {(["Street", "Airport", "Hotel", "Travel"] as Context[]).map((c) => {
-              const Icon = c === "Street" ? MapPin : c === "Airport" ? Plane : c === "Hotel" ? Building2 : Globe2;
-              const active = ctx === c;
+        {lastMinyan && !repeated && (
+          <button
+            onClick={repeatLast}
+            className="w-full rounded-2xl border border-gold/40 bg-gold/5 p-3 flex items-center gap-3 text-left active:scale-[0.99] transition-transform"
+          >
+            <div className="h-9 w-9 rounded-xl gold-gradient text-gold-foreground flex items-center justify-center shrink-0">
+              <RotateCcw className="h-4 w-4" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="text-sm font-semibold leading-tight">{t("create.repeatLast")}</div>
+              <div className="text-[11px] text-muted-foreground truncate">
+                {t(`prayer.${lastMinyan.prayer}`, { defaultValue: lastMinyan.prayer })} ·{" "}
+                {lastMinyan.nusach}
+              </div>
+            </div>
+          </button>
+        )}
+
+        <Section step="1" title={t("create.whereAreYou")}>
+          <div className="relative rounded-2xl border border-border bg-surface focus-within:border-gold transition-colors">
+            <div className="flex items-center gap-2 px-3 pt-3">
+              <MapPin className="h-4 w-4 text-gold shrink-0" strokeWidth={2.2} />
+              <input
+                value={street}
+                onChange={(e) => setStreet(e.target.value)}
+                placeholder={t("create.streetPh")}
+                className="flex-1 min-w-0 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+              />
+              {position && (
+                <span className="shrink-0 inline-flex items-center gap-1 rounded-full bg-success/12 text-success px-2 py-0.5 text-[10px] font-semibold tracking-wide">
+                  <Check className="h-3 w-3" strokeWidth={2.6} />
+                  {t("create.gpsDetected")}
+                </span>
+              )}
+            </div>
+            <p className="px-3 pb-2.5 pt-1 text-[11px] text-muted-foreground leading-snug pl-9">
+              {position ? t("create.locationFromGps") : t("create.allowLocationToPublish")}
+            </p>
+          </div>
+        </Section>
+
+        <Section step="2" title={t("create.whichPrayer")}>
+          <div className="grid grid-cols-3 gap-2">
+            {prayers.map(({ name, icon: Icon }) => {
+              const active = prayer === name;
               return (
                 <button
-                  key={c}
-                  onClick={() => setCtx(c)}
-                  className={`rounded-2xl border p-3 flex flex-col items-center gap-1.5 transition-all active:scale-[0.97] ${
-                    active ? "border-gold bg-gold-soft shadow-sm" : "border-border bg-surface hover:border-gold/50"
+                  key={name}
+                  onClick={() => setPrayer(name)}
+                  className={`flex flex-col items-center gap-2 py-4 rounded-2xl border transition-all active:scale-[0.97] ${
+                    active
+                      ? "border-gold bg-gold-soft shadow-sm"
+                      : "border-border bg-surface hover:border-gold/50"
                   }`}
                 >
-                  <div className={`h-9 w-9 rounded-xl flex items-center justify-center ${active ? "gold-gradient text-gold-foreground" : "bg-muted text-muted-foreground"}`}>
-                    <Icon className="h-4 w-4" />
-                  </div>
-                  <span className="text-[11px] font-semibold">{ctxDisplay[c]}</span>
+                  <Icon className={`h-5 w-5 ${active ? "text-gold" : "text-muted-foreground"}`} />
+                  <span className="text-xs font-semibold">{t(`prayer.${PRAYER_MAP[name]}`)}</span>
                 </button>
               );
             })}
           </div>
-          <p className="text-[11px] text-muted-foreground mt-2">{ctxLabel[ctx]}</p>
-
-          {/* Context-specific inputs */}
-          {ctx === "Street" && (
-            <div className="mt-3 space-y-2">
-              <div className="rounded-2xl border border-gold/30 bg-gold/5 p-3 flex items-center gap-3">
-                <Crosshair className="h-4 w-4 text-gold" />
-                <div className="flex-1 min-w-0">
-                  <div className="text-sm font-semibold leading-tight">GPS auto-detected</div>
-                  <div className="text-[11px] text-muted-foreground">Drop pin on your exact spot</div>
-                </div>
-              </div>
-              <input
-                value={street}
-                onChange={(e) => setStreet(e.target.value)}
-                placeholder="Street, corner, landmark…"
-                className="w-full rounded-2xl border border-border bg-surface p-3 text-sm outline-none focus:border-gold"
-              />
-            </div>
-          )}
-          {ctx === "Airport" && (
-            <div className="mt-3 grid grid-cols-2 gap-2">
-              <input
-                value={airport}
-                onChange={(e) => setAirport(e.target.value)}
-                placeholder="Airport (e.g. JFK, CDG)"
-                className="rounded-2xl border border-border bg-surface p-3 text-sm outline-none focus:border-gold"
-              />
-              <input
-                value={gate}
-                onChange={(e) => setGate(e.target.value)}
-                placeholder="Terminal / Gate (e.g. T2 · B14)"
-                className="rounded-2xl border border-border bg-surface p-3 text-sm outline-none focus:border-gold"
-              />
-            </div>
-          )}
-          {ctx === "Hotel" && (
-            <div className="mt-3 space-y-2">
-              <AddressAutocomplete
-                value={hotelAddress}
-                onChange={setHotelAddress}
-                onPick={setHotelPick}
-                placeholder="Address (hotel, shul, apartment…)"
-              />
-              <p className="text-[11px] text-muted-foreground">Type a place — pick it from the suggestions to lock the exact spot on the map.</p>
-            </div>
-          )}
-          {ctx === "Travel" && (
-            <div className="mt-3 space-y-2">
-              <AddressAutocomplete
-                value={tripCity}
-                onChange={(value) => {
-                  setTripCity(value);
-                  setTripPick(null);
-                }}
-                onPick={setTripPick}
-                placeholder="Destination city"
-                citiesOnly
-              />
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <label className="text-[10px] uppercase tracking-wider text-muted-foreground ml-1">From</label>
-                  <input
-                    value={tripDateStart}
-                    onChange={(e) => setTripDateStart(e.target.value)}
-                    type="date"
-                    className="w-full rounded-2xl border border-border bg-surface p-3 text-sm outline-none focus:border-gold"
-                  />
-                </div>
-                <div>
-                  <label className="text-[10px] uppercase tracking-wider text-muted-foreground ml-1">To</label>
-                  <input
-                    value={tripDateEnd}
-                    onChange={(e) => setTripDateEnd(e.target.value)}
-                    type="date"
-                    className="w-full rounded-2xl border border-border bg-surface p-3 text-sm outline-none focus:border-gold"
-                  />
-                </div>
-              </div>
-            </div>
-          )}
         </Section>
 
+        <Section step="3" title={t("create.startingIn")}>
+          <div className="flex gap-2 overflow-x-auto hide-scrollbar -mx-1 px-1">
+            {["Now", "+5 min", "+10 min", "+15 min", "+30 min", "+1 h"].map((opt) => {
+              const a = when === opt;
+              return (
+                <button
+                  key={opt}
+                  onClick={() => setWhen(opt)}
+                  className={`shrink-0 rounded-2xl px-4 py-3 text-sm font-semibold border transition-all ${
+                    a
+                      ? "gold-gradient text-gold-foreground border-transparent shadow-glow-gold"
+                      : "bg-surface border-border text-muted-foreground hover:border-gold/50"
+                  }`}
+                >
+                  {opt}
+                </button>
+              );
+            })}
+          </div>
+        </Section>
 
-        {/* 1b. SCHEDULE — Hotel only (Travel uses trip dates) */}
-        {ctx === "Hotel" && (
-          <Section step="★" title="Schedule the minyan (date & time)">
-            <div className="grid grid-cols-2 gap-2">
-              <input
-                value={scheduledDate}
-                onChange={(e) => setScheduledDate(e.target.value)}
-                type="date"
-                className="rounded-2xl border border-border bg-surface p-3 text-sm outline-none focus:border-gold"
-              />
-              <input
-                value={scheduledTime}
-                onChange={(e) => setScheduledTime(e.target.value)}
-                type="time"
-                className="rounded-2xl border border-border bg-surface p-3 text-sm outline-none focus:border-gold"
-              />
+        <Section step="4" title={t("create.howMany")}>
+          <div className="flex items-center justify-between rounded-2xl border border-border bg-surface p-3">
+            <button
+              onClick={() => setPresent(Math.max(1, present - 1))}
+              className="h-12 w-12 rounded-xl bg-muted flex items-center justify-center active:scale-[0.97] transition-transform"
+              aria-label="Less"
+            >
+              <Minus className="h-4 w-4" />
+            </button>
+            <div className="text-center">
+              <div className="font-display text-3xl leading-none">{present}</div>
+              <div className="text-[10px] uppercase tracking-wider text-muted-foreground mt-1">
+                {t("create.alreadyHere")}
+              </div>
             </div>
-            <p className="text-[11px] text-muted-foreground mt-2">
-              Travelers can plan in advance — pick when the minyan starts.
-            </p>
-          </Section>
-        )}
+            <button
+              onClick={() => setPresent(present + 1)}
+              className="h-12 w-12 rounded-xl gold-gradient text-gold-foreground flex items-center justify-center active:scale-[0.97] transition-transform"
+              aria-label="More"
+            >
+              <Plus className="h-4 w-4" />
+            </button>
+          </div>
+          <p className="text-[11px] text-muted-foreground mt-2">{t("create.howManyHint")}</p>
+        </Section>
 
-        {/* PRAYER / WHEN / HOW MANY / NUSACH — hidden for Travel */}
-        {ctx !== "Travel" && (
-          <>
-            <Section step="2" title="Which prayer?">
-              <div className="grid grid-cols-3 gap-2">
-                {prayers.map(({ name, icon: Icon }) => {
-                  const active = prayer === name;
-                  return (
-                    <button
-                      key={name}
-                      onClick={() => setPrayer(name)}
-                      className={`flex flex-col items-center gap-2 py-4 rounded-2xl border transition-all active:scale-[0.97] ${
-                        active ? "border-gold bg-gold-soft shadow-sm" : "border-border bg-surface hover:border-gold/50"
-                      }`}
-                    >
-                      <Icon className={`h-5 w-5 ${active ? "text-gold" : "text-muted-foreground"}`} />
-                      <span className="text-xs font-semibold">{name}</span>
-                    </button>
-                  );
-                })}
-              </div>
-            </Section>
-
-            {/* "Starting in…" only for live contexts (Street/Airport). Hotel has its own schedule. */}
-            {(ctx === "Street" || ctx === "Airport") && (
-              <Section step="3" title="Starting in…">
-                <div className="flex gap-2 overflow-x-auto hide-scrollbar -mx-1 px-1">
-                  {["Now", "+5 min", "+10 min", "+15 min", "+30 min", "+1 h"].map((t) => {
-                    const a = when === t;
-                    return (
-                      <button
-                        key={t}
-                        onClick={() => setWhen(t)}
-                        className={`shrink-0 rounded-2xl px-4 py-3 text-sm font-semibold border transition-all ${
-                          a
-                            ? "gold-gradient text-gold-foreground border-transparent shadow-glow-gold"
-                            : "bg-surface border-border text-muted-foreground hover:border-gold/50"
-                        }`}
-                      >
-                        {t}
-                      </button>
-                    );
-                  })}
-                </div>
-              </Section>
-            )}
-
-            <Section step="4" title="How many of us are already here?">
-              <div className="flex items-center justify-between rounded-2xl border border-border bg-surface p-3">
+        <Section step="5" title={t("create.nusach")}>
+          <div className="flex gap-2 flex-wrap">
+            {["Any", "Ashkenaz", "Sephard", "Nusach Ari", "Edot Mizrach"].map((n) => {
+              const a = nusach === n;
+              return (
                 <button
-                  onClick={() => setPresent(Math.max(1, present - 1))}
-                  className="h-12 w-12 rounded-xl bg-muted flex items-center justify-center active:scale-95"
-                  aria-label="Less"
+                  key={n}
+                  onClick={() => setNusach(n)}
+                  className={`rounded-full px-3.5 py-2 text-xs font-medium border transition-colors ${
+                    a
+                      ? "bg-foreground text-background border-foreground"
+                      : "bg-surface border-border hover:border-gold/50"
+                  }`}
                 >
-                  <Minus className="h-4 w-4" />
+                  {n}
                 </button>
-                <div className="text-center">
-                  <div className="font-display text-3xl leading-none">{present}</div>
-                  <div className="text-[10px] uppercase tracking-wider text-muted-foreground mt-1">already here</div>
-                </div>
-                <button
-                  onClick={() => setPresent(present + 1)}
-                  className="h-12 w-12 rounded-xl gold-gradient text-gold-foreground flex items-center justify-center active:scale-95"
-                  aria-label="More"
-                >
-                  <Plus className="h-4 w-4" />
-                </button>
-              </div>
-              <p className="text-[11px] text-muted-foreground mt-2">
-                You + anyone already with you. A minyan needs 10, but you can still join a full one.
-              </p>
-            </Section>
+              );
+            })}
+          </div>
+        </Section>
 
-            <Section step="5" title="Nusach">
-              <div className="flex gap-2 flex-wrap">
-                {["Any", "Ashkenaz", "Sephard", "Nusach Ari", "Edot Mizrach"].map((n) => {
-                  const a = nusach === n;
-                  return (
-                    <button
-                      key={n}
-                      onClick={() => setNusach(n)}
-                      className={`rounded-full px-3.5 py-2 text-xs font-medium border transition-colors ${
-                        a ? "bg-foreground text-background border-foreground" : "bg-surface border-border hover:border-gold/50"
-                      }`}
-                    >
-                      {n}
-                    </button>
-                  );
-                })}
-              </div>
-            </Section>
-          </>
-        )}
-
-        <Section step={ctx === "Travel" ? "2" : "6"} title={ctx === "Travel" ? "Comment (optional)" : "Comment (optional)"}>
+        <Section step="6" title={t("create.commentLabel")}>
           <textarea
-            rows={ctx === "Travel" ? 3 : 2}
+            rows={2}
             value={comment}
             onChange={(e) => setComment(e.target.value)}
-            placeholder={ctx === "Travel" ? "Where you'll stay, your shul preference, kosher tips…" : "Kaddish · Yahrzeit · bring tefillin…"}
+            placeholder={t("create.commentPh")}
             className="w-full rounded-2xl border border-border bg-surface p-3 text-sm outline-none focus:border-gold"
           />
-          {ctx !== "Travel" && <p className="text-[10px] text-muted-foreground mt-1">Visible to everyone notified.</p>}
+          <p className="text-[10px] text-muted-foreground mt-1">{t("create.commentVisible")}</p>
         </Section>
 
-        {/* Preview */}
-        {ctx !== "Travel" && <div className="rounded-2xl bg-gold-soft/40 border border-gold/30 p-4">
+        <div className="rounded-2xl bg-gold-soft/40 border border-gold/30 p-4">
           <div className="text-[11px] text-muted-foreground space-y-1">
-            <div><span className="font-semibold text-foreground">{prayer}</span> · {when} · {present} here · {present >= 10 ? "minyan ready — join us too" : `${Math.max(0, 10 - present)} missing`}</div>
-            <div className="flex items-start gap-1"><MapPin className="h-3 w-3 mt-0.5 shrink-0" /><span className="truncate">{locationSummary}</span></div>
-            {ctx === "Hotel" && (scheduledDate || scheduledTime) && (
-              <div>Scheduled: <span className="text-foreground">{[scheduledDate, scheduledTime].filter(Boolean).join(" · ")}</span></div>
-            )}
-            <div>Nusach: <span className="text-foreground">{nusach}</span></div>
+            <div>
+              <span className="font-semibold text-foreground">
+                {t(`prayer.${PRAYER_MAP[prayer]}`)}
+              </span>{" "}
+              · {when} · {present} {t("create.here")} ·{" "}
+              {present >= 10
+                ? t("create.minyanReady")
+                : t("create.missing", { count: Math.max(0, 10 - present) })}
+            </div>
+            <div className="flex items-start gap-1">
+              <MapPin className="h-3 w-3 mt-0.5 shrink-0" />
+              <span className="truncate">{locationSummary}</span>
+            </div>
+            <div>
+              {t("create.nusach")}: <span className="text-foreground">{nusach}</span>
+            </div>
             {comment && <div className="italic">"{comment}"</div>}
           </div>
-        </div>}
+        </div>
       </div>
 
       <div className="sticky bottom-24 px-6 pb-2">
@@ -370,146 +303,81 @@ function Create() {
           disabled={publishing}
           className="flex items-center justify-center gap-2 w-full gold-gradient text-gold-foreground font-semibold py-5 rounded-2xl shadow-glow-gold text-base transition-transform active:scale-[0.99] disabled:opacity-60"
         >
-          {publishing ? <Loader2 className="h-5 w-5 animate-spin" /> : <Users className="h-5 w-5" />}
-          {ctx === "Travel" ? "Create" : "Publish minyan"}
+          {publishing ? (
+            <Loader2 className="h-5 w-5 animate-spin" />
+          ) : (
+            <Users className="h-5 w-5" />
+          )}
+          {t("create.publish")}
         </button>
-        {ctx !== "Travel" && <p className="text-center text-[11px] text-muted-foreground mt-2">
-          {ctx === "Street" || ctx === "Airport"
-            ? position
-              ? "Your GPS position will be shared with this minyan only."
-              : "Tap to allow location — needed to publish a street/airport minyan."
-            : "Travelers will see it in advance."}
-        </p>}
+        <p className="text-center text-[11px] text-muted-foreground mt-2">
+          {position ? t("create.gpsShared") : t("create.allowLocationToPublish")}
+        </p>
       </div>
     </MobileFrame>
   );
 
   async function publish() {
     if (!user) {
-      toast.error("Please sign in first.");
+      toast.error(t("create.signInFirst"));
       navigate({ to: "/auth" });
       return;
     }
 
-    // ===== TRAVEL: register a city presence (not a minyan) =====
-    if (ctx === "Travel") {
-      const cityLabel = getTravelCityLabel(tripPick, tripCity);
-      if (!cityLabel || !tripDateStart || !tripDateEnd) {
-        toast.error("Pick a city and your travel dates.");
-        return;
-      }
-      if (tripDateEnd < tripDateStart) {
-        toast.error("Pick valid dates.");
-        return;
-      }
-      setPublishing(true);
-      try {
-        const cityKey = cityLabel.trim().toLowerCase();
-        const { error } = await supabase.from("travel_presence").insert({
-          user_id: user.id,
-          city_key: cityKey,
-          city_label: cityLabel,
-          address: tripPick?.address ?? tripCity,
-          latitude: tripPick?.lat ?? null,
-          longitude: tripPick?.lng ?? null,
-          date_start: tripDateStart,
-          date_end: tripDateEnd,
-          note: comment || null,
-        });
-        if (error) throw error;
-
-        void import("@/lib/analytics").then(({ track }) => track("create_minyan", { type: "travel" }));
-        toast.success(`Created in ${cityLabel}`);
-        navigate({ to: "/travel-city/$cityKey", params: { cityKey } });
-      } catch (e) {
-        toast.error("Could not register", { description: (e as Error).message });
-      } finally {
-        setPublishing(false);
-      }
-      return;
-    }
-
-    const liveCtx = ctx === "Street" || ctx === "Airport";
-    if (liveCtx && !position) {
+    if (!position) {
       requestGeo();
-      toast.error("We need your location for a live minyan.");
+      toast.error(t("create.needLocationLive"));
       return;
     }
+
     setPublishing(true);
     try {
-      // Resolve coords
-      let lat: number;
-      let lng: number;
-      if (liveCtx && position) {
-        lat = position.lat;
-        lng = position.lng;
-      } else if (ctx === "Hotel" && hotelPick?.lat != null && hotelPick?.lng != null) {
-        lat = hotelPick.lat;
-        lng = hotelPick.lng;
-      } else {
-        lat = position?.lat ?? 0;
-        lng = position?.lng ?? 0;
-      }
+      const lat = position.lat;
+      const lng = position.lng;
+      const now = Date.now();
 
       let scheduled_at: string | null = null;
-      const now = Date.now();
-      if (liveCtx && when !== "Now") {
+      if (when !== "Now") {
         const offsetMin =
-          when === "+1 h" ? 60 :
-          when.startsWith("+") ? parseInt(when.replace(/\D/g, "") || "0", 10) : 0;
+          when === "+1 h"
+            ? 60
+            : when.startsWith("+")
+              ? parseInt(when.replace(/\D/g, "") || "0", 10)
+              : 0;
         if (offsetMin > 0) {
           scheduled_at = new Date(now + offsetMin * 60 * 1000).toISOString();
         }
-      } else if (ctx === "Hotel" && scheduledDate && scheduledTime) {
-        scheduled_at = new Date(`${scheduledDate}T${scheduledTime}`).toISOString();
       }
 
-      if (liveCtx) {
-        const startIso = scheduled_at ?? new Date(now).toISOString();
-        const { data: nearbyCount, error: rpcErr } = await supabase.rpc("count_minyanim_within", {
-          lat,
-          lng,
-          radius_m: 200,
-          _start: startIso,
-        });
-        if (rpcErr) throw rpcErr;
-        if ((nearbyCount ?? 0) > 0) {
-          toast.error("Another minyan starts within 30 min nearby", {
-            description: "Pick a start time at least 30 min apart, or join the existing one.",
-          });
-          setPublishing(false);
-          return;
-        }
+      const startIso = scheduled_at ?? new Date(now).toISOString();
+      const { data: nearbyCount, error: rpcErr } = await supabase.rpc("count_minyanim_within", {
+        lat,
+        lng,
+        radius_m: 200,
+        _start: startIso,
+      });
+      if (rpcErr) throw rpcErr;
+      if ((nearbyCount ?? 0) > 0) {
+        toast.error(t("create.duplicateNearby"), { description: t("create.joinInstead") });
+        setPublishing(false);
+        return;
       }
 
-      let expires_at: string;
-      if (liveCtx) {
-        const startMs = scheduled_at ? new Date(scheduled_at).getTime() : now;
-        expires_at = new Date(startMs + 2 * 60 * 60 * 1000).toISOString();
-      } else if (scheduled_at) {
-        expires_at = new Date(new Date(scheduled_at).getTime() + 4 * 60 * 60 * 1000).toISOString();
-      } else {
-        expires_at = new Date(now + 7 * 24 * 60 * 60 * 1000).toISOString();
-      }
-
-      const prayerMap: Record<string, "shacharit" | "mincha" | "maariv"> = {
-        Shacharit: "shacharit",
-        Mincha: "mincha",
-        Maariv: "maariv",
-      };
+      const startMs = scheduled_at ? new Date(scheduled_at).getTime() : now;
+      const expires_at = new Date(startMs + 2 * 60 * 60 * 1000).toISOString();
 
       const { data: created, error } = await supabase
         .from("minyanim")
         .insert({
           creator_id: user.id,
-          type: ctx.toLowerCase() as "street" | "airport" | "hotel",
-          prayer: prayerMap[prayer] ?? "mincha",
+          type: "street",
+          prayer: PRAYER_MAP[prayer] ?? "mincha",
           nusach,
           message: comment || null,
           address: locationSummary,
           latitude: lat,
           longitude: lng,
-          is_live: liveCtx,
+          is_live: true,
           scheduled_at,
           present_count: present,
           extra_present: Math.max(0, present - 1),
@@ -524,28 +392,38 @@ function Create() {
         .from("minyan_participants")
         .insert({ minyan_id: created.id, user_id: user.id });
 
-      void import("@/lib/analytics").then(({ track }) => track("create_minyan", { type: ctx.toLowerCase(), prayer: prayer.toLowerCase(), scheduled: Boolean(scheduled_at) }));
-      toast.success("Minyan published!");
+      void import("@/lib/analytics").then(({ track }) =>
+        track("create_minyan", {
+          type: "street",
+          prayer: prayer.toLowerCase(),
+          scheduled: Boolean(scheduled_at),
+        }),
+      );
+      toast.success(t("create.published"));
       navigate({ to: "/success", search: { id: created.id } });
     } catch (e) {
-      toast.error("Could not publish", { description: (e as Error).message });
+      toast.error(t("create.errPublish"), { description: (e as Error).message });
     } finally {
       setPublishing(false);
     }
   }
 }
 
-
-function getTravelCityLabel(pick: AddressPick | null, raw: string) {
-  return (pick?.city || raw.split(",")[0] || "").trim();
-}
-
-
-function Section({ step, title, children }: { step: string; title: string; children: React.ReactNode }) {
+function Section({
+  step,
+  title,
+  children,
+}: {
+  step: string;
+  title: string;
+  children: React.ReactNode;
+}) {
   return (
     <div>
       <div className="flex items-center gap-2 mb-2">
-        <span className="h-5 w-5 rounded-full bg-gold text-gold-foreground text-[10px] font-bold flex items-center justify-center">{step}</span>
+        <span className="h-5 w-5 rounded-full bg-gold text-gold-foreground text-[10px] font-bold flex items-center justify-center">
+          {step}
+        </span>
         <h3 className="font-display text-sm font-semibold">{title}</h3>
       </div>
       {children}

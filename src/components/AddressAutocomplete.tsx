@@ -2,7 +2,8 @@ import { APIProvider, useMapsLibrary } from "@vis.gl/react-google-maps";
 import { useEffect, useRef, useState } from "react";
 import { Loader2, MapPin } from "lucide-react";
 
-const API_KEY = import.meta.env.VITE_LOVABLE_CONNECTOR_GOOGLE_MAPS_BROWSER_KEY as string | undefined;
+const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_BROWSER_KEY as
+  string | undefined;
 
 export type AddressPick = {
   address: string;
@@ -30,7 +31,10 @@ export function AddressAutocomplete(props: Props) {
         value={props.value}
         onChange={(e) => props.onChange(e.target.value)}
         placeholder={props.placeholder}
-        className={props.className ?? "w-full rounded-2xl border border-border bg-surface p-3 text-sm outline-none focus:border-gold"}
+        className={
+          props.className ??
+          "w-full rounded-2xl border border-border bg-surface p-3 text-sm outline-none focus:border-gold"
+        }
       />
     );
   }
@@ -53,7 +57,8 @@ function Inner({ value, onChange, onPick, placeholder, citiesOnly, className }: 
 
   useEffect(() => {
     if (!placesLib) return;
-    if (!sessionTokenRef.current) sessionTokenRef.current = new placesLib.AutocompleteSessionToken();
+    if (!sessionTokenRef.current)
+      sessionTokenRef.current = new placesLib.AutocompleteSessionToken();
 
     if (debounceRef.current) window.clearTimeout(debounceRef.current);
     const q = value.trim();
@@ -66,11 +71,15 @@ function Inner({ value, onChange, onPick, placeholder, citiesOnly, className }: 
       setLoading(true);
       lastQueryRef.current = q;
       try {
-        const { suggestions } = await placesLib.AutocompleteSuggestion.fetchAutocompleteSuggestions({
-          input: q,
-          sessionToken: sessionTokenRef.current!,
-          includedPrimaryTypes: citiesOnly ? ["locality", "administrative_area_level_3"] : undefined,
-        });
+        const { suggestions } = await placesLib.AutocompleteSuggestion.fetchAutocompleteSuggestions(
+          {
+            input: q,
+            sessionToken: sessionTokenRef.current!,
+            includedPrimaryTypes: citiesOnly
+              ? ["locality", "administrative_area_level_3"]
+              : undefined,
+          },
+        );
         if (lastQueryRef.current === q) {
           setSuggestions(suggestions);
           setOpen(true);
@@ -90,7 +99,9 @@ function Inner({ value, onChange, onPick, placeholder, citiesOnly, className }: 
   async function handlePick(s: any) {
     if (!s.placePrediction) return;
     const place = s.placePrediction.toPlace();
-    await place.fetchFields({ fields: ["formattedAddress", "location", "addressComponents", "displayName"] });
+    await place.fetchFields({
+      fields: ["formattedAddress", "location", "addressComponents", "displayName"],
+    });
     const addr = place.formattedAddress ?? place.displayName ?? s.placePrediction.text?.text ?? "";
     const comps: any[] = place.addressComponents ?? [];
     const city =
@@ -110,7 +121,7 @@ function Inner({ value, onChange, onPick, placeholder, citiesOnly, className }: 
       placeId: place.id ?? "",
     });
     setOpen(false);
-    sessionTokenRef.current = new (placesLib!.AutocompleteSessionToken)();
+    sessionTokenRef.current = new placesLib!.AutocompleteSessionToken();
   }
 
   return (
@@ -122,7 +133,10 @@ function Inner({ value, onChange, onPick, placeholder, citiesOnly, className }: 
           onFocus={() => suggestions.length > 0 && setOpen(true)}
           onBlur={() => setTimeout(() => setOpen(false), 150)}
           placeholder={placeholder}
-          className={className ?? "w-full rounded-2xl border border-border bg-surface p-3 pr-9 text-sm outline-none focus:border-gold"}
+          className={
+            className ??
+            "w-full rounded-2xl border border-border bg-surface p-3 pr-9 text-sm outline-none focus:border-gold"
+          }
         />
         {loading && (
           <Loader2 className="h-4 w-4 animate-spin text-muted-foreground absolute right-3 top-1/2 -translate-y-1/2" />
@@ -137,7 +151,10 @@ function Inner({ value, onChange, onPick, placeholder, citiesOnly, className }: 
               <button
                 type="button"
                 key={i}
-                onMouseDown={(e) => { e.preventDefault(); handlePick(s); }}
+                onMouseDown={(e) => {
+                  e.preventDefault();
+                  handlePick(s);
+                }}
                 className="w-full flex items-start gap-2 px-3 py-2.5 text-left hover:bg-muted/60 border-b border-border last:border-b-0"
               >
                 <MapPin className="h-4 w-4 text-gold mt-0.5 shrink-0" />

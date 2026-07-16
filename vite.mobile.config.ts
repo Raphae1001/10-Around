@@ -47,10 +47,7 @@ export default defineConfig(({ mode }) => {
         { find: "@", replacement: path.resolve(__dirname, "src") },
         {
           find: /^@tanstack\/react-start(\/.*)?$/,
-          replacement: path.resolve(
-            __dirname,
-            "src/lib/mobile/tanstack-start-stub.ts",
-          ),
+          replacement: path.resolve(__dirname, "src/lib/mobile/tanstack-start-stub.ts"),
         },
       ],
     },

@@ -69,8 +69,8 @@ export const createMiddleware = (() => ({
 export const getRequest = (): Request => {
   throw new Error("getRequest() is not available in the native SPA build");
 };
-export const createStart = (() => ({
-  /* noop in SPA */
-})) as unknown as (...args: unknown[]) => unknown;
+export const createStart = (() => ({/* noop in SPA */})) as unknown as (
+  ...args: unknown[]
+) => unknown;
 
 export default { createServerFn, useServerFn, createMiddleware, getRequest, createStart };

@@ -9,10 +9,7 @@ import { RouterProvider } from "@tanstack/react-router";
 import "./styles.css";
 import "./i18n";
 import { getRouter } from "./router";
-import {
-  hydrateNativeSupabaseStorage,
-  attachNativeStorageMirror,
-} from "./lib/native-storage";
+import { hydrateNativeSupabaseStorage, attachNativeStorageMirror } from "./lib/native-storage";
 
 async function bootstrap() {
   // CRITICAL: hydrate Preferences → localStorage BEFORE the Supabase client

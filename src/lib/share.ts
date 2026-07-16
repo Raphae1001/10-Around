@@ -27,7 +27,9 @@ async function copyToClipboard(text: string): Promise<boolean> {
       await navigator.clipboard.writeText(text);
       return true;
     }
-  } catch { /* fall through */ }
+  } catch {
+    /* fall through */
+  }
   try {
     const ta = document.createElement("textarea");
     ta.value = text;
@@ -38,7 +40,9 @@ async function copyToClipboard(text: string): Promise<boolean> {
     const ok = document.execCommand("copy");
     document.body.removeChild(ta);
     return ok;
-  } catch { return false; }
+  } catch {
+    return false;
+  }
 }
 
 function isMobileUA(): boolean {
@@ -82,9 +86,10 @@ export async function shareAny(opts: { title?: string; text: string; url?: strin
   }
 
   // 2) Web Share API (mobile browsers, Safari, modern Chrome desktop).
-  const nav = typeof navigator !== "undefined"
-    ? (navigator as Navigator & { share?: (d: ShareData) => Promise<void> })
-    : null;
+  const nav =
+    typeof navigator !== "undefined"
+      ? (navigator as Navigator & { share?: (d: ShareData) => Promise<void> })
+      : null;
   if (nav?.share) {
     try {
       await nav.share({ title: opts.title, text: opts.text, url: opts.url });
@@ -97,9 +102,7 @@ export async function shareAny(opts: { title?: string; text: string; url?: strin
 
   // 3) WhatsApp deep link (wa.me on desktop, whatsapp:// on mobile).
   const encoded = encodeURIComponent(full);
-  const wa = isMobileUA()
-    ? `whatsapp://send?text=${encoded}`
-    : `https://wa.me/?text=${encoded}`;
+  const wa = isMobileUA() ? `whatsapp://send?text=${encoded}` : `https://wa.me/?text=${encoded}`;
   if (openExternal(wa)) return;
 
   // 4) Clipboard fallback.

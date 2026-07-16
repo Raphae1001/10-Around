@@ -21,6 +21,7 @@ bunx cap open ios         # ouvre Xcode
 ```
 
 Dans Xcode :
+
 - Sélectionne le projet **App** dans la sidebar
 - Onglet **Signing & Capabilities** → **Team** = ton équipe Apple Developer
 - **Bundle Identifier** = `app.lovable.minyanstreet` (ou ce que tu veux, doit être unique)
@@ -32,10 +33,10 @@ Dans Xcode :
 
 Xcode → `App/Info.plist` → ajoute (clic droit → Add Row) :
 
-| Clé | Valeur |
-|---|---|
+| Clé                                   | Valeur                                                                         |
+| ------------------------------------- | ------------------------------------------------------------------------------ |
 | `NSLocationWhenInUseUsageDescription` | MinyanStreet uses your location to find minyanim happening within 1 km of you. |
-| `NSCalendarsUsageDescription` | Add scheduled minyanim to your calendar. |
+| `NSCalendarsUsageDescription`         | Add scheduled minyanim to your calendar.                                       |
 
 ## Test
 
@@ -61,16 +62,19 @@ bunx cap sync ios   # à relancer seulement si tu ajoutes des plugins natifs
 ## Assets prêts ✅
 
 J'ai généré pour toi (dans `/mnt/documents/` du sandbox — récupère-les via "Files" dans Lovable) :
+
 - **Icône 1024×1024** → `app-icon-1024.png` (étoile de David dorée sur navy)
 - **Splash 2732×2732** → `splash-2732.png` (à recentrer/cropper sur Mac si besoin)
 
 Encore à faire toi-même :
+
 - 3-10 **captures** par taille (6.7" = 1290×2796, 6.5" = 1242×2688) — fais-les depuis le simulateur Xcode
 - Adapte l'icône/splash dans Xcode via **App/Assets.xcassets** (AppIcon + Splash)
 
 ## Privacy Policy URL ✅
 
 Obligatoire pour soumettre à l'App Store. La page est déjà en ligne :
+
 - **https://global-minyan-connect.lovable.app/privacy** (multilingue EN/FR/ES/HE)
 
 Colle cette URL dans App Store Connect → Politique de confidentialité.
@@ -78,4 +82,3 @@ Colle cette URL dans App Store Connect → Politique de confidentialité.
 ## Multilingue 🌍
 
 L'app gère déjà 4 langues (anglais par défaut, français, espagnol, hébreu avec RTL). Pour le store, soumets la fiche en anglais d'abord, puis ajoute les localisations (FR/ES/HE) avec titre + description + mots-clés traduits dans App Store Connect.
-

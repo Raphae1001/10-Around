@@ -17,20 +17,20 @@ import uk from "./locales/uk.json";
 import ro from "./locales/ro.json";
 
 export const SUPPORTED_LANGS = [
-  { code: "en", label: "English",     native: "English",    flag: "🇬🇧" },
-  { code: "fr", label: "French",      native: "Français",   flag: "🇫🇷" },
-  { code: "he", label: "Hebrew",      native: "עברית",      flag: "🇮🇱" },
-  { code: "es", label: "Spanish",     native: "Español",    flag: "🇪🇸" },
-  { code: "ru", label: "Russian",     native: "Русский",    flag: "🇷🇺" },
-  { code: "pt", label: "Portuguese",  native: "Português",  flag: "🇵🇹" },
-  { code: "de", label: "German",      native: "Deutsch",    flag: "🇩🇪" },
-  { code: "it", label: "Italian",     native: "Italiano",   flag: "🇮🇹" },
-  { code: "yi", label: "Yiddish",     native: "ייִדיש",      flag: "🇮🇱" },
-  { code: "ar", label: "Arabic",      native: "العربية",    flag: "🇸🇦" },
-  { code: "nl", label: "Dutch",       native: "Nederlands", flag: "🇳🇱" },
-  { code: "pl", label: "Polish",      native: "Polski",     flag: "🇵🇱" },
-  { code: "uk", label: "Ukrainian",   native: "Українська", flag: "🇺🇦" },
-  { code: "ro", label: "Romanian",    native: "Română",     flag: "🇷🇴" },
+  { code: "en", label: "English", native: "English", flag: "🇬🇧" },
+  { code: "fr", label: "French", native: "Français", flag: "🇫🇷" },
+  { code: "he", label: "Hebrew", native: "עברית", flag: "🇮🇱" },
+  { code: "es", label: "Spanish", native: "Español", flag: "🇪🇸" },
+  { code: "ru", label: "Russian", native: "Русский", flag: "🇷🇺" },
+  { code: "pt", label: "Portuguese", native: "Português", flag: "🇵🇹" },
+  { code: "de", label: "German", native: "Deutsch", flag: "🇩🇪" },
+  { code: "it", label: "Italian", native: "Italiano", flag: "🇮🇹" },
+  { code: "yi", label: "Yiddish", native: "ייִדיש", flag: "🇮🇱" },
+  { code: "ar", label: "Arabic", native: "العربية", flag: "🇸🇦" },
+  { code: "nl", label: "Dutch", native: "Nederlands", flag: "🇳🇱" },
+  { code: "pl", label: "Polish", native: "Polski", flag: "🇵🇱" },
+  { code: "uk", label: "Ukrainian", native: "Українська", flag: "🇺🇦" },
+  { code: "ro", label: "Romanian", native: "Română", flag: "🇷🇴" },
 ] as const;
 
 export type LangCode = (typeof SUPPORTED_LANGS)[number]["code"];
@@ -42,11 +42,20 @@ const isBrowser = typeof window !== "undefined";
 if (!i18n.isInitialized) {
   i18n.use(initReactI18next).init({
     resources: {
-      en: { translation: en }, fr: { translation: fr }, he: { translation: he },
-      es: { translation: es }, ru: { translation: ru }, pt: { translation: pt },
-      de: { translation: de }, it: { translation: it }, yi: { translation: yi },
-      ar: { translation: ar }, nl: { translation: nl }, pl: { translation: pl },
-      uk: { translation: uk }, ro: { translation: ro },
+      en: { translation: en },
+      fr: { translation: fr },
+      he: { translation: he },
+      es: { translation: es },
+      ru: { translation: ru },
+      pt: { translation: pt },
+      de: { translation: de },
+      it: { translation: it },
+      yi: { translation: yi },
+      ar: { translation: ar },
+      nl: { translation: nl },
+      pl: { translation: pl },
+      uk: { translation: uk },
+      ro: { translation: ro },
     },
     lng: "en",
     fallbackLng: "en",
@@ -67,14 +76,18 @@ function syncHtmlAttrs() {
 i18n.on("languageChanged", (lng) => {
   syncHtmlAttrs();
   if (isBrowser) {
-    try { localStorage.setItem("minyannow.lang", lng); } catch {}
+    try {
+      localStorage.setItem("minyannow.lang", lng);
+    } catch {}
   }
 });
 
 export function applySavedLang() {
   if (!isBrowser) return;
   let saved: string | null = null;
-  try { saved = localStorage.getItem("minyannow.lang"); } catch {}
+  try {
+    saved = localStorage.getItem("minyannow.lang");
+  } catch {}
   if (saved && SUPPORTED_LANGS.some((l) => l.code === saved) && saved !== i18n.language) {
     i18n.changeLanguage(saved);
   } else {

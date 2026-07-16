@@ -11,6 +11,7 @@ the onboarding flow). There is no Google, Apple, email, password, or any
 OAuth provider in the app.
 
 As a direct consequence:
+
 - **Sign in with Apple is NOT required** by App Store Review. Guideline
   4.8 only mandates Apple sign-in when the app offers a third-party social
   login (Google, Facebook, etc.). MinyanNow offers none, so 4.8 does not
