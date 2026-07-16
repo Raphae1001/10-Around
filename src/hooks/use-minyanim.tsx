@@ -4,12 +4,21 @@ import type { Database } from "@/integrations/supabase/types";
 
 export type MinyanRow = Database["public"]["Tables"]["minyanim"]["Row"];
 
+// Stale-while-revalidate cache shared across mounts/navigations. Keyed by a
+// coarse position (~1 km) + radius so returning to /home paints the last known
+// pins instantly instead of flashing an empty map while the RPC round-trips.
+const nearbyCache = new Map<string, MinyanRow[]>();
+const cacheKey = (p: { lat: number; lng: number }, r: number) =>
+  `${p.lat.toFixed(2)},${p.lng.toFixed(2)},${r}`;
+
 /** Nearby live minyanim: street + scheduled in ±30 min of start, both within radius. */
 export function useNearbyMinyanim(
   position: { lat: number; lng: number } | null,
   radiusMeters = 1000,
 ) {
-  const [data, setData] = useState<MinyanRow[]>([]);
+  const [data, setData] = useState<MinyanRow[]>(() =>
+    position ? (nearbyCache.get(cacheKey(position, radiusMeters)) ?? []) : [],
+  );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   // Unique channel per hook instance. supabase.channel(topic) dedupes by topic
@@ -23,6 +32,9 @@ export function useNearbyMinyanim(
       setData([]);
       return;
     }
+    const key = cacheKey(position, radiusMeters);
+    const cached = nearbyCache.get(key);
+    if (cached) setData(cached); // paint stale immediately, revalidate below
     setLoading(true);
     const { data: rows, error: err } = await supabase.rpc("nearby_minyanim", {
       lat: position.lat,
@@ -30,7 +42,11 @@ export function useNearbyMinyanim(
       radius_m: radiusMeters,
     });
     if (err) setError(err.message);
-    else setData((rows as MinyanRow[]) ?? []);
+    else {
+      const fresh = (rows as MinyanRow[]) ?? [];
+      nearbyCache.set(key, fresh);
+      setData(fresh);
+    }
     setLoading(false);
   }, [position, radiusMeters]);
 
@@ -38,15 +54,22 @@ export function useNearbyMinyanim(
     refresh();
   }, [refresh]);
 
-  // Realtime: any change to minyanim or participants → refresh
+  // Realtime: any change to minyanim → refresh. Debounced so a burst of
+  // postgres_changes (e.g. many joins at once) collapses into a single RPC.
   useEffect(() => {
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    const debouncedRefresh = () => {
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(() => void refresh(), 400);
+    };
     const ch = supabase
       .channel(`minyanim-live-${channelId}`)
-      .on("postgres_changes", { event: "*", schema: "public", table: "minyanim" }, () => refresh())
+      .on("postgres_changes", { event: "*", schema: "public", table: "minyanim" }, debouncedRefresh)
       // minyan_participants no longer in realtime publication for privacy;
       // present_count is synced into minyanim by trigger, which we already listen to.
       .subscribe();
     return () => {
+      if (timer) clearTimeout(timer);
       supabase.removeChannel(ch);
     };
   }, [refresh, channelId]);

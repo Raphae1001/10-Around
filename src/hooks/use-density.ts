@@ -15,10 +15,18 @@ export type DensityZone = {
 const REFRESH_MS = 90_000; // 1.5 min — halos are not real-time
 const MOVE_THRESHOLD_M = 500;
 
+// Stale-while-revalidate cache shared across mounts — halos/count reappear
+// instantly when returning to /home instead of blinking off then back on.
+type DensitySnapshot = { zones: DensityZone[]; activeCount: number | null; at: number };
+const densityCache = new Map<string, DensitySnapshot>();
+const densityKey = (p: { lat: number; lng: number }, r: number) =>
+  `${p.lat.toFixed(2)},${p.lng.toFixed(2)},${r}`;
+
 export function useDensity(position: GeoPosition | null, radiusM = 5000) {
-  const [zones, setZones] = useState<DensityZone[]>([]);
-  const [activeCount, setActiveCount] = useState<number | null>(null);
-  const [lastUpdatedAt, setLastUpdatedAt] = useState<number | null>(null);
+  const seed = position ? densityCache.get(densityKey(position, radiusM)) : undefined;
+  const [zones, setZones] = useState<DensityZone[]>(seed?.zones ?? []);
+  const [activeCount, setActiveCount] = useState<number | null>(seed?.activeCount ?? null);
+  const [lastUpdatedAt, setLastUpdatedAt] = useState<number | null>(seed?.at ?? null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const lastFetchRef = useRef<{ lat: number; lng: number; at: number } | null>(null);
@@ -58,10 +66,16 @@ export function useDensity(position: GeoPosition | null, radiusM = 5000) {
           };
         });
 
+        const nextCount = count != null ? Number(count) : null;
         setZones(decoded);
-        setActiveCount(count != null ? Number(count) : null);
+        setActiveCount(nextCount);
         setLastUpdatedAt(now);
         setError(null);
+        densityCache.set(densityKey(pos, radiusM), {
+          zones: decoded,
+          activeCount: nextCount,
+          at: now,
+        });
         lastFetchRef.current = { lat: pos.lat, lng: pos.lng, at: now };
       } catch (err) {
         setError(err instanceof Error ? err.message : "Density fetch failed");
