@@ -21,8 +21,6 @@ import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
-import { useServerFn } from "@tanstack/react-start";
-import { deleteMyAccount } from "@/lib/account.functions";
 import { track, setAnalyticsEnabled, isAnalyticsEnabled } from "@/lib/analytics";
 import { toast } from "sonner";
 import { tapLight } from "@/lib/haptics";
@@ -53,7 +51,6 @@ function Settings() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { user } = useAuth();
-  const deleteAccountFn = useServerFn(deleteMyAccount);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [confirmText, setConfirmText] = useState("");
   const [deleting, setDeleting] = useState(false);
@@ -109,22 +106,19 @@ function Settings() {
     const timeout = setTimeout(() => {
       setDeleting(false);
       toast.error("Delete timed out. Please try again.");
-    }, 15000);
+    }, 20000);
     try {
-      let ok = false;
-      try {
-        const { data, error } = await supabase.functions.invoke("delete-account", { body: {} });
-        if (!error && (data?.ok ?? true)) ok = true;
-        else if (error) throw error;
-      } catch (invokeErr) {
-        try {
-          await deleteAccountFn();
-          ok = true;
-        } catch {
-          throw invokeErr;
-        }
+      // Edge function is the only delete path (works on Capacitor SPA + web).
+      const { data, error } = await supabase.functions.invoke("delete-account", { body: {} });
+      if (error) throw error;
+      if (data && typeof data === "object" && "ok" in data && data.ok === false) {
+        throw new Error(
+          typeof (data as { error?: string }).error === "string"
+            ? (data as { error: string }).error
+            : "Delete failed",
+        );
       }
-      if (!ok) throw new Error("Delete failed");
+
       track("delete_account");
       try {
         await queryClient.cancelQueries();
@@ -134,6 +128,10 @@ function Settings() {
       } catch {}
       try {
         await supabase.auth.signOut();
+      } catch {}
+      try {
+        const { nativeAuthClear } = await import("@/lib/native-auth");
+        await nativeAuthClear();
       } catch {}
       try {
         localStorage.clear();

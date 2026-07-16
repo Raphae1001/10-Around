@@ -297,6 +297,7 @@
     "groupChatsSub": "Minyan threads and travel city chats",
     "resetDevice": "Reset this device",
     "resetDeviceHint": "Clears your local profile so another person can start fresh on this device.",
+    "signOutHint": "Ends this session on the device. To permanently remove your data, use Delete account in Settings.",
     "firstName": "First name",
     "lastName": "Last name",
     "nameRequired": "First and last name are required",
