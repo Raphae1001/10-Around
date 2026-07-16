@@ -53,11 +53,16 @@ export async function openAppSettings(): Promise<void> {
   await App.openUrl({ url: "app-settings:" });
 }
 
-export async function getCurrentPosition(): Promise<{
+export async function getCurrentPosition(opts?: { highAccuracy?: boolean }): Promise<{
   lat: number;
   lng: number;
   accuracy?: number;
 } | null> {
+  // Default = fast coarse fix. High-accuracy GPS can take several seconds to
+  // acquire a first lock; for "minyanim near me" (≥200m / ~1km blur) a coarse
+  // fix is plenty and lets the map paint pins/halos almost instantly. Callers
+  // that need precision (e.g. dropping an exact create pin) pass highAccuracy.
+  const highAccuracy = opts?.highAccuracy ?? false;
   if (isNative()) {
     const { Geolocation } = await import("@capacitor/geolocation");
     const perm = await Geolocation.checkPermissions();
@@ -65,7 +70,11 @@ export async function getCurrentPosition(): Promise<{
       const req = await Geolocation.requestPermissions();
       if (req.location !== "granted") return null;
     }
-    const pos = await Geolocation.getCurrentPosition({ enableHighAccuracy: true, timeout: 10000 });
+    const pos = await Geolocation.getCurrentPosition({
+      enableHighAccuracy: highAccuracy,
+      timeout: highAccuracy ? 10000 : 6000,
+      maximumAge: 60000,
+    });
     return { lat: pos.coords.latitude, lng: pos.coords.longitude, accuracy: pos.coords.accuracy };
   }
   // Web fallback
@@ -75,7 +84,7 @@ export async function getCurrentPosition(): Promise<{
       (p) =>
         resolve({ lat: p.coords.latitude, lng: p.coords.longitude, accuracy: p.coords.accuracy }),
       () => resolve(null),
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 },
+      { enableHighAccuracy: highAccuracy, timeout: highAccuracy ? 10000 : 6000, maximumAge: 60000 },
     );
   });
 }

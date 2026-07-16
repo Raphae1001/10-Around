@@ -11,7 +11,28 @@ import "./i18n";
 import { getRouter } from "./router";
 import { hydrateNativeSupabaseStorage, attachNativeStorageMirror } from "./lib/native-storage";
 
+/**
+ * Warm the TLS/DNS handshake to Supabase as early as possible (the URL is only
+ * known at runtime via env, so it can't live in the static HTML). Fire-and-forget.
+ */
+function preconnectSupabase() {
+  const url = import.meta.env.VITE_SUPABASE_URL as string | undefined;
+  if (!url || typeof document === "undefined") return;
+  try {
+    const origin = new URL(url).origin;
+    const link = document.createElement("link");
+    link.rel = "preconnect";
+    link.href = origin;
+    link.crossOrigin = "anonymous";
+    document.head.appendChild(link);
+  } catch {
+    /* ignore malformed URL */
+  }
+}
+
 async function bootstrap() {
+  preconnectSupabase();
+
   // CRITICAL: hydrate Preferences → localStorage BEFORE the Supabase client
   // is constructed (it reads its initial session synchronously from
   // localStorage on first use). Otherwise an anonymous user whose
