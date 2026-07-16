@@ -12,8 +12,10 @@ export function buildDirectionsUrls(
   label?: string,
 ) {
   const hasCoords =
-    typeof lat === "number" && typeof lng === "number" &&
-    Number.isFinite(lat) && Number.isFinite(lng);
+    typeof lat === "number" &&
+    typeof lng === "number" &&
+    Number.isFinite(lat) &&
+    Number.isFinite(lng);
 
   const web = hasCoords
     ? `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`
@@ -31,6 +33,8 @@ export function openDirections(
   label?: string,
 ) {
   const { web } = buildDirectionsUrls(lat, lng, label);
-  void import("@/lib/analytics").then(({ track }) => track("open_maps", { has_coords: typeof lat === "number" && typeof lng === "number" }));
+  void import("@/lib/analytics").then(({ track }) =>
+    track("open_maps", { has_coords: typeof lat === "number" && typeof lng === "number" }),
+  );
   openExternal(web);
 }

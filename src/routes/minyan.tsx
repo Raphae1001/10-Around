@@ -3,17 +3,32 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { MobileFrame } from "@/components/MobileFrame";
-import { ScreenHeader, StatusPill } from "@/components/ui-bits";
-import { MapCanvas } from "@/components/MapCanvas";
-import { MapPin, Clock, Navigation2, Users, Check, Loader2, X, MessageCircle } from "lucide-react";
+import { ScreenHeader, LiveBadge } from "@/components/ui-bits";
+import {
+  MapPin,
+  Clock,
+  CalendarDays,
+  Navigation2,
+  Users,
+  Check,
+  Loader2,
+  X,
+  MessageCircle,
+  Share2,
+  ScrollText,
+  Timer,
+} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { joinMinyan, leaveMinyan, type MinyanRow } from "@/hooks/use-minyanim";
 import { openDirections } from "@/lib/directions";
 import { shareAny, appOrigin } from "@/lib/share";
+import { tapLight, tapMedium } from "@/lib/haptics";
 
 export const Route = createFileRoute("/minyan")({
-  validateSearch: (s: Record<string, unknown>) => ({ id: typeof s.id === "string" ? s.id : undefined }),
+  validateSearch: (s: Record<string, unknown>) => ({
+    id: typeof s.id === "string" ? s.id : undefined,
+  }),
   component: Details,
 });
 
@@ -24,13 +39,17 @@ function relTime(iso: string | null, t: (k: string, o?: any) => string) {
   const diffMin = Math.round((new Date(iso).getTime() - Date.now()) / 60000);
   if (Math.abs(diffMin) < 1) return t("home.liveNow");
   if (diffMin > 0) {
-    if (diffMin < 60) return `in ${diffMin} min`;
+    if (diffMin < 60) return t("home.inMin", { count: diffMin, defaultValue: "in {{count}} min" });
     const h = Math.round(diffMin / 60);
-    return `in ${h} h`;
+    return t("home.inHour", { count: h, defaultValue: "in {{count}} h" });
   }
   const past = -diffMin;
-  if (past < 60) return `${past} min ago`;
-  return `${Math.round(past / 60)} h ago`;
+  if (past < 60)
+    return t("home.startedAgo", { count: past, defaultValue: "started {{count}} min ago" });
+  return t("home.startedAgo", {
+    count: Math.round(past / 60),
+    defaultValue: "started {{count}} min ago",
+  });
 }
 
 function Details() {
@@ -48,45 +67,80 @@ function Details() {
   useEffect(() => {
     let cancelled = false;
     async function load() {
-      if (!id) { setNotFound(true); setLoading(false); return; }
+      if (!id) {
+        setNotFound(true);
+        setLoading(false);
+        return;
+      }
       setLoading(true);
-      const { data, error } = await supabase.from("minyanim").select("*").eq("id", id).maybeSingle();
+      const { data, error } = await supabase
+        .from("minyanim")
+        .select("*")
+        .eq("id", id)
+        .maybeSingle();
       if (cancelled) return;
-      if (error) { toast.error(t("minyan.loadFailed")); setLoading(false); return; }
-      if (!data) { setNotFound(true); setLoading(false); return; }
+      if (error) {
+        toast.error(t("minyan.loadFailed"));
+        setLoading(false);
+        return;
+      }
+      if (!data) {
+        setNotFound(true);
+        setLoading(false);
+        return;
+      }
       setMinyan(data as MinyanRow);
 
       const { data: prof } = await supabase
-        .from("profiles").select("display_name").eq("id", (data as any).creator_id).maybeSingle();
+        .from("profiles")
+        .select("display_name")
+        .eq("id", (data as any).creator_id)
+        .maybeSingle();
       if (!cancelled) setOrganizer(prof as any);
 
       if (user) {
         const { data: p } = await supabase
-          .from("minyan_participants").select("id")
-          .eq("minyan_id", id).eq("user_id", user.id).maybeSingle();
+          .from("minyan_participants")
+          .select("id")
+          .eq("minyan_id", id)
+          .eq("user_id", user.id)
+          .maybeSingle();
         if (!cancelled) setJoined(!!p);
       }
       if (!cancelled) setLoading(false);
     }
     load();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [id, user, t]);
 
-  // Realtime: refresh count when participants change for this minyan
   useEffect(() => {
     if (!id) return;
-    const ch = supabase.channel(`minyan-${id}`)
-      .on("postgres_changes", { event: "*", schema: "public", table: "minyanim", filter: `id=eq.${id}` },
-        (payload) => { if (payload.new) setMinyan(payload.new as MinyanRow); })
+    const ch = supabase
+      .channel(`minyan-${id}`)
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "minyanim", filter: `id=eq.${id}` },
+        (payload) => {
+          if (payload.new) setMinyan(payload.new as MinyanRow);
+        },
+      )
       .subscribe();
-    return () => { supabase.removeChannel(ch); };
+    return () => {
+      supabase.removeChannel(ch);
+    };
   }, [id]);
 
   const startsAtIso = minyan?.scheduled_at ?? minyan?.created_at ?? null;
   const startsAt = startsAtIso ? new Date(startsAtIso) : null;
+  const scheduledAt = minyan?.scheduled_at ? new Date(minyan.scheduled_at) : null;
   const expiresAt = minyan?.expires_at ? new Date(minyan.expires_at) : null;
   const prayerLabel = minyan ? t(`prayer.${minyan.prayer}`, { defaultValue: minyan.prayer }) : "";
-  const whenLabel = useMemo(() => relTime(minyan?.scheduled_at ?? null, t), [minyan?.scheduled_at, t]);
+  const whenLabel = useMemo(
+    () => relTime(minyan?.scheduled_at ?? null, t),
+    [minyan?.scheduled_at, t],
+  );
 
   const present = minyan?.present_count ?? 0;
   const missing = Math.max(0, NEEDED - present);
@@ -94,23 +148,33 @@ function Details() {
   const progress = Math.min(100, (present / NEEDED) * 100);
 
   const isOrganizer = !!user && !!minyan && minyan.creator_id === user.id;
+  const isScheduled = minyan?.type === "scheduled";
 
   async function handleJoin() {
     if (!minyan || !user) return;
+    void tapMedium();
     setBusy(true);
     const { error } = await joinMinyan(minyan.id, user.id);
     setBusy(false);
     if (error) toast.error(error.message);
-    else { setJoined(true); toast.success(t("minyan.youreIn")); navigate({ to: "/success", search: { id: minyan.id } }); }
+    else {
+      setJoined(true);
+      toast.success(t("minyan.youreIn"));
+      navigate({ to: "/success", search: { id: minyan.id } });
+    }
   }
 
   async function handleLeave() {
     if (!minyan || !user) return;
+    void tapLight();
     setBusy(true);
     const { error } = await leaveMinyan(minyan.id, user.id);
     setBusy(false);
     if (error) toast.error(error.message);
-    else { setJoined(false); toast.success(t("common.cancel")); }
+    else {
+      setJoined(false);
+      toast.success(t("common.cancel"));
+    }
   }
 
   async function handleCancelMinyan() {
@@ -122,7 +186,9 @@ function Details() {
     if (error) {
       toast.error(t("minyan.cancelTooLate"), { description: error.message });
     } else {
-      void import("@/lib/analytics").then(({ track }) => track("cancel_minyan", { minyan_id: minyan.id }));
+      void import("@/lib/analytics").then(({ track }) =>
+        track("cancel_minyan", { minyan_id: minyan.id }),
+      );
       toast.success(t("minyan.cancelledOk"));
       navigate({ to: "/home" });
     }
@@ -130,13 +196,17 @@ function Details() {
 
   function handleDirections() {
     if (!minyan) return;
+    void tapLight();
     openDirections(minyan.latitude, minyan.longitude, minyan.address ?? undefined);
   }
 
-  function handleWhatsApp() {
+  function handleShare() {
     if (!minyan) return;
+    void tapLight();
     const url = `${appOrigin()}/minyan/${minyan.id}`;
-    const when = startsAt ? startsAt.toLocaleString([], { dateStyle: "short", timeStyle: "short" }) : t("home.liveNow");
+    const when = startsAt
+      ? startsAt.toLocaleString([], { dateStyle: "short", timeStyle: "short" })
+      : t("home.liveNow");
     const text = t("minyan.shareText", {
       prayer: prayerLabel,
       address: minyan.address ?? "",
@@ -148,16 +218,19 @@ function Details() {
 
   async function handleOpenChat() {
     if (!minyan || !user) return;
-    const { data: tid, error } = await supabase.rpc("get_or_create_minyan_chat", { _minyan_id: minyan.id });
+    void tapLight();
+    const { data: tid, error } = await supabase.rpc("get_or_create_minyan_chat", {
+      _minyan_id: minyan.id,
+    });
     if (error || !tid) {
-      toast.error("Join the minyan first to access the group chat.", { description: error?.message });
+      toast.error(t("minyan.chatJoinFirst"), { description: error?.message });
       return;
     }
-    void import("@/lib/analytics").then(({ track }) => track("open_chat", { minyan_id: minyan.id }));
+    void import("@/lib/analytics").then(({ track }) =>
+      track("open_chat", { minyan_id: minyan.id }),
+    );
     navigate({ to: "/chat", search: { id: tid as string } });
   }
-
-
 
   if (loading) {
     return (
@@ -177,7 +250,9 @@ function Details() {
         <div className="px-6 py-16 text-center text-sm text-muted-foreground">
           {t("minyan.notFound")}
           <div className="mt-6">
-            <button onClick={() => navigate({ to: "/home" })} className="text-gold font-semibold">{t("nav.home")}</button>
+            <button onClick={() => navigate({ to: "/home" })} className="text-gold font-semibold">
+              {t("nav.home")}
+            </button>
           </div>
         </div>
       </MobileFrame>
@@ -185,66 +260,123 @@ function Details() {
   }
 
   const orgInitial = (organizer?.display_name?.[0] ?? minyan.address?.[0] ?? "?").toUpperCase();
-  const orgName = isOrganizer ? t("minyan.you") : organizer?.display_name ?? t("minyan.organizer");
+  const orgName = isOrganizer
+    ? t("minyan.you")
+    : (organizer?.display_name ?? t("minyan.organizer"));
+  const canCancel =
+    isOrganizer && (!scheduledAt || scheduledAt.getTime() - Date.now() > 20 * 60_000);
+  const cancelWindowClosed =
+    isOrganizer && scheduledAt && scheduledAt.getTime() - Date.now() <= 20 * 60_000;
 
   return (
     <MobileFrame>
       <ScreenHeader
         title={minyan.address ?? t("minyan.title")}
-        subtitle={t("minyan.subtitle", { prayer: prayerLabel, when: whenLabel })}
+        subtitle={prayerLabel}
         back
+        right={
+          <button
+            onClick={handleShare}
+            aria-label={t("minyan.share")}
+            className="h-9 w-9 rounded-full bg-surface border border-border shadow-card flex items-center justify-center active:scale-95 transition-transform"
+          >
+            <Share2 className="h-[18px] w-[18px]" />
+          </button>
+        }
       />
 
-      <Link to="/map" search={{ id: minyan.id }} className="mx-6 block rounded-3xl overflow-hidden border border-border shadow-soft hover:border-gold/60 transition-colors">
-        <MapCanvas height="h-40" pins={[{ x: 50, y: 50, tone: complete ? "success" : "urgent", pulse: !complete, label: complete ? "✓" : "!", size: "lg" }]} />
-      </Link>
+      <div className="flex-1 overflow-y-auto overscroll-y-contain">
+        <div className="px-6 space-y-4 pb-4">
+          {/* HERO */}
+          <div className="rounded-2xl bg-surface border border-border p-4">
+            <div className="flex items-center gap-2 mb-3">
+              {isScheduled ? (
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-gold/10 text-gold px-2.5 py-1 text-[11px] font-semibold">
+                  <CalendarDays className="h-3.5 w-3.5" />
+                  {scheduledAt
+                    ? scheduledAt.toLocaleString([], { dateStyle: "medium", timeStyle: "short" })
+                    : t("minyan.scheduled")}
+                </span>
+              ) : (
+                <LiveBadge>{whenLabel}</LiveBadge>
+              )}
+            </div>
+            <div className="flex items-end justify-between">
+              <div className="text-3xl font-semibold tracking-tight leading-none">
+                {present}
+                <span className="text-muted-foreground text-xl">/{NEEDED}</span>
+              </div>
+              <div className="text-sm font-medium text-muted-foreground">
+                {complete ? t("minyan.complete") : t("minyan.missing", { count: missing })}
+              </div>
+            </div>
+            <div className="h-2 rounded-full bg-muted overflow-hidden mt-3">
+              <div
+                className={`h-full rounded-full ${complete ? "bg-success" : "gold-gradient"}`}
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+          </div>
 
-      <div className="px-6 mt-4">
-        <div className="flex items-center gap-2 flex-wrap">
-          <StatusPill tone={complete ? "success" : "urgent"}>
-            {complete ? t("minyan.complete") : t("minyan.missing", { count: missing })}
-          </StatusPill>
-          <StatusPill tone="gold">{minyan.nusach ?? t("minyan.nusachAny")}</StatusPill>
-          <StatusPill>{t(`ctx.${minyan.type}` as const, { defaultValue: minyan.type })}</StatusPill>
+          {/* INFO LIST */}
+          <div className="rounded-2xl bg-surface border border-border overflow-hidden">
+            {isScheduled ? (
+              <Row
+                icon={CalendarDays}
+                label={t("minyan.startsAt")}
+                value={
+                  scheduledAt
+                    ? scheduledAt.toLocaleString([], { dateStyle: "full", timeStyle: "short" })
+                    : "—"
+                }
+              />
+            ) : (
+              <Row
+                icon={Clock}
+                label={t("minyan.startsAt")}
+                value={
+                  startsAt && minyan.scheduled_at
+                    ? startsAt.toLocaleString([], { dateStyle: "short", timeStyle: "short" })
+                    : t("home.liveNow")
+                }
+              />
+            )}
+            <Row icon={MapPin} label={t("minyan.location")} value={minyan.address ?? "—"} />
+            <Row icon={Users} label={t("minyan.organizer")} value={orgName} />
+            <Row
+              icon={ScrollText}
+              label={t("minyan.nusach")}
+              value={minyan.nusach ?? t("minyan.nusachAny")}
+              isLast={isScheduled}
+            />
+            {!isScheduled && expiresAt && (
+              <Row
+                icon={Timer}
+                label={t("minyan.autoCloses")}
+                value={`${Math.max(0, Math.round((expiresAt.getTime() - Date.now()) / 60000))} min`}
+                isLast
+              />
+            )}
+          </div>
+
+          {/* MESSAGE */}
+          {minyan.message && (
+            <div className="rounded-2xl bg-gold-soft/40 border border-gold/20 p-4">
+              <p className="text-sm italic text-foreground/80 leading-relaxed">
+                "{minyan.message}"
+              </p>
+            </div>
+          )}
         </div>
       </div>
 
-      <div className="mx-6 mt-4 rounded-2xl bg-surface border border-border p-4 shadow-soft">
-        <div className="flex items-center justify-between mb-2">
-          <div className="font-display text-xl"><span>{present}</span>/{NEEDED}</div>
-          <div className="text-xs text-muted-foreground">{complete ? t("minyan.complete") : t("minyan.almostReady")}</div>
-        </div>
-        <div className="h-2 rounded-full bg-muted overflow-hidden">
-          <div className={`h-full ${complete ? "bg-success" : "gold-gradient"}`} style={{ width: `${progress}%` }} />
-        </div>
-        {minyan.message && (
-          <p className="text-xs italic text-muted-foreground mt-3">"{minyan.message}"</p>
-        )}
-      </div>
-
-      <div className="mx-6 mt-4 rounded-2xl bg-surface border border-border p-4 flex items-center gap-3">
-        <div className="h-11 w-11 rounded-2xl bg-navy text-white flex items-center justify-center font-bold">{orgInitial}</div>
-        <div className="flex-1">
-          <div className="text-sm font-semibold">{orgName} · {t("minyan.organizer")}</div>
-        </div>
-        <Check className="h-5 w-5 text-success" />
-      </div>
-
-      <div className="mx-6 mt-4 rounded-2xl bg-surface border border-border divide-y divide-border">
-        <Row icon={Clock} label={t("minyan.startsAt")} value={startsAt ? startsAt.toLocaleString([], { dateStyle: "short", timeStyle: "short" }) : t("home.liveNow")} />
-        <Row icon={MapPin} label={t("minyan.location")} value={minyan.address ?? "—"} />
-        <Row icon={Users} label={t("minyan.type")} value={t(`ctx.${minyan.type}` as const, { defaultValue: minyan.type })} />
-        {expiresAt && (
-          <Row icon={Clock} label={t("minyan.expiresAt", { when: expiresAt.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) })} value={`${Math.max(0, Math.round((expiresAt.getTime() - Date.now()) / 60000))} min`} />
-        )}
-      </div>
-
-      <div className="px-6 pt-5 pb-2 space-y-2">
+      {/* STICKY FOOTER */}
+      <div className="px-6 pt-3 pb-2 space-y-2 border-t border-border/60 bg-background/95 backdrop-blur">
         {joined ? (
           <button
             disabled={busy}
             onClick={handleLeave}
-            className="w-full bg-surface border border-urgent text-urgent font-semibold py-4 rounded-2xl flex items-center justify-center gap-2"
+            className="w-full bg-urgent/5 border border-urgent/40 text-urgent font-semibold py-4 rounded-2xl flex items-center justify-center gap-2 active:scale-[0.99] transition-transform"
           >
             <X className="h-5 w-5" /> {t("minyan.cancel")}
           </button>
@@ -252,7 +384,7 @@ function Details() {
           <button
             disabled={busy || !user || isOrganizer}
             onClick={handleJoin}
-            className="w-full gold-gradient text-gold-foreground font-semibold py-4 rounded-2xl shadow-glow-gold flex items-center justify-center gap-2 disabled:opacity-60"
+            className="w-full gold-gradient text-gold-foreground font-semibold py-4 rounded-2xl shadow-glow-gold flex items-center justify-center gap-2 disabled:opacity-60 active:scale-[0.99] transition-transform"
           >
             <Check className="h-5 w-5" /> {isOrganizer ? t("minyan.you") : t("minyan.imComing")}
           </button>
@@ -260,50 +392,67 @@ function Details() {
         <div className="grid grid-cols-2 gap-2">
           <button
             onClick={handleDirections}
-            className="bg-surface border border-border font-medium py-3 rounded-2xl text-sm flex items-center justify-center gap-2 hover:border-gold/60"
+            className="bg-surface border border-border font-medium py-3 rounded-2xl text-sm flex items-center justify-center gap-2 hover:border-gold/60 active:scale-[0.99] transition-transform"
           >
-            <Navigation2 className="h-4 w-4 text-gold" /> {t("common.directions")}
+            <Navigation2 className="h-4 w-4 text-gold shrink-0" /> {t("common.directions")}
           </button>
           <button
             onClick={handleOpenChat}
             disabled={!joined && !isOrganizer}
-            className="bg-navy text-white font-semibold py-3 rounded-2xl text-sm flex items-center justify-center gap-2 disabled:opacity-50"
+            className="bg-surface border border-border font-medium py-3 rounded-2xl text-sm flex items-center justify-center gap-2 hover:border-gold/60 active:scale-[0.99] transition-transform disabled:bg-muted/60 disabled:border-border/80 disabled:text-muted-foreground disabled:hover:border-border/80 disabled:cursor-not-allowed"
           >
-            <MessageCircle className="h-4 w-4" /> Group chat
+            <MessageCircle className="h-4 w-4 shrink-0" /> {t("minyan.groupChat")}
           </button>
         </div>
 
-        {isOrganizer && (!minyan.scheduled_at || (new Date(minyan.scheduled_at).getTime() - Date.now()) > 20 * 60_000) && (
-          <button
-            disabled={busy}
-            onClick={handleCancelMinyan}
-            className="w-full mt-2 bg-surface border border-urgent text-urgent font-semibold py-3 rounded-2xl text-sm flex items-center justify-center gap-2"
-          >
-            <X className="h-4 w-4" /> {t("minyan.cancelMinyan")}
-          </button>
+        {canCancel && (
+          <div className="pt-1 text-center">
+            <p className="text-[11px] text-muted-foreground mb-1.5">
+              {t("minyan.cancelMinyanHint")}
+            </p>
+            <button
+              disabled={busy}
+              onClick={handleCancelMinyan}
+              className="text-destructive/80 text-[13px] font-medium py-2 px-3 active:opacity-60 transition-opacity disabled:opacity-40"
+            >
+              {t("minyan.cancelMinyan")}
+            </button>
+          </div>
         )}
-        {isOrganizer && minyan.scheduled_at && (new Date(minyan.scheduled_at).getTime() - Date.now()) <= 20 * 60_000 && (
-          <p className="mt-2 text-[11px] text-center text-muted-foreground">
+        {cancelWindowClosed && (
+          <p className="text-[11px] text-center text-muted-foreground">
             {t("minyan.cancelWindowClosed")}
           </p>
         )}
       </div>
 
-      {/* keep Link import used for type safety / future use */}
       <Link to="/home" className="hidden" aria-hidden />
     </MobileFrame>
   );
 }
 
-function Row({ icon: Icon, label, value }: any) {
+function Row({
+  icon: Icon,
+  label,
+  value,
+  isLast,
+}: {
+  icon: typeof MapPin;
+  label: string;
+  value: string;
+  isLast?: boolean;
+}) {
   return (
-    <div className="p-4 flex items-center gap-3">
-      <Icon className="h-4 w-4 text-muted-foreground" />
-      <div className="flex-1">
+    <div
+      className={`px-4 py-3.5 flex items-center gap-3 ${!isLast ? "border-b border-border/60" : ""}`}
+    >
+      <div className="h-9 w-9 rounded-full bg-muted flex items-center justify-center shrink-0">
+        <Icon className="h-[18px] w-[18px] text-muted-foreground" />
+      </div>
+      <div className="min-w-0 flex-1">
         <div className="text-[11px] uppercase tracking-wider text-muted-foreground">{label}</div>
-        <div className="text-sm">{value}</div>
+        <div className="text-[15px] text-foreground leading-snug">{value}</div>
       </div>
     </div>
   );
 }
-

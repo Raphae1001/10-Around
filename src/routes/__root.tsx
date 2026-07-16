@@ -14,6 +14,10 @@ import { Toaster } from "@/components/ui/sonner";
 import { ConfirmationPrompt } from "@/components/ConfirmationPrompt";
 import "@/i18n";
 import { applySavedLang } from "@/i18n";
+import { initTheme } from "@/hooks/use-theme";
+
+// Apply saved theme synchronously before first paint to avoid flash
+if (typeof window !== "undefined") initTheme();
 
 function NotFoundComponent() {
   return (
@@ -101,14 +105,25 @@ const rootRouteOptions: Parameters<
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "MinyanNow — Start a minyan, anywhere, right now" },
-      { name: "description", content: "Create or join a minyan right where you stand — street, airport, hotel, anywhere in the world." },
+      {
+        name: "description",
+        content:
+          "Create or join a minyan right where you stand — street, airport, hotel, anywhere in the world.",
+      },
       { name: "author", content: "MinyanNow" },
       { property: "og:title", content: "MinyanNow — Start a minyan, anywhere, right now" },
-      { property: "og:description", content: "Create or join a minyan right where you stand — street, airport, hotel, anywhere in the world." },
+      {
+        property: "og:description",
+        content:
+          "Create or join a minyan right where you stand — street, airport, hotel, anywhere in the world.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:title", content: "MinyanNow" },
-      { name: "twitter:description", content: "Start a minyan right where you stand — in under 10 seconds." },
+      {
+        name: "twitter:description",
+        content: "Start a minyan right where you stand — in under 10 seconds.",
+      },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
@@ -133,9 +148,7 @@ if (!IS_CAPACITOR_RUNTIME) {
   rootRouteOptions.shellComponent = RootShell;
 }
 
-export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
-  rootRouteOptions,
-);
+export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(rootRouteOptions);
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
@@ -154,7 +167,9 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
-  useEffect(() => { applySavedLang(); }, []);
+  useEffect(() => {
+    applySavedLang();
+  }, []);
   useEffect(() => {
     // Fire-and-forget analytics page_view on every route change. No-ops
     // when analytics is disabled or not configured. Lazy-imported so the
@@ -168,7 +183,10 @@ function RootComponent() {
         pageView(router.state.location.pathname);
       });
     });
-    return () => { cancelled = true; unsub?.(); };
+    return () => {
+      cancelled = true;
+      unsub?.();
+    };
   }, [router]);
 
   return (

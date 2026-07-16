@@ -15,13 +15,15 @@ export function EmptyState({
 }) {
   return (
     <div className="flex flex-col items-center justify-center text-center gap-3 py-10">
-      <div className="h-14 w-14 rounded-2xl bg-gold-soft text-gold-foreground flex items-center justify-center">
+      <div className="h-14 w-14 rounded-2xl bg-gold-soft text-gold-foreground dark:bg-gold/20 dark:text-gold flex items-center justify-center">
         <Icon className="h-7 w-7" />
       </div>
       <div className="space-y-1">
         <h3 className="font-display text-base text-foreground">{title}</h3>
         {description && (
-          <p className="text-sm text-muted-foreground max-w-[260px] mx-auto leading-snug">{description}</p>
+          <p className="text-sm text-muted-foreground max-w-[260px] mx-auto leading-snug">
+            {description}
+          </p>
         )}
       </div>
       {action}
@@ -89,7 +91,9 @@ export function StatusPill({
     sky: "bg-accent text-accent-foreground",
   };
   return (
-    <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold ${tones[tone]}`}>
+    <span
+      className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold ${tones[tone]}`}
+    >
       {children}
     </span>
   );
@@ -121,7 +125,9 @@ export function MinyanCard({ m, compact = false }: { m: Minyan; compact?: boolea
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <StatusPill tone={isConfirmed ? "success" : m.urgency === "kaddish" ? "urgent" : "gold"}>
+            <StatusPill
+              tone={isConfirmed ? "success" : m.urgency === "kaddish" ? "urgent" : "gold"}
+            >
               {m.type}
             </StatusPill>
             {m.urgency === "kaddish" && <LiveBadge>Kaddish</LiveBadge>}
@@ -134,7 +140,10 @@ export function MinyanCard({ m, compact = false }: { m: Minyan; compact?: boolea
         </div>
         <div className="text-right shrink-0">
           <div className="text-[10px] uppercase tracking-wider text-muted-foreground">in</div>
-          <div className="font-display text-2xl leading-none">{m.inMin}<span className="text-xs text-muted-foreground ml-0.5">m</span></div>
+          <div className="font-display text-2xl leading-none">
+            {m.inMin}
+            <span className="text-xs text-muted-foreground ml-0.5">m</span>
+          </div>
         </div>
       </div>
 
@@ -143,7 +152,9 @@ export function MinyanCard({ m, compact = false }: { m: Minyan; compact?: boolea
           <div className="mt-3 flex items-center justify-between text-xs">
             <span className="flex items-center gap-2 text-muted-foreground">
               <Users className="h-3.5 w-3.5" />
-              <span className="text-sm text-foreground font-bold count-up">{m.confirmed} présents</span>
+              <span className="text-sm text-foreground font-bold count-up">
+                {m.confirmed} présents
+              </span>
               <span>/ {m.needed}</span>
               {missing > 0 ? (
                 <span className="ml-1 text-urgent font-medium">· {missing} manquent</span>

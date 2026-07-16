@@ -11,7 +11,8 @@ npm run cap:ios
 ```
 
 In Xcode:
-1. Select target **App** → Signing & Capabilities → set Team, verify Bundle ID `com.minyannow.app`
+
+1. Select target **App** → Signing & Capabilities → set Team, verify Bundle ID `com.raphaelkalfon.minyannow`
 2. Add capability: **Push Notifications** (anonymous auth — no Sign in with Apple required)
 3. `Info.plist` already includes location usage string (see `IOS_READINESS.md`)
 4. Top bar → device selector → **Any iOS Device (arm64)**
@@ -21,6 +22,7 @@ In Xcode:
 ### 2. Upload to App Store Connect
 
 In Organizer:
+
 1. Select the new archive → **Distribute App**
 2. Choose **App Store Connect** → **Upload**
 3. Automatic signing, include bitcode = NO (no longer supported), upload symbols = YES
@@ -65,6 +67,7 @@ bunx cap open android
 ```
 
 In Android Studio:
+
 1. Build → Generate Signed Bundle / APK → Android App Bundle
 2. Create or select a keystore (back it up — Play Store apps cannot rotate keystore without Play App Signing migration)
 3. Variant: `release`

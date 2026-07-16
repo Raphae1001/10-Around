@@ -6,7 +6,7 @@
     ],
     "target": {
       "namespace": "android_app",
-      "package_name": "com.minyannow.app",
+      "package_name": "com.raphaelkalfon.minyannow",
       "sha256_cert_fingerprints": [
         "REPLACE_WITH_UPLOAD_KEY_SHA256",
         "REPLACE_WITH_PLAY_APP_SIGNING_SHA256"

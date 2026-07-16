@@ -4,7 +4,7 @@ import type { CapacitorConfig } from "@capacitor/cli";
 // We do NOT set server.url — that would make the app a website wrapper and
 // Apple rejects those under guideline 4.2.
 const config: CapacitorConfig = {
-  appId: "com.minyannow.app",
+  appId: "com.raphaelkalfon.minyannow",
   appName: "MinyanNow",
   // SPA build for Capacitor lives in `dist-mobile/` (see vite.mobile.config.ts
   // and `npm run build:mobile`). The default `dist/` is the SSR/Nitro output

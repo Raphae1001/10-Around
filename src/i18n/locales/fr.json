@@ -1,11 +1,30 @@
 {
-  "nav": { "home": "Accueil", "map": "Carte", "create": "Créer", "profile": "Profil" },
+  "nav": {
+    "home": "Accueil",
+    "map": "Carte",
+    "planned": "Planifié",
+    "create": "Créer",
+    "profile": "Profil"
+  },
   "common": {
-    "back": "Retour", "cancel": "Annuler", "save": "Enregistrer", "loading": "Chargement…",
-    "retry": "Réessayer", "signOut": "Se déconnecter", "settings": "Paramètres",
-    "directions": "Itinéraire", "later": "Plus tard", "search": "Rechercher…",
-    "skip": "Passer", "continue": "Continuer", "yes": "Oui", "no": "Non",
-    "open": "Ouvert", "join": "Rejoindre", "go": "Y aller", "live": "LIVE"
+    "back": "Retour",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "loading": "Chargement…",
+    "retry": "Réessayer",
+    "signOut": "Se déconnecter",
+    "settings": "Paramètres",
+    "directions": "Itinéraire",
+    "later": "Plus tard",
+    "search": "Rechercher…",
+    "skip": "Passer",
+    "continue": "Continuer",
+    "yes": "Oui",
+    "no": "Non",
+    "open": "Ouvert",
+    "join": "Rejoindre",
+    "go": "Y aller",
+    "live": "LIVE"
   },
   "auth": {
     "welcome": "Bienvenue sur",
@@ -23,11 +42,44 @@
     "signInFailed": "Échec de la connexion",
     "authFailed": "Authentification échouée",
     "terms": "En continuant, tu acceptes nos CGU et notre politique de confidentialité.",
-    "locationNote": "Nous partageons ta position uniquement quand tu le choisis."
+    "locationNote": "Nous partageons ta position uniquement quand tu le choisis.",
+    "acceptTerms": "J'accepte les <terms>Conditions d'utilisation</terms> et la <privacy>Politique de confidentialité</privacy>",
+    "legal": {
+      "termsTitle": "Conditions d'utilisation",
+      "termsUpdated": "Dernière mise à jour : juillet 2026",
+      "privacyTitle": "Politique de confidentialité"
+    },
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "firstNamePlaceholder": "ex. David",
+    "lastNamePlaceholder": "ex. Cohen",
+    "notificationsPrimer": {
+      "title": "Activer les notifications",
+      "body": "Reçois une alerte quand un minyan est proche ou a besoin d'une personne de plus.",
+      "allow": "Activer"
+    }
   },
+
   "home": {
     "subtitleWithGps": "En direct dans un rayon d'1 km",
     "subtitleNoGps": "Active la géoloc pour voir les minyanim autour",
+    "createFab": "Lancer un minyan ici",
+    "locationPrimer": {
+      "title": "Voir qui prie autour de toi",
+      "body": "MinyanNow utilise ta position pour afficher la présence communautaire autour de toi et t'aider à lancer un minyan là où tu es.",
+      "privacy": "Ta position exacte n'est jamais stockée — seulement une zone floutée (~1 km) pour le comptage.",
+      "allow": "Autoriser la localisation",
+      "later": "Pas maintenant"
+    },
+    "presence": {
+      "count_one": "{{count}} membre actif autour de toi",
+      "count_other": "{{count}} membres actifs autour de toi",
+      "updated": "actualisé {{time}}",
+      "emptyTitle": "Sois le premier à prier ici",
+      "emptySubtitle": "Personne autour pour l'instant — lance un minyan",
+      "openList": "Voir les minyanim proches"
+    },
+    "recenter": "Recentrer sur moi",
     "tapGps": "Toucher pour activer le GPS",
     "refresh": "actualiser",
     "startSection": "Lancer un minyan — où es-tu ?",
@@ -38,7 +90,7 @@
     "joinHint": "Minyanim GPS dans 1 km · plus tous les planifiés (Autres / Voyage)",
     "live": "live",
     "enableLocation": "Active la géoloc pour découvrir les minyanim autour.",
-    "noneNearby": "Aucun minyan autour de toi pour l'instant. Sois le premier — touche \"Lancer un minyan\" ci-dessus.",
+    "noneNearby": "Aucun minyan proche pour l'instant — sois le premier à en lancer un.",
     "youreIn": "Tu es inscrit !",
     "willYouShow": "Tu vas vraiment venir ?",
     "commitText": "Tu t'engages à {{prayer}} à {{address}}. Les autres comptent sur toi.",
@@ -53,6 +105,93 @@
     "complete": "minyan complet",
     "liveNow": "en cours"
   },
+  "planned": {
+    "title": "Planifié",
+    "subtitle": "Minyanim planifiés et séjours à l'étranger",
+    "scheduledSection": "Minyanim planifiés",
+    "staySection": "Séjours à l'étranger",
+    "addScheduled": "Planifier",
+    "addStay": "Séjour",
+    "emptyScheduled": "Aucun minyan planifié pour l'instant.",
+    "emptyStay": "Aucun séjour signalé pour l'instant.",
+    "dateRange": "{{start}} – {{end}}"
+  },
+  "chats": {
+    "title": "Chats",
+    "subtitle": "Fils de minyan et groupes de voyage",
+    "tripsSection": "Séjours à l'étranger",
+    "minyanSection": "Chats de minyan",
+    "minyanChat": "Chat du minyan",
+    "peerCount_one": "{{count}} personne",
+    "peerCount_other": "{{count}} personnes",
+    "noMessages": "Aucun message pour l'instant",
+    "emptyTitle": "Aucun chat pour l'instant",
+    "emptyDesc": "Rejoins un minyan ou signale un séjour pour te coordonner.",
+    "emptyCta": "Voir Planifié",
+    "chat": "Chat",
+    "travelersGroup": "Groupe voyageurs",
+    "minyanGroup": "Groupe minyan",
+    "writePh": "Écrire un message…",
+    "send": "Envoyer",
+    "sendError": "Envoi impossible",
+    "someone": "Quelqu'un",
+    "firstMessageTitle": "Sois le premier à écrire",
+    "firstMessageDesc": "Coordonnez-vous discrètement — tips, horaires ou point de rendez-vous.",
+    "report": "Signaler le message",
+    "reportTitle": "Signaler ce message ?",
+    "reportBody": "Nous l’examinerons et agirons s’il enfreint les règles de la communauté. L’auteur ne saura pas que tu l’as signalé.",
+    "reportConfirm": "Signaler",
+    "reportThanks": "Merci — nous examinerons ça rapidement.",
+    "reportError": "Impossible d’envoyer le signalement"
+  },
+  "createScheduled": {
+    "title": "Planifier un minyan",
+    "subtitle": "Choisis une date, une heure et un lieu précis",
+    "whereTitle": "Où aura-t-il lieu ?",
+    "addressPh": "Rechercher une adresse (synagogue, salle, hôtel…)",
+    "addressHint": "Saisis un lieu et choisis-le dans les suggestions pour verrouiller l'emplacement exact.",
+    "whenTitle": "Quand ?",
+    "date": "Date",
+    "time": "Heure",
+    "publish": "Publier le minyan planifié",
+    "publishHint": "Il apparaîtra dans la section Planifié, pas sur la carte en direct.",
+    "previewNoDate": "Choisis une date et une heure",
+    "previewNoAddress": "Choisis un lieu",
+    "published": "Minyan planifié publié !",
+    "errNoAddress": "Choisis un lieu dans les suggestions.",
+    "errNoDate": "Choisis une date et une heure.",
+    "errPast": "Choisis un horaire dans le futur.",
+    "errPublish": "Publication impossible"
+  },
+  "createStay": {
+    "title": "Signaler un séjour à l'étranger",
+    "subtitle": "Partage tes dates pour te coordonner avec les autres",
+    "whereTitle": "Quelle ville ?",
+    "cityPh": "Rechercher une ville (Monaco, Herzliya…)",
+    "cityHint": "Choisis une ville dans les suggestions — pas une adresse précise.",
+    "whenTitle": "Quand seras-tu sur place ?",
+    "notePh": "Note optionnelle (ex. cherche un minyan vendredi soir)",
+    "addMinyan": "Planifier aussi un minyan pendant le séjour",
+    "addMinyanHint": "Crée un minyan planifié séparé dans la section Planifié.",
+    "publish": "Publier le séjour",
+    "publishHint": "Visible dans Planifié et le chat de ville.",
+    "published": "Séjour publié !",
+    "errNoCity": "Choisis une ville dans les suggestions.",
+    "errNoDates": "Choisis les dates de début et de fin.",
+    "errDateOrder": "La date de fin doit être après la date de début.",
+    "errMinyanInRange": "La date du minyan doit être pendant ton séjour.",
+    "errPublish": "Impossible de publier le séjour"
+  },
+  "time": {
+    "justNow": "à l'instant",
+    "minAgo_one": "il y a {{count}} min",
+    "minAgo_other": "il y a {{count}} min",
+    "hourAgo_one": "il y a {{count}} h",
+    "hourAgo_other": "il y a {{count}} h",
+    "dayAgo_one": "il y a {{count}} j",
+    "dayAgo_other": "il y a {{count}} j",
+    "unknown": "—"
+  },
   "ctx": { "Street": "Rue", "Airport": "Aéroport", "Hotel": "Autres", "Travel": "Étranger" },
   "prayer": { "shacharit": "Chaharit", "mincha": "Minha", "maariv": "Arvit" },
   "create": {
@@ -63,8 +202,9 @@
     "ctxAirport": "À l'aéroport avant mon vol",
     "ctxHotel": "Hôtel, synagogue, appartement… n'importe quel lieu planifié",
     "ctxTravel": "Pour un futur voyage",
-    "gpsDetected": "GPS détecté",
+    "gpsDetected": "GPS",
     "dropPin": "Pose un repère sur ta position exacte",
+    "locationFromGps": "Adresse remplie depuis ta position — tu peux la modifier.",
     "streetPh": "Rue, coin, repère…",
     "airportPh": "Aéroport (ex : JFK, CDG)",
     "gatePh": "Terminal / Porte (ex : T2 · B14)",
@@ -72,7 +212,8 @@
     "venuePh": "Lieu (hôtel, shul, appt…)",
     "spotPh": "Spot exact (Lobby, chambre 412, 3e étage…)",
     "destPh": "Ville de destination",
-    "from": "Du", "to": "Au",
+    "from": "Du",
+    "to": "Au",
     "schedule": "Planifier le minyan (date & heure)",
     "scheduleHint": "Les voyageurs peuvent planifier à l'avance — choisis l'heure de début.",
     "whichPrayer": "Quelle prière ?",
@@ -96,8 +237,17 @@
     "previewScheduled": "Minyan planifié",
     "previewScheduledHint": "les voyageurs le verront à l'avance.",
     "minyanReady": "minyan prêt — rejoins-nous aussi",
-    "less": "Moins", "more": "Plus",
-    "morning": "Matin", "afternoon": "Après-midi", "evening": "Soir", "custom": "Personnalisé",
+    "here": "présents",
+    "missing": "{{count}} manquant(s)",
+    "published": "Minyan publié !",
+    "errPublish": "Publication impossible",
+    "repeatLast": "Répéter mon dernier minyan",
+    "less": "Moins",
+    "more": "Plus",
+    "morning": "Matin",
+    "afternoon": "Après-midi",
+    "evening": "Soir",
+    "custom": "Personnalisé",
     "now": "Maintenant"
   },
   "onboarding": {
@@ -138,19 +288,37 @@
     "badgeTraveler": "Voyageur",
     "badgeTravelerSub": "12 villes",
     "badgeTrusted": "Fiable",
-    "badgeTrustedSub": "98% de présence"
+    "badgeTrustedSub": "98% de présence",
+    "badgeMakerProgress": "{{count}} complétés",
+    "badgeTravelerProgress": "{{count}} minyanim",
+    "shortcuts": "Raccourcis",
+    "editProfile": "Modifier le profil",
+    "groupChats": "Chats de groupe",
+    "groupChatsSub": "Fils de minyan et chats de ville",
+    "resetDevice": "Réinitialiser cet appareil",
+    "resetDeviceHint": "Efface le profil local pour qu'une autre personne puisse repartir de zéro sur cet appareil.",
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "nameRequired": "Le prénom et le nom sont requis",
+    "nameSaveError": "Impossible d'enregistrer le nom"
   },
   "notifications": {
     "title": "Alertes",
     "subtitle": "Intelligent, en temps réel",
-    "filters": { "all": "Tout", "urgent": "Urgent", "kaddish": "Kaddish", "confirmed": "Confirmé", "nearby": "Près d'ici" },
+    "filters": {
+      "all": "Tout",
+      "urgent": "Urgent",
+      "kaddish": "Kaddish",
+      "confirmed": "Confirmé",
+      "nearby": "Près d'ici"
+    },
     "snooze": "Reporter",
     "requestKaddish": "Demander un minyan pour Kaddish",
     "requestKaddishSub": "Pour yahrzeit, shloshim ou shiva",
     "open": "Ouvert",
     "items": {
       "missing1Title": "Il ne manque qu'1 personne",
-      "missing1Body": "Minha chez Aaron · 4 min à pied · démarre dans 12 min",
+      "missing1Body": "Minha près de chez toi · 4 min à pied · démarre dans 12 min",
       "missing1Cta": "J'arrive",
       "missing1Time": "maintenant",
       "kaddishTitle": "Demande de Kaddish près de toi",
@@ -194,7 +362,7 @@
     "oneMoreNeeded": "Plus qu'un…",
     "communityFormed": "Une communauté vient de se former.",
     "almostThere": "Presque.",
-    "confirmedBody": "Minha chez Aaron est prête. Le Kaddish sera dit en ton honneur aujourd'hui.",
+    "confirmedBody": "Ta Minha est prête. Le Kaddish sera dit en ton honneur aujourd'hui.",
     "almostBody": "On prévient les membres autour. Tu sauras dès que c'est confirmé.",
     "walking": "{{count}} participants en route · ETA 4 min",
     "openSiddur": "Ouvrir le Siddour · Minha",
@@ -225,9 +393,12 @@
     "pickDates": "Choisis des dates valides",
     "jewsPlanning": "{{count}} juifs prévoient le voyage",
     "tripVisibility": "Visibilité du voyage",
-    "everyone": "Tous", "everyoneHint": "Tous les membres",
-    "minyanOnly": "Minyan uniquement", "minyanOnlyHint": "Participants",
-    "private": "Privé", "privateHint": "Moi seul",
+    "everyone": "Tous",
+    "everyoneHint": "Tous les membres",
+    "minyanOnly": "Minyan uniquement",
+    "minyanOnlyHint": "Participants",
+    "private": "Privé",
+    "privateHint": "Moi seul",
     "saveTrip": "Sauver & trouver des minyanim",
     "tripSaved": "Voyage sauvegardé · mise à jour live",
     "tripSavedToast": "Voyage à {{city}} enregistré",
@@ -256,9 +427,15 @@
     "mode": "Mode voyageur",
     "tripIn": "{{city}} · dans 14h",
     "departs": "départ {{time}}",
-    "stats": { "minyanim": "Minyanim {{city}}", "atAirport": "À l'aéroport", "hotelWalk": "À pied de l'hôtel" },
+    "stats": {
+      "minyanim": "Minyanim {{city}}",
+      "atAirport": "À l'aéroport",
+      "hotelWalk": "À pied de l'hôtel"
+    },
     "builtForTrip": "Conçu pour ton voyage",
-    "flight": "Vol", "hotel": "Hôtel", "business": "Pro",
+    "flight": "Vol",
+    "hotel": "Hôtel",
+    "business": "Pro",
     "flightCta": "✈ Entre ton numéro de vol — trouve les Juifs à bord",
     "alongRoute": "Sur ta route",
     "cities": "{{count}} villes",
@@ -284,7 +461,7 @@
     "onBoard": "{{count}} à bord"
   },
   "minyan": {
-    "title": "Minyan chez Aaron",
+    "title": "Minyan",
     "subtitle": "Minha · dans 12 min",
     "missing1": "Manque 1",
     "nusachAri": "Nusach Ari",
@@ -299,14 +476,23 @@
     "type": "Type",
     "typeValue": "Ouvert · tous bienvenus · tefillin dispo",
     "imComing": "J'arrive",
-    "whatsapp": "WhatsApp"
+    "whatsapp": "WhatsApp",
+    "share": "Partager",
+    "nusach": "Nusach",
+    "groupChat": "Chat de groupe",
+    "autoCloses": "Se ferme dans",
+    "scheduled": "Planifié",
+    "chatJoinFirst": "Rejoins d'abord le minyan pour accéder au chat de groupe.",
+    "cancelMinyanHint": "Annule le minyan pour tout le monde — irréversible."
   },
   "kaddish": {
     "title": "Demander un minyan pour Kaddish",
     "subtitle": "Ta communauté se mobilisera discrètement. Les Juifs autour seront gentiment sollicités pour compléter un minyan en ton honneur.",
     "forWhom": "Pour qui",
-    "when": "Quand", "whenVal": "Minha · aujourd'hui",
-    "where": "Où", "whereVal": "Ici · 800 m",
+    "when": "Quand",
+    "whenVal": "Minha · aujourd'hui",
+    "where": "Où",
+    "whereVal": "Ici · 800 m",
     "personalNote": "Note personnelle (optionnel)",
     "notePh": "Shloshim · avec toute ma gratitude",
     "urgent": "DISCRET URGENT",
@@ -327,7 +513,7 @@
   "siddur": {
     "kicker": "Siddour contextuel",
     "header": "Minha · Nusach Ari",
-    "synced": "Synchronisé avec chez Aaron",
+    "synced": "Synchronisé avec ton minyan",
     "syncedSub": "10/10 confirmés · commencé il y a 2 min",
     "textSize": "Taille du texte",
     "transliteration": "Translittération"
@@ -354,10 +540,16 @@
     "score": "Score de confiance",
     "topPercent": "Membre de confiance",
     "noScoreYet": "Pas encore de note — rejoins ton premier minyan",
-    "showRate": "Taux de présence", "showRateSub": "Présent à l'heure",
-    "consistency": "Régularité", "consistencyVal": "—", "consistencySub": "Jours consécutifs de présence",
-    "identity": "Identité vérifiée", "identityVal": "Connecté", "identitySub": "Lié à ton compte",
-    "ratings": "Évaluations communauté", "ratingsSub": "Moyenne des notes des organisateurs",
+    "showRate": "Taux de présence",
+    "showRateSub": "Présent à l'heure",
+    "consistency": "Régularité",
+    "consistencyVal": "—",
+    "consistencySub": "Jours consécutifs de présence",
+    "identity": "Identité vérifiée",
+    "identityVal": "Connecté",
+    "identitySub": "Lié à ton compte",
+    "ratings": "Évaluations communauté",
+    "ratingsSub": "Moyenne des notes des organisateurs",
     "howWorks": "Comment la confiance fonctionne",
     "howWorksBody": "La confiance se construit discrètement — en venant quand tu dis que tu viendras, en aidant à compléter les minyanim, en étant vérifié par ceux qui te connaissent. Jamais d'humiliation publique, juste une reconnaissance silencieuse.",
     "noBelow": "Aucun score sous 4,0",
@@ -413,7 +605,27 @@
     "largerText": "Texte plus grand",
     "highContrast": "Contraste élevé",
     "reduceMotion": "Réduire les animations",
-    "chooseLanguage": "Choisis ta langue"
+    "chooseLanguage": "Choisis ta langue",
+    "presence": "Présence communautaire",
+    "presenceOff": "Désactivée",
+    "presenceOffDesc": "Ne pas me compter sur la carte communautaire",
+    "presencePonctual": "Ponctuelle",
+    "presencePonctualDesc": "Compté quand je me déplace (~200 m)",
+    "presenceActive": "App ouverte",
+    "presenceActiveDesc": "Compté tant que l'app est au premier plan",
+    "presenceFootnote": "Ta position exacte n'est jamais stockée — seule une zone floutée (~1 km) pour le comptage.",
+    "presenceSaved": "Préférence de présence enregistrée",
+    "notifComingSoon": "L'envoi des notifications push arrive dans une prochaine mise à jour. Les préférences sont enregistrées localement pour l'instant.",
+    "analytics": "Analytique",
+    "analyticsHelp": "Aider à améliorer MinyanNow",
+    "analyticsDesc": "Statistiques d'usage anonymes. Aucune donnée personnelle.",
+    "privacyPolicy": "Politique de confidentialité",
+    "termsOfService": "Conditions d'utilisation",
+    "support": "Support",
+    "deleteAccount": "Supprimer le compte",
+    "deleteAccountTitle": "Supprimer ton compte ?",
+    "deleteAccountDesc": "Cela supprime définitivement ton profil, tes tokens push, ton historique de participation et ton appartenance aux chats. Tape DELETE pour confirmer.",
+    "deleteForever": "Supprimer définitivement"
   },
   "confirm": {
     "organizerTitle": "Le minyan a-t-il commencé ?",
@@ -429,32 +641,32 @@
   },
   "privacy": {
     "title": "Politique de confidentialité",
-    "updated": "Dernière mise à jour : juin 2026",
-    "intro": "MinyanStreet aide les Juifs à trouver ou lancer un minyan partout dans le monde. Nous prenons ta vie privée très au sérieux.",
+    "updated": "Dernière mise à jour : juillet 2026",
+    "intro": "MinyanNow aide les Juifs à trouver ou lancer un minyan partout dans le monde. Nous prenons ta vie privée très au sérieux.",
     "sections": {
       "data": {
         "title": "Données collectées",
-        "body": "Adresse email (connexion), nom et avatar (optionnel), position approximative (uniquement quand tu choisis de la partager pour un minyan), token de notification, score de confiance et historique de participation."
+        "body": "Nom affiché (et avatar optionnel), identifiant de compte anonyme, zone de présence floutée (~1 km) si tu actives la présence, minyanim créés ou rejoints, messages de chat, historique de confiance, analytics optionnelles, et token push quand les notifications seront activées."
       },
       "use": {
         "title": "Utilisation des données",
-        "body": "Pour t'afficher les minyanim proches, te notifier des demandes urgentes, compter les présents, et maintenir le système de confiance qui fait la fiabilité de la communauté. Nous ne vendons jamais tes données."
+        "body": "Pour t’afficher les minyanim proches, compter les personnes par zones floutées, faire tourner les chats, maintenir la confiance, et (plus tard) te notifier. Nous ne vendons jamais tes données."
       },
       "location": {
         "title": "Localisation",
-        "body": "Ton GPS est utilisé uniquement quand tu ouvres la carte ou lances/rejoins un minyan en direct. Il est partagé avec ce minyan uniquement, jamais diffusé publiquement."
+        "body": "Le GPS sert uniquement quand l’app est ouverte — carte, création sur place, présence optionnelle. Les coordonnées exactes ne sont pas stockées pour la densité : seulement une zone floutée (~1 km). Les pins de minyan que tu publies stockent le lieu de ce minyan."
       },
       "sharing": {
         "title": "Partage des données",
-        "body": "Nous ne partageons aucune donnée personnelle avec des tiers, sauf nos prestataires d'infrastructure essentiels (base de données, notifications push, cartes) agissant pour notre compte sous accords stricts."
+        "body": "Nous ne partageons aucune donnée personnelle avec des tiers, sauf nos prestataires d’infrastructure essentiels (base de données, notifications push, cartes) agissant pour notre compte sous accords stricts."
       },
       "retention": {
         "title": "Conservation & suppression",
-        "body": "Tu peux supprimer ton compte à tout moment depuis les Paramètres. Toutes tes données personnelles et ton historique sont supprimés définitivement sous 30 jours."
+        "body": "Tu peux supprimer ton compte à tout moment depuis les Paramètres. Profil, présence, tokens et historique liés sont retirés. Les minyanim live expirent après leur fenêtre horaire."
       },
       "contact": {
         "title": "Contact",
-        "body": "Une question sur tes données ? Écris à privacy@minyanstreet.app"
+        "body": "Une question sur tes données ? Écris à support@minyannowapp.com"
       }
     }
   }

@@ -370,8 +370,12 @@ async function main() {
     const { rows: userCount } = await pool.query("SELECT count(*)::int AS c FROM auth.users");
     const { rows: idCount } = await pool.query("SELECT count(*)::int AS c FROM auth.identities");
     await pool.end();
-    console.log(`auth.users: ${userCount[0].c} (expected 8) ${userCount[0].c === 8 ? "OK" : "MISMATCH"}`);
-    console.log(`auth.identities: ${idCount[0].c} (expected 2) ${idCount[0].c === 2 ? "OK" : "MISMATCH"}`);
+    console.log(
+      `auth.users: ${userCount[0].c} (expected 8) ${userCount[0].c === 8 ? "OK" : "MISMATCH"}`,
+    );
+    console.log(
+      `auth.identities: ${idCount[0].c} (expected 2) ${idCount[0].c === 2 ? "OK" : "MISMATCH"}`,
+    );
   }
 
   console.log("\nDone.");

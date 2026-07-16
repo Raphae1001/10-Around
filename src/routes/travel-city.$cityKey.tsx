@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate, useParams } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate, useParams, useSearch } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { MobileFrame } from "@/components/MobileFrame";
 import { ScreenHeader } from "@/components/ui-bits";
@@ -7,9 +7,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
 import { shareWhatsApp, appOrigin } from "@/lib/share";
+import { stayCityKey } from "@/lib/stay";
 
 export const Route = createFileRoute("/travel-city/$cityKey")({
   component: TravelCityPage,
+  validateSearch: (search: Record<string, unknown>) => ({
+    from: typeof search.from === "string" ? search.from : undefined,
+    to: typeof search.to === "string" ? search.to : undefined,
+  }),
 });
 
 type Peer = {
@@ -24,14 +29,17 @@ type Peer = {
 
 function TravelCityPage() {
   const { cityKey } = useParams({ from: "/travel-city/$cityKey" });
+  const { from: searchFrom, to: searchTo } = useSearch({ from: "/travel-city/$cityKey" });
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [cityLabel, setCityLabel] = useState<string>("");
   const [myStart, setMyStart] = useState<string | null>(null);
   const [myEnd, setMyEnd] = useState<string | null>(null);
   const [peers, setPeers] = useState<Peer[] | null>(null);
+  const [peerCount, setPeerCount] = useState<number | null>(null);
   const [threadId, setThreadId] = useState<string | null>(null);
   const [registered, setRegistered] = useState(false);
+  const [myStayId, setMyStayId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!authLoading && !user) navigate({ to: "/auth" });
@@ -39,46 +47,82 @@ function TravelCityPage() {
 
   async function load() {
     if (!user) return;
-    const { data: mine } = await supabase
-      .from("travel_presence")
-      .select("city_label,date_start,date_end")
-      .eq("user_id", user.id)
-      .eq("city_key", cityKey)
-      .order("date_start", { ascending: true });
+
+    const { data: stays } = await supabase
+      .from("minyanim")
+      .select("id, address, trip_start_date, trip_end_date")
+      .eq("type", "stay")
+      .eq("creator_id", user.id)
+      .gt("expires_at", new Date().toISOString())
+      .order("trip_start_date", { ascending: true });
+
+    const mine = (stays ?? []).filter((s) => stayCityKey(s.address ?? "") === cityKey);
+
+    const { data: cityStays } = await supabase
+      .from("minyanim")
+      .select("address, trip_start_date, trip_end_date")
+      .eq("type", "stay")
+      .gt("expires_at", new Date().toISOString());
+
+    const inCity = (cityStays ?? []).filter((s) => stayCityKey(s.address ?? "") === cityKey);
 
     let dStart: string;
     let dEnd: string;
-    if (mine && mine.length > 0) {
+    let isRegistered = false;
+    if (mine.length > 0) {
+      isRegistered = true;
       setRegistered(true);
-      setCityLabel(mine[0].city_label);
-      dStart = mine[0].date_start;
-      dEnd = mine[mine.length - 1].date_end;
+      setMyStayId(mine[0].id);
+      setCityLabel(mine[0].address ?? cityKey);
+      dStart = mine[0].trip_start_date!;
+      dEnd = mine[mine.length - 1].trip_end_date!;
     } else {
       setRegistered(false);
-      // wide default window so the page is browseable
-      const today = new Date();
-      const in60 = new Date(today.getTime() + 60 * 86400_000);
-      dStart = today.toISOString().slice(0, 10);
-      dEnd = in60.toISOString().slice(0, 10);
-      // Try to pick a nice label from any presence in this city
-      const { data: any1 } = await supabase
-        .from("travel_presence")
-        .select("city_label")
-        .eq("city_key", cityKey)
-        .limit(1)
-        .maybeSingle();
-      setCityLabel(any1?.city_label ?? cityKey);
+      setMyStayId(null);
+      if (searchFrom && searchTo) {
+        dStart = searchFrom;
+        dEnd = searchTo;
+      } else if (inCity.length > 0) {
+        dStart = inCity.reduce(
+          (min, s) => (s.trip_start_date! < min ? s.trip_start_date! : min),
+          inCity[0].trip_start_date!,
+        );
+        dEnd = inCity.reduce(
+          (max, s) => (s.trip_end_date! > max ? s.trip_end_date! : max),
+          inCity[0].trip_end_date!,
+        );
+      } else {
+        const today = new Date();
+        const in60 = new Date(today.getTime() + 60 * 86400_000);
+        dStart = today.toISOString().slice(0, 10);
+        dEnd = in60.toISOString().slice(0, 10);
+      }
+      setCityLabel(inCity[0]?.address ?? cityKey);
     }
     setMyStart(dStart);
     setMyEnd(dEnd);
 
-    const { data: peerData, error } = await supabase.rpc("list_city_peers", {
-      _city_key: cityKey,
-      _from: dStart,
-      _to: dEnd,
-    });
-    if (error) toast.error(error.message);
-    else setPeers((peerData ?? []) as Peer[]);
+    if (isRegistered) {
+      const { data: peerData, error } = await supabase.rpc("list_city_peers", {
+        _city_key: cityKey,
+        _from: dStart,
+        _to: dEnd,
+      });
+      if (error) toast.error(error.message);
+      else {
+        const list = (peerData ?? []) as Peer[];
+        setPeers(list);
+        setPeerCount(list.length);
+      }
+    } else {
+      const { data: count, error } = await supabase.rpc("count_travelers_in_city", {
+        _city_key: cityKey,
+        _from: dStart,
+        _to: dEnd,
+      });
+      if (!error) setPeerCount(typeof count === "number" ? count : 0);
+      setPeers([]);
+    }
 
     const { data: th } = await supabase
       .from("chat_threads")
@@ -90,39 +134,31 @@ function TravelCityPage() {
   }
 
   useEffect(() => {
-    load();
+    void load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, cityKey]);
+  }, [user, cityKey, searchFrom, searchTo]);
 
-  const fmtDate = (s: string) => new Date(s).toLocaleDateString(undefined, { day: "2-digit", month: "short" });
+  const fmtDate = (s: string) =>
+    new Date(s).toLocaleDateString(undefined, { day: "2-digit", month: "short" });
 
   async function registerMe() {
-    if (!user) return;
-    const today = new Date().toISOString().slice(0, 10);
-    const in7 = new Date(Date.now() + 7 * 86400_000).toISOString().slice(0, 10);
-    const { error } = await supabase.from("travel_presence").insert({
-      user_id: user.id,
-      city_key: cityKey,
-      city_label: cityLabel || cityKey,
-      date_start: today,
-      date_end: in7,
-    });
-    if (error) { toast.error(error.message); return; }
-    toast.success("Registered — you can chat now");
-    load();
+    navigate({ to: "/create-stay" });
   }
 
   async function cancelTrip() {
-    if (!user) return;
-    if (!confirm(`Cancel your trip to ${cityLabel || cityKey}? You'll be removed from the group chat.`)) return;
+    if (!user || !myStayId) return;
+    if (!confirm(`Cancel your trip to ${cityLabel || cityKey}?`)) return;
     const { error } = await supabase
-      .from("travel_presence")
+      .from("minyanim")
       .delete()
-      .eq("user_id", user.id)
-      .eq("city_key", cityKey);
-    if (error) { toast.error(error.message); return; }
+      .eq("id", myStayId)
+      .eq("creator_id", user.id);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     toast.success("Trip cancelled");
-    navigate({ to: "/home" });
+    navigate({ to: "/planned" });
   }
 
   function shareCity() {
@@ -148,11 +184,16 @@ function TravelCityPage() {
             </div>
             <div>
               <div className="text-sm font-semibold">{cityLabel || "City"}</div>
-              <div className="text-xs text-muted-foreground">{peers ? peers.length : "…"} person{peers && peers.length === 1 ? "" : "s"}</div>
+              <div className="text-xs text-muted-foreground">
+                {peerCount === null ? "…" : peerCount} person{peerCount === 1 ? "" : "s"}
+              </div>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <button onClick={shareCity} className="rounded-full border border-border bg-surface px-3 py-2 text-xs font-semibold flex items-center gap-1.5">
+            <button
+              onClick={shareCity}
+              className="rounded-full border border-border bg-surface px-3 py-2 text-xs font-semibold flex items-center gap-1.5"
+            >
               <Share2 className="h-4 w-4" /> Share
             </button>
             {threadId ? (
@@ -161,7 +202,7 @@ function TravelCityPage() {
                 search={{ id: threadId }}
                 className="rounded-full bg-navy text-white px-3 py-2 text-xs font-semibold flex items-center gap-1.5"
               >
-                 <MessageCircle className="h-4 w-4" /> Chat
+                <MessageCircle className="h-4 w-4" /> Chat
               </Link>
             ) : null}
           </div>
@@ -169,14 +210,19 @@ function TravelCityPage() {
 
         {!registered ? (
           <div className="rounded-2xl border border-dashed border-gold/60 bg-gold/5 p-4 text-sm">
-            <p className="mb-2">Register your dates here to join the group chat and let others know you're around.</p>
-            <button onClick={registerMe} className="rounded-full gold-gradient text-gold-foreground px-4 py-2 text-xs font-bold">
-              Register me (next 7 days)
+            <p className="mb-2">
+              Signal your trip dates to join the group chat and let others know you&apos;re around.
+            </p>
+            <button
+              onClick={registerMe}
+              className="rounded-full gold-gradient text-gold-foreground px-4 py-2 text-xs font-bold"
+            >
+              Signal a trip
             </button>
           </div>
         ) : (
           <button
-            onClick={cancelTrip}
+            onClick={() => void cancelTrip()}
             className="w-full rounded-2xl border border-destructive/40 bg-destructive/5 text-destructive py-3 text-sm font-semibold flex items-center justify-center gap-2 active:scale-[0.99]"
           >
             <Trash2 className="h-4 w-4" /> Cancel this trip
@@ -188,27 +234,44 @@ function TravelCityPage() {
             <Loader2 className="h-5 w-5 animate-spin" />
           </div>
         ) : peers.length === 0 ? (
-          <p className="text-center text-sm text-muted-foreground py-6">No one registered here yet.</p>
+          <p className="text-center text-sm text-muted-foreground py-6">
+            {registered
+              ? "No one registered here yet."
+              : "Signal your trip to see who else is around and join the city chat."}
+          </p>
         ) : (
           <ul className="space-y-2">
             {peers.map((p) => (
-              <li key={`${p.user_id}-${p.date_start}`} className="rounded-2xl border border-border bg-surface p-3">
+              <li
+                key={`${p.user_id}-${p.date_start}`}
+                className="rounded-2xl border border-border bg-surface p-3"
+              >
                 <div className="flex items-center gap-3">
                   <div className="h-10 w-10 rounded-full bg-navy text-white flex items-center justify-center text-sm font-semibold overflow-hidden">
                     {p.avatar_url ? (
-                      <img src={p.avatar_url} alt={p.display_name} className="h-full w-full object-cover" />
+                      <img
+                        src={p.avatar_url}
+                        alt={p.display_name}
+                        className="h-full w-full object-cover"
+                      />
                     ) : (
                       (p.display_name?.[0] ?? "?").toUpperCase()
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="text-sm font-semibold truncate">
-                      {p.display_name}{p.is_me && <span className="text-muted-foreground font-normal"> · you</span>}
+                      {p.display_name}
+                      {p.is_me && <span className="text-muted-foreground font-normal"> · you</span>}
                     </div>
                     <div className="text-xs text-muted-foreground flex items-center gap-1">
-                      <CalendarDays className="h-3 w-3" /> {fmtDate(p.date_start)} → {fmtDate(p.date_end)}
+                      <CalendarDays className="h-3 w-3" /> {fmtDate(p.date_start)} →{" "}
+                      {fmtDate(p.date_end)}
                     </div>
-                    {p.note && <div className="text-xs text-muted-foreground mt-1 italic">"{p.note}"</div>}
+                    {p.note && (
+                      <div className="text-xs text-muted-foreground mt-1 italic">
+                        &quot;{p.note}&quot;
+                      </div>
+                    )}
                   </div>
                 </div>
               </li>
@@ -219,4 +282,3 @@ function TravelCityPage() {
     </MobileFrame>
   );
 }
-

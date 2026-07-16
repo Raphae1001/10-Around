@@ -60,7 +60,9 @@ export async function attachNativeStorageMirror(): Promise<void> {
         if (!k || !AUTH_KEY_RX.test(k)) continue;
         const v = localStorage.getItem(k);
         if (v != null) {
-          try { await Preferences.set({ key: k, value: v }); } catch {}
+          try {
+            await Preferences.set({ key: k, value: v });
+          } catch {}
         }
       }
     }
@@ -70,7 +72,9 @@ export async function attachNativeStorageMirror(): Promise<void> {
     // recover their anonymous account if they re-open the app; full wipe
     // happens explicitly via nativeAuthClear() on "Reset this device".
     void mirror();
-    supabase.auth.onAuthStateChange(() => { void mirror(); });
+    supabase.auth.onAuthStateChange(() => {
+      void mirror();
+    });
   } catch (err) {
     console.warn("[native-storage] mirror attach failed", err);
   }

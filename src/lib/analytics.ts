@@ -80,7 +80,11 @@ async function ensureLoaded() {
     if (CLARITY_ID) {
       // Microsoft Clarity bootstrap
       (function (c: any, l: Document, a: string, r: string, i: string) {
-        c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments); };
+        c[a] =
+          c[a] ||
+          function () {
+            (c[a].q = c[a].q || []).push(arguments);
+          };
         const t = l.createElement(r) as HTMLScriptElement;
         t.async = true;
         t.src = "https://www.clarity.ms/tag/" + i;

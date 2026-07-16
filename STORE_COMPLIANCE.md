@@ -9,18 +9,18 @@ Google Play Developer Program Policies (as of 2026).
 
 ### Code-level compliance — PASS
 
-| Guideline | Status | Notes |
-|---|---|---|
-| 5.1.1(v) Account deletion | ✅ | Settings → Reset this device + Delete Account, hard-deletes via `deleteMyAccount` server fn |
-| 4.8 Sign in with Apple parity | ✅ | N/A — MinyanNow uses anonymous-only onboarding (Prénom + Nom). No Google / Apple / email / OAuth offered, so 4.8 does not apply. |
-| 4.0 Design — minimum functionality | ✅ | Live minyan creation/joining is non-trivial native functionality |
-| 2.1 App completeness | ✅ | All routes load; no placeholder screens |
-| 2.3.1 Hidden features | ✅ | No |
-| 2.5.4 Multitasking apps | ✅ | No background location, no background audio |
-| 5.1.1 Permission strings | ⚠️ | `NSLocationWhenInUseUsageDescription` MUST be in Info.plist before submission (see IOS_READINESS.md) |
-| 5.1.2 Data collection minimization | ✅ | Only first/last name + foreground location collected. No email, no password. |
-| 5.4 VPN apps | N/A | |
-| 1.4.1 Physical harm | ✅ | App provides religious functionality, not medical/safety guidance |
+| Guideline                          | Status | Notes                                                                                                                            |
+| ---------------------------------- | ------ | -------------------------------------------------------------------------------------------------------------------------------- |
+| 5.1.1(v) Account deletion          | ✅     | Settings → Reset this device + Delete Account, hard-deletes via `deleteMyAccount` server fn                                      |
+| 4.8 Sign in with Apple parity      | ✅     | N/A — MinyanNow uses anonymous-only onboarding (Prénom + Nom). No Google / Apple / email / OAuth offered, so 4.8 does not apply. |
+| 4.0 Design — minimum functionality | ✅     | Live minyan creation/joining is non-trivial native functionality                                                                 |
+| 2.1 App completeness               | ✅     | All routes load; no placeholder screens                                                                                          |
+| 2.3.1 Hidden features              | ✅     | No                                                                                                                               |
+| 2.5.4 Multitasking apps            | ✅     | No background location, no background audio                                                                                      |
+| 5.1.1 Permission strings           | ⚠️     | `NSLocationWhenInUseUsageDescription` MUST be in Info.plist before submission (see IOS_READINESS.md)                             |
+| 5.1.2 Data collection minimization | ✅     | Only first/last name + foreground location collected. No email, no password.                                                     |
+| 5.4 VPN apps                       | N/A    |                                                                                                                                  |
+| 1.4.1 Physical harm                | ✅     | App provides religious functionality, not medical/safety guidance                                                                |
 
 ### Known rejection risks
 
@@ -35,17 +35,17 @@ Google Play Developer Program Policies (as of 2026).
 
 ### Code-level compliance — PASS
 
-| Policy | Status | Notes |
-|---|---|---|
-| Account deletion | ✅ | In-app + documented URL on `/support` |
-| Target API level (Aug 2024+) | ⚠️ | Verify `targetSdk = 34` in `android/app/build.gradle` |
-| Data Safety form | ⚠️ | Must complete in Play Console (table in ANDROID_READINESS.md) |
-| Privacy policy URL | ✅ | `/privacy` route exists and is publicly accessible |
-| Permissions justification | ✅ | Only requests what app needs (location, notifications, internet) |
-| Sensitive permissions | N/A | No SMS, contacts, accessibility, or all-files-access |
-| Foreground location | ✅ | Used only while app is in foreground |
-| Background location | ✅ | Not requested |
-| Notification permission (API 33+) | ✅ | Capacitor Push plugin requests at runtime |
+| Policy                            | Status | Notes                                                            |
+| --------------------------------- | ------ | ---------------------------------------------------------------- |
+| Account deletion                  | ✅     | In-app + documented URL on `/support`                            |
+| Target API level (Aug 2024+)      | ⚠️     | Verify `targetSdk = 34` in `android/app/build.gradle`            |
+| Data Safety form                  | ⚠️     | Must complete in Play Console (table in ANDROID_READINESS.md)    |
+| Privacy policy URL                | ✅     | `/privacy` route exists and is publicly accessible               |
+| Permissions justification         | ✅     | Only requests what app needs (location, notifications, internet) |
+| Sensitive permissions             | N/A    | No SMS, contacts, accessibility, or all-files-access             |
+| Foreground location               | ✅     | Used only while app is in foreground                             |
+| Background location               | ✅     | Not requested                                                    |
+| Notification permission (API 33+) | ✅     | Capacitor Push plugin requests at runtime                        |
 
 ### Known requirements before submission
 
@@ -58,10 +58,10 @@ Google Play Developer Program Policies (as of 2026).
 
 ## Required public URLs (both stores)
 
-| URL | Status |
-|---|---|
-| `https://global-minyan-connect.lovable.app/privacy` | ✅ Live |
-| `https://global-minyan-connect.lovable.app/terms` | ✅ Live (added this pass) |
+| URL                                                 | Status                    |
+| --------------------------------------------------- | ------------------------- |
+| `https://global-minyan-connect.lovable.app/privacy` | ✅ Live                   |
+| `https://global-minyan-connect.lovable.app/terms`   | ✅ Live (added this pass) |
 | `https://global-minyan-connect.lovable.app/support` | ✅ Live (added this pass) |
 
 ---
@@ -69,6 +69,7 @@ Google Play Developer Program Policies (as of 2026).
 ## Marketing assets checklist
 
 ### iOS
+
 - [ ] 1024×1024 App Store icon (PNG, no alpha, no rounded corners)
 - [ ] 6.7" iPhone screenshots (1290×2796) × 3-10
 - [ ] 6.1" iPhone screenshots (1179×2556) × 3-10 (optional)
@@ -79,6 +80,7 @@ Google Play Developer Program Policies (as of 2026).
 - [ ] Keywords (100 chars)
 
 ### Android
+
 - [ ] 512×512 app icon (PNG, no alpha)
 - [ ] Feature graphic 1024×500 (JPG/PNG)
 - [ ] Phone screenshots × 2-8 (16:9 or 9:16, min 320 px)

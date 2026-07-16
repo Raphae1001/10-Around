@@ -8,7 +8,11 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "MinyanNow — Start a minyan, anywhere, right now" },
-      { name: "description", content: "Create or join a minyan in the street, at the airport, anywhere in the world — in seconds." },
+      {
+        name: "description",
+        content:
+          "Create or join a minyan in the street, at the airport, anywhere in the world — in seconds.",
+      },
     ],
   }),
   component: Splash,
@@ -32,7 +36,9 @@ function Splash() {
         setChecking(false);
       }
     });
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [navigate]);
 
   useEffect(() => {
@@ -59,7 +65,9 @@ function Splash() {
         </svg>
 
         <div className="flex-1 flex flex-col items-center justify-center px-8 text-center relative">
-          <div className={`transition-all duration-700 ${show ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"}`}>
+          <div
+            className={`transition-all duration-700 ${show ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"}`}
+          >
             <div className="relative inline-block float-slow">
               <span className="absolute inset-0 rounded-2xl bg-gold/40 blur-xl" />
               <Logo size={72} glow />

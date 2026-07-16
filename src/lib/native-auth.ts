@@ -25,10 +25,7 @@ export async function nativeAuthClear(): Promise<void> {
     await Promise.all(
       keys
         .filter(
-          (k) =>
-            k.startsWith("sb-") ||
-            k.includes("auth-token") ||
-            k.includes("code-verifier"),
+          (k) => k.startsWith("sb-") || k.includes("auth-token") || k.includes("code-verifier"),
         )
         .map((k) => Preferences.remove({ key: k })),
     );

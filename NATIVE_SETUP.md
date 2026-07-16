@@ -6,13 +6,13 @@ Vercel (TanStack Start SSR). The native apps load a **bundled SPA** from
 
 ## Repo layout
 
-| Path | Role |
-|------|------|
-| `capacitor.config.ts` | `appId: com.minyannow.app`, `webDir: dist-mobile` |
-| `vite.mobile.config.ts` | SPA build → `dist-mobile/index.html` |
-| `npm run build:mobile` | Rebuild the native web bundle |
-| `npm run cap:sync` | Build mobile + `cap sync` (iOS + Android) |
-| `public/.well-known/` | Universal Links + Android App Links (served by Vercel) |
+| Path                    | Role                                                        |
+| ----------------------- | ----------------------------------------------------------- |
+| `capacitor.config.ts`   | `appId: com.raphaelkalfon.minyannow`, `webDir: dist-mobile` |
+| `vite.mobile.config.ts` | SPA build → `dist-mobile/index.html`                        |
+| `npm run build:mobile`  | Rebuild the native web bundle                               |
+| `npm run cap:sync`      | Build mobile + `cap sync` (iOS + Android)                   |
+| `public/.well-known/`   | Universal Links + Android App Links (served by Vercel)      |
 
 **Auth:** anonymous onboarding only (Prénom + Nom). No Google/Apple OAuth in the app.
 
@@ -41,11 +41,13 @@ Project ref: `jyqregdkmufrxyugrxrp` (region ap-northeast-2).
 ## 2. Environment variables
 
 ### Vercel (web)
+
 - `VITE_SUPABASE_*`, `SUPABASE_*`
 - `VITE_APP_URL=https://minyan-now-18mb.vercel.app`
-- `VITE_LOVABLE_CONNECTOR_GOOGLE_MAPS_BROWSER_KEY` (or your GCP key)
+- `VITE_GOOGLE_MAPS_BROWSER_KEY` (GCP Maps browser key)
 
 ### Local `.env`
+
 Copy from `.env.example`. Run `npm run dev` for web, `npm run build:mobile` for native.
 
 Native builds inject `VITE_*` at compile time via `vite.mobile.config.ts`.
@@ -66,7 +68,7 @@ After changing web code, always re-run `cap:sync` before testing in Xcode/Androi
 
 ## 4. iOS
 
-- Bundle ID: `com.minyannow.app`
+- Bundle ID: `com.raphaelkalfon.minyannow`
 - Open `ios/App/App.xcworkspace` in Xcode
 - Set your **Team** under Signing & Capabilities
 - `Info.plist` includes `NSLocationWhenInUseUsageDescription` (required for map/nearby)
@@ -75,7 +77,7 @@ See `IOS_READINESS.md` and `TESTFLIGHT_GUIDE.md`.
 
 ### Universal Links (optional)
 
-1. Replace `TEAMID` in `public/.well-known/apple-app-site-association` with your Apple Team ID
+1. Confirm `appID` / `webcredentials` use your Apple Team ID (`44BUT87LCH.com.raphaelkalfon.minyannow`)
 2. Redeploy Vercel (file is served from production)
 3. Xcode → Associated Domains: `applinks:minyan-now-18mb.vercel.app`
 
@@ -83,7 +85,7 @@ See `IOS_READINESS.md` and `TESTFLIGHT_GUIDE.md`.
 
 ## 5. Android
 
-- Application ID: `com.minyannow.app`
+- Application ID: `com.raphaelkalfon.minyannow`
 - Open `android/` in Android Studio
 - Replace SHA-256 fingerprints in `public/.well-known/assetlinks.json` with your upload/signing keys
 

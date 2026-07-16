@@ -1,10 +1,13 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { MobileFrame } from "@/components/MobileFrame";
 import { ScreenHeader, EmptyState } from "@/components/ui-bits";
 import { MessageCircle, Users, MapPin, ChevronRight, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
+import { tapLight } from "@/lib/haptics";
+import { humanTimeAgo } from "@/lib/time";
 
 type TravelCity = {
   city_key: string;
@@ -31,6 +34,7 @@ type ThreadRow = {
 };
 
 function ChatsPage() {
+  const { t } = useTranslation();
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [threads, setThreads] = useState<ThreadRow[] | null>(null);
@@ -44,21 +48,33 @@ function ChatsPage() {
     if (!user) return;
     let cancelled = false;
     const loadAll = async () => {
-      const [{ data: t }, { data: c }] = await Promise.all([
+      const [{ data: tRows }, { data: c }] = await Promise.all([
         supabase.rpc("my_chat_threads"),
         supabase.rpc("my_travel_cities"),
       ]);
       if (cancelled) return;
-      setThreads(((t ?? []) as ThreadRow[]).filter((thread) => thread.kind !== "travel_city"));
+      setThreads(((tRows ?? []) as ThreadRow[]).filter((thread) => thread.kind !== "travel_city"));
       setCities((c ?? []) as TravelCity[]);
     };
-    loadAll();
+    void loadAll();
 
     const channel = supabase
       .channel("chats-list")
-      .on("postgres_changes", { event: "*", schema: "public", table: "chat_messages" }, loadAll)
-      .on("postgres_changes", { event: "*", schema: "public", table: "chat_thread_members" }, loadAll)
-      .on("postgres_changes", { event: "*", schema: "public", table: "travel_presence" }, loadAll)
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "chat_messages" },
+        () => void loadAll(),
+      )
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "chat_thread_members" },
+        () => void loadAll(),
+      )
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "minyanim" },
+        () => void loadAll(),
+      )
       .subscribe();
     return () => {
       cancelled = true;
@@ -66,71 +82,114 @@ function ChatsPage() {
     };
   }, [user]);
 
+  const loading = threads === null;
+  const empty = !loading && threads!.length === 0 && (!cities || cities.length === 0);
+
   return (
     <MobileFrame>
-      <ScreenHeader title="Chats" back />
-      <div className="px-6 pb-8 space-y-5">
-        {cities && cities.length > 0 && (
-          <div>
-            <ul className="space-y-2">
-              {cities.map((c) => (
-                <li key={c.city_key}>
-                  <Link
-                    to="/travel-city/$cityKey"
-                    params={{ cityKey: c.city_key }}
-                    className="flex items-center gap-3 rounded-2xl border border-border bg-surface p-4 hover:border-gold/60 transition-colors"
-                  >
-                    <div className="h-11 w-11 rounded-2xl gold-gradient text-gold-foreground flex items-center justify-center">
-                      <MapPin className="h-5 w-5" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="text-sm font-semibold truncate">{c.city_label}</div>
-                      <div className="text-xs text-muted-foreground">
-                        {c.peer_count} person{c.peer_count === 1 ? "" : "s"}
-                      </div>
-                    </div>
-                    <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
+      <ScreenHeader title={t("chats.title")} subtitle={t("chats.subtitle")} back />
 
-        {threads === null ? (
-          <div className="flex items-center justify-center py-16 text-muted-foreground"><Loader2 className="h-5 w-5 animate-spin" /></div>
-        ) : threads.length === 0 && (!cities || cities.length === 0) ? (
+      <div className="flex-1 overflow-y-auto overscroll-y-contain px-6 space-y-6 pb-8">
+        {loading ? (
+          <div className="flex items-center justify-center py-16 text-muted-foreground">
+            <Loader2 className="h-5 w-5 animate-spin" />
+          </div>
+        ) : empty ? (
           <EmptyState
             icon={MessageCircle}
-            title="No chats yet"
-            description="Create an Abroad city to organize with people there."
+            title={t("chats.emptyTitle")}
+            description={t("chats.emptyDesc")}
+            action={
+              <Link
+                to="/planned"
+                onClick={() => void tapLight()}
+                className="text-gold font-semibold text-sm"
+              >
+                {t("chats.emptyCta")}
+              </Link>
+            }
           />
         ) : (
-          <ul className="space-y-2">
-            {threads.map((t) => (
-              <li key={t.id}>
-                <Link
-                  to="/chat"
-                  search={{ id: t.id }}
-                  className="flex items-center gap-3 rounded-2xl border border-border bg-surface p-3 hover:border-gold/60 transition-colors"
-                >
-                  <div className={`h-11 w-11 rounded-2xl flex items-center justify-center ${t.kind === "minyan" ? "bg-navy text-white" : "gold-gradient text-gold-foreground"}`}>
-                    {t.kind === "minyan" ? <Users className="h-5 w-5" /> : <MapPin className="h-5 w-5" />}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-semibold truncate">{t.title || (t.kind === "minyan" ? "Minyan chat" : "Travelers")}</span>
-                      <span className="text-[10px] text-muted-foreground shrink-0">· {t.member_count}</span>
-                    </div>
-                    <div className="text-xs text-muted-foreground truncate">
-                      {t.last_message ?? <span className="italic">No messages yet — say hi 👋</span>}
-                    </div>
-                  </div>
-                  <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                </Link>
-              </li>
-            ))}
-          </ul>
+          <>
+            {cities && cities.length > 0 && (
+              <section>
+                <h2 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-2 px-1">
+                  {t("chats.tripsSection")}
+                </h2>
+                <div className="rounded-2xl bg-surface border border-border overflow-hidden">
+                  {cities.map((c, idx) => (
+                    <Link
+                      key={c.city_key}
+                      to="/travel-city/$cityKey"
+                      params={{ cityKey: c.city_key }}
+                      search={{ from: c.date_start, to: c.date_end }}
+                      onClick={() => void tapLight()}
+                      className={`flex items-center gap-3 px-4 py-3.5 min-h-[68px] active:bg-muted/50 ${
+                        idx < cities.length - 1 ? "border-b border-border/60" : ""
+                      }`}
+                    >
+                      <div className="h-11 w-11 rounded-full bg-gold/10 text-gold flex items-center justify-center shrink-0">
+                        <MapPin className="h-5 w-5" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-[15px] font-medium truncate">{c.city_label}</div>
+                        <div className="text-[13px] text-muted-foreground mt-0.5 truncate">
+                          {t("chats.peerCount", { count: c.peer_count })}
+                        </div>
+                      </div>
+                      <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
+                    </Link>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {threads && threads.length > 0 && (
+              <section>
+                <h2 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-2 px-1">
+                  {t("chats.minyanSection")}
+                </h2>
+                <div className="rounded-2xl bg-surface border border-border overflow-hidden">
+                  {threads.map((row, idx) => (
+                    <Link
+                      key={row.id}
+                      to="/chat"
+                      search={{ id: row.id }}
+                      onClick={() => void tapLight()}
+                      className={`flex items-center gap-3 px-4 py-3.5 min-h-[68px] active:bg-muted/50 ${
+                        idx < threads.length - 1 ? "border-b border-border/60" : ""
+                      }`}
+                    >
+                      <div className="h-11 w-11 rounded-full bg-navy text-white flex items-center justify-center shrink-0">
+                        <Users className="h-5 w-5" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="text-[15px] font-medium truncate">
+                            {row.title || t("chats.minyanChat")}
+                          </span>
+                          <span className="text-[11px] text-muted-foreground shrink-0">
+                            · {row.member_count}
+                          </span>
+                        </div>
+                        <div className="text-[13px] text-muted-foreground mt-0.5 truncate">
+                          {row.last_message ?? t("chats.noMessages")}
+                        </div>
+                      </div>
+                      <div className="flex flex-col items-end gap-1 shrink-0">
+                        {row.last_at && (
+                          <span className="text-[11px] text-muted-foreground">
+                            {humanTimeAgo(row.last_at, t)}
+                          </span>
+                        )}
+                        <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </section>
+            )}
+          </>
         )}
       </div>
     </MobileFrame>

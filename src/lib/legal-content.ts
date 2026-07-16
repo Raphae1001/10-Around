@@ -1,0 +1,91 @@
+import { SUPPORT_EMAIL } from "@/lib/support-email";
+
+export type LegalSection = { title: string; body: string };
+
+/** Shared Terms of Service sections (EN — legal text, not auto-translated). */
+export const TERMS_SECTIONS: LegalSection[] = [
+  {
+    title: "1. Acceptance of terms",
+    body: "By creating an account or using MinyanNow you agree to these terms. If you do not agree, please do not use the app.",
+  },
+  {
+    title: "2. Eligibility & accounts",
+    body: "You must be at least 13 years old to use MinyanNow. You are responsible for the activity on your account. MinyanNow currently uses anonymous sign-in with a display name; do not impersonate others.",
+  },
+  {
+    title: "3. User responsibilities",
+    body: "You agree to provide accurate information, to use the service in good faith, and to respect the privacy and dignity of other users. Do not impersonate others, submit fake locations, or attempt to disrupt the service.",
+  },
+  {
+    title: "4. Minyan creation guidelines",
+    body: "When you create a minyan you commit to providing a real, accessible location and an honest time window. Do not create test, fake, joke, or commercial minyanim. Cancel a scheduled minyan as soon as you know it will not happen.",
+  },
+  {
+    title: "5. Community behavior & chat",
+    body: "MinyanNow is a respectful community of Jewish daveners. Harassment, hate speech, discriminatory content, sexual content, advertising, or any content that targets, mocks, or excludes other users is prohibited — including in group chats. Moderators may remove content and suspend accounts that violate these rules.",
+  },
+  {
+    title: "6. Reporting",
+    body: `You can report inappropriate chat messages from inside the chat. You can also email ${SUPPORT_EMAIL}. We review reports and take action where appropriate, typically within 24 hours for clear violations.`,
+  },
+  {
+    title: "7. Service availability",
+    body: "We work hard to keep MinyanNow available, but we do not guarantee uninterrupted service. Features may change, be added, or be removed without notice. We may perform maintenance that briefly interrupts the service.",
+  },
+  {
+    title: "8. Limitation of liability",
+    body: 'MinyanNow is provided "as is" without warranty of any kind. To the maximum extent allowed by law, we are not liable for any indirect, incidental, or consequential damages arising from your use of the app, including reliance on minyan times, locations, or attendance counts.',
+  },
+  {
+    title: "9. Termination",
+    body: "You may delete your account at any time from Settings → Delete Account. We may suspend or terminate accounts that violate these terms or that pose a risk to other users.",
+  },
+  {
+    title: "10. Changes to these terms",
+    body: "We may update these terms from time to time. Material changes will be communicated through the app. Continued use of MinyanNow after changes take effect constitutes acceptance of the updated terms.",
+  },
+  {
+    title: "11. Contact",
+    body: `Questions about these terms? Email ${SUPPORT_EMAIL}.`,
+  },
+];
+
+/** EN-only privacy legal sections (mirrors src/routes/privacy.tsx LEGAL_SECTIONS, plain text for sheets). */
+export const PRIVACY_LEGAL_SECTIONS: LegalSection[] = [
+  {
+    title: "Account creation & authentication",
+    body: "MinyanNow uses anonymous authentication: you enter a first and last name to create a session. We store a unique user identifier and your display name (and an optional avatar if you add one). We do not require an email address or a third-party social login (Apple, Google, etc.) at this time.",
+  },
+  {
+    title: "Location & blurred presence",
+    body: "Your device location is used only while the app is in use — to show nearby minyanim, let you create one where you stand, and (if you enable presence) count people in your area. We never store your exact GPS coordinates for density counting. Instead we store only a blurred zone (geohash, roughly ~1 km) that cannot be reversed to a street address. We do not track your location in the background. You can revoke location access at any time in your device settings, and adjust presence in Settings.",
+  },
+  {
+    title: "Chat & user-generated content",
+    body: "If you join a minyan or trip chat, messages you send are stored so other members of that thread can see them. You can report inappropriate messages from inside the chat. We review reports and may remove content or suspend accounts that violate our Terms.",
+  },
+  {
+    title: "Push notifications",
+    body: "When push delivery is enabled in a future update, we may store an anonymous device push token associated with your account so we can alert you about nearby minyanim and related prompts. The token contains no personal information and is deleted when you uninstall the app or delete your account. Preference toggles in Settings are saved locally until delivery ships.",
+  },
+  {
+    title: "Analytics",
+    body: "With your consent, we use Google Analytics 4 and Microsoft Clarity to understand which features are used and where the app can be improved. We disable Google Signals and ad personalization, do not send personal identifiers, and IP addresses are anonymized. You can disable analytics at any time from Settings → Analytics.",
+  },
+  {
+    title: "Data storage & retention",
+    body: "Account data, minyan records, presence zones, and chat messages are stored on secure managed Postgres infrastructure (Supabase) protected by row-level security. Data is encrypted in transit (HTTPS) and at rest. Live street minyanim expire automatically after their time window; presence rows and tokens are removed when you delete your account.",
+  },
+  {
+    title: "Your rights",
+    body: "You have the right to access, correct, export, or delete your data at any time. Under GDPR (EU), CCPA (California), and similar laws, you can also restrict or object to processing. Most rights can be exercised directly in the app; for anything else, contact us at the email below.",
+  },
+  {
+    title: "Account deletion",
+    body: `You can delete your account at any time from Settings → Delete Account. Deletion is immediate and permanent: your profile, presence zone, push tokens, participation history, chat membership, messages you sent (where cascaded), and minyanim you created are removed. If you cannot sign in, email ${SUPPORT_EMAIL} and we will process the deletion manually within 30 days.`,
+  },
+  {
+    title: "Contact",
+    body: `Questions or requests about your data? Email ${SUPPORT_EMAIL}.`,
+  },
+];

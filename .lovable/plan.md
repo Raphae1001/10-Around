@@ -13,7 +13,6 @@ Alternative considered (device-id table + custom JWT via edge function): rejecte
 
 ## Preservation audit (confirmed safe)
 
-
 | Area                                                                                           | Impact                                                                                                                       |
 | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
 | `profiles`, `minyanim`, `minyan_participants`, `chat_*`, `travel_presence`, `user_push_tokens` | No changes. All keyed on `auth.uid()` which anonymous users have.                                                            |
@@ -22,7 +21,6 @@ Alternative considered (device-id table + custom JWT via edge function): rejecte
 | Notifications / push tokens                                                                    | Unchanged — still scoped to `auth.uid()`.                                                                                    |
 | Analytics / moderation / ownership                                                             | Unchanged.                                                                                                                   |
 | Native deep-link OAuth bridge                                                                  | Becomes dead code path, left in place but unused.                                                                            |
-
 
 ## Changes
 
@@ -82,8 +80,8 @@ Minyan create/join/leave, chats, notifications delivery, location queries, analy
 
 ## Open question
 
-Do you want **first/last stored as two separate columns** in `profiles` (small migration adding `first_name` / `last_name`), or keep using the existing `display_name` field as `"First Last"` (zero migration, split on display)? I recommend the latter — simpler, no schema change, fully reversible.  
-  
+Do you want **first/last stored as two separate columns** in `profiles` (small migration adding `first_name` / `last_name`), or keep using the existing `display_name` field as `"First Last"` (zero migration, split on display)? I recommend the latter — simpler, no schema change, fully reversible.
+
 This proposal looks great.
 
 I only have a few small changes before implementation:

@@ -1,11 +1,17 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
-import { Home, Map, Plus, User } from "lucide-react";
+import { Home, CalendarDays, Plus, User } from "lucide-react";
 
-type Item = { to: "/home" | "/map" | "/create" | "/profile"; key: "home" | "map" | "create" | "profile"; icon: typeof Home; primary?: boolean };
+type Item = {
+  to: "/home" | "/planned" | "/create" | "/profile";
+  key: "home" | "planned" | "create" | "profile";
+  icon: typeof Home;
+  primary?: boolean;
+};
+
 const items: Item[] = [
   { to: "/home", key: "home", icon: Home },
-  { to: "/map", key: "map", icon: Map },
+  { to: "/planned", key: "planned", icon: CalendarDays },
   { to: "/create", key: "create", icon: Plus, primary: true },
   { to: "/profile", key: "profile", icon: User },
 ];
@@ -25,7 +31,7 @@ export function BottomNav() {
                 <li key={to} className="flex justify-center -mt-6">
                   <Link
                     to={to}
-                    className="h-14 w-14 rounded-2xl gold-gradient text-gold-foreground flex items-center justify-center shadow-glow-gold transition-transform active:scale-95"
+                    className="h-14 w-14 rounded-2xl gold-gradient text-gold-foreground flex items-center justify-center shadow-glow-gold transition-transform active:scale-[0.97]"
                     aria-label={label}
                   >
                     <Icon className="h-6 w-6" strokeWidth={2.4} />
@@ -41,7 +47,10 @@ export function BottomNav() {
                     active ? "text-gold" : "text-muted-foreground"
                   }`}
                 >
-                  <Icon className={`h-5 w-5 ${active ? "" : "opacity-80"}`} strokeWidth={active ? 2.4 : 1.8} />
+                  <Icon
+                    className={`h-5 w-5 ${active ? "" : "opacity-80"}`}
+                    strokeWidth={active ? 2.4 : 1.8}
+                  />
                   <span>{label}</span>
                   {active && <span className="h-1 w-1 rounded-full bg-gold mt-0.5" />}
                 </Link>
