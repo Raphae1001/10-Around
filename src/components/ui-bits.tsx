@@ -15,11 +15,11 @@ export function EmptyState({
 }) {
   return (
     <div className="flex flex-col items-center justify-center text-center gap-3 py-10">
-      <div className="h-14 w-14 rounded-2xl bg-gold-soft text-gold-foreground dark:bg-gold/20 dark:text-gold flex items-center justify-center">
+      <div className="h-14 w-14 rounded-2xl bg-gold-soft text-gold dark:bg-gold/20 flex items-center justify-center">
         <Icon className="h-7 w-7" />
       </div>
       <div className="space-y-1">
-        <h3 className="font-display text-base text-foreground">{title}</h3>
+        <h3 className="font-semibold text-base text-foreground">{title}</h3>
         {description && (
           <p className="text-sm text-muted-foreground max-w-[260px] mx-auto leading-snug">
             {description}
@@ -38,7 +38,7 @@ export function ScreenHeader({
   right,
   overlay = false,
 }: {
-  title: string;
+  title: ReactNode;
   subtitle?: string;
   back?: boolean;
   right?: ReactNode;
@@ -64,7 +64,7 @@ export function ScreenHeader({
           </Link>
         )}
         <div className="min-w-0">
-          <h1 className="font-display text-2xl leading-tight truncate">{title}</h1>
+          <h1 className="text-2xl leading-tight truncate">{title}</h1>
           {subtitle && <p className="text-xs text-muted-foreground mt-0.5">{subtitle}</p>}
         </div>
       </div>

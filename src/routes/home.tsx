@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Loader2, Moon, Plus, SunMedium } from "lucide-react";
 import { MobileFrame } from "@/components/MobileFrame";
+import { Wordmark } from "@/components/Logo";
 import { ScreenHeader } from "@/components/ui-bits";
 import { GoogleMapCanvas, type DensityHalo, type MapPinDatum } from "@/components/GoogleMap";
 import { LocationPrimerDialog } from "@/components/LocationPrimerDialog";
@@ -187,7 +188,7 @@ function Home() {
           <div className="pointer-events-auto">
             <ScreenHeader
               overlay
-              title="MinyanNow"
+              title={<Wordmark className="text-2xl" />}
               subtitle={position ? t("home.subtitleWithGps") : t("home.subtitleNoGps")}
               right={
                 <div className="flex items-center gap-2 relative z-50">
