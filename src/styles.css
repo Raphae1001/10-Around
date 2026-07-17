@@ -48,17 +48,17 @@
   --shadow-soft: 0 1px 2px oklch(0.2 0.04 260 / 0.04), 0 8px 24px oklch(0.2 0.04 260 / 0.06);
   --shadow-card: 0 1px 2px oklch(0.2 0.04 260 / 0.03), 0 4px 16px -4px oklch(0.2 0.04 260 / 0.08);
   --shadow-lift: 0 2px 6px oklch(0.2 0.04 260 / 0.06), 0 20px 40px -10px oklch(0.2 0.04 260 / 0.12);
-  --shadow-glow-gold: 0 0 0 3px oklch(0.8 0.17 78 / 0.14), 0 8px 24px -6px oklch(0.8 0.17 78 / 0.4);
+  --shadow-glow-gold: 0 0 0 3px oklch(0.58 0.1 42 / 0.14), 0 8px 24px -6px oklch(0.58 0.1 42 / 0.32);
 }
 
 :root {
   color-scheme: light;
   --radius: 1rem;
-  --background: oklch(0.985 0.008 80);
-  --foreground: oklch(0.18 0.04 260);
+  --background: oklch(0.99 0.002 260);
+  --foreground: oklch(0.18 0.02 260);
 
   --surface: oklch(1 0 0);
-  --surface-2: oklch(0.975 0.01 80);
+  --surface-2: oklch(0.97 0.003 260);
 
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.18 0.04 260);
@@ -70,16 +70,16 @@
 
   --navy: oklch(0.22 0.06 260);
   --sky: oklch(0.78 0.07 240);
-  --gold: oklch(0.8 0.17 78);
-  --gold-foreground: oklch(0.22 0.06 260);
-  --gold-soft: oklch(0.93 0.07 82);
-  --gold-strong: oklch(0.72 0.18 72);
+  --gold: oklch(0.58 0.1 42);
+  --gold-foreground: oklch(0.99 0 0);
+  --gold-soft: oklch(0.94 0.02 42);
+  --gold-strong: oklch(0.5 0.11 40);
 
-  --secondary: oklch(0.96 0.012 250);
-  --secondary-foreground: oklch(0.22 0.06 260);
-  --muted: oklch(0.96 0.012 250);
-  --muted-foreground: oklch(0.5 0.02 260);
-  --accent: oklch(0.93 0.04 240);
+  --secondary: oklch(0.96 0.004 260);
+  --secondary-foreground: oklch(0.22 0.02 260);
+  --muted: oklch(0.96 0.004 260);
+  --muted-foreground: oklch(0.5 0.015 260);
+  --accent: oklch(0.96 0.004 260);
   --accent-foreground: oklch(0.22 0.06 260);
   --destructive: oklch(0.62 0.2 27);
   --destructive-foreground: oklch(0.99 0.005 250);
@@ -88,7 +88,7 @@
 
   --border: oklch(0.9 0.012 255);
   --input: oklch(0.9 0.012 255);
-  --ring: oklch(0.78 0.07 240);
+  --ring: oklch(0.58 0.08 42);
 }
 
 .dark {
@@ -156,7 +156,10 @@
   }
   h1,
   h2,
-  h3,
+  h3 {
+    letter-spacing: -0.02em;
+  }
+  /* Serif reserved for brand wordmark only — see Logo.tsx Wordmark */
   .font-display {
     font-family: var(--font-display);
     letter-spacing: -0.02em;
@@ -282,7 +285,8 @@
 }
 
 @utility gold-gradient {
-  background: linear-gradient(135deg, oklch(0.88 0.13 85), oklch(0.78 0.15 70));
+  /* Matte terracotta — not metallic gold */
+  background: linear-gradient(145deg, oklch(0.6 0.1 42), oklch(0.52 0.11 40));
 }
 @utility navy-gradient {
   background: linear-gradient(160deg, oklch(0.22 0.06 260), oklch(0.14 0.04 260));
