@@ -131,7 +131,7 @@ function Create() {
     <MobileFrame>
       <ScreenHeader title={t("create.title")} subtitle={t("create.subtitle")} back />
 
-      <div className="px-6 space-y-5 pb-4">
+      <div className="px-5 space-y-6 pb-8 w-full max-w-full">
         {lastMinyan && !repeated && (
           <button
             onClick={repeatLast}
@@ -180,15 +180,18 @@ function Create() {
               return (
                 <button
                   key={name}
+                  type="button"
                   onClick={() => setPrayer(name)}
-                  className={`flex flex-col items-center gap-2 py-4 rounded-2xl transition-all active:scale-[0.97] ${
+                  className={`min-w-0 flex flex-col items-center gap-2 py-4 px-1 rounded-2xl transition-all active:scale-[0.97] ${
                     active
                       ? "bg-accent text-accent-foreground"
                       : "bg-surface-muted text-ink"
                   }`}
                 >
-                  <Icon className={`h-5 w-5 ${active ? "text-accent-foreground" : "text-ink-soft"}`} />
-                  <span className="text-xs font-semibold">{t(`prayer.${PRAYER_MAP[name]}`)}</span>
+                  <Icon className={`h-5 w-5 shrink-0 ${active ? "text-accent-foreground" : "text-ink-soft"}`} />
+                  <span className="text-xs font-semibold truncate w-full text-center">
+                    {t(`prayer.${PRAYER_MAP[name]}`)}
+                  </span>
                 </button>
               );
             })}
@@ -255,14 +258,15 @@ function Create() {
         </Section>
 
         <Section step="5" title={t("create.nusach")}>
-          <div className="flex gap-2 flex-wrap">
+          <div className="flex flex-wrap gap-2">
             {["Any", "Ashkenaz", "Sephard", "Nusach Ari", "Edot Mizrach"].map((n) => {
               const a = nusach === n;
               return (
                 <button
                   key={n}
+                  type="button"
                   onClick={() => setNusach(n)}
-                  className={`rounded-full px-3.5 py-2 text-xs font-medium transition-colors ${
+                  className={`rounded-full px-3 py-2 text-xs font-medium transition-colors shrink-0 ${
                     a ? "bg-accent text-accent-foreground" : "bg-surface-muted text-ink"
                   }`}
                 >
@@ -279,13 +283,13 @@ function Create() {
             value={comment}
             onChange={(e) => setComment(e.target.value)}
             placeholder={t("create.commentPh")}
-            className="w-full rounded-2xl border border-border bg-surface p-3 text-sm outline-none focus:border-gold"
+            className="w-full rounded-2xl border border-border bg-surface p-3 text-base outline-none focus:border-accent"
           />
           <p className="text-[10px] text-muted-foreground mt-1">{t("create.commentVisible")}</p>
         </Section>
 
-        <div className="rounded-2xl bg-gold-soft/40 border border-gold/30 p-4">
-          <div className="text-[11px] text-muted-foreground space-y-1">
+        <div className="rounded-2xl bg-gold-soft/40 border border-accent/20 p-4">
+          <div className="text-[11px] text-muted-foreground space-y-1.5">
             <div>
               <span className="font-semibold text-foreground">
                 {t(`prayer.${PRAYER_MAP[prayer]}`)}
@@ -295,8 +299,8 @@ function Create() {
                 ? t("create.minyanReady")
                 : t("create.missing", { count: Math.max(0, 10 - present) })}
             </div>
-            <div className="flex items-start gap-1">
-              <MapPin className="h-3 w-3 mt-0.5 shrink-0" />
+            <div className="flex items-start gap-1.5">
+              <MapPin className="h-3.5 w-3.5 mt-0.5 shrink-0 text-accent" />
               <span className="truncate">{locationSummary}</span>
             </div>
             <div>
@@ -305,24 +309,25 @@ function Create() {
             {comment && <div className="italic">"{comment}"</div>}
           </div>
         </div>
-      </div>
 
-      <div className="sticky bottom-24 border-t border-hairline bg-surface/95 backdrop-blur px-6 pt-3 pb-2">
-        <button
-          onClick={publish}
-          disabled={publishing}
-          className="flex items-center justify-center gap-2 w-full rounded-2xl bg-accent text-accent-foreground font-semibold py-4 shadow-fab text-base transition-transform active:scale-[0.99] disabled:opacity-60"
-        >
-          {publishing ? (
-            <Loader2 className="h-5 w-5 animate-spin" />
-          ) : (
-            <Users className="h-5 w-5" />
-          )}
-          {t("create.publish")}
-        </button>
-        <p className="text-center text-[11px] text-ink-soft mt-2">
-          {position ? t("create.gpsShared") : t("create.allowLocationToPublish")}
-        </p>
+        <div className="pt-1 pb-2">
+          <button
+            type="button"
+            onClick={publish}
+            disabled={publishing}
+            className="flex items-center justify-center gap-2 w-full rounded-2xl bg-accent text-accent-foreground font-semibold py-4 shadow-fab text-base transition-transform active:scale-[0.99] disabled:opacity-60"
+          >
+            {publishing ? (
+              <Loader2 className="h-5 w-5 animate-spin" />
+            ) : (
+              <Users className="h-5 w-5" />
+            )}
+            {t("create.publish")}
+          </button>
+          <p className="text-center text-[11px] text-ink-soft mt-2">
+            {position ? t("create.gpsShared") : t("create.allowLocationToPublish")}
+          </p>
+        </div>
       </div>
     </MobileFrame>
   );
