@@ -13,7 +13,10 @@ type Props = {
   className?: string;
 };
 
-/** Date/time field with icon + empty hint — native inputs alone look blank on iOS. */
+/**
+ * Full-width date/time field. Never place two native date inputs side-by-side
+ * on iPhone — iOS controls overflow and make the whole app pannable.
+ */
 export function DateTimeField({
   type,
   value,
@@ -28,17 +31,17 @@ export function DateTimeField({
   const empty = !value;
 
   return (
-    <div className={cn("min-w-0", className)}>
+    <div className={cn("w-full min-w-0", className)}>
       <label className="text-[10px] uppercase tracking-wider text-muted-foreground ml-1">
         {label}
       </label>
-      <div className="relative mt-1">
+      <div className="relative mt-1 w-full">
         <Icon
           className="pointer-events-none absolute left-3 top-1/2 z-[1] h-4 w-4 -translate-y-1/2 text-accent"
           aria-hidden
         />
         {empty && (
-          <span className="pointer-events-none absolute inset-y-0 left-9 right-3 z-[1] flex items-center text-[13px] text-muted-foreground truncate">
+          <span className="pointer-events-none absolute inset-y-0 left-9 right-3 z-[1] flex items-center text-[15px] text-muted-foreground truncate">
             {emptyHint}
           </span>
         )}
@@ -49,7 +52,7 @@ export function DateTimeField({
           max={max}
           onChange={(e) => onChange(e.target.value)}
           className={cn(
-            "w-full min-w-0 rounded-2xl border border-border bg-surface py-3 pl-9 pr-3 text-sm outline-none focus:border-accent",
+            "box-border w-full max-w-full min-w-0 rounded-2xl border border-border bg-surface py-3.5 pl-9 pr-3 text-base outline-none focus:border-accent appearance-none",
             empty && "text-transparent [&::-webkit-datetime-edit]:text-transparent",
           )}
         />

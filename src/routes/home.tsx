@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState, type PointerEvent } from "react";
 import { useTranslation } from "react-i18next";
-import { Loader2, Moon, Plus, SunMedium, X } from "lucide-react";
+import { Loader2, Moon, SunMedium, X } from "lucide-react";
 import { MobileFrame } from "@/components/MobileFrame";
 import { Wordmark } from "@/components/Logo";
 import { GoogleMapCanvas, type DensityHalo, type MapPinDatum } from "@/components/GoogleMap";
@@ -159,17 +159,6 @@ function Home() {
     pendingCreateRef.current = false;
   }, []);
 
-  const handleCreateFab = useCallback(async () => {
-    tapLight();
-    const perm = permState ?? (await checkLocationPermission());
-    if (perm !== "granted") {
-      pendingCreateRef.current = true;
-      setPrimerOpen(true);
-      return;
-    }
-    goToCreate();
-  }, [permState, goToCreate]);
-
   const center = position ?? FALLBACK_CENTER;
   const halos: DensityHalo[] = useMemo(
     () =>
@@ -242,7 +231,7 @@ function Home() {
         )}
 
         {/* Header — wordmark + round surface control (theme) */}
-        <div className="absolute top-0 left-0 right-0 z-50 px-5 pt-3 pb-4 flex items-center justify-between pointer-events-none bg-gradient-to-b from-background/90 via-background/50 to-transparent">
+        <div className="absolute top-0 left-0 right-0 z-50 px-5 pt-[max(0.75rem,env(safe-area-inset-top))] pb-4 flex items-center justify-between pointer-events-none bg-gradient-to-b from-background/90 via-background/50 to-transparent">
           <Wordmark className="text-[22px] pointer-events-auto" />
           <div className="flex items-center gap-2 pointer-events-auto relative z-50">
             <button
@@ -271,18 +260,6 @@ function Home() {
             </Link>
           </div>
         </div>
-
-        {/* FAB — above floating card; hide while list sheet is open */}
-        {listSheet === "closed" && (
-          <button
-            type="button"
-            onClick={() => void handleCreateFab()}
-            aria-label={t("home.createFab")}
-            className="absolute bottom-[11.5rem] right-5 z-30 h-14 w-14 rounded-full bg-accent text-accent-foreground shadow-fab flex items-center justify-center transition-transform active:scale-[0.94]"
-          >
-            <Plus className="h-7 w-7" strokeWidth={2.5} />
-          </button>
-        )}
 
         {position && listSheet === "closed" && (
           <HomePresenceCard

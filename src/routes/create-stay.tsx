@@ -69,7 +69,7 @@ function CreateStay() {
         </Section>
 
         <Section step="2" title={t("createStay.whenTitle")}>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-3">
             <DateTimeField
               type="date"
               value={dateStart}
@@ -130,7 +130,7 @@ function CreateStay() {
           {addMinyan && (
             <div className="space-y-4 pt-1 border-t border-border/60">
               <p className="text-[11px] text-muted-foreground">{t("createStay.addMinyanHint")}</p>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 gap-3">
                 <DateTimeField
                   type="date"
                   value={minyanDate}
