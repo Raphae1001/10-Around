@@ -30,22 +30,28 @@ export function MobileFrame({
 
   return (
     <div
-      className={`min-h-dvh w-full flex items-stretch justify-center ${
-        native ? "bg-background" : "bg-muted/40"
+      className={`w-full flex items-stretch justify-center ${
+        native ? "h-full bg-background" : "min-h-dvh bg-muted/40"
       }`}
     >
       <div
-        className={`relative w-full h-dvh max-h-dvh ${bgClass} ${className} flex flex-col overflow-hidden ${
+        className={`relative w-full max-w-full flex flex-col overflow-hidden ${bgClass} ${className} ${
           native
-            ? ""
-            : "max-w-[440px] sm:max-w-[440px] md:max-w-[440px] md:my-6 md:h-[calc(100dvh-3rem)] md:max-h-[calc(100dvh-3rem)] md:rounded-3xl md:shadow-2xl"
+            ? "h-full"
+            : "min-h-dvh h-dvh max-h-dvh max-w-[440px] md:my-6 md:h-[calc(100dvh-3rem)] md:max-h-[calc(100dvh-3rem)] md:rounded-3xl md:shadow-2xl"
         }`}
+        style={
+          native
+            ? {
+                ...(bg !== "map" ? { paddingTop: "env(safe-area-inset-top)" } : {}),
+                paddingBottom: "env(safe-area-inset-bottom)",
+              }
+            : undefined
+        }
       >
         <div
           className={`flex-1 min-h-0 flex flex-col overflow-x-hidden ${
-            bg === "map"
-              ? "overflow-hidden"
-              : "overflow-y-auto overscroll-y-contain"
+            bg === "map" ? "overflow-hidden" : "overflow-y-auto overscroll-y-contain"
           }`}
         >
           {children}

@@ -15,7 +15,7 @@ const config: CapacitorConfig = {
     // single native pass. Combined with Keyboard.resize="native" below,
     // this prevents the "freeze after first keystroke" bug where the body
     // is re-laid out mid-input and WKWebView loses its input session.
-    contentInset: "automatic",
+    contentInset: "never",
     backgroundColor: "#ffffff",
     limitsNavigationsToAppBoundDomains: true,
   },
