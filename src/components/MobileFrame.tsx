@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import { BottomNav } from "./BottomNav";
 import { LegalFooter } from "./LegalFooter";
+import { isNativeApp } from "@/lib/platform";
 
 interface Props {
   children: ReactNode;
@@ -10,13 +11,11 @@ interface Props {
   className?: string;
 }
 
-function isNativeShell() {
-  if (typeof window === "undefined") return false;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const cap = (window as any).Capacitor;
-  return !!cap?.isNativePlatform?.();
-}
-
+/**
+ * App chrome:
+ * - Native (iOS/Android): full-bleed fixed height, safe-area padding
+ * - Web: phone-frame on desktop, full width on small screens, normal scroll
+ */
 export function MobileFrame({
   children,
   showNav = true,
@@ -26,7 +25,7 @@ export function MobileFrame({
 }: Props) {
   const bgClass =
     bg === "navy" ? "navy-gradient text-white" : bg === "map" ? "map-tile" : "bg-background";
-  const native = isNativeShell();
+  const native = isNativeApp();
 
   return (
     <div

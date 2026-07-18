@@ -11,13 +11,12 @@ const config: CapacitorConfig = {
   // used by the hosted web deployment and does NOT contain an index.html.
   webDir: "dist-mobile",
   ios: {
-    // `automatic` lets WKWebView manage safe-area + keyboard insets in a
-    // single native pass. Combined with Keyboard.resize="native" below,
-    // this prevents the "freeze after first keystroke" bug where the body
-    // is re-laid out mid-input and WKWebView loses its input session.
+    // `never` + CSS env(safe-area-inset-*) = edge-to-edge like a native app.
+    // Do not use `automatic` here — it double-insets with our shell padding.
     contentInset: "never",
     backgroundColor: "#ffffff",
     limitsNavigationsToAppBoundDomains: true,
+    preferredContentMode: "mobile",
   },
   android: {
     backgroundColor: "#ffffff",
@@ -38,6 +37,7 @@ const config: CapacitorConfig = {
     StatusBar: {
       style: "DEFAULT",
       backgroundColor: "#ffffff",
+      overlaysWebView: true,
     },
     Keyboard: {
       // `native` = iOS adjusts the WebView frame itself; the DOM is never
