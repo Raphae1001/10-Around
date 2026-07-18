@@ -154,7 +154,7 @@
     "date": "Date",
     "time": "Time",
     "publish": "Publish scheduled minyan",
-    "publishHint": "It will appear in the Planned section, not on the live map.",
+    "publishHint": "Visible in Planned and on the map for people near the venue.",
     "previewNoDate": "Pick a date & time",
     "previewNoAddress": "Pick a location",
     "published": "Scheduled minyan published!",

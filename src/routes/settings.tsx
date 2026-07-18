@@ -7,7 +7,6 @@ import {
   Bell,
   Lock,
   MapPin,
-  Accessibility,
   ChevronDown,
   Sparkles,
   BarChart3,
@@ -258,12 +257,6 @@ function Settings() {
             options={[t("settings.whileUsing"), "Always", "Never"]}
             isLast
           />
-        </SettingsSection>
-
-        <SettingsSection title={t("settings.accessibility")} icon={Accessibility}>
-          <PrefToggle storageKey="a11y.largerText" label={t("settings.largerText")} />
-          <PrefToggle storageKey="a11y.highContrast" label={t("settings.highContrast")} />
-          <PrefToggle storageKey="a11y.reduceMotion" label={t("settings.reduceMotion")} isLast />
         </SettingsSection>
 
         <div className="rounded-2xl bg-surface border border-border overflow-hidden">

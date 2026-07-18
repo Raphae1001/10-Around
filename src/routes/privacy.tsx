@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate, useRouter } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import {
   Shield,
@@ -16,6 +16,7 @@ import {
   MessageCircle,
 } from "lucide-react";
 import { SUPPORT_EMAIL } from "@/lib/support-email";
+import { navigateBack } from "@/lib/navigate-back";
 
 export const Route = createFileRoute("/privacy")({
   head: () => ({
@@ -159,6 +160,8 @@ const LEGAL_SECTIONS: { icon: typeof UserPlus; title: string; body: React.ReactN
 
 function Privacy() {
   const { t } = useTranslation();
+  const router = useRouter();
+  const navigate = useNavigate();
   const icons = {
     data: Database,
     use: Shield,
@@ -172,12 +175,17 @@ function Privacy() {
   return (
     <div className="min-h-dvh bg-background text-foreground">
       <div className="max-w-2xl mx-auto px-6 py-10">
-        <Link
-          to="/"
+        <button
+          type="button"
+          onClick={() =>
+            navigateBack(router.history, () => {
+              void navigate({ to: "/settings" });
+            })
+          }
           className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-6"
         >
           <ChevronLeft className="h-4 w-4" /> {t("common.back")}
-        </Link>
+        </button>
 
         <div className="flex items-center gap-3 mb-2">
           <div className="h-12 w-12 rounded-2xl gold-gradient text-gold-foreground flex items-center justify-center">

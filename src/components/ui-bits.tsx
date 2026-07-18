@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate, useRouter } from "@tanstack/react-router";
 import { ChevronLeft, Users, Clock, MapPin, Flame, Star, type LucideIcon } from "lucide-react";
+import { navigateBack } from "@/lib/navigate-back";
 
 export function EmptyState({
   icon: Icon,
@@ -29,6 +30,25 @@ export function EmptyState({
   );
 }
 
+function BackButton() {
+  const router = useRouter();
+  const navigate = useNavigate();
+  return (
+    <button
+      type="button"
+      onClick={() =>
+        navigateBack(router.history, () => {
+          void navigate({ to: "/home" });
+        })
+      }
+      className="h-10 w-10 rounded-full bg-surface shadow-soft flex items-center justify-center"
+      aria-label="Back"
+    >
+      <ChevronLeft className="h-5 w-5 text-ink" />
+    </button>
+  );
+}
+
 export function ScreenHeader({
   title,
   subtitle,
@@ -45,22 +65,14 @@ export function ScreenHeader({
 }) {
   return (
     <div
-      className={`flex items-center justify-between px-6 pt-2 pb-4 ${
+      className={`flex items-center justify-between px-5 pt-2 pb-3 ${
         overlay
           ? "bg-gradient-to-b from-background/90 via-background/70 to-transparent backdrop-blur-[2px]"
           : ""
       }`}
     >
       <div className="flex items-center gap-3 min-w-0">
-        {back && (
-          <Link
-            to="/home"
-            className="h-9 w-9 rounded-full bg-surface shadow-soft flex items-center justify-center"
-            aria-label="Back"
-          >
-            <ChevronLeft className="h-5 w-5" />
-          </Link>
-        )}
+        {back && <BackButton />}
         <div className="min-w-0">
           {title !== "" && title != null && (
             <h1 className="text-2xl leading-tight truncate">{title}</h1>

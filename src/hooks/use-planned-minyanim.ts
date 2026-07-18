@@ -4,7 +4,7 @@ import type { MinyanRow } from "@/hooks/use-minyanim";
 
 /**
  * Scheduled + stay for the Planned screen.
- * Scheduled also appear on the live map/list within ±30 min of scheduled_at (see isLiveOnMap).
+ * Scheduled also appear on the live map from creation at the chosen location (see isLiveOnMap).
  */
 export function usePlannedMinyanim() {
   const [rows, setRows] = useState<MinyanRow[]>([]);
