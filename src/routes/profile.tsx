@@ -169,42 +169,60 @@ function Profile() {
       />
 
       <div className="flex-1 overflow-y-auto overscroll-y-contain px-6 space-y-6 pb-8">
-        {/* Identity card — focal point kept */}
-        <div className="rounded-3xl navy-gradient text-white p-5 relative overflow-hidden">
-          <div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-gold/30 blur-2xl pointer-events-none" />
-          <div className="relative flex items-center gap-4">
-            <div className="h-16 w-16 rounded-2xl gold-gradient text-navy flex items-center justify-center text-xl font-bold shrink-0">
+        {/* Identity card — ONLY dark surface in the app */}
+        <div className="rounded-3xl bg-dark-surface text-dark-surface-foreground p-5">
+          <div className="flex items-center gap-4">
+            <div
+              className="h-16 w-16 rounded-2xl flex items-center justify-center text-xl font-bold shrink-0 text-dark-surface-foreground"
+              style={{
+                background: "oklch(0.32 0.015 250)",
+                boxShadow: "0 0 0 2px oklch(0.6 0.135 38)",
+              }}
+            >
               {initial}
             </div>
             <div className="flex-1 min-w-0">
               <div className="text-xl font-semibold truncate leading-tight">{name}</div>
               <button
                 onClick={startEdit}
-                className="text-xs text-gold font-medium mt-1 inline-flex items-center gap-1 active:opacity-70"
+                className="text-xs text-accent font-medium mt-1 inline-flex items-center gap-1 active:opacity-70"
               >
                 <Pencil className="h-3 w-3" /> {t("profile.editProfile")}
               </button>
-              <div className="mt-2 flex items-center gap-2 text-xs text-white/80">
-                <Star className="h-3.5 w-3.5 fill-gold text-gold shrink-0" />
-                <span className="font-medium text-white">{stars.toFixed(1)}</span>
-                <span className="text-white/50">·</span>
+              <div className="mt-2 flex items-center gap-2 text-xs text-dark-surface-foreground/80">
+                <Star className="h-3.5 w-3.5 fill-accent text-accent shrink-0" />
+                <span className="font-medium">{stars.toFixed(1)}</span>
+                <span className="opacity-50">·</span>
                 <span>
                   {t("profile.trust")} {profile?.trust_score ?? 0}
                 </span>
               </div>
+              <div
+                className="mt-2.5 h-1.5 rounded-full overflow-hidden"
+                style={{ background: "oklch(0.3 0.015 250)" }}
+              >
+                <div
+                  className="h-full rounded-full bg-accent transition-all"
+                  style={{
+                    width: `${Math.min(100, Math.max(0, profile?.trust_score ?? 0))}%`,
+                  }}
+                />
+              </div>
             </div>
           </div>
-          <div className="relative grid grid-cols-3 gap-2 mt-5 pt-5 border-t border-white/10 text-center">
-            <HeroStat
-              label={t("profile.stats.minyanim")}
-              value={String(stats?.minyanim_count ?? 0)}
-            />
-            <HeroStat
-              label={t("profile.stats.completed")}
-              value={String(stats?.completed_count ?? 0)}
-            />
-            <HeroStat label={t("profile.stats.streak")} value={`${stats?.streak_days ?? 0}d`} />
-          </div>
+        </div>
+
+        {/* Trio de stats — cartes séparées */}
+        <div className="grid grid-cols-3 gap-2">
+          <HeroStat
+            label={t("profile.stats.minyanim")}
+            value={String(stats?.minyanim_count ?? 0)}
+          />
+          <HeroStat
+            label={t("profile.stats.completed")}
+            value={String(stats?.completed_count ?? 0)}
+          />
+          <HeroStat label={t("profile.stats.streak")} value={`${stats?.streak_days ?? 0}d`} />
         </div>
 
         {/* Badges — grouped list */}
@@ -370,19 +388,19 @@ function Profile() {
 function ProfileSection({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section>
-      <h2 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-2 px-1">
+      <h2 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-soft mb-2 px-1">
         {title}
       </h2>
-      <div className="rounded-2xl bg-surface border border-border overflow-hidden">{children}</div>
+      <div className="rounded-2xl bg-surface shadow-soft overflow-hidden">{children}</div>
     </section>
   );
 }
 
 function HeroStat({ label, value }: { label: string; value: string }) {
   return (
-    <div>
-      <div className="text-2xl font-semibold text-gold leading-none">{value}</div>
-      <div className="text-[10px] uppercase tracking-wider text-white/50 mt-1">{label}</div>
+    <div className="rounded-2xl bg-surface shadow-soft p-3 text-center">
+      <div className="font-serif-brand text-[22px] text-ink leading-none">{value}</div>
+      <div className="text-[11px] text-ink-soft mt-1.5">{label}</div>
     </div>
   );
 }
@@ -402,16 +420,16 @@ function BadgeRow({
 }) {
   return (
     <div
-      className={`flex items-center gap-3 px-4 py-3.5 ${!isLast ? "border-b border-border/60" : ""} ${
-        locked ? "opacity-50" : ""
-      }`}
+      className={`flex items-center gap-3 px-4 py-3.5 relative ${
+        !isLast ? "after:absolute after:left-16 after:right-0 after:bottom-0 after:h-px after:bg-hairline" : ""
+      } ${locked ? "opacity-50" : ""}`}
     >
-      <div className="h-9 w-9 rounded-full bg-muted flex items-center justify-center shrink-0">
-        <Icon className="h-[18px] w-[18px] text-muted-foreground" />
+      <div className="h-9 w-9 rounded-full bg-surface-muted flex items-center justify-center shrink-0">
+        <Icon className="h-[18px] w-[18px] text-ink-soft" />
       </div>
       <div className="flex-1 min-w-0">
-        <div className="text-[15px] font-medium">{label}</div>
-        <div className="text-[13px] text-muted-foreground mt-0.5">{sub}</div>
+        <div className="text-[15px] font-medium text-ink">{label}</div>
+        <div className="text-[13px] text-ink-soft mt-0.5">{sub}</div>
       </div>
     </div>
   );

@@ -184,7 +184,7 @@ function Privacy() {
             <Lock className="h-6 w-6" />
           </div>
           <div>
-            <h1 className="font-display text-3xl tracking-tight">{t("privacy.title")}</h1>
+            <h1 className="font-semibold text-3xl tracking-tight">{t("privacy.title")}</h1>
             <p className="text-xs text-muted-foreground">{t("privacy.updated")}</p>
           </div>
         </div>
@@ -201,7 +201,7 @@ function Privacy() {
                     <Icon className="h-5 w-5" />
                   </div>
                   <div className="flex-1">
-                    <h2 className="font-display text-lg">
+                    <h2 className="font-semibold text-lg">
                       {t(`privacy.sections.${k}.title` as any)}
                     </h2>
                     <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed">
@@ -220,7 +220,7 @@ function Privacy() {
                   <s.icon className="h-5 w-5" />
                 </div>
                 <div className="flex-1">
-                  <h2 className="font-display text-lg">{s.title}</h2>
+                  <h2 className="font-semibold text-lg">{s.title}</h2>
                   <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed">{s.body}</p>
                 </div>
               </div>

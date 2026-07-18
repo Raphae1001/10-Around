@@ -193,7 +193,7 @@ function makeClusterRenderer() {
         </filter>
       </defs>
       <g filter="url(#s)">
-        <circle cx="${(size + 8) / 2}" cy="${(size + 8) / 2}" r="${size / 2}" fill="#1a1a2e" stroke="#D4A537" stroke-width="2.5"/>
+        <circle cx="${(size + 8) / 2}" cy="${(size + 8) / 2}" r="${size / 2}" fill="#1a1a2e" stroke="#C25A2E" stroke-width="2.5"/>
       </g>
     </svg>`;
       return new google.maps.Marker({
@@ -206,7 +206,7 @@ function makeClusterRenderer() {
         },
         label: {
           text: String(count),
-          color: "#D4A537",
+          color: "#C25A2E",
           fontSize: "13px",
           fontWeight: "800",
         },
@@ -282,7 +282,10 @@ function ClusteredPins({ pins }: { pins: MapPinDatum[] }) {
   return null;
 }
 
-/** User's own avatar (or initial) marker — thick white ring, soft shadow, slow breathing halo. */
+/** Brand accent as hex for Google Maps APIs that don't accept oklch. */
+const INK_HEX = "#1C1F2A";
+
+/** User's own avatar (or initial) marker — ink disc, white ring, compact radial halo. */
 function UserAvatarOverlay({
   position,
   avatarUrl,
@@ -308,16 +311,16 @@ function UserAvatarOverlay({
 
     const wrap = document.createElement("div");
     wrap.style.cssText =
-      "position:relative;width:40px;height:40px;display:flex;align-items:center;justify-content:center;";
+      "position:relative;width:44px;height:44px;display:flex;align-items:center;justify-content:center;";
 
+    /* Compact radial halo — ~95px radius */
     const halo = document.createElement("div");
-    halo.className = "breathe-halo";
     halo.style.cssText =
-      "position:absolute;inset:-2px;border-radius:9999px;background:#D4A537;opacity:0.35;";
+      "position:absolute;left:50%;top:50%;width:190px;height:190px;margin-left:-95px;margin-top:-95px;border-radius:9999px;pointer-events:none;background:radial-gradient(circle, oklch(0.6 0.135 38 / 0.55) 0%, oklch(0.6 0.135 38 / 0.15) 70%, oklch(0.6 0.135 38 / 0) 100%);";
 
     const avatar = document.createElement("div");
     avatar.style.cssText =
-      "position:relative;width:34px;height:34px;border-radius:9999px;border:2.5px solid #fff;box-shadow:0 3px 10px rgba(0,0,0,0.35);overflow:hidden;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#D4A537,#F0C868);color:#1a1a2e;font-weight:800;font-size:13px;font-family:Inter,sans-serif;";
+      `position:relative;width:44px;height:44px;border-radius:9999px;overflow:hidden;display:flex;align-items:center;justify-content:center;background:${INK_HEX};color:#fff;font-weight:700;font-size:15px;font-family:Inter,sans-serif;box-shadow:0 0 0 3px oklch(1 0 0), 0 6px 14px -4px oklch(0.2 0.02 250 / 0.35);`;
 
     if (avatarUrl) {
       const img = document.createElement("img");
@@ -395,7 +398,7 @@ function DensityHaloBloom({
       `width:${size}px`,
       `height:${size}px`,
       "border-radius:9999px",
-      `background:radial-gradient(circle, rgba(212,165,55,${alpha}) 0%, rgba(212,165,55,${alpha * 0.45}) 38%, rgba(212,165,55,0) 72%)`,
+      `background:radial-gradient(circle, oklch(0.6 0.135 38 / ${alpha}) 0%, oklch(0.6 0.135 38 / ${alpha * 0.45}) 38%, oklch(0.6 0.135 38 / 0) 72%)`,
     ].join(";");
 
     div.appendChild(bloom);
@@ -446,13 +449,13 @@ function DensityCountBadge({
     const pulse = document.createElement("div");
     pulse.className = "breathe-halo";
     pulse.style.cssText =
-      "position:absolute;inset:-4px;border-radius:9999px;background:rgba(212,165,55,0.35);";
+      "position:absolute;inset:-4px;border-radius:9999px;background:oklch(0.6 0.135 38 / 0.35);";
 
     const pill = document.createElement("div");
     pill.style.cssText =
-      "position:relative;display:flex;align-items:center;gap:4px;padding:4px 9px 4px 7px;border-radius:9999px;background:rgba(255,255,255,0.94);box-shadow:0 2px 10px rgba(0,0,0,0.2);border:1px solid rgba(212,165,55,0.4);";
+      "position:relative;display:flex;align-items:center;gap:4px;padding:4px 9px 4px 7px;border-radius:9999px;background:rgba(255,255,255,0.94);box-shadow:0 2px 10px rgba(0,0,0,0.2);border:1px solid oklch(0.6 0.135 38 / 0.4);";
 
-    pill.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#D4A537" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+    pill.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#C25A2E" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
       <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
     </svg>`;
 
@@ -545,7 +548,7 @@ export function GoogleMapCanvas({
                 <Circle
                   center={{ lat: h.lat, lng: h.lng }}
                   radius={outer}
-                  fillColor="#D4A537"
+                  fillColor="#C25A2E"
                   fillOpacity={0.03 + h.intensity * 0.06}
                   strokeOpacity={0}
                   clickable={false}
@@ -553,7 +556,7 @@ export function GoogleMapCanvas({
                 <Circle
                   center={{ lat: h.lat, lng: h.lng }}
                   radius={mid}
-                  fillColor="#D4A537"
+                  fillColor="#C25A2E"
                   fillOpacity={0.07 + h.intensity * 0.14}
                   strokeOpacity={0}
                   clickable={false}
@@ -561,9 +564,9 @@ export function GoogleMapCanvas({
                 <Circle
                   center={{ lat: h.lat, lng: h.lng }}
                   radius={inner}
-                  fillColor="#D4A537"
+                  fillColor="#C25A2E"
                   fillOpacity={0.12 + h.intensity * 0.28}
-                  strokeColor="#D4A537"
+                  strokeColor="#C25A2E"
                   strokeOpacity={0.2 + h.intensity * 0.3}
                   strokeWeight={1}
                   clickable={false}

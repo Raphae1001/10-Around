@@ -80,7 +80,7 @@ export function HomeNearbyList({ position, userId }: Props) {
     <>
       <div className="px-6 pt-4 pb-2 flex items-end justify-between">
         <div>
-          <h2 className="font-display text-xl">{t("home.orJoinNearby")}</h2>
+          <h2 className="text-xl font-semibold">{t("home.orJoinNearby")}</h2>
           <p className="text-xs text-muted-foreground">{t("home.joinHint")}</p>
         </div>
         {minyanim.length > 0 ? (

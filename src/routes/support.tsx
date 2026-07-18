@@ -58,7 +58,7 @@ function Support() {
             <LifeBuoy className="h-6 w-6" />
           </div>
           <div>
-            <h1 className="font-display text-3xl tracking-tight">Support</h1>
+            <h1 className="font-semibold text-3xl tracking-tight">Support</h1>
             <p className="text-xs text-muted-foreground">We're here to help.</p>
           </div>
         </div>
@@ -172,7 +172,7 @@ function Card({
           <Icon className="h-5 w-5" />
         </div>
         <div className="flex-1 min-w-0">
-          <h2 className="font-display text-lg mb-2">{title}</h2>
+          <h2 className="font-semibold text-lg mb-2">{title}</h2>
           {children}
         </div>
       </div>

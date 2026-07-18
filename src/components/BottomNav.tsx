@@ -21,7 +21,7 @@ export function BottomNav() {
   const { pathname } = useLocation();
   return (
     <div className="sticky bottom-0 left-0 right-0 px-4 pb-4 pt-2 bg-gradient-to-t from-background via-background to-background/0">
-      <nav className="relative bg-surface border border-border rounded-3xl shadow-lift backdrop-blur">
+      <nav className="relative bg-surface rounded-3xl shadow-lifted backdrop-blur">
         <ul className="grid grid-cols-4 items-end">
           {items.map(({ to, key, icon: Icon, primary }) => {
             const active = pathname === to;
@@ -31,7 +31,7 @@ export function BottomNav() {
                 <li key={to} className="flex justify-center -mt-6">
                   <Link
                     to={to}
-                    className="h-14 w-14 rounded-2xl gold-gradient text-gold-foreground flex items-center justify-center shadow-glow-gold transition-transform active:scale-[0.97]"
+                    className="h-14 w-14 rounded-full bg-accent text-accent-foreground flex items-center justify-center shadow-fab transition-transform active:scale-[0.97]"
                     aria-label={label}
                   >
                     <Icon className="h-6 w-6" strokeWidth={2.4} />
@@ -44,7 +44,7 @@ export function BottomNav() {
                 <Link
                   to={to}
                   className={`flex flex-col items-center gap-1 py-3 text-[10px] font-medium transition-colors ${
-                    active ? "text-gold" : "text-muted-foreground"
+                    active ? "text-accent" : "text-ink-soft"
                   }`}
                 >
                   <Icon
@@ -52,7 +52,7 @@ export function BottomNav() {
                     strokeWidth={active ? 2.4 : 1.8}
                   />
                   <span>{label}</span>
-                  {active && <span className="h-1 w-1 rounded-full bg-gold mt-0.5" />}
+                  {active && <span className="h-1 w-1 rounded-full bg-accent mt-0.5" />}
                 </Link>
               </li>
             );

@@ -49,17 +49,13 @@ export function PlannedMinyanRow({ m, variant, isLast }: Props) {
           })
         : formatDate(m.trip_start_date, locale);
 
-  const rowClass = `flex items-center gap-3.5 px-4 py-3.5 min-h-[72px] active:bg-muted/50 ${
-    !isLast ? "border-b border-border/50" : ""
+  const rowClass = `flex items-center gap-3.5 px-4 py-3.5 min-h-[72px] active:bg-surface-muted/60 relative ${
+    !isLast ? "after:absolute after:left-16 after:right-0 after:bottom-0 after:h-px after:bg-hairline" : ""
   }`;
 
   const inner = (
     <>
-      <div
-        className={`h-11 w-11 rounded-full flex items-center justify-center shrink-0 ${
-          variant === "stay" ? "bg-accent/15 text-accent-foreground" : "bg-gold/12 text-gold"
-        }`}
-      >
+      <div className="h-11 w-11 rounded-full flex items-center justify-center shrink-0 bg-surface-muted text-ink-soft">
         {variant === "stay" ? (
           <Globe2 className="h-5 w-5" strokeWidth={1.9} />
         ) : (

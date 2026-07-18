@@ -130,7 +130,7 @@ function HeroSlide() {
       <p className="mt-6 text-[11px] tracking-[0.3em] uppercase text-gold/80">
         {t("onboarding.welcome")}
       </p>
-      <h2 className="mt-2 font-display text-4xl tracking-tight leading-tight">
+      <h2 className="mt-2 font-semibold text-4xl tracking-tight leading-tight">
         <Wordmark />
       </h2>
       <p className="mt-4 text-base text-white/75 max-w-xs leading-relaxed">
@@ -165,7 +165,7 @@ function ContentSlide({
         {icon}
       </div>
       <p className="mt-6 text-[11px] tracking-[0.3em] uppercase text-gold/80">{kicker}</p>
-      <h2 className="mt-2 font-display text-4xl tracking-tight leading-tight">{title}</h2>
+      <h2 className="mt-2 font-semibold text-4xl tracking-tight leading-tight">{title}</h2>
       <p className="mt-4 text-base text-white/75 max-w-xs leading-relaxed">{body}</p>
       {final && (
         <div className="mt-8 inline-flex items-center gap-1.5 text-xs text-gold">

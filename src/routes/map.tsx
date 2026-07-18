@@ -218,7 +218,7 @@ function LiveMap() {
             <div className="px-5 pb-5 flex-1 overflow-hidden flex flex-col">
               <div className="flex items-center justify-between mb-3 gap-3">
                 <div className="min-w-0">
-                  <h2 className="font-display text-lg leading-tight truncate">
+                  <h2 className="font-semibold text-lg leading-tight truncate">
                     {selected ? "Selected minyan" : "Live near you"}
                   </h2>
                   <p className="text-xs text-muted-foreground truncate">

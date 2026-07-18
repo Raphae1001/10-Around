@@ -53,7 +53,7 @@ function Syn() {
             { p: "Maariv", t: "6:45 PM", c: 0, s: "open" as const },
           ].map((r, i) => (
             <div key={i} className="p-4 flex items-center gap-3">
-              <div className="font-display text-lg w-16">{r.t}</div>
+              <div className="font-semibold text-lg w-16">{r.t}</div>
               <div className="flex-1">
                 <div className="text-sm font-semibold">{r.p}</div>
                 <div className="text-xs text-muted-foreground">

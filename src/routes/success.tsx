@@ -78,7 +78,7 @@ function Success() {
         </div>
 
         <div className="relative mt-8">
-          <div className="font-display text-6xl text-gold leading-none count-up" key={count}>
+          <div className="font-semibold text-6xl text-gold leading-none count-up" key={count}>
             {count}
             <span className="text-white/40">/{NEEDED}</span>
           </div>
@@ -87,7 +87,7 @@ function Success() {
           </div>
         </div>
 
-        <h1 className="font-display text-3xl mt-6 leading-tight max-w-xs">
+        <h1 className="font-semibold text-3xl mt-6 leading-tight max-w-xs">
           {confirmed ? t("success.communityFormed") : t("success.almostThere")}
         </h1>
         <p className="text-sm text-white/70 mt-3 max-w-xs leading-relaxed">

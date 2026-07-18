@@ -49,7 +49,7 @@ https://minyanlive.app/m/aaronloft`;
           >
             <div className="h-24 navy-gradient flex items-center justify-center text-white">
               <div className="text-center">
-                <div className="font-display text-2xl text-gold">9/10</div>
+                <div className="text-2xl font-semibold text-gold tabular-nums">9/10</div>
                 <div className="text-[10px] uppercase tracking-wider text-white/70">
                   {t("share.oneMore")}
                 </div>
@@ -85,14 +85,14 @@ https://minyanlive.app/m/aaronloft`;
                 toast("Copie impossible", { description: message });
               }
             }}
-            className="bg-surface border border-border font-medium py-3 rounded-2xl text-sm flex items-center justify-center gap-2"
+            className="btn-secondary active:scale-[0.99]"
           >
             {copied ? <Check className="h-4 w-4 text-success" /> : <Copy className="h-4 w-4" />}
             {copied ? t("share.copied") : t("share.copyText")}
           </button>
           <button
             onClick={() => shareAny({ title: "MinyanNow", text: message })}
-            className="bg-surface border border-border font-medium py-3 rounded-2xl text-sm flex items-center justify-center gap-2"
+            className="btn-secondary active:scale-[0.99]"
           >
             <Send className="h-4 w-4" /> {t("share.otherApps")}
           </button>
@@ -105,7 +105,7 @@ https://minyanlive.app/m/aaronloft`;
           <div className="space-y-2 text-sm">
             {(["bayit", "office", "family"] as const).map((g) => (
               <label key={g} className="flex items-center gap-3 py-1.5">
-                <input type="checkbox" defaultChecked className="accent-[oklch(0.82_0.14_80)]" />
+                <input type="checkbox" defaultChecked className="accent-gold" />
                 <span>{t(`share.targets.${g}` as any)}</span>
               </label>
             ))}

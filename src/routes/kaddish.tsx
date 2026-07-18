@@ -25,7 +25,7 @@ function Kaddish() {
           </div>
         </div>
 
-        <h1 className="font-display text-3xl mt-8 leading-tight max-w-xs">{t("kaddish.title")}</h1>
+        <h1 className="font-semibold text-3xl mt-8 leading-tight max-w-xs">{t("kaddish.title")}</h1>
         <p className="text-sm text-white/70 mt-3 max-w-xs leading-relaxed">
           {t("kaddish.subtitle")}
         </p>

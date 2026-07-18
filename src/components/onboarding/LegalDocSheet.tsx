@@ -35,7 +35,7 @@ export function LegalDocSheet({ kind, onClose }: Props) {
               {isTerms ? <FileText className="h-5 w-5" /> : <Lock className="h-5 w-5" />}
             </div>
             <div className="min-w-0">
-              <SheetTitle className="font-display text-xl">
+              <SheetTitle className="font-semibold text-xl">
                 {isTerms ? t("auth.legal.termsTitle") : t("auth.legal.privacyTitle")}
               </SheetTitle>
               <SheetDescription className="text-xs">
@@ -49,7 +49,7 @@ export function LegalDocSheet({ kind, onClose }: Props) {
           {isTerms ? (
             TERMS_SECTIONS.map((s) => (
               <section key={s.title} className="rounded-2xl border border-border bg-surface p-4">
-                <h3 className="font-display text-base text-foreground">{s.title}</h3>
+                <h3 className="font-semibold text-base text-foreground">{s.title}</h3>
                 <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed">{s.body}</p>
               </section>
             ))
@@ -58,7 +58,7 @@ export function LegalDocSheet({ kind, onClose }: Props) {
               <p className="text-sm text-muted-foreground leading-relaxed">{t("privacy.intro")}</p>
               {PRIVACY_I18N_KEYS.map((k) => (
                 <section key={k} className="rounded-2xl border border-border bg-surface p-4">
-                  <h3 className="font-display text-base text-foreground">
+                  <h3 className="font-semibold text-base text-foreground">
                     {t(`privacy.sections.${k}.title`)}
                   </h3>
                   <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed">
@@ -68,7 +68,7 @@ export function LegalDocSheet({ kind, onClose }: Props) {
               ))}
               {PRIVACY_LEGAL_SECTIONS.map((s) => (
                 <section key={s.title} className="rounded-2xl border border-border bg-surface p-4">
-                  <h3 className="font-display text-base text-foreground">{s.title}</h3>
+                  <h3 className="font-semibold text-base text-foreground">{s.title}</h3>
                   <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed">{s.body}</p>
                 </section>
               ))}

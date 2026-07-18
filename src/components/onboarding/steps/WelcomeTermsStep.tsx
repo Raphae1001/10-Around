@@ -22,7 +22,7 @@ export function WelcomeTermsStep({ accepted, onAcceptedChange, onContinue }: Pro
           <div className="relative">
             <Logo size={56} />
           </div>
-          <h1 className="relative mt-6 font-display text-3xl text-foreground">
+          <h1 className="relative mt-6 font-semibold text-3xl text-foreground">
             {t("auth.welcome")} <Wordmark />
           </h1>
           <p className="mt-3 text-sm text-muted-foreground max-w-xs mx-auto leading-relaxed">

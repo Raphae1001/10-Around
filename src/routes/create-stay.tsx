@@ -161,10 +161,10 @@ function CreateStay() {
                     key={n}
                     type="button"
                     onClick={() => setNusach(n)}
-                    className={`rounded-full px-3 py-1.5 text-xs font-medium border ${
+                    className={`rounded-full px-3 py-1.5 text-xs font-medium ${
                       nusach === n
-                        ? "bg-foreground text-background border-foreground"
-                        : "border-border"
+                        ? "bg-accent text-accent-foreground"
+                        : "bg-surface-muted text-ink"
                     }`}
                   >
                     {n}
@@ -180,7 +180,7 @@ function CreateStay() {
         <button
           onClick={publish}
           disabled={publishing}
-          className="flex items-center justify-center gap-2 w-full gold-gradient text-gold-foreground font-semibold py-5 rounded-2xl shadow-glow-gold text-base transition-transform active:scale-[0.99] disabled:opacity-60"
+          className="flex items-center justify-center gap-2 w-full rounded-2xl bg-accent text-accent-foreground font-semibold py-4 shadow-fab text-base transition-transform active:scale-[0.99] disabled:opacity-60"
         >
           {publishing ? (
             <Loader2 className="h-5 w-5 animate-spin" />
@@ -320,7 +320,7 @@ function Section({
         <span className="h-5 w-5 rounded-full bg-gold text-gold-foreground text-[10px] font-bold flex items-center justify-center">
           {step}
         </span>
-        <h3 className="font-display text-sm font-semibold">{title}</h3>
+        <h3 className="text-sm font-semibold">{title}</h3>
       </div>
       {children}
     </div>

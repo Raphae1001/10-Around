@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { ChevronUp, Loader2, Locate, MapPin, Sparkles, Users } from "lucide-react";
+import { Loader2, Locate, MapPin } from "lucide-react";
 import { humanTimeAgo } from "@/lib/time";
 import { tapLight } from "@/lib/haptics";
 
@@ -9,18 +9,14 @@ type Props = {
   lastUpdatedAt: number | null;
   loading: boolean;
   minyanimCount: number;
+  /** Nearest live minyan — display only (hero footer). */
+  nextMinyanLabel?: string | null;
   onOpenList: () => void;
   onRecenter?: () => void;
 };
 
 /**
- * Bottom presence card on the home map.
- * - Honest counter: shows real active-member count (server already applies the
- *   privacy threshold, so a low count surfaces as the "never empty" state).
- * - Named zone: neighborhood from reverse geocoding.
- * - Human time: "updated 2 min ago".
- * - Never empty: encouraging copy when nobody's around yet.
- * Tapping opens the nearby minyanim list (secondary access).
+ * Home map floating card — template Variante C (exact structure).
  */
 export function HomePresenceCard({
   activeCount,
@@ -28,6 +24,7 @@ export function HomePresenceCard({
   lastUpdatedAt,
   loading,
   minyanimCount,
+  nextMinyanLabel,
   onOpenList,
   onRecenter,
 }: Props) {
@@ -35,77 +32,79 @@ export function HomePresenceCard({
 
   const hasPresence = (activeCount ?? 0) > 0;
   const updated = lastUpdatedAt ? humanTimeAgo(lastUpdatedAt, t) : null;
-
-  const title = hasPresence
-    ? t("home.presence.count", { count: activeCount ?? 0 })
-    : t("home.presence.emptyTitle");
-
-  const subtitleParts: string[] = [];
-  if (hasPresence) {
-    if (neighborhood) subtitleParts.push(neighborhood);
-    if (updated) subtitleParts.push(t("home.presence.updated", { time: updated }));
-  } else {
-    subtitleParts.push(t("home.presence.emptySubtitle"));
-  }
-  const subtitle = subtitleParts.join(" · ");
+  const count = activeCount ?? 0;
 
   return (
-    <div className="absolute bottom-4 left-4 right-20 z-20 flex items-end gap-2.5">
+    <div className="absolute bottom-4 left-4 right-4 z-20 flex flex-col gap-3">
+      <div className="flex justify-end">
+        {onRecenter && (
+          <button
+            type="button"
+            onClick={() => {
+              tapLight();
+              onRecenter();
+            }}
+            aria-label={t("home.recenter")}
+            className="h-11 w-11 rounded-full bg-surface shadow-soft flex items-center justify-center text-ink transition-transform active:scale-[0.94]"
+          >
+            <Locate className="h-5 w-5" strokeWidth={2.2} />
+          </button>
+        )}
+      </div>
+
       <button
         type="button"
         onClick={onOpenList}
         aria-label={t("home.presence.openList")}
-        className="flex-1 min-w-0 flex items-center gap-3 rounded-3xl bg-surface/75 backdrop-blur-xl border border-white/20 dark:border-white/10 shadow-[0_8px_32px_-6px_rgba(0,0,0,0.28)] px-4 py-3.5 text-left transition-transform active:scale-[0.985]"
+        className="w-full rounded-2xl bg-surface shadow-lifted overflow-hidden text-left transition-transform active:scale-[0.99]"
       >
-        <div
-          className={`h-10 w-10 rounded-2xl flex items-center justify-center shrink-0 ${
-            hasPresence ? "bg-gold/15 text-gold" : "bg-muted text-muted-foreground"
-          }`}
-        >
-          {loading && activeCount === null ? (
-            <Loader2 className="h-5 w-5 animate-spin" />
-          ) : hasPresence ? (
-            <Users className="h-5 w-5" />
-          ) : (
-            <Sparkles className="h-5 w-5" />
-          )}
-        </div>
-
-        <div className="min-w-0 flex-1">
-          <div className="font-medium text-[15px] text-foreground leading-tight truncate">
-            {title}
-          </div>
-          {subtitle && (
-            <div className="text-[12px] text-muted-foreground leading-snug truncate flex items-center gap-1 mt-0.5">
-              {hasPresence && neighborhood && <MapPin className="h-3 w-3 shrink-0" />}
-              <span className="truncate">{subtitle}</span>
+        {hasPresence ? (
+          <>
+            <div className="px-4 pt-4 pb-3">
+              <div className="text-[11px] font-medium uppercase tracking-widest text-ink-soft">
+                {t("home.subtitleWithGps")}
+              </div>
+              <div className="mt-1 flex items-baseline gap-2 min-w-0">
+                {loading && activeCount === null ? (
+                  <Loader2 className="h-7 w-7 animate-spin text-accent shrink-0" />
+                ) : (
+                  <span className="font-serif-brand text-[28px] leading-none text-ink tabular-nums">
+                    {count}
+                  </span>
+                )}
+                <span className="text-[13px] text-ink-soft truncate leading-snug">
+                  {t("home.presence.count", { count }).replace(new RegExp(`^${count}\\s*`), "")}
+                  {neighborhood ? ` · ${neighborhood}` : ""}
+                </span>
+              </div>
             </div>
-          )}
-        </div>
-
-        <div className="shrink-0 flex flex-col items-center text-muted-foreground">
-          <ChevronUp className="h-4 w-4" />
-          {minyanimCount > 0 && (
-            <span className="text-[10px] font-semibold text-gold leading-none mt-0.5">
-              {minyanimCount}
-            </span>
-          )}
-        </div>
+            <div className="border-t border-hairline px-4 py-4 flex items-center justify-between gap-2 min-w-0">
+              <span className="text-[12px] text-ink-soft truncate">
+                {nextMinyanLabel
+                  ? nextMinyanLabel
+                  : updated
+                    ? t("home.presence.updated", { time: updated })
+                    : "\u00a0"}
+              </span>
+              {minyanimCount > 0 && (
+                <span className="text-[12px] font-semibold text-accent shrink-0">
+                  {t("home.presence.openList")}
+                </span>
+              )}
+            </div>
+          </>
+        ) : (
+          <div className="px-4 py-4">
+            <div className="text-[15px] font-semibold text-ink leading-tight">
+              {t("home.presence.emptyTitle")}
+            </div>
+            <div className="text-[12px] text-ink-soft mt-1 leading-snug flex items-center gap-1">
+              <MapPin className="h-3 w-3 shrink-0" />
+              <span className="truncate">{t("home.presence.emptySubtitle")}</span>
+            </div>
+          </div>
+        )}
       </button>
-
-      {onRecenter && (
-        <button
-          type="button"
-          onClick={() => {
-            tapLight();
-            onRecenter();
-          }}
-          aria-label={t("home.recenter")}
-          className="h-12 w-12 shrink-0 rounded-2xl bg-surface/80 backdrop-blur-xl border border-white/20 dark:border-white/10 shadow-[0_6px_20px_-4px_rgba(0,0,0,0.25)] flex items-center justify-center text-foreground transition-transform active:scale-[0.94]"
-        >
-          <Locate className="h-5 w-5" strokeWidth={2.2} />
-        </button>
-      )}
     </div>
   );
 }
