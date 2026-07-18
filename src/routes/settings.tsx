@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { MobileFrame } from "@/components/MobileFrame";
 import { ScreenHeader } from "@/components/ui-bits";
@@ -18,12 +18,12 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { track, setAnalyticsEnabled, isAnalyticsEnabled } from "@/lib/analytics";
 import { toast } from "sonner";
 import { tapLight } from "@/lib/haptics";
 import { getAppPref, setAppPref } from "@/lib/app-prefs";
+import { deleteAccountAndLeave, goToWelcomeAfterLeave } from "@/lib/leave-account";
 import {
   getPresenceLevel,
   setPresenceLevel,
@@ -47,7 +47,6 @@ export const Route = createFileRoute("/settings")({
 
 function Settings() {
   const { t, i18n } = useTranslation();
-  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { user } = useAuth();
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -86,16 +85,10 @@ function Settings() {
       queryClient.clear();
     } catch {}
     try {
-      await supabase.auth.signOut();
-    } catch {}
-    try {
-      const { nativeAuthClear } = await import("@/lib/native-auth");
-      await nativeAuthClear();
-    } catch {}
-    if (typeof window !== "undefined") {
-      window.location.assign("/auth");
-    } else {
-      navigate({ to: "/auth", replace: true });
+      await deleteAccountAndLeave();
+      goToWelcomeAfterLeave();
+    } catch (e) {
+      toast.error(t("common.couldNotSignOut"), { description: (e as Error).message });
     }
   }
 
@@ -104,20 +97,10 @@ function Settings() {
     setDeleting(true);
     const timeout = setTimeout(() => {
       setDeleting(false);
-      toast.error("Delete timed out. Please try again.");
+      toast.error(t("common.deleteTimedOut"));
     }, 20000);
     try {
-      // Edge function is the only delete path (works on Capacitor SPA + web).
-      const { data, error } = await supabase.functions.invoke("delete-account", { body: {} });
-      if (error) throw error;
-      if (data && typeof data === "object" && "ok" in data && data.ok === false) {
-        throw new Error(
-          typeof (data as { error?: string }).error === "string"
-            ? (data as { error: string }).error
-            : "Delete failed",
-        );
-      }
-
+      await deleteAccountAndLeave();
       track("delete_account");
       try {
         await queryClient.cancelQueries();
@@ -125,23 +108,12 @@ function Settings() {
       try {
         queryClient.clear();
       } catch {}
-      try {
-        await supabase.auth.signOut();
-      } catch {}
-      try {
-        const { nativeAuthClear } = await import("@/lib/native-auth");
-        await nativeAuthClear();
-      } catch {}
-      try {
-        localStorage.clear();
-      } catch {}
       clearTimeout(timeout);
-      toast.success("Account deleted");
-      if (typeof window !== "undefined") window.location.assign("/auth");
-      else navigate({ to: "/auth", replace: true });
+      toast.success(t("common.accountDeleted"));
+      goToWelcomeAfterLeave();
     } catch (e) {
       clearTimeout(timeout);
-      toast.error("Could not delete account", { description: (e as Error).message });
+      toast.error(t("common.couldNotDeleteAccount"), { description: (e as Error).message });
       setDeleting(false);
     }
   }
@@ -383,7 +355,15 @@ function PresenceRow({
   );
 }
 
-function LinkRow({ to, label, isLast }: { to: string; label: string; isLast?: boolean }) {
+function LinkRow({
+  to,
+  label,
+  isLast,
+}: {
+  to: "/privacy" | "/terms" | "/support";
+  label: string;
+  isLast?: boolean;
+}) {
   return (
     <Link
       to={to}

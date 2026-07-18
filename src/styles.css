@@ -265,28 +265,6 @@
     transform: translateY(0);
   }
 }
-@keyframes breathe-halo {
-  0%,
-  100% {
-    transform: scale(0.92);
-    opacity: 0.45;
-  }
-  50% {
-    transform: scale(1.12);
-    opacity: 0.85;
-  }
-}
-@keyframes breathe-density {
-  0%,
-  100% {
-    transform: scale(0.94);
-    opacity: 0.55;
-  }
-  50% {
-    transform: scale(1.06);
-    opacity: 0.95;
-  }
-}
 
 @utility live-pulse {
   position: relative;
@@ -304,12 +282,6 @@
 }
 @utility float-slow {
   animation: float-slow 4s ease-in-out infinite;
-}
-@utility breathe-halo {
-  animation: breathe-halo 2.4s ease-in-out infinite;
-}
-@utility breathe-density {
-  animation: breathe-density 2.8s ease-in-out infinite;
 }
 @utility shimmer {
   position: relative;

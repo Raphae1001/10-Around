@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate, useRouter } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import {
   Shield,
@@ -8,15 +8,15 @@ import {
   Share2,
   Trash2,
   Mail,
-  ChevronLeft,
   UserPlus,
   Bell,
   BarChart3,
   Scale,
   MessageCircle,
 } from "lucide-react";
+import { MobileFrame } from "@/components/MobileFrame";
+import { ScreenHeader } from "@/components/ui-bits";
 import { SUPPORT_EMAIL } from "@/lib/support-email";
-import { navigateBack } from "@/lib/navigate-back";
 
 export const Route = createFileRoute("/privacy")({
   head: () => ({
@@ -160,8 +160,6 @@ const LEGAL_SECTIONS: { icon: typeof UserPlus; title: string; body: React.ReactN
 
 function Privacy() {
   const { t } = useTranslation();
-  const router = useRouter();
-  const navigate = useNavigate();
   const icons = {
     data: Database,
     use: Shield,
@@ -173,78 +171,61 @@ function Privacy() {
   const sections = ["data", "use", "location", "sharing", "retention", "contact"] as const;
 
   return (
-    <div className="min-h-dvh bg-background text-foreground">
-      <div className="max-w-2xl mx-auto px-6 py-10">
-        <button
-          type="button"
-          onClick={() =>
-            navigateBack(router.history, () => {
-              void navigate({ to: "/settings" });
-            })
-          }
-          className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-6"
-        >
-          <ChevronLeft className="h-4 w-4" /> {t("common.back")}
-        </button>
+    <MobileFrame showLegal={false}>
+      <ScreenHeader title={t("privacy.title")} subtitle={t("privacy.updated")} back />
 
-        <div className="flex items-center gap-3 mb-2">
-          <div className="h-12 w-12 rounded-2xl gold-gradient text-gold-foreground flex items-center justify-center">
+      <div className="px-5 pb-8 space-y-4">
+        <div className="flex items-center gap-3">
+          <div className="h-12 w-12 rounded-2xl gold-gradient text-gold-foreground flex items-center justify-center shrink-0">
             <Lock className="h-6 w-6" />
           </div>
-          <div>
-            <h1 className="font-semibold text-3xl tracking-tight">{t("privacy.title")}</h1>
-            <p className="text-xs text-muted-foreground">{t("privacy.updated")}</p>
-          </div>
+          <p className="text-sm text-muted-foreground leading-relaxed">{t("privacy.intro")}</p>
         </div>
 
-        <p className="mt-6 text-base text-muted-foreground leading-relaxed">{t("privacy.intro")}</p>
-
-        <div className="mt-8 space-y-4">
-          {sections.map((k) => {
-            const Icon = icons[k];
-            return (
-              <section key={k} className="rounded-2xl border border-border bg-surface p-5">
-                <div className="flex items-start gap-3">
-                  <div className="h-10 w-10 rounded-xl bg-muted flex items-center justify-center shrink-0">
-                    <Icon className="h-5 w-5" />
-                  </div>
-                  <div className="flex-1">
-                    <h2 className="font-semibold text-lg">
-                      {t(`privacy.sections.${k}.title` as any)}
-                    </h2>
-                    <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed">
-                      {t(`privacy.sections.${k}.body` as any)}
-                    </p>
-                  </div>
-                </div>
-              </section>
-            );
-          })}
-
-          {LEGAL_SECTIONS.map((s) => (
-            <section key={s.title} className="rounded-2xl border border-border bg-surface p-5">
+        {sections.map((k) => {
+          const Icon = icons[k];
+          return (
+            <section key={k} className="rounded-2xl border border-border bg-surface p-5">
               <div className="flex items-start gap-3">
                 <div className="h-10 w-10 rounded-xl bg-muted flex items-center justify-center shrink-0">
-                  <s.icon className="h-5 w-5" />
+                  <Icon className="h-5 w-5" />
                 </div>
-                <div className="flex-1">
-                  <h2 className="font-semibold text-lg">{s.title}</h2>
-                  <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed">{s.body}</p>
+                <div className="flex-1 min-w-0">
+                  <h2 className="font-semibold text-lg">
+                    {t(`privacy.sections.${k}.title` as any)}
+                  </h2>
+                  <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed">
+                    {t(`privacy.sections.${k}.body` as any)}
+                  </p>
                 </div>
               </div>
             </section>
-          ))}
-        </div>
+          );
+        })}
 
-        <div className="mt-10 flex justify-center gap-4 text-xs text-muted-foreground">
+        {LEGAL_SECTIONS.map((s) => (
+          <section key={s.title} className="rounded-2xl border border-border bg-surface p-5">
+            <div className="flex items-start gap-3">
+              <div className="h-10 w-10 rounded-xl bg-muted flex items-center justify-center shrink-0">
+                <s.icon className="h-5 w-5" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h2 className="font-semibold text-lg">{s.title}</h2>
+                <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed">{s.body}</p>
+              </div>
+            </div>
+          </section>
+        ))}
+
+        <div className="pt-4 flex justify-center gap-4 text-xs text-muted-foreground">
           <Link to="/terms" className="underline">
-            Terms
+            {t("common.terms")}
           </Link>
           <Link to="/support" className="underline">
-            Support
+            {t("common.support")}
           </Link>
         </div>
       </div>
-    </div>
+    </MobileFrame>
   );
 }

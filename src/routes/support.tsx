@@ -1,8 +1,9 @@
-import { createFileRoute, Link, useNavigate, useRouter } from "@tanstack/react-router";
-import { ChevronLeft, LifeBuoy, Mail, Bug, Flag, UserX, HelpCircle } from "lucide-react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { LifeBuoy, Mail, Bug, Flag, UserX, HelpCircle } from "lucide-react";
+import { Trans, useTranslation } from "react-i18next";
+import { MobileFrame } from "@/components/MobileFrame";
+import { ScreenHeader } from "@/components/ui-bits";
 import { SUPPORT_EMAIL } from "@/lib/support-email";
-import { navigateBack } from "@/lib/navigate-back";
-import { useTranslation } from "react-i18next";
 
 export const Route = createFileRoute("/support")({
   head: () => ({
@@ -20,150 +21,123 @@ export const Route = createFileRoute("/support")({
   component: Support,
 });
 
-const FAQ: { q: string; a: string }[] = [
-  {
-    q: "I'm not receiving notifications",
-    a: "Push delivery is not live yet — Settings → Notifications explains that preferences are saved locally for a future update. When push ships, also allow system notifications for MinyanNow on your device.",
-  },
-  {
-    q: "Nearby minyanim aren't showing",
-    a: 'MinyanNow needs your location to show minyanim near you. Open Settings → Location and allow access "While Using" the app.',
-  },
-  {
-    q: "How do I change the language?",
-    a: "Open Settings → Language and pick from the 14 supported languages. The change is instant.",
-  },
-  {
-    q: "How do I create a minyan?",
-    a: "Tap the gold + button in the bottom nav, choose a prayer, set the location and time, and tap Create. Other users nearby will see it immediately.",
-  },
-  {
-    q: "Can I cancel a minyan I created?",
-    a: "Yes. Open the minyan, tap Cancel. Scheduled minyanim cannot be canceled less than 20 minutes before their start time to protect joiners.",
-  },
-  { q: "Is MinyanNow free?", a: "Yes. MinyanNow is free to use." },
-];
-
 function Support() {
   const { t } = useTranslation();
-  const router = useRouter();
-  const navigate = useNavigate();
+
+  const faq = [
+    { q: "support.faq.notifQ", a: "support.faq.notifA" },
+    { q: "support.faq.nearbyQ", a: "support.faq.nearbyA" },
+    { q: "support.faq.langQ", a: "support.faq.langA" },
+    { q: "support.faq.createQ", a: "support.faq.createA" },
+    { q: "support.faq.cancelQ", a: "support.faq.cancelA" },
+    { q: "support.faq.freeQ", a: "support.faq.freeA" },
+  ] as const;
 
   return (
-    <div className="min-h-dvh bg-background text-foreground">
-      <div className="max-w-2xl mx-auto px-6 py-10">
-        <button
-          type="button"
-          onClick={() =>
-            navigateBack(router.history, () => {
-              void navigate({ to: "/settings" });
-            })
-          }
-          className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-6"
-        >
-          <ChevronLeft className="h-4 w-4" /> {t("common.back")}
-        </button>
+    <MobileFrame showLegal={false}>
+      <ScreenHeader title={t("support.title")} subtitle={t("support.subtitle")} back />
 
-        <div className="flex items-center gap-3 mb-6">
-          <div className="h-12 w-12 rounded-2xl gold-gradient text-gold-foreground flex items-center justify-center">
+      <div className="px-5 pb-8 space-y-4">
+        <div className="flex items-center gap-3">
+          <div className="h-12 w-12 rounded-2xl gold-gradient text-gold-foreground flex items-center justify-center shrink-0">
             <LifeBuoy className="h-6 w-6" />
           </div>
-          <div>
-            <h1 className="font-semibold text-3xl tracking-tight">Support</h1>
-            <p className="text-xs text-muted-foreground">We're here to help.</p>
-          </div>
+          <p className="text-sm text-muted-foreground leading-relaxed">{t("support.intro")}</p>
         </div>
 
-        <Card icon={Mail} title="Contact us">
+        <Card icon={Mail} title={t("support.contactTitle")}>
           <p className="text-sm text-muted-foreground leading-relaxed">
-            Email{" "}
+            {t("support.contactBody", { email: SUPPORT_EMAIL })}
+          </p>
+          <p className="text-sm mt-2">
             <a className="underline text-foreground" href={`mailto:${SUPPORT_EMAIL}`}>
               {SUPPORT_EMAIL}
-            </a>{" "}
-            and we'll get back to you as soon as we can. Please include your device, app version,
-            and a short description of what happened.
+            </a>
           </p>
         </Card>
 
-        <Card icon={HelpCircle} title="Frequently asked questions">
+        <Card icon={HelpCircle} title={t("support.faqTitle")}>
           <div className="space-y-4">
-            {FAQ.map((f) => (
+            {faq.map((f) => (
               <div key={f.q}>
-                <div className="text-sm font-semibold">{f.q}</div>
-                <p className="text-sm text-muted-foreground mt-1 leading-relaxed">{f.a}</p>
+                <div className="text-sm font-semibold">{t(f.q)}</div>
+                <p className="text-sm text-muted-foreground mt-1 leading-relaxed">{t(f.a)}</p>
               </div>
             ))}
           </div>
         </Card>
 
-        <Card icon={Bug} title="Report a bug">
+        <Card icon={Bug} title={t("support.bugTitle")}>
           <p className="text-sm text-muted-foreground leading-relaxed">
-            Found something broken? Email{" "}
+            {t("support.bugIntro", { email: SUPPORT_EMAIL })}
+          </p>
+          <p className="text-sm mt-1">
             <a
               className="underline text-foreground"
               href={`mailto:${SUPPORT_EMAIL}?subject=Bug%20report`}
             >
               {SUPPORT_EMAIL}
-            </a>{" "}
-            with:
+            </a>
           </p>
           <ul className="mt-2 text-sm text-muted-foreground list-disc pl-5 space-y-1">
-            <li>What you were trying to do</li>
-            <li>What happened instead</li>
-            <li>Device + OS version (e.g. iPhone 15, iOS 17.4)</li>
-            <li>App version (Settings → About)</li>
-            <li>A screenshot if you have one</li>
+            <li>{t("support.bugWhat")}</li>
+            <li>{t("support.bugInstead")}</li>
+            <li>{t("support.bugDevice")}</li>
+            <li>{t("support.bugVersion")}</li>
+            <li>{t("support.bugScreenshot")}</li>
           </ul>
         </Card>
 
-        <Card icon={Flag} title="Report inappropriate content">
+        <Card icon={Flag} title={t("support.reportTitle")}>
           <p className="text-sm text-muted-foreground leading-relaxed">
-            MinyanNow has zero tolerance for harassment, hate speech, fake minyanim, or content that
-            targets other users. In a chat, tap the flag on a message to report it in-app. You can
-            also email{" "}
+            <Trans
+              i18nKey="support.reportBody"
+              values={{ email: SUPPORT_EMAIL }}
+              components={{
+                terms: <Link to="/terms" className="underline text-foreground" />,
+              }}
+            />
+          </p>
+          <p className="text-sm mt-2">
             <a
               className="underline text-foreground"
               href={`mailto:${SUPPORT_EMAIL}?subject=Content%20report`}
             >
               {SUPPORT_EMAIL}
             </a>
-            . Reports are reviewed within 24 hours and we take action against accounts that violate
-            our{" "}
-            <Link to="/terms" className="underline text-foreground">
-              terms
-            </Link>
-            .
           </p>
         </Card>
 
-        <Card icon={UserX} title="Account assistance & deletion">
+        <Card icon={UserX} title={t("support.accountTitle")}>
           <p className="text-sm text-muted-foreground leading-relaxed">
-            You can delete your account at any time from{" "}
-            <Link to="/settings" className="underline text-foreground">
-              Settings → Delete Account
-            </Link>
-            . Deletion is permanent and removes your profile, presence data, push tokens,
-            participation history, and chat membership. If you cannot delete from the app, email{" "}
+            <Trans
+              i18nKey="support.accountBody"
+              values={{ email: SUPPORT_EMAIL }}
+              components={{
+                settings: <Link to="/settings" className="underline text-foreground" />,
+              }}
+            />
+          </p>
+          <p className="text-sm mt-2">
             <a
               className="underline text-foreground"
               href={`mailto:${SUPPORT_EMAIL}?subject=Account%20deletion`}
             >
               {SUPPORT_EMAIL}
-            </a>{" "}
-            and we will process the deletion manually.
+            </a>
           </p>
         </Card>
 
-        <div className="mt-10 flex justify-center gap-4 text-xs text-muted-foreground">
+        <div className="pt-4 flex justify-center gap-4 text-xs text-muted-foreground">
           <Link to="/privacy" className="underline">
-            Privacy
+            {t("common.privacy")}
           </Link>
           <Link to="/terms" className="underline">
-            Terms
+            {t("common.terms")}
           </Link>
         </div>
       </div>
-    </div>
+    </MobileFrame>
   );
 }
 
@@ -177,7 +151,7 @@ function Card({
   children: React.ReactNode;
 }) {
   return (
-    <section className="rounded-2xl border border-border bg-surface p-5 mb-4">
+    <section className="rounded-2xl border border-border bg-surface p-5">
       <div className="flex items-start gap-3">
         <div className="h-10 w-10 rounded-xl bg-muted flex items-center justify-center shrink-0">
           <Icon className="h-5 w-5" />

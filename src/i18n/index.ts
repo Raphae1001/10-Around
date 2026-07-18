@@ -39,6 +39,17 @@ const RTL_LANGS = new Set<LangCode>(["he", "yi", "ar"]);
 
 const isBrowser = typeof window !== "undefined";
 
+function readSavedLang(): LangCode | null {
+  if (!isBrowser) return null;
+  try {
+    const saved = localStorage.getItem("minyannow.lang");
+    if (saved && SUPPORTED_LANGS.some((l) => l.code === saved)) return saved as LangCode;
+  } catch {}
+  return null;
+}
+
+const initialLng = readSavedLang() ?? "en";
+
 if (!i18n.isInitialized) {
   i18n.use(initReactI18next).init({
     resources: {
@@ -57,7 +68,7 @@ if (!i18n.isInitialized) {
       uk: { translation: uk },
       ro: { translation: ro },
     },
-    lng: "en",
+    lng: initialLng,
     fallbackLng: "en",
     supportedLngs: SUPPORTED_LANGS.map((l) => l.code),
     load: "languageOnly",
@@ -65,6 +76,10 @@ if (!i18n.isInitialized) {
     returnNull: false,
     react: { useSuspense: false },
   });
+  if (isBrowser) {
+    document.documentElement.lang = initialLng;
+    document.documentElement.dir = RTL_LANGS.has(initialLng) ? "rtl" : "ltr";
+  }
 }
 
 function syncHtmlAttrs() {

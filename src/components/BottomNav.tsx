@@ -21,7 +21,7 @@ export function BottomNav() {
   const { t } = useTranslation();
   const { pathname } = useLocation();
   return (
-    <div className="shrink-0 z-50 px-4 pt-2 pb-3 bg-background/95 backdrop-blur-md border-t border-hairline">
+    <div className="shrink-0 z-50 px-4 pt-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] bg-background/95 backdrop-blur-md border-t border-hairline">
       <nav className="relative bg-surface rounded-3xl shadow-lifted">
         <ul className="grid grid-cols-4 items-end">
           {items.map(({ to, key, icon: Icon, primary }) => {
