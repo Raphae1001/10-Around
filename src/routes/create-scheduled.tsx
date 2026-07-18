@@ -108,13 +108,13 @@ function CreateScheduled() {
                 <button
                   key={name}
                   onClick={() => setPrayer(name)}
-                  className={`flex flex-col items-center gap-2 py-4 rounded-2xl border transition-all active:scale-[0.97] ${
+                  className={`flex flex-col items-center gap-2 py-4 rounded-2xl transition-all active:scale-[0.97] ${
                     active
-                      ? "border-gold bg-gold-soft shadow-sm"
-                      : "border-border bg-surface hover:border-gold/50"
+                      ? "bg-accent text-accent-foreground"
+                      : "bg-surface-muted text-ink"
                   }`}
                 >
-                  <Icon className={`h-5 w-5 ${active ? "text-gold" : "text-muted-foreground"}`} />
+                  <Icon className={`h-5 w-5 ${active ? "text-accent-foreground" : "text-ink-soft"}`} />
                   <span className="text-xs font-semibold">{t(`prayer.${PRAYER_MAP[name]}`)}</span>
                 </button>
               );
@@ -130,10 +130,8 @@ function CreateScheduled() {
                 <button
                   key={n}
                   onClick={() => setNusach(n)}
-                  className={`rounded-full px-3.5 py-2 text-xs font-medium border transition-colors ${
-                    a
-                      ? "bg-foreground text-background border-foreground"
-                      : "bg-surface border-border hover:border-gold/50"
+                  className={`rounded-full px-3.5 py-2 text-xs font-medium transition-colors ${
+                    a ? "bg-accent text-accent-foreground" : "bg-surface-muted text-ink"
                   }`}
                 >
                   {n}
@@ -184,7 +182,7 @@ function CreateScheduled() {
         <button
           onClick={publish}
           disabled={publishing}
-          className="flex items-center justify-center gap-2 w-full gold-gradient text-gold-foreground font-semibold py-5 rounded-2xl shadow-glow-gold text-base transition-transform active:scale-[0.99] disabled:opacity-60"
+          className="flex items-center justify-center gap-2 w-full rounded-2xl bg-accent text-accent-foreground font-semibold py-4 shadow-fab text-base transition-transform active:scale-[0.99] disabled:opacity-60"
         >
           {publishing ? (
             <Loader2 className="h-5 w-5 animate-spin" />
@@ -275,10 +273,12 @@ function Section({
   return (
     <div>
       <div className="flex items-center gap-2 mb-2">
-        <span className="h-5 w-5 rounded-full bg-gold text-gold-foreground text-[10px] font-bold flex items-center justify-center">
+        <span className="h-5 w-5 rounded-full bg-accent text-accent-foreground text-[10px] font-bold flex items-center justify-center">
           {step}
         </span>
-        <h3 className="font-display text-sm font-semibold">{title}</h3>
+        <h3 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-soft">
+          {title}
+        </h3>
       </div>
       {children}
     </div>

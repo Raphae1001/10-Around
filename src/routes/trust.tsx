@@ -44,7 +44,7 @@ function Trust() {
           <div className="text-[10px] uppercase tracking-[0.3em] text-white/50">
             {t("trust.score")}
           </div>
-          <div className="font-display text-6xl text-gold mt-2 leading-none">
+          <div className="font-semibold text-6xl text-gold mt-2 leading-none">
             {stars.toFixed(1)}
           </div>
           <div className="flex items-center justify-center gap-0.5 mt-2">
@@ -128,7 +128,7 @@ function Pillar({ icon: Icon, tone, label, value, bar, sub }: any) {
         </div>
         <div className="flex-1">
           <div className="text-xs uppercase tracking-wider text-muted-foreground">{label}</div>
-          <div className="font-display text-lg leading-tight">{value}</div>
+          <div className="font-semibold text-lg leading-tight">{value}</div>
         </div>
       </div>
       <div className="mt-3 h-1.5 rounded-full bg-muted overflow-hidden">

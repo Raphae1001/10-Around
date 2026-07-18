@@ -34,7 +34,7 @@ function Terms() {
             <FileText className="h-6 w-6" />
           </div>
           <div>
-            <h1 className="font-display text-3xl tracking-tight">Terms of Service</h1>
+            <h1 className="font-semibold text-3xl tracking-tight">Terms of Service</h1>
             <p className="text-xs text-muted-foreground">Last updated: July 2026</p>
           </div>
         </div>
@@ -42,7 +42,7 @@ function Terms() {
         <div className="space-y-4">
           {TERMS_SECTIONS.map((s) => (
             <section key={s.title} className="rounded-2xl border border-border bg-surface p-5">
-              <h2 className="font-display text-lg">{s.title}</h2>
+              <h2 className="font-semibold text-lg">{s.title}</h2>
               <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed">{s.body}</p>
             </section>
           ))}

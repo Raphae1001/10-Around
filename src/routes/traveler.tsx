@@ -49,7 +49,7 @@ function Traveler() {
           <div className="text-[11px] uppercase tracking-[0.2em] text-white/50">
             {t("traveler.mode")}
           </div>
-          <h1 className="font-display text-2xl mt-1">{t("traveler.tripIn", { city })}</h1>
+          <h1 className="font-semibold text-2xl mt-1">{t("traveler.tripIn", { city })}</h1>
         </div>
         <Link
           to="/home"
@@ -73,19 +73,19 @@ function Traveler() {
         </div>
         <div className="grid grid-cols-3 gap-3 text-center pt-3 border-t border-white/10">
           <div>
-            <div className="font-display text-2xl text-gold">42</div>
+            <div className="font-semibold text-2xl text-gold">42</div>
             <div className="text-[10px] uppercase tracking-wider text-white/60">
               {t("traveler.stats.minyanim", { city: "TLV" })}
             </div>
           </div>
           <div>
-            <div className="font-display text-2xl text-gold">3</div>
+            <div className="font-semibold text-2xl text-gold">3</div>
             <div className="text-[10px] uppercase tracking-wider text-white/60">
               {t("traveler.stats.atAirport")}
             </div>
           </div>
           <div>
-            <div className="font-display text-2xl text-gold">7</div>
+            <div className="font-semibold text-2xl text-gold">7</div>
             <div className="text-[10px] uppercase tracking-wider text-white/60">
               {t("traveler.stats.hotelWalk")}
             </div>
@@ -126,7 +126,7 @@ function Traveler() {
 
       <div className="bg-background text-foreground rounded-t-3xl mt-6 flex-1 px-6 pt-6 pb-8">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="font-display text-xl flex items-center gap-2">
+          <h2 className="font-semibold text-xl flex items-center gap-2">
             <Globe2 className="h-5 w-5 text-gold" /> {t("traveler.alongRoute")}
           </h2>
           <StatusPill tone="sky">{t("traveler.cities", { count: 2 })}</StatusPill>

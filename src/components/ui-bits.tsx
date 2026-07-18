@@ -14,16 +14,14 @@ export function EmptyState({
   action?: ReactNode;
 }) {
   return (
-    <div className="flex flex-col items-center justify-center text-center gap-3 py-10">
-      <div className="h-14 w-14 rounded-2xl bg-gold-soft text-gold dark:bg-gold/20 flex items-center justify-center">
+    <div className="flex flex-col items-center justify-center text-center gap-3 py-10 rounded-2xl bg-surface shadow-soft">
+      <div className="h-14 w-14 rounded-full bg-surface-muted text-ink-soft flex items-center justify-center">
         <Icon className="h-7 w-7" />
       </div>
       <div className="space-y-1">
-        <h3 className="font-semibold text-base text-foreground">{title}</h3>
+        <h3 className="font-semibold text-base text-ink">{title}</h3>
         {description && (
-          <p className="text-sm text-muted-foreground max-w-[260px] mx-auto leading-snug">
-            {description}
-          </p>
+          <p className="text-sm text-ink-soft max-w-[260px] mx-auto leading-snug">{description}</p>
         )}
       </div>
       {action}
@@ -57,14 +55,16 @@ export function ScreenHeader({
         {back && (
           <Link
             to="/home"
-            className="h-9 w-9 rounded-full bg-surface border border-border shadow-card flex items-center justify-center"
+            className="h-9 w-9 rounded-full bg-surface shadow-soft flex items-center justify-center"
             aria-label="Back"
           >
             <ChevronLeft className="h-5 w-5" />
           </Link>
         )}
         <div className="min-w-0">
-          <h1 className="text-2xl leading-tight truncate">{title}</h1>
+          {title !== "" && title != null && (
+            <h1 className="text-2xl leading-tight truncate">{title}</h1>
+          )}
           {subtitle && <p className="text-xs text-muted-foreground mt-0.5">{subtitle}</p>}
         </div>
       </div>
@@ -97,7 +97,7 @@ export function StatusPill({
     gold: "gold-gradient text-gold-foreground",
     urgent: "bg-urgent/10 text-urgent",
     success: "bg-success/15 text-success",
-    sky: "bg-accent text-accent-foreground",
+    sky: "bg-surface-muted text-ink",
   };
   return (
     <span
@@ -142,14 +142,14 @@ export function MinyanCard({ m, compact = false }: { m: Minyan; compact?: boolea
             {m.urgency === "kaddish" && <LiveBadge>Kaddish</LiveBadge>}
             {m.urgency === "almost" && <LiveBadge>Almost</LiveBadge>}
           </div>
-          <h3 className="font-display text-lg leading-tight truncate">{m.name}</h3>
+          <h3 className="text-lg font-semibold leading-tight truncate">{m.name}</h3>
           <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-2 truncate">
             <MapPin className="h-3 w-3" /> {m.distance} · {m.nusach}
           </p>
         </div>
         <div className="text-right shrink-0">
           <div className="text-[10px] uppercase tracking-wider text-muted-foreground">in</div>
-          <div className="font-display text-2xl leading-none">
+          <div className="text-2xl font-semibold leading-none tabular-nums">
             {m.inMin}
             <span className="text-xs text-muted-foreground ml-0.5">m</span>
           </div>

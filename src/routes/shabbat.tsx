@@ -45,7 +45,7 @@ function Shabbat() {
           <div className="text-[10px] uppercase tracking-[0.25em] text-white/50">
             {t("shabbat.mode")}
           </div>
-          <h1 className="font-display text-2xl mt-1">{t("shabbat.parasha")}</h1>
+          <h1 className="font-semibold text-2xl mt-1">{t("shabbat.parasha")}</h1>
         </div>
         <Link
           to="/home"
@@ -65,7 +65,7 @@ function Shabbat() {
             <div className="text-[10px] uppercase tracking-wider text-white/60">
               {t("shabbat.candleLighting")}
             </div>
-            <div className="font-display text-3xl">16:24</div>
+            <div className="font-semibold text-3xl">16:24</div>
             <div className="text-xs text-white/70">
               {t("shabbat.endsHavdalah", { time: "17:48" })}
             </div>
@@ -75,7 +75,7 @@ function Shabbat() {
 
       <div className="bg-background text-foreground rounded-t-3xl mt-6 flex-1 px-6 pt-6 pb-8">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="font-display text-xl flex items-center gap-2">
+          <h2 className="font-semibold text-xl flex items-center gap-2">
             <Calendar className="h-5 w-5 text-gold" /> {t("shabbat.yourPlan")}
           </h2>
           <StatusPill tone="success">{t("shabbat.ratio", { done: 2, total: 5 })}</StatusPill>
@@ -88,7 +88,7 @@ function Shabbat() {
                 <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
                   {p.day}
                 </div>
-                <div className="font-display text-base leading-none">{p.time}</div>
+                <div className="font-semibold text-base leading-none">{p.time}</div>
               </div>
               <div className="flex-1 min-w-0">
                 <div className="text-sm font-semibold truncate">{p.label}</div>

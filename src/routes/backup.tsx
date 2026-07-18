@@ -24,7 +24,7 @@ function Backup() {
             <div className="h-11 w-11 rounded-2xl gold-gradient text-navy flex items-center justify-center mb-3">
               <Shield className="h-5 w-5" />
             </div>
-            <div className="font-display text-2xl leading-tight">{t("backup.heroTitle")}</div>
+            <div className="font-semibold text-2xl leading-tight">{t("backup.heroTitle")}</div>
             <p className="text-xs text-white/70 mt-1 max-w-[240px]">{t("backup.heroBody")}</p>
           </div>
           <button
@@ -54,7 +54,7 @@ function Backup() {
             <div className="text-[11px] uppercase tracking-wider text-muted-foreground">
               {t("backup.alertRadius")}
             </div>
-            <div className="font-display text-lg">{radiusLabel}</div>
+            <div className="font-semibold text-lg">{radiusLabel}</div>
           </div>
           <MapPin className="h-5 w-5 text-muted-foreground" />
         </div>
@@ -96,7 +96,7 @@ function Backup() {
             <StatusPill tone="success">{t("backup.saved")}</StatusPill>
             <span className="text-[10px] text-muted-foreground">Tue · 13:42</span>
           </div>
-          <div className="font-display text-base">{t("backup.exampleTitle")}</div>
+          <div className="font-semibold text-base">{t("backup.exampleTitle")}</div>
           <div className="text-xs text-muted-foreground mt-1">{t("backup.exampleDesc")}</div>
         </div>
       </div>

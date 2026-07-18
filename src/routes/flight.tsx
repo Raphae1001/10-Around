@@ -34,7 +34,7 @@ function Flight() {
         <div className="h-14 w-14 rounded-2xl gold-gradient text-navy flex items-center justify-center mb-4">
           <Plane className="h-6 w-6" />
         </div>
-        <h1 className="font-display text-3xl leading-tight">{t("flight.question")}</h1>
+        <h1 className="font-semibold text-3xl leading-tight">{t("flight.question")}</h1>
         <p className="text-sm text-white/70 mt-2 max-w-xs leading-relaxed">
           {t("flight.subtitle")}
         </p>
@@ -47,7 +47,7 @@ function Flight() {
             value={flight}
             onChange={(e) => setFlight(e.target.value.toUpperCase())}
             placeholder="LY 002"
-            className="w-full bg-transparent font-display text-3xl mt-1 outline-none placeholder:text-white/20 tracking-wider"
+            className="w-full bg-transparent font-semibold text-3xl mt-1 outline-none placeholder:text-white/20 tracking-wider"
           />
           <div className="flex items-center justify-between text-[11px] text-white/40 mt-2 border-t border-white/10 pt-2">
             <span>JFK → TLV</span>
@@ -65,7 +65,7 @@ function Flight() {
                 {t("flight.matchFound")}
               </span>
             </div>
-            <div className="font-display text-2xl leading-tight">
+            <div className="font-semibold text-2xl leading-tight">
               <span className="text-gold">9</span>{" "}
               {t("flight.membersOnFlight", { count: 9 }).replace(/^\d+\s*/, "")}
             </div>
@@ -84,19 +84,19 @@ function Flight() {
 
             <div className="grid grid-cols-3 gap-3 mt-5 text-center border-t border-white/10 pt-4">
               <div>
-                <div className="font-display text-xl text-gold">1</div>
+                <div className="font-semibold text-xl text-gold">1</div>
                 <div className="text-[10px] uppercase tracking-wider text-white/60">
                   {t("flight.neededFor10")}
                 </div>
               </div>
               <div>
-                <div className="font-display text-xl text-gold">3</div>
+                <div className="font-semibold text-xl text-gold">3</div>
                 <div className="text-[10px] uppercase tracking-wider text-white/60">
                   {t("flight.sameHotel")}
                 </div>
               </div>
               <div>
-                <div className="font-display text-xl text-gold">TLV</div>
+                <div className="font-semibold text-xl text-gold">TLV</div>
                 <div className="text-[10px] uppercase tracking-wider text-white/60">
                   {t("flight.destination")}
                 </div>

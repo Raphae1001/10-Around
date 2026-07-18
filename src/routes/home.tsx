@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next";
 import { Loader2, Moon, Plus, SunMedium } from "lucide-react";
 import { MobileFrame } from "@/components/MobileFrame";
 import { Wordmark } from "@/components/Logo";
-import { ScreenHeader } from "@/components/ui-bits";
 import { GoogleMapCanvas, type DensityHalo, type MapPinDatum } from "@/components/GoogleMap";
 import { LocationPrimerDialog } from "@/components/LocationPrimerDialog";
 import { HomePresenceCard } from "@/components/HomePresenceCard";
@@ -163,12 +162,28 @@ function Home() {
     [firstName, user],
   );
 
+  const nextMinyanLabel = useMemo(() => {
+    if (minyanim.length === 0) return null;
+    const sorted = [...minyanim].sort((a, b) => {
+      const ta = new Date(a.scheduled_at ?? a.created_at).getTime();
+      const tb = new Date(b.scheduled_at ?? b.created_at).getTime();
+      return ta - tb;
+    });
+    const m = sorted[0];
+    const prayer = t(`prayer.${m.prayer}`, { defaultValue: m.prayer });
+    const when = new Date(m.scheduled_at ?? m.created_at).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    return `${prayer} · ${when}`;
+  }, [minyanim, t]);
+
   return (
     <MobileFrame bg="map">
       <div className="flex-1 relative min-h-0">
         {geoLoading && !position ? (
           <div className="absolute inset-0 flex items-center justify-center bg-background/80 z-10">
-            <Loader2 className="h-6 w-6 animate-spin text-gold" />
+            <Loader2 className="h-6 w-6 animate-spin text-accent" />
           </div>
         ) : (
           <GoogleMapCanvas
@@ -184,43 +199,46 @@ function Home() {
           />
         )}
 
-        <div className="absolute top-0 left-0 right-0 z-50 pointer-events-none">
-          <div className="pointer-events-auto">
-            <ScreenHeader
-              overlay
-              title={<Wordmark className="text-2xl" />}
-              subtitle={position ? t("home.subtitleWithGps") : t("home.subtitleNoGps")}
-              right={
-                <div className="flex items-center gap-2 relative z-50">
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      void tapLight();
-                      toggleTheme();
-                    }}
-                    onPointerDown={(e) => e.stopPropagation()}
-                    aria-label="Toggle dark mode"
-                    className="h-9 w-9 rounded-full border border-border bg-surface/95 flex items-center justify-center text-muted-foreground hover:border-gold/50 transition-colors active:scale-[0.97]"
-                  >
-                    {theme === "dark" ? (
-                      <SunMedium className="h-4 w-4" />
-                    ) : (
-                      <Moon className="h-4 w-4" />
-                    )}
-                  </button>
-                  <Link
-                    to="/profile"
-                    className="h-9 w-9 rounded-full bg-gold/20 flex items-center justify-center text-xs font-semibold"
-                  >
-                    {initial}
-                  </Link>
-                </div>
-              }
-            />
+        {/* Header — wordmark + round surface control (theme) */}
+        <div className="absolute top-0 left-0 right-0 z-50 px-5 pt-3 pb-4 flex items-center justify-between pointer-events-none bg-gradient-to-b from-background/90 via-background/50 to-transparent">
+          <Wordmark className="text-[22px] pointer-events-auto" />
+          <div className="flex items-center gap-2 pointer-events-auto relative z-50">
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                void tapLight();
+                toggleTheme();
+              }}
+              onPointerDown={(e) => e.stopPropagation()}
+              aria-label="Toggle dark mode"
+              className="h-10 w-10 rounded-full bg-surface shadow-soft flex items-center justify-center text-ink-soft active:scale-[0.97]"
+            >
+              {theme === "dark" ? (
+                <SunMedium className="h-4 w-4" />
+              ) : (
+                <Moon className="h-4 w-4" />
+              )}
+            </button>
+            <Link
+              to="/profile"
+              className="h-10 w-10 rounded-full bg-surface shadow-soft flex items-center justify-center text-xs font-semibold text-ink"
+            >
+              {initial}
+            </Link>
           </div>
         </div>
+
+        {/* FAB — above floating card, bottom-right */}
+        <button
+          type="button"
+          onClick={() => void handleCreateFab()}
+          aria-label={t("home.createFab")}
+          className="absolute bottom-[11.5rem] right-5 z-30 h-14 w-14 rounded-full bg-accent text-accent-foreground shadow-fab flex items-center justify-center transition-transform active:scale-[0.94]"
+        >
+          <Plus className="h-7 w-7" strokeWidth={2.5} />
+        </button>
 
         {position && (
           <HomePresenceCard
@@ -229,6 +247,7 @@ function Home() {
             lastUpdatedAt={lastUpdatedAt}
             loading={densityLoading}
             minyanimCount={minyanim.length}
+            nextMinyanLabel={nextMinyanLabel}
             onOpenList={() => {
               tapLight();
               setListOpen(true);
@@ -239,15 +258,6 @@ function Home() {
             }}
           />
         )}
-
-        <button
-          type="button"
-          onClick={() => void handleCreateFab()}
-          aria-label={t("home.createFab")}
-          className="absolute bottom-4 right-5 z-20 h-14 w-14 rounded-2xl gold-gradient text-gold-foreground shadow-[0_6px_20px_-4px_rgba(212,165,55,0.55)] flex items-center justify-center transition-transform active:scale-[0.94] active:opacity-90"
-        >
-          <Plus className="h-7 w-7" strokeWidth={2.5} />
-        </button>
       </div>
 
       <LocationPrimerDialog

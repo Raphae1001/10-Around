@@ -74,7 +74,7 @@ function Siddur() {
           <div className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
             Contextual Siddur
           </div>
-          <div className="font-display text-base leading-tight flex items-center gap-1 justify-center">
+          <div className="font-semibold text-base leading-tight flex items-center gap-1 justify-center">
             Mincha · Nusach Ari <ChevronDown className="h-4 w-4 opacity-50" />
           </div>
         </div>
@@ -134,7 +134,7 @@ function Siddur() {
         {sections.map((s) => (
           <section key={s.id} id={s.id}>
             <div className="flex items-center justify-between mb-3">
-              <h2 className="font-display text-sm uppercase tracking-[0.2em] text-muted-foreground">
+              <h2 className="font-semibold text-sm uppercase tracking-[0.2em] text-muted-foreground">
                 {s.title}
               </h2>
               <button className="text-muted-foreground">
@@ -144,7 +144,7 @@ function Siddur() {
             <div className="space-y-5">
               {s.he.map((line, i) => (
                 <div key={i}>
-                  <p dir="rtl" className={`font-display ${sizeCls} leading-loose`}>
+                  <p dir="rtl" className={`font-semibold ${sizeCls} leading-loose`}>
                     {line}
                   </p>
                   {showTr && (

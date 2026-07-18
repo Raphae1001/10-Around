@@ -168,7 +168,7 @@ function TravelMinyan() {
               value={city}
               onChange={(e) => setCity(e.target.value)}
               placeholder="City"
-              className="mt-1 w-full bg-transparent font-display text-3xl tracking-tight outline-none placeholder:text-white/30"
+              className="mt-1 w-full bg-transparent font-semibold text-3xl tracking-tight outline-none placeholder:text-white/30"
             />
 
             <div className="mt-2 flex flex-wrap gap-1.5">
@@ -252,7 +252,7 @@ function TravelMinyan() {
       <div className="px-6 mt-7">
         <div className="flex items-center justify-between mb-3">
           <div>
-            <h2 className="font-display text-xl">During your stay</h2>
+            <h2 className="font-semibold text-xl">During your stay</h2>
             <p className="text-xs text-muted-foreground">
               {city} · {nights > 0 ? `${nights} nights` : "no dates"}
             </p>
@@ -417,7 +417,7 @@ function ScheduledCard({ m, onJoin }: { m: ScheduledMinyan; onJoin: () => void }
             </span>
             {complete && <LiveBadge>10/10</LiveBadge>}
           </div>
-          <h3 className="font-display text-base leading-tight truncate">{m.venue}</h3>
+          <h3 className="font-semibold text-base leading-tight truncate">{m.venue}</h3>
           <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1.5">
             <MapPin className="h-3 w-3" /> {m.venueType} · {m.nusach}
           </p>

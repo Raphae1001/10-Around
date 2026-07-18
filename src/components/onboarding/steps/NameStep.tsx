@@ -23,7 +23,7 @@ export function NameStep({ kind, value, onChange, onContinue, autoFocus = true }
     <>
       <div className="flex-1 flex flex-col">
         <div className="text-center mb-10">
-          <h1 className="font-display text-3xl text-foreground tracking-tight">{label}</h1>
+          <h1 className="font-semibold text-3xl text-foreground tracking-tight">{label}</h1>
         </div>
 
         <label className="block">

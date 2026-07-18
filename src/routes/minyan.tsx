@@ -33,6 +33,8 @@ export const Route = createFileRoute("/minyan")({
 });
 
 const NEEDED = 10;
+const SECONDARY_BTN =
+  "flex items-center justify-center gap-2 rounded-xl bg-surface-muted text-ink py-3 text-sm font-medium active:scale-[0.99] disabled:opacity-45 disabled:cursor-not-allowed";
 
 function relTime(iso: string | null, t: (k: string, o?: any) => string) {
   if (!iso) return t("home.liveNow");
@@ -250,7 +252,7 @@ function Details() {
         <div className="px-6 py-16 text-center text-sm text-muted-foreground">
           {t("minyan.notFound")}
           <div className="mt-6">
-            <button onClick={() => navigate({ to: "/home" })} className="text-gold font-semibold">
+            <button onClick={() => navigate({ to: "/home" })} className="text-accent font-semibold">
               {t("nav.home")}
             </button>
           </div>
@@ -271,14 +273,13 @@ function Details() {
   return (
     <MobileFrame>
       <ScreenHeader
-        title={minyan.address ?? t("minyan.title")}
-        subtitle={prayerLabel}
+        title=""
         back
         right={
           <button
             onClick={handleShare}
             aria-label={t("minyan.share")}
-            className="h-9 w-9 rounded-full bg-surface border border-border shadow-card flex items-center justify-center active:scale-95 transition-transform"
+            className="h-9 w-9 rounded-full bg-surface shadow-soft flex items-center justify-center active:scale-95 transition-transform"
           >
             <Share2 className="h-[18px] w-[18px]" />
           </button>
@@ -287,11 +288,18 @@ function Details() {
 
       <div className="flex-1 overflow-y-auto overscroll-y-contain">
         <div className="px-6 space-y-4 pb-4">
-          {/* HERO */}
-          <div className="rounded-2xl bg-surface border border-border p-4">
-            <div className="flex items-center gap-2 mb-3">
+          <div>
+            <h1 className="text-[20px] font-semibold text-ink leading-tight">
+              {minyan.address ?? t("minyan.title")}
+            </h1>
+            <p className="text-[13px] text-ink-soft mt-1">{prayerLabel}</p>
+          </div>
+
+          {/* HERO — compteur Fraunces */}
+          <div className="rounded-3xl bg-surface shadow-soft p-6 text-center">
+            <div className="flex justify-center mb-3">
               {isScheduled ? (
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-gold/10 text-gold px-2.5 py-1 text-[11px] font-semibold">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-accent/10 text-accent px-2.5 py-1 text-[11px] font-semibold">
                   <CalendarDays className="h-3.5 w-3.5" />
                   {scheduledAt
                     ? scheduledAt.toLocaleString([], { dateStyle: "medium", timeStyle: "short" })
@@ -301,25 +309,30 @@ function Details() {
                 <LiveBadge>{whenLabel}</LiveBadge>
               )}
             </div>
-            <div className="flex items-end justify-between">
-              <div className="text-3xl font-semibold tracking-tight leading-none">
-                {present}
-                <span className="text-muted-foreground text-xl">/{NEEDED}</span>
-              </div>
-              <div className="text-sm font-medium text-muted-foreground">
-                {complete ? t("minyan.complete") : t("minyan.missing", { count: missing })}
-              </div>
+            <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-ink-soft">
+              {t("home.present")}
             </div>
-            <div className="h-2 rounded-full bg-muted overflow-hidden mt-3">
+            <div className="mt-1 flex items-baseline justify-center gap-1">
+              <span className="font-serif-brand text-[64px] leading-none tracking-tight tabular-nums text-ink">
+                {present}
+              </span>
+              <span className="text-[18px] text-ink-soft">/{NEEDED}</span>
+            </div>
+            <div
+              className={`mt-2 text-sm font-medium ${complete ? "text-ink-soft" : "text-accent"}`}
+            >
+              {complete ? t("minyan.complete") : t("minyan.missing", { count: missing })}
+            </div>
+            <div className="mx-auto mt-4 h-1.5 w-40 rounded-full bg-surface-muted overflow-hidden">
               <div
-                className={`h-full rounded-full ${complete ? "bg-success" : "gold-gradient"}`}
+                className={`h-full rounded-full ${complete ? "bg-success" : "bg-accent"}`}
                 style={{ width: `${progress}%` }}
               />
             </div>
           </div>
 
           {/* INFO LIST */}
-          <div className="rounded-2xl bg-surface border border-border overflow-hidden">
+          <div className="rounded-2xl bg-surface shadow-soft overflow-hidden">
             {isScheduled ? (
               <Row
                 icon={CalendarDays}
@@ -359,24 +372,22 @@ function Details() {
             )}
           </div>
 
-          {/* MESSAGE */}
+          {/* MESSAGE — blockquote, not a card */}
           {minyan.message && (
-            <div className="rounded-2xl bg-gold-soft/40 border border-gold/20 p-4">
-              <p className="text-sm italic text-foreground/80 leading-relaxed">
-                "{minyan.message}"
-              </p>
-            </div>
+            <blockquote className="border-l-2 border-accent pl-4 text-[13px] italic text-ink-soft">
+              {minyan.message}
+            </blockquote>
           )}
         </div>
       </div>
 
       {/* STICKY FOOTER */}
-      <div className="px-6 pt-3 pb-2 space-y-2 border-t border-border/60 bg-background/95 backdrop-blur">
+      <div className="px-6 pt-3 pb-2 space-y-2 border-t border-hairline bg-surface/95 backdrop-blur">
         {joined ? (
           <button
             disabled={busy}
             onClick={handleLeave}
-            className="w-full bg-urgent/5 border border-urgent/40 text-urgent font-semibold py-4 rounded-2xl flex items-center justify-center gap-2 active:scale-[0.99] transition-transform"
+            className="w-full bg-surface-muted text-ink font-semibold py-4 rounded-2xl flex items-center justify-center gap-2 active:scale-[0.99] transition-transform"
           >
             <X className="h-5 w-5" /> {t("minyan.cancel")}
           </button>
@@ -384,22 +395,20 @@ function Details() {
           <button
             disabled={busy || !user || isOrganizer}
             onClick={handleJoin}
-            className="w-full gold-gradient text-gold-foreground font-semibold py-4 rounded-2xl shadow-glow-gold flex items-center justify-center gap-2 disabled:opacity-60 active:scale-[0.99] transition-transform"
+            className="w-full bg-accent text-accent-foreground font-semibold py-4 rounded-2xl shadow-fab flex items-center justify-center gap-2 disabled:opacity-60 active:scale-[0.99] transition-transform"
           >
             <Check className="h-5 w-5" /> {isOrganizer ? t("minyan.you") : t("minyan.imComing")}
           </button>
         )}
         <div className="grid grid-cols-2 gap-2">
-          <button
-            onClick={handleDirections}
-            className="bg-surface border border-border font-medium py-3 rounded-2xl text-sm flex items-center justify-center gap-2 hover:border-gold/60 active:scale-[0.99] transition-transform"
-          >
-            <Navigation2 className="h-4 w-4 text-gold shrink-0" /> {t("common.directions")}
+          <button type="button" onClick={handleDirections} className={SECONDARY_BTN}>
+            <Navigation2 className="h-4 w-4 shrink-0" /> {t("common.directions")}
           </button>
           <button
+            type="button"
             onClick={handleOpenChat}
             disabled={!joined && !isOrganizer}
-            className="bg-surface border border-border font-medium py-3 rounded-2xl text-sm flex items-center justify-center gap-2 hover:border-gold/60 active:scale-[0.99] transition-transform disabled:bg-muted/60 disabled:border-border/80 disabled:text-muted-foreground disabled:hover:border-border/80 disabled:cursor-not-allowed"
+            className={SECONDARY_BTN}
           >
             <MessageCircle className="h-4 w-4 shrink-0" /> {t("minyan.groupChat")}
           </button>
@@ -407,9 +416,7 @@ function Details() {
 
         {canCancel && (
           <div className="pt-1 text-center">
-            <p className="text-[11px] text-muted-foreground mb-1.5">
-              {t("minyan.cancelMinyanHint")}
-            </p>
+            <p className="text-[11px] text-ink-soft mb-1.5">{t("minyan.cancelMinyanHint")}</p>
             <button
               disabled={busy}
               onClick={handleCancelMinyan}
@@ -420,9 +427,7 @@ function Details() {
           </div>
         )}
         {cancelWindowClosed && (
-          <p className="text-[11px] text-center text-muted-foreground">
-            {t("minyan.cancelWindowClosed")}
-          </p>
+          <p className="text-[11px] text-center text-ink-soft">{t("minyan.cancelWindowClosed")}</p>
         )}
       </div>
 
@@ -444,14 +449,16 @@ function Row({
 }) {
   return (
     <div
-      className={`px-4 py-3.5 flex items-center gap-3 ${!isLast ? "border-b border-border/60" : ""}`}
+      className={`px-4 py-3.5 flex items-center gap-3 relative ${
+        !isLast ? "after:absolute after:left-16 after:right-0 after:bottom-0 after:h-px after:bg-hairline" : ""
+      }`}
     >
-      <div className="h-9 w-9 rounded-full bg-muted flex items-center justify-center shrink-0">
-        <Icon className="h-[18px] w-[18px] text-muted-foreground" />
+      <div className="h-9 w-9 rounded-full bg-surface-muted flex items-center justify-center shrink-0">
+        <Icon className="h-[18px] w-[18px] text-ink-soft" />
       </div>
       <div className="min-w-0 flex-1">
-        <div className="text-[11px] uppercase tracking-wider text-muted-foreground">{label}</div>
-        <div className="text-[15px] text-foreground leading-snug">{value}</div>
+        <div className="text-[11px] uppercase tracking-wider text-ink-soft">{label}</div>
+        <div className="text-[15px] text-ink leading-snug">{value}</div>
       </div>
     </div>
   );
