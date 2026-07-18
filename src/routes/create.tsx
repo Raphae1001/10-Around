@@ -429,14 +429,10 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <div>
-      <div className="flex items-center gap-2 mb-2">
-        <span className="h-5 w-5 rounded-full bg-accent text-accent-foreground text-[10px] font-bold flex items-center justify-center">
-          {step}
-        </span>
-        <h3 className="text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-soft">
-          {title}
-        </h3>
+    <div className="w-full min-w-0">
+      <div className="flex items-baseline gap-2 mb-2.5">
+        <span className="text-[12px] font-semibold tabular-nums text-accent">{step}.</span>
+        <h3 className="text-[13px] font-semibold text-ink tracking-tight">{title}</h3>
       </div>
       {children}
     </div>

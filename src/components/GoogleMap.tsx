@@ -446,28 +446,18 @@ function DensityCountBadge({
     wrap.style.cssText =
       "position:relative;display:flex;align-items:center;justify-content:center;";
 
-    const pulse = document.createElement("div");
-    pulse.className = "breathe-halo";
-    pulse.style.cssText =
-      "position:absolute;inset:-4px;border-radius:9999px;background:oklch(0.6 0.135 38 / 0.35);";
-
-    const pill = document.createElement("div");
-    pill.style.cssText =
-      "position:relative;display:flex;align-items:center;gap:4px;padding:4px 9px 4px 7px;border-radius:9999px;background:rgba(255,255,255,0.94);box-shadow:0 2px 10px rgba(0,0,0,0.2);border:1px solid oklch(0.6 0.135 38 / 0.4);";
-
-    pill.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#C25A2E" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-    </svg>`;
+    const disc = document.createElement("div");
+    disc.style.cssText =
+      "position:relative;display:flex;align-items:center;justify-content:center;min-width:36px;height:36px;padding:0 10px;border-radius:9999px;background:oklch(0.6 0.135 38);box-shadow:0 4px 14px oklch(0.6 0.135 38 / 0.45);border:2px solid #fff;";
 
     const countEl = document.createElement("span");
     countEl.style.cssText =
-      "font-family:Inter,sans-serif;font-size:11px;font-weight:800;color:#1a1a2e;line-height:1;";
+      "font-family:Fraunces,Georgia,serif;font-size:15px;font-weight:600;color:#fff;line-height:1;letter-spacing:-0.02em;";
     countEl.textContent = String(count);
-    pill.appendChild(countEl);
+    disc.appendChild(countEl);
     countRef.current = countEl;
 
-    wrap.appendChild(pulse);
-    wrap.appendChild(pill);
+    wrap.appendChild(disc);
     div.appendChild(wrap);
 
     const overlay = createHtmlOverlay(position, div);

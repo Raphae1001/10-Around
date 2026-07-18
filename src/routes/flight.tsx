@@ -16,7 +16,7 @@ function Flight() {
   const found = flight.trim().length >= 4;
 
   return (
-    <MobileFrame bg="navy" showNav={false}>
+    <MobileFrame bg="navy">
       <div className="px-5 pt-2 pb-4 flex items-center justify-between">
         <Link
           to="/traveler"

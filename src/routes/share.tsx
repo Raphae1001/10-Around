@@ -21,7 +21,7 @@ function Share() {
 https://minyanlive.app/m/aaronloft`;
 
   return (
-    <MobileFrame showNav={false}>
+    <MobileFrame>
       <ScreenHeader title={t("share.title")} subtitle={t("share.subtitle")} back />
 
       <div
