@@ -10,6 +10,7 @@ import "./styles.css";
 import "./i18n";
 import { getRouter } from "./router";
 import { hydrateNativeSupabaseStorage, attachNativeStorageMirror } from "./lib/native-storage";
+import { applyNativeShell } from "./lib/platform";
 
 /**
  * Warm the TLS/DNS handshake to Supabase as early as possible (the URL is only
@@ -32,28 +33,7 @@ function preconnectSupabase() {
 
 async function bootstrap() {
   preconnectSupabase();
-
-  // Native iPhone shell: lock page to the viewport (no pinch / pan of the whole app).
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const cap = typeof window !== "undefined" ? (window as any).Capacitor : null;
-  if (cap?.isNativePlatform?.() === true) {
-    document.documentElement.classList.add("capacitor-native");
-    document.documentElement.addEventListener(
-      "gesturestart",
-      (e) => e.preventDefault(),
-      { passive: false },
-    );
-    let meta = document.querySelector('meta[name="viewport"]');
-    if (!meta) {
-      meta = document.createElement("meta");
-      meta.setAttribute("name", "viewport");
-      document.head.appendChild(meta);
-    }
-    meta.setAttribute(
-      "content",
-      "width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover",
-    );
-  }
+  await applyNativeShell();
 
   // CRITICAL: hydrate Preferences → localStorage BEFORE the Supabase client
   // is constructed (it reads its initial session synchronously from

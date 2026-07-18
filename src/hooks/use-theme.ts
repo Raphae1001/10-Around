@@ -38,9 +38,10 @@ async function syncNativeChrome(theme: Theme) {
   if (!Capacitor.isNativePlatform()) return;
   try {
     const { StatusBar, Style } = await import("@capacitor/status-bar");
+    await StatusBar.setOverlaysWebView({ overlay: true }).catch(() => {});
     // Style.Dark = light content (for dark backgrounds); Style.Light = dark content.
     await StatusBar.setStyle({ style: theme === "dark" ? Style.Dark : Style.Light });
-    // Android / some iOS builds honor background color.
+    // Android honors background color when not overlaying.
     await StatusBar.setBackgroundColor({
       color: theme === "dark" ? "#1A1A2E" : "#FFFFFF",
     }).catch(() => {});
