@@ -16,19 +16,20 @@ const items: Item[] = [
   { to: "/profile", key: "profile", icon: User },
 ];
 
+/** Always pinned at the bottom of MobileFrame — visible without scrolling. */
 export function BottomNav() {
   const { t } = useTranslation();
   const { pathname } = useLocation();
   return (
-    <div className="sticky bottom-0 left-0 right-0 px-4 pb-4 pt-2 bg-gradient-to-t from-background via-background to-background/0">
-      <nav className="relative bg-surface rounded-3xl shadow-lifted backdrop-blur">
+    <div className="shrink-0 z-50 px-4 pt-2 pb-[max(0.75rem,env(safe-area-inset-bottom))] bg-background/95 backdrop-blur-md border-t border-hairline">
+      <nav className="relative bg-surface rounded-3xl shadow-lifted">
         <ul className="grid grid-cols-4 items-end">
           {items.map(({ to, key, icon: Icon, primary }) => {
-            const active = pathname === to;
+            const active = pathname === to || (to !== "/home" && pathname.startsWith(to));
             const label = t(`nav.${key}`);
             if (primary) {
               return (
-                <li key={to} className="flex justify-center -mt-6">
+                <li key={to} className="flex justify-center -mt-5">
                   <Link
                     to={to}
                     className="h-14 w-14 rounded-full bg-accent text-accent-foreground flex items-center justify-center shadow-fab transition-transform active:scale-[0.97]"

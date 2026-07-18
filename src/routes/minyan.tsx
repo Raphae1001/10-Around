@@ -297,7 +297,7 @@ function Details() {
       : t("home.liveNow");
 
   return (
-    <MobileFrame showNav={false} showLegal={false}>
+    <MobileFrame showLegal={false}>
       <ScreenHeader
         title=""
         back

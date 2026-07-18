@@ -168,7 +168,7 @@ function Profile() {
         }
       />
 
-      <div className="flex-1 overflow-y-auto overscroll-y-contain px-6 space-y-6 pb-8">
+      <div className="px-6 space-y-6 pb-8">
         {/* Identity card — ONLY dark surface in the app */}
         <div className="rounded-3xl bg-dark-surface text-dark-surface-foreground p-5">
           <div className="flex items-center gap-4">
@@ -265,7 +265,27 @@ function Profile() {
                 {t("profile.backupHint")}
               </div>
             </div>
-            <IosSwitch on={backupOn} />
+            <span
+              className={`shrink-0 inline-flex rounded-full p-0.5 text-[11px] font-semibold ${
+                backupOn ? "bg-accent/15" : "bg-surface-muted"
+              }`}
+              aria-hidden
+            >
+              <span
+                className={`px-2.5 py-1 rounded-full transition-colors ${
+                  !backupOn ? "bg-surface text-ink shadow-soft" : "text-ink-soft"
+                }`}
+              >
+                {t("profile.backupOff")}
+              </span>
+              <span
+                className={`px-2.5 py-1 rounded-full transition-colors ${
+                  backupOn ? "bg-accent text-accent-foreground shadow-soft" : "text-ink-soft"
+                }`}
+              >
+                {t("profile.backupOn")}
+              </span>
+            </span>
           </button>
           <NavRow
             to="/trust"
@@ -463,20 +483,5 @@ function NavRow({
       </div>
       <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
     </Link>
-  );
-}
-
-function IosSwitch({ on }: { on: boolean }) {
-  return (
-    <div
-      className={`relative h-[31px] w-[51px] rounded-full shrink-0 transition-colors ${on ? "bg-gold" : "bg-muted"}`}
-      aria-hidden
-    >
-      <div
-        className={`absolute top-[2px] h-[27px] w-[27px] rounded-full bg-white shadow transition-transform ${
-          on ? "translate-x-[22px]" : "translate-x-[2px]"
-        }`}
-      />
-    </div>
   );
 }

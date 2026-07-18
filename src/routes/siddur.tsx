@@ -61,7 +61,7 @@ function Siddur() {
   const sizeCls = size === 1 ? "text-lg" : size === 3 ? "text-3xl" : "text-2xl";
 
   return (
-    <MobileFrame showNav={false}>
+    <MobileFrame>
       {/* Header */}
       <div className="px-5 pt-2 pb-3 flex items-center justify-between sticky top-0 bg-background/95 backdrop-blur z-10 border-b border-border">
         <Link

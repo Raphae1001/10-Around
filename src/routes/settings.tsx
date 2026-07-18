@@ -422,7 +422,7 @@ function AnalyticsToggle({ isLast }: { isLast?: boolean }) {
           {t("settings.analyticsDesc")}
         </div>
       </div>
-      <IosSwitch on={on} />
+      <OnOffSegment on={on} />
     </button>
   );
 }
@@ -535,24 +535,33 @@ function PrefToggle({
       } ${disabled ? "opacity-60 cursor-default" : "active:bg-muted/50"}`}
     >
       <div className="flex-1 text-[15px] font-medium">{label}</div>
-      <IosSwitch on={on} disabled={disabled} />
+      <OnOffSegment on={on} disabled={disabled} />
     </button>
   );
 }
 
-function IosSwitch({ on, disabled }: { on: boolean; disabled?: boolean }) {
+function OnOffSegment({ on, disabled }: { on: boolean; disabled?: boolean }) {
   return (
-    <div
-      className={`relative h-[31px] w-[51px] rounded-full shrink-0 transition-colors ${
-        on ? "bg-gold" : "bg-muted"
+    <span
+      className={`shrink-0 inline-flex rounded-full p-0.5 text-[11px] font-semibold ${
+        on ? "bg-accent/15" : "bg-surface-muted"
       } ${disabled ? "opacity-70" : ""}`}
       aria-hidden
     >
-      <div
-        className={`absolute top-[2px] h-[27px] w-[27px] rounded-full bg-white shadow transition-transform ${
-          on ? "translate-x-[22px]" : "translate-x-[2px]"
+      <span
+        className={`px-2.5 py-1 rounded-full transition-colors ${
+          !on ? "bg-surface text-ink shadow-soft" : "text-ink-soft"
         }`}
-      />
-    </div>
+      >
+        OFF
+      </span>
+      <span
+        className={`px-2.5 py-1 rounded-full transition-colors ${
+          on ? "bg-accent text-accent-foreground shadow-soft" : "text-ink-soft"
+        }`}
+      >
+        ON
+      </span>
+    </span>
   );
 }
