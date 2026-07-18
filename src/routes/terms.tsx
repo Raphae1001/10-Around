@@ -1,6 +1,8 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, useRouter } from "@tanstack/react-router";
 import { ChevronLeft, FileText } from "lucide-react";
 import { TERMS_SECTIONS } from "@/lib/legal-content";
+import { navigateBack } from "@/lib/navigate-back";
+import { useTranslation } from "react-i18next";
 
 export const Route = createFileRoute("/terms")({
   head: () => ({
@@ -19,15 +21,24 @@ export const Route = createFileRoute("/terms")({
 });
 
 function Terms() {
+  const { t } = useTranslation();
+  const router = useRouter();
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-dvh bg-background text-foreground">
       <div className="max-w-2xl mx-auto px-6 py-10">
-        <Link
-          to="/"
+        <button
+          type="button"
+          onClick={() =>
+            navigateBack(router.history, () => {
+              void navigate({ to: "/settings" });
+            })
+          }
           className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-6"
         >
-          <ChevronLeft className="h-4 w-4" /> Back
-        </Link>
+          <ChevronLeft className="h-4 w-4" /> {t("common.back")}
+        </button>
 
         <div className="flex items-center gap-3 mb-6">
           <div className="h-12 w-12 rounded-2xl gold-gradient text-gold-foreground flex items-center justify-center">

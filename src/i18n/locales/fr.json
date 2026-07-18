@@ -154,7 +154,7 @@
     "date": "Date",
     "time": "Heure",
     "publish": "Publier le minyan planifié",
-    "publishHint": "Il apparaîtra dans la section Planifié, pas sur la carte en direct.",
+    "publishHint": "Visible dans Planifié et sur la carte pour les personnes à proximité du lieu.",
     "previewNoDate": "Choisis une date et une heure",
     "previewNoAddress": "Choisis un lieu",
     "published": "Minyan planifié publié !",

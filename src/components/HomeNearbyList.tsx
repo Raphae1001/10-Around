@@ -17,7 +17,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { MapPin, Users, Plus, Sunrise, Sun, Moon, Check, Loader2, Navigation } from "lucide-react";
+import { MapPin, Users, Sunrise, Sun, Moon, Check, Loader2, Navigation } from "lucide-react";
 import { tapLight, tapMedium, successHaptic } from "@/lib/haptics";
 import { joinMinyan, useNearbyMinyanim, type MinyanRow } from "@/hooks/use-minyanim";
 import type { GeoPosition } from "@/hooks/use-geolocation";
@@ -77,16 +77,16 @@ export function HomeNearbyList({ position, userId }: Props) {
   };
 
   return (
-    <>
-      <div className="px-6 pt-4 pb-2 flex items-end justify-between">
-        <div>
-          <h2 className="text-xl font-semibold">{t("home.orJoinNearby")}</h2>
-          <p className="text-xs text-muted-foreground">{t("home.joinHint")}</p>
+    <div className="flex flex-col h-full min-h-0">
+      <div className="px-5 pt-1 pb-2 flex items-end justify-between shrink-0 gap-3">
+        <div className="min-w-0">
+          <h2 className="text-lg font-semibold leading-tight truncate">{t("home.orJoinNearby")}</h2>
+          <p className="text-xs text-muted-foreground truncate">{t("home.joinHint")}</p>
         </div>
         {minyanim.length > 0 ? (
           <LiveBadge>{t("home.live")}</LiveBadge>
         ) : (
-          <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+          <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold shrink-0">
             {t("home.live")}
           </span>
         )}
@@ -94,7 +94,7 @@ export function HomeNearbyList({ position, userId }: Props) {
 
       <div
         ref={listRef}
-        className="flex-1 overflow-y-auto overscroll-y-contain px-6 pb-8"
+        className="flex-1 min-h-0 overflow-y-auto overscroll-y-contain px-5 pb-6"
         onTouchStart={(e) => {
           if ((listRef.current?.scrollTop ?? 1) === 0) touchStartY.current = e.touches[0].clientY;
         }}
@@ -135,16 +135,21 @@ export function HomeNearbyList({ position, userId }: Props) {
           </div>
         )}
         {position && !loading && minyanim.length === 0 && (
-          <div className="flex flex-col items-center justify-center pt-10">
-            <EmptyState
-              icon={Users}
-              title={t("home.noneNearby")}
-              action={
-                <Link to="/create" className="text-gold font-semibold text-sm">
+          <div className="rounded-2xl bg-surface border border-border overflow-hidden">
+            <div className="flex items-center gap-3 px-4 py-4">
+              <div className="h-10 w-10 rounded-full bg-accent/10 text-accent flex items-center justify-center shrink-0">
+                <Users className="h-[18px] w-[18px]" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[15px] font-medium text-ink leading-snug">{t("home.noneNearby")}</p>
+                <Link
+                  to="/create"
+                  className="inline-block mt-1.5 text-[13px] font-semibold text-accent"
+                >
                   {t("home.startCta")}
                 </Link>
-              }
-            />
+              </div>
+            </div>
           </div>
         )}
         {minyanim.length > 0 && (
@@ -204,7 +209,7 @@ export function HomeNearbyList({ position, userId }: Props) {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </>
+    </div>
   );
 }
 const SWIPE_ACTION_W = 72;
@@ -345,13 +350,13 @@ function NearbyRow({
             onJoinRequest();
           }}
           disabled={joined}
-          aria-label="Join this minyan"
-          className={`h-9 w-9 rounded-full flex items-center justify-center transition-all active:scale-[0.97] shrink-0 ${joined ? "bg-success text-white" : "gold-gradient text-gold-foreground"}`}
+          aria-label={t("common.join")}
+          className={`h-9 px-3.5 rounded-full flex items-center justify-center gap-1 text-[13px] font-semibold transition-all active:scale-[0.97] shrink-0 ${joined ? "bg-success text-white" : "bg-accent text-accent-foreground"}`}
         >
           {joined ? (
             <Check className="h-4 w-4" strokeWidth={2.8} />
           ) : (
-            <Plus className="h-4 w-4" strokeWidth={2.4} />
+            t("common.join")
           )}
         </button>
         <div

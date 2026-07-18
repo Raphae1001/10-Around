@@ -11,7 +11,7 @@ const nearbyCache = new Map<string, MinyanRow[]>();
 const cacheKey = (p: { lat: number; lng: number }, r: number) =>
   `${p.lat.toFixed(2)},${p.lng.toFixed(2)},${r}`;
 
-/** Nearby live minyanim: street + scheduled in ±30 min of start, both within radius. */
+/** Nearby live minyanim: street + scheduled (from creation), both within radius. */
 export function useNearbyMinyanim(
   position: { lat: number; lng: number } | null,
   radiusMeters = 1000,

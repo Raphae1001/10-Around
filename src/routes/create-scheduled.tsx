@@ -221,6 +221,19 @@ function CreateScheduled() {
 
     setPublishing(true);
     try {
+      const { data: nearbyCount, error: rpcErr } = await supabase.rpc("count_minyanim_within", {
+        lat: pick.lat,
+        lng: pick.lng,
+        radius_m: 200,
+        _start: scheduledAt.toISOString(),
+      });
+      if (rpcErr) throw rpcErr;
+      if ((nearbyCount ?? 0) > 0) {
+        toast.error(t("create.duplicateNearby"), { description: t("create.joinInstead") });
+        setPublishing(false);
+        return;
+      }
+
       const expiresAt = new Date(scheduledAt.getTime() + 40 * 60 * 1000).toISOString();
       const { data: created, error } = await supabase
         .from("minyanim")

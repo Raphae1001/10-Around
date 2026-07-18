@@ -1,14 +1,13 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type PointerEvent } from "react";
 import { useTranslation } from "react-i18next";
-import { Loader2, Moon, Plus, SunMedium } from "lucide-react";
+import { Loader2, Moon, Plus, SunMedium, X } from "lucide-react";
 import { MobileFrame } from "@/components/MobileFrame";
 import { Wordmark } from "@/components/Logo";
 import { GoogleMapCanvas, type DensityHalo, type MapPinDatum } from "@/components/GoogleMap";
 import { LocationPrimerDialog } from "@/components/LocationPrimerDialog";
 import { HomePresenceCard } from "@/components/HomePresenceCard";
 import { HomeNearbyList } from "@/components/HomeNearbyList";
-import { Drawer, DrawerContent, DrawerTitle } from "@/components/ui/drawer";
 import { useTheme } from "@/hooks/use-theme";
 import { useAuth } from "@/hooks/use-auth";
 import { useGeolocation } from "@/hooks/use-geolocation";
@@ -35,6 +34,15 @@ export const Route = createFileRoute("/home")({
 const PRIMER_SEEN_KEY = "minyan:location-primer-seen";
 const FALLBACK_CENTER = { lat: 32.0853, lng: 34.7818 };
 
+/** Nearby list sheet — never full-screen; map stays visible. */
+type ListSheet = "closed" | "peek" | "half" | "tall";
+const LIST_SHEET_HEIGHT: Record<Exclude<ListSheet, "closed">, string> = {
+  peek: "min(38vh, 300px)",
+  half: "52vh",
+  tall: "68vh",
+};
+const LIST_SHEET_ORDER: Exclude<ListSheet, "closed">[] = ["peek", "half", "tall"];
+
 function Home() {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -50,12 +58,46 @@ function Home() {
   const [primerOpen, setPrimerOpen] = useState(false);
   const [permState, setPermState] = useState<LocationPermissionState | null>(null);
   const [neighborhood, setNeighborhood] = useState<string | null>(null);
-  const [listOpen, setListOpen] = useState(false);
+  const [listSheet, setListSheet] = useState<ListSheet>("closed");
   const [recenterNonce, setRecenterNonce] = useState(0);
   const pendingCreateRef = useRef(false);
   const allowingRef = useRef(false);
   const lastGeoRef = useRef<{ lat: number; lng: number } | null>(null);
-  const drawerContentRef = useRef<HTMLDivElement>(null);
+  const listDragStartY = useRef<number | null>(null);
+  const listDragStartState = useRef<Exclude<ListSheet, "closed">>("peek");
+
+  const openListSheet = useCallback(() => {
+    void tapLight();
+    setListSheet("peek");
+  }, []);
+
+  const closeListSheet = useCallback(() => {
+    setListSheet("closed");
+  }, []);
+
+  const onListSheetDragStart = useCallback(
+    (e: PointerEvent<HTMLDivElement>) => {
+      if (listSheet === "closed") return;
+      listDragStartY.current = e.clientY;
+      listDragStartState.current = listSheet;
+      (e.target as HTMLElement).setPointerCapture(e.pointerId);
+    },
+    [listSheet],
+  );
+
+  const onListSheetDragEnd = useCallback((e: PointerEvent<HTMLDivElement>) => {
+    if (listDragStartY.current == null) return;
+    const dy = e.clientY - listDragStartY.current;
+    listDragStartY.current = null;
+    const from = listDragStartState.current;
+    const idx = LIST_SHEET_ORDER.indexOf(from);
+    if (dy < -48) {
+      setListSheet(LIST_SHEET_ORDER[Math.min(idx + 1, LIST_SHEET_ORDER.length - 1)]);
+    } else if (dy > 48) {
+      if (idx <= 0) setListSheet("closed");
+      else setListSheet(LIST_SHEET_ORDER[idx - 1]);
+    }
+  }, []);
 
   useEffect(() => {
     if (!user) return;
@@ -230,17 +272,19 @@ function Home() {
           </div>
         </div>
 
-        {/* FAB — above floating card, bottom-right */}
-        <button
-          type="button"
-          onClick={() => void handleCreateFab()}
-          aria-label={t("home.createFab")}
-          className="absolute bottom-[11.5rem] right-5 z-30 h-14 w-14 rounded-full bg-accent text-accent-foreground shadow-fab flex items-center justify-center transition-transform active:scale-[0.94]"
-        >
-          <Plus className="h-7 w-7" strokeWidth={2.5} />
-        </button>
+        {/* FAB — above floating card; hide while list sheet is open */}
+        {listSheet === "closed" && (
+          <button
+            type="button"
+            onClick={() => void handleCreateFab()}
+            aria-label={t("home.createFab")}
+            className="absolute bottom-[11.5rem] right-5 z-30 h-14 w-14 rounded-full bg-accent text-accent-foreground shadow-fab flex items-center justify-center transition-transform active:scale-[0.94]"
+          >
+            <Plus className="h-7 w-7" strokeWidth={2.5} />
+          </button>
+        )}
 
-        {position && (
+        {position && listSheet === "closed" && (
           <HomePresenceCard
             activeCount={activeCount}
             neighborhood={neighborhood}
@@ -248,15 +292,63 @@ function Home() {
             loading={densityLoading}
             minyanimCount={minyanim.length}
             nextMinyanLabel={nextMinyanLabel}
-            onOpenList={() => {
-              tapLight();
-              setListOpen(true);
-            }}
+            onOpenList={openListSheet}
             onRecenter={() => {
               void requestGeo();
               setRecenterNonce((n) => n + 1);
             }}
           />
+        )}
+
+        {/* Nearby list — snap sheet (peek / half / tall), drag to resize or close */}
+        {listSheet !== "closed" && user && (
+          <>
+            <button
+              type="button"
+              aria-label={t("common.cancel")}
+              className="absolute inset-0 z-30 bg-transparent"
+              onClick={closeListSheet}
+            />
+            <div
+              role="dialog"
+              aria-label={t("home.orJoinNearby")}
+              style={{ height: LIST_SHEET_HEIGHT[listSheet] }}
+              className="absolute left-0 right-0 bottom-0 z-40 bg-surface rounded-t-3xl border-t border-border shadow-lifted flex flex-col overflow-hidden transition-[height] duration-300 ease-out"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div
+                onPointerDown={onListSheetDragStart}
+                onPointerUp={onListSheetDragEnd}
+                onPointerCancel={onListSheetDragEnd}
+                className="relative shrink-0 pt-2.5 pb-1 px-5 cursor-grab active:cursor-grabbing select-none touch-none"
+              >
+                <div className="flex justify-center">
+                  <button
+                    type="button"
+                    aria-label={t("home.presence.openList")}
+                    onClick={() => {
+                      const idx = LIST_SHEET_ORDER.indexOf(listSheet);
+                      setListSheet(
+                        LIST_SHEET_ORDER[Math.min(idx + 1, LIST_SHEET_ORDER.length - 1)],
+                      );
+                    }}
+                    className="h-1.5 w-12 rounded-full bg-muted"
+                  />
+                </div>
+                <button
+                  type="button"
+                  onClick={closeListSheet}
+                  aria-label={t("common.cancel")}
+                  className="absolute right-4 top-2 h-7 w-7 rounded-full bg-muted text-muted-foreground flex items-center justify-center active:scale-[0.96]"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              </div>
+              <div className="flex-1 min-h-0 flex flex-col">
+                <HomeNearbyList position={position} userId={user.id} />
+              </div>
+            </div>
+          </>
         )}
       </div>
 
@@ -269,26 +361,6 @@ function Home() {
         onAllow={() => void handlePrimerAllow()}
         onLater={handlePrimerLater}
       />
-
-      <Drawer open={listOpen} onOpenChange={setListOpen}>
-        <DrawerContent
-          ref={drawerContentRef}
-          tabIndex={-1}
-          aria-describedby={undefined}
-          onOpenAutoFocus={(e) => {
-            // vaul defaults to autoFocus=false and calls preventDefault on the
-            // open auto-focus, which leaves focus on the trigger button — now
-            // inside an aria-hidden subtree (VoiceOver warning). Move focus into
-            // the drawer container instead of a random inner control.
-            e.preventDefault();
-            drawerContentRef.current?.focus();
-          }}
-          className="h-[82vh] focus:outline-none"
-        >
-          <DrawerTitle className="sr-only">{t("home.orJoinNearby")}</DrawerTitle>
-          {user && <HomeNearbyList position={position} userId={user.id} />}
-        </DrawerContent>
-      </Drawer>
     </MobileFrame>
   );
 }

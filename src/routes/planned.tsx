@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
-import { CalendarDays, Globe2, Loader2, Plus } from "lucide-react";
+import { CalendarDays, Loader2, Plane, Plus } from "lucide-react";
 import { MobileFrame } from "@/components/MobileFrame";
 import { EmptyState } from "@/components/ui-bits";
 import { PlannedMinyanRow } from "@/components/PlannedMinyanRow";
@@ -13,7 +13,6 @@ export const Route = createFileRoute("/planned")({
   component: Planned,
 });
 
-/** Text-only add action — accent, no filled pill. */
 function CreateTextButton({ label, onClick }: { label: string; onClick: () => void }) {
   return (
     <button
@@ -97,8 +96,23 @@ function Planned() {
                   ))}
                 </div>
               ) : (
-                <div className="px-6 py-1">
-                  <EmptyState icon={CalendarDays} title={t("planned.emptyScheduled")} />
+                <div className="px-6">
+                  <EmptyState
+                    icon={CalendarDays}
+                    title={t("planned.emptyScheduled")}
+                    action={
+                      <button
+                        type="button"
+                        onClick={() => {
+                          tapLight();
+                          navigate({ to: "/create-scheduled" });
+                        }}
+                        className="text-[13px] font-semibold text-accent active:opacity-70"
+                      >
+                        {t("planned.addScheduled")}
+                      </button>
+                    }
+                  />
                 </div>
               )}
             </PlannedSection>
@@ -124,8 +138,23 @@ function Planned() {
                   ))}
                 </div>
               ) : (
-                <div className="px-6 py-1">
-                  <EmptyState icon={Globe2} title={t("planned.emptyStay")} />
+                <div className="px-6">
+                  <EmptyState
+                    icon={Plane}
+                    title={t("planned.emptyStay")}
+                    action={
+                      <button
+                        type="button"
+                        onClick={() => {
+                          tapLight();
+                          navigate({ to: "/create-stay" });
+                        }}
+                        className="text-[13px] font-semibold text-accent active:opacity-70"
+                      >
+                        {t("planned.addStay")}
+                      </button>
+                    }
+                  />
                 </div>
               )}
             </PlannedSection>
