@@ -1,49 +1,77 @@
 import UIKit
 import Capacitor
 
+/// Keeps WKWebView at scale 1 — no pinch-zoom / horizontal page pan on iPhone.
+final class WebViewZoomLock: NSObject, UIScrollViewDelegate {
+  func apply(to bridge: CAPBridgeViewController) {
+    guard let scroll = bridge.webView?.scrollView else { return }
+    scroll.delegate = self
+    scroll.minimumZoomScale = 1
+    scroll.maximumZoomScale = 1
+    scroll.zoomScale = 1
+    scroll.bouncesZoom = false
+    scroll.bounces = false
+    scroll.alwaysBounceHorizontal = false
+    scroll.alwaysBounceVertical = false
+    scroll.showsHorizontalScrollIndicator = false
+    scroll.pinchGestureRecognizer?.isEnabled = false
+    scroll.contentInsetAdjustmentBehavior = .never
+    scroll.setZoomScale(1, animated: false)
+  }
+
+  func viewForZooming(in scrollView: UIScrollView) -> UIView? { nil }
+
+  func scrollViewDidZoom(_ scrollView: UIScrollView) {
+    if scrollView.zoomScale != 1 {
+      scrollView.setZoomScale(1, animated: false)
+    }
+  }
+
+  func scrollViewDidScroll(_ scrollView: UIScrollView) {
+    if scrollView.contentOffset.x != 0 {
+      scrollView.contentOffset.x = 0
+    }
+  }
+}
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
+    private let webViewZoomLock = WebViewZoomLock()
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        // WebView is created asynchronously — retry lock a few times after launch.
+        for delay in [0.05, 0.25, 0.75, 1.5] as [TimeInterval] {
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
+                self?.lockWebView()
+            }
+        }
         return true
     }
 
-    func applicationWillResignActive(_ application: UIApplication) {
-        // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
-        // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
-    }
+    func applicationWillResignActive(_ application: UIApplication) {}
 
-    func applicationDidEnterBackground(_ application: UIApplication) {
-        // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
-        // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
-    }
+    func applicationDidEnterBackground(_ application: UIApplication) {}
 
-    func applicationWillEnterForeground(_ application: UIApplication) {
-        // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
-    }
+    func applicationWillEnterForeground(_ application: UIApplication) {}
 
     func applicationDidBecomeActive(_ application: UIApplication) {
-        // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+        lockWebView()
     }
 
-    func applicationWillTerminate(_ application: UIApplication) {
-        // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
-    }
+    func applicationWillTerminate(_ application: UIApplication) {}
 
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
-        // Called when the app was launched with a url. Feel free to add additional processing here,
-        // but if you want the App API to support tracking app url opens, make sure to keep this call
         return ApplicationDelegateProxy.shared.application(app, open: url, options: options)
     }
 
     func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
-        // Called when the app was launched with an activity, including Universal Links.
-        // Feel free to add additional processing here, but if you want the App API to support
-        // tracking app url opens, make sure to keep this call
         return ApplicationDelegateProxy.shared.application(application, continue: userActivity, restorationHandler: restorationHandler)
     }
 
+    private func lockWebView() {
+        guard let bridge = window?.rootViewController as? CAPBridgeViewController else { return }
+        webViewZoomLock.apply(to: bridge)
+    }
 }
