@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Logo, Wordmark } from "@/components/Logo";
 import { useEffect, useState } from "react";
 import { MapPin } from "lucide-react";
+import { Trans, useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/")({
@@ -19,6 +20,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Splash() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [show, setShow] = useState(false);
   const [checking, setChecking] = useState(true);
@@ -43,8 +45,8 @@ function Splash() {
 
   useEffect(() => {
     if (checking) return;
-    const t = setTimeout(() => setShow(true), 200);
-    return () => clearTimeout(t);
+    const tmr = setTimeout(() => setShow(true), 200);
+    return () => clearTimeout(tmr);
   }, [checking]);
 
   if (checking) {
@@ -76,17 +78,18 @@ function Splash() {
               <Wordmark />
             </h1>
             <p className="mt-4 text-base text-white/80 max-w-xs mx-auto leading-snug">
-              Start a minyan <span className="text-gold">everywhere, every moment</span>.
+              <Trans
+                i18nKey="splash.tagline"
+                components={{ gold: <span className="text-gold" /> }}
+              />
             </p>
-            <p className="mt-1 text-xs text-white/50 max-w-xs mx-auto">
-              Street · Airport · Hotel · Anywhere
-            </p>
+            <p className="mt-1 text-xs text-white/50 max-w-xs mx-auto">{t("splash.places")}</p>
           </div>
 
           <div className="absolute bottom-32 left-0 right-0 flex justify-center">
             <div className="flex items-center gap-2 text-[11px] tracking-[0.3em] uppercase text-white/40">
               <MapPin className="h-3 w-3 text-gold" />
-              10 jews, 1 tap, anywhere
+              {t("splash.mission")}
             </div>
           </div>
         </div>
@@ -96,10 +99,10 @@ function Splash() {
             to="/onboarding"
             className="block w-full text-center gold-gradient text-gold-foreground font-semibold py-4 rounded-2xl shadow-glow-gold"
           >
-            Begin
+            {t("splash.begin")}
           </Link>
           <Link to="/auth" className="block text-center text-white/60 text-sm py-2">
-            I already have an account
+            {t("splash.haveAccount")}
           </Link>
         </div>
       </div>

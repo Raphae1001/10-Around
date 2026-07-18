@@ -1,5 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { MobileFrame } from "@/components/MobileFrame";
 import { GoogleMapCanvas } from "@/components/GoogleMap";
 import { LiveBadge, StatusPill, EmptyState } from "@/components/ui-bits";
@@ -35,6 +36,7 @@ const FALLBACK = { lat: 40.7588, lng: -73.9857 };
 type SheetState = "hidden" | "collapsed" | "expanded";
 
 function LiveMap() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { id: focusId } = Route.useSearch();
   const { position, request } = useGeolocation(true);
@@ -99,7 +101,7 @@ function LiveMap() {
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search city, synagogue, or address"
+            placeholder={t("map.searchPh")}
             className="bg-transparent text-sm flex-1 min-w-0 outline-none placeholder:text-muted-foreground"
           />
           <button className="h-9 w-9 rounded-xl bg-muted flex items-center justify-center shrink-0">
@@ -107,17 +109,24 @@ function LiveMap() {
           </button>
         </div>
         <div className="mt-3 flex gap-2 overflow-x-auto hide-scrollbar">
-          {["All", "Shacharit", "Mincha", "Maariv"].map((f) => (
+          {(
+            [
+              { id: "All", label: t("map.filters.all") },
+              { id: "Shacharit", label: t("prayer.shacharit") },
+              { id: "Mincha", label: t("prayer.mincha") },
+              { id: "Maariv", label: t("prayer.maariv") },
+            ] as const
+          ).map((f) => (
             <button
-              key={f}
-              onClick={() => setFilter(f)}
+              key={f.id}
+              onClick={() => setFilter(f.id)}
               className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-medium border transition-colors ${
-                filter === f
+                filter === f.id
                   ? "bg-foreground text-background border-foreground"
                   : "bg-surface/90 border-border hover:border-gold/50"
               }`}
             >
-              {f}
+              {f.label}
             </button>
           ))}
         </div>
@@ -150,7 +159,7 @@ function LiveMap() {
 
         {minyanError && (
           <div className="absolute top-3 left-1/2 -translate-x-1/2 z-20 rounded-full bg-urgent/90 text-white text-[11px] px-3 py-1 shadow-soft">
-            Connection issue — retrying…
+            {t("map.connectionIssue")}
           </div>
         )}
 
@@ -161,7 +170,7 @@ function LiveMap() {
               request();
             }}
             className="h-10 w-10 rounded-xl bg-surface/90 backdrop-blur border border-border shadow-card flex items-center justify-center transition-transform active:scale-[0.97]"
-            aria-label="Recenter on me"
+            aria-label={t("map.recenter")}
           >
             <Locate className="h-4 w-4 text-sky" />
           </button>
@@ -169,10 +178,12 @@ function LiveMap() {
 
         <div className="absolute top-3 left-3 z-10">
           {filtered.length > 0 ? (
-            <LiveBadge>{filtered.length} LIVE</LiveBadge>
+            <LiveBadge>
+              {filtered.length} {t("common.live")}
+            </LiveBadge>
           ) : (
             <span className="inline-flex items-center rounded-full bg-surface/90 backdrop-blur px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground shadow-card border border-border">
-              0 live
+              {t("map.noneAround")}
             </span>
           )}
         </div>
@@ -219,19 +230,19 @@ function LiveMap() {
               <div className="flex items-center justify-between mb-3 gap-3">
                 <div className="min-w-0">
                   <h2 className="font-semibold text-lg leading-tight truncate">
-                    {selected ? "Selected minyan" : "Live near you"}
+                    {selected ? t("map.selected") : t("map.liveNear")}
                   </h2>
                   <p className="text-xs text-muted-foreground truncate">
                     {selected
-                      ? (selected.address ?? "Unknown spot")
-                      : `${filtered.length} minyanim`}
+                      ? (selected.address ?? t("map.unknownSpot"))
+                      : t("map.minyanimCount", { count: filtered.length })}
                   </p>
                 </div>
                 {(() => {
                   const forming = filtered.filter((m) => (m.present_count ?? 1) < 10).length;
                   return (
                     <StatusPill tone={forming > 0 ? "gold" : "default"}>
-                      {forming} forming
+                      {t("map.forming", { count: forming })}
                     </StatusPill>
                   );
                 })()}
@@ -248,13 +259,13 @@ function LiveMap() {
                     />
                   ))}
                 {filtered.length === 0 && (
-                  <EmptyState icon={MapPin} title="No minyanim around — be the first." />
+                  <EmptyState icon={MapPin} title={t("map.noNearby")} />
                 )}
                 <button
                   onClick={() => navigate({ to: "/create" })}
                   className="w-full text-center text-sm font-semibold text-gold py-2 flex items-center justify-center gap-1"
                 >
-                  <Plus className="h-4 w-4" /> Don't see one? Start a minyan here
+                  <Plus className="h-4 w-4" /> {t("map.startHere")}
                 </button>
               </div>
             </div>
@@ -266,6 +277,7 @@ function LiveMap() {
 }
 
 function MapCard({ m, active, onSelect }: { m: MinyanRow; active: boolean; onSelect: () => void }) {
+  const { t } = useTranslation();
   const Icon = m.prayer === "shacharit" ? Sunrise : m.prayer === "mincha" ? Sun : Moon;
   return (
     <div
@@ -278,9 +290,11 @@ function MapCard({ m, active, onSelect }: { m: MinyanRow; active: boolean; onSel
         <Icon className="h-5 w-5" />
       </div>
       <div className="flex-1 min-w-0">
-        <div className="text-sm font-semibold truncate">{m.address ?? "Unknown spot"}</div>
+        <div className="text-sm font-semibold truncate">
+          {m.address ?? t("map.unknownSpot")}
+        </div>
         <div className="text-[11px] text-muted-foreground">
-          {m.prayer} · {m.present_count}/10 · {m.type}
+          {t(`prayer.${m.prayer}`, { defaultValue: m.prayer })} · {m.present_count}/10 · {m.type}
         </div>
       </div>
       <button
@@ -290,7 +304,7 @@ function MapCard({ m, active, onSelect }: { m: MinyanRow; active: boolean; onSel
         }}
         className="h-9 px-3 rounded-xl gold-gradient text-gold-foreground text-xs font-semibold flex items-center gap-1"
       >
-        <Navigation className="h-3.5 w-3.5" /> Go
+        <Navigation className="h-3.5 w-3.5" /> {t("common.go")}
       </button>
     </div>
   );

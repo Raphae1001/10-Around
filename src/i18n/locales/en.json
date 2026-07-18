@@ -24,7 +24,24 @@
     "open": "Open",
     "join": "Join",
     "go": "Go",
-    "live": "LIVE"
+    "live": "LIVE",
+    "pageNotFound": "Page not found",
+    "pageNotFoundDesc": "The page you're looking for doesn't exist or has been moved.",
+    "goHome": "Go home",
+    "somethingWrong": "Something went wrong",
+    "pageLoadFailed": "This page didn't load",
+    "pageLoadFailedDesc": "Something went wrong on our end. You can try refreshing or head back home.",
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "support": "Support",
+    "couldNotSignOut": "Could not sign out",
+    "deleteTimedOut": "Delete timed out. Please try again.",
+    "accountDeleted": "Account deleted",
+    "couldNotDeleteAccount": "Could not delete account",
+    "less": "Less",
+    "more": "More",
+    "toggleTheme": "Toggle dark mode",
+    "chooseLanguage": "Choose language"
   },
   "auth": {
     "welcome": "Welcome to",
@@ -59,7 +76,6 @@
       "allow": "Enable"
     }
   },
-
   "home": {
     "subtitleWithGps": "Live within 1 km of you",
     "subtitleNoGps": "Allow location to see nearby minyanim",
@@ -198,8 +214,17 @@
     "dayAgo_other": "{{count}} d ago",
     "unknown": "—"
   },
-  "ctx": { "Street": "Street", "Airport": "Airport", "Hotel": "Other", "Travel": "Abroad" },
-  "prayer": { "shacharit": "Shacharit", "mincha": "Mincha", "maariv": "Maariv" },
+  "ctx": {
+    "Street": "Street",
+    "Airport": "Airport",
+    "Hotel": "Other",
+    "Travel": "Abroad"
+  },
+  "prayer": {
+    "shacharit": "Shacharit",
+    "mincha": "Mincha",
+    "maariv": "Maariv"
+  },
   "create": {
     "title": "Start a minyan",
     "subtitle": "Fill in the details — everyone will see them",
@@ -288,7 +313,11 @@
     "trustSub": "Your 98% show-rate keeps the community strong",
     "recent": "Recent participation",
     "noHistory": "No minyanim yet — your history will appear here.",
-    "stats": { "minyanim": "Minyanim", "completed": "Completed", "streak": "Streak" },
+    "stats": {
+      "minyanim": "Minyanim",
+      "completed": "Completed",
+      "streak": "Streak"
+    },
     "badges": "Badges",
     "badgeMaker": "Minyan Maker",
     "badgeMakerSub": "Completed 25+",
@@ -304,7 +333,7 @@
     "groupChatsSub": "Minyan threads and travel city chats",
     "resetDevice": "Reset this device",
     "resetDeviceHint": "Clears your local profile so another person can start fresh on this device.",
-    "signOutHint": "Ends this session on the device. To permanently remove your data, use Delete account in Settings.",
+    "signOutHint": "Deletes your account and all data on this device, then returns to welcome.",
     "firstName": "First name",
     "lastName": "Last name",
     "nameRequired": "First and last name are required",
@@ -380,7 +409,9 @@
   },
   "map": {
     "searchPh": "Search city, synagogue, or address",
-    "filters": { "all": "All" },
+    "filters": {
+      "all": "All"
+    },
     "recenter": "Recenter on me",
     "selected": "Selected minyan",
     "liveNear": "Live near you",
@@ -388,7 +419,9 @@
     "minyanimCount": "{{count}} minyanim",
     "noNearby": "No minyanim around — be the first.",
     "startHere": "Don't see one? Start a minyan here",
-    "unknownSpot": "Unknown spot"
+    "unknownSpot": "Unknown spot",
+    "connectionIssue": "Connection issue — retrying…",
+    "noneAround": "None around"
   },
   "travel": {
     "title": "Travel Minyan",
@@ -690,5 +723,48 @@
         "body": "Questions about your data? Email support@minyannowapp.com"
       }
     }
+  },
+  "splash": {
+    "tagline": "Start a minyan <gold>everywhere, every moment</gold>.",
+    "places": "Street · Airport · Hotel · Anywhere",
+    "mission": "10 jews, 1 tap, anywhere",
+    "begin": "Begin",
+    "haveAccount": "I already have an account"
+  },
+  "support": {
+    "title": "Support",
+    "subtitle": "We're here to help.",
+    "intro": "FAQ, bug reports, and account help.",
+    "contactTitle": "Contact us",
+    "contactBody": "Email {{email}} and we'll get back to you as soon as we can. Please include your device, app version, and a short description of what happened.",
+    "faqTitle": "Frequently asked questions",
+    "faq": {
+      "notifQ": "I'm not receiving notifications",
+      "notifA": "Push delivery is not live yet — Settings → Notifications explains that preferences are saved locally for a future update. When push ships, also allow system notifications for MinyanNow on your device.",
+      "nearbyQ": "Nearby minyanim aren't showing",
+      "nearbyA": "MinyanNow needs your location to show minyanim near you. Open Settings → Location and allow access \"While Using\" the app.",
+      "langQ": "How do I change the language?",
+      "langA": "Open Settings → Language and pick from the supported languages. The change is instant.",
+      "createQ": "How do I create a minyan?",
+      "createA": "Tap the + button in the bottom nav, choose a prayer, set the location and time, and tap Create. Other users nearby will see it immediately.",
+      "cancelQ": "Can I cancel a minyan I created?",
+      "cancelA": "Yes. Open the minyan, tap Cancel. Scheduled minyanim cannot be canceled less than 20 minutes before their start time to protect joiners.",
+      "freeQ": "Is MinyanNow free?",
+      "freeA": "Yes. MinyanNow is free to use."
+    },
+    "bugTitle": "Report a bug",
+    "bugIntro": "Found something broken? Email {{email}} with:",
+    "bugWhat": "What you were trying to do",
+    "bugInstead": "What happened instead",
+    "bugDevice": "Device + OS version (e.g. iPhone 15, iOS 17.4)",
+    "bugVersion": "App version (Settings → About)",
+    "bugScreenshot": "A screenshot if you have one",
+    "reportTitle": "Report inappropriate content",
+    "reportBody": "MinyanNow has zero tolerance for harassment, hate speech, fake minyanim, or content that targets other users. In a chat, tap the flag on a message to report it in-app. You can also email {{email}}. Reports are reviewed within 24 hours and we take action against accounts that violate our <terms>terms</terms>.",
+    "accountTitle": "Account assistance & deletion",
+    "accountBody": "You can delete your account at any time from <settings>Settings → Delete Account</settings>. Deletion is permanent and removes your profile, presence data, push tokens, participation history, and chat membership. If you cannot delete from the app, email {{email}} and we will process the deletion manually."
+  },
+  "termsPage": {
+    "intro": "Terms governing your use of MinyanNow."
   }
 }

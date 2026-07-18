@@ -24,7 +24,24 @@
     "open": "Ouvert",
     "join": "Rejoindre",
     "go": "Y aller",
-    "live": "LIVE"
+    "live": "LIVE",
+    "pageNotFound": "Page introuvable",
+    "pageNotFoundDesc": "La page que tu cherches n'existe pas ou a été déplacée.",
+    "goHome": "Retour à l'accueil",
+    "somethingWrong": "Une erreur est survenue",
+    "pageLoadFailed": "Cette page ne s'est pas chargée",
+    "pageLoadFailedDesc": "Une erreur est survenue de notre côté. Tu peux essayer de rafraîchir ou revenir à l'accueil.",
+    "privacy": "Confidentialité",
+    "terms": "Conditions",
+    "support": "Support",
+    "couldNotSignOut": "Déconnexion impossible",
+    "deleteTimedOut": "La suppression a expiré. Réessaie.",
+    "accountDeleted": "Compte supprimé",
+    "couldNotDeleteAccount": "Impossible de supprimer le compte",
+    "less": "Moins",
+    "more": "Plus",
+    "toggleTheme": "Basculer le mode sombre",
+    "chooseLanguage": "Choisir la langue"
   },
   "auth": {
     "welcome": "Bienvenue sur",
@@ -59,7 +76,6 @@
       "allow": "Activer"
     }
   },
-
   "home": {
     "subtitleWithGps": "En direct dans un rayon d'1 km",
     "subtitleNoGps": "Active la géoloc pour voir les minyanim autour",
@@ -198,8 +214,17 @@
     "dayAgo_other": "il y a {{count}} j",
     "unknown": "—"
   },
-  "ctx": { "Street": "Rue", "Airport": "Aéroport", "Hotel": "Autres", "Travel": "Étranger" },
-  "prayer": { "shacharit": "Chaharit", "mincha": "Minha", "maariv": "Arvit" },
+  "ctx": {
+    "Street": "Rue",
+    "Airport": "Aéroport",
+    "Hotel": "Autres",
+    "Travel": "Étranger"
+  },
+  "prayer": {
+    "shacharit": "Chaharit",
+    "mincha": "Minha",
+    "maariv": "Arvit"
+  },
   "create": {
     "title": "Lancer un minyan",
     "subtitle": "Remplis les détails — tout le monde les verra",
@@ -288,7 +313,11 @@
     "trustSub": "Ton taux de présence de 98% renforce la communauté",
     "recent": "Participation récente",
     "noHistory": "Aucun minyan pour l'instant — ton historique apparaîtra ici.",
-    "stats": { "minyanim": "Minyanim", "completed": "Complets", "streak": "Série" },
+    "stats": {
+      "minyanim": "Minyanim",
+      "completed": "Complets",
+      "streak": "Série"
+    },
     "badges": "Badges",
     "badgeMaker": "Bâtisseur",
     "badgeMakerSub": "25+ minyanim complétés",
@@ -304,7 +333,7 @@
     "groupChatsSub": "Fils de minyan et chats de ville",
     "resetDevice": "Réinitialiser cet appareil",
     "resetDeviceHint": "Efface le profil local pour qu'une autre personne puisse repartir de zéro sur cet appareil.",
-    "signOutHint": "Termine la session sur cet appareil. Pour supprimer définitivement tes données, utilise Supprimer le compte dans Réglages.",
+    "signOutHint": "Supprime ton compte et toutes tes données sur cet appareil, puis revient à l'accueil.",
     "firstName": "Prénom",
     "lastName": "Nom",
     "nameRequired": "Le prénom et le nom sont requis",
@@ -380,7 +409,9 @@
   },
   "map": {
     "searchPh": "Rechercher ville, synagogue ou adresse",
-    "filters": { "all": "Tout" },
+    "filters": {
+      "all": "Tout"
+    },
     "recenter": "Me recentrer",
     "selected": "Minyan sélectionné",
     "liveNear": "En direct près de toi",
@@ -388,7 +419,9 @@
     "minyanimCount": "{{count}} minyanim",
     "noNearby": "Aucun minyan autour — sois le premier.",
     "startHere": "Pas trouvé ? Lance un minyan ici",
-    "unknownSpot": "Lieu inconnu"
+    "unknownSpot": "Lieu inconnu",
+    "connectionIssue": "Problème de connexion — nouvelle tentative…",
+    "noneAround": "Aucun autour"
   },
   "travel": {
     "title": "Minyan en voyage",
@@ -471,27 +504,45 @@
   "minyan": {
     "title": "Minyan",
     "subtitle": "Minha · dans 12 min",
-    "missing1": "Manque 1",
-    "nusachAri": "Nusach Ari",
-    "dist": "600 m · 4 min à pied",
+    "liveNow": "en direct",
+    "starts": "commence {{when}}",
+    "started": "commencé {{when}}",
+    "missing": "Il manque {{count}}",
+    "complete": "Complet",
+    "nusachAny": "Nusach : Any",
     "almostReady": "Presque prêt",
-    "walking": "{{walking}} à pied · {{driving}} en voiture",
     "averageArrival": "Arrivée moyenne dans 4 min",
     "organizer": "Organisateur",
-    "hosted": "73 minyanim organisés",
+    "you": "Vous",
     "startsAt": "Commence à",
     "location": "Lieu",
     "type": "Type",
     "typeValue": "Ouvert · tous bienvenus · tefillin dispo",
     "imComing": "J'arrive",
+    "cancel": "Annuler ma place",
+    "youreIn": "Vous êtes inscrit",
+    "loadFailed": "Impossible de charger ce minyan.",
+    "notFound": "Minyan introuvable — il est peut-être terminé.",
+    "expiresAt": "Fermeture auto à {{when}}",
     "whatsapp": "WhatsApp",
+    "shareText": "Rejoins mon minyan sur MinyanNow — {{prayer}} à {{address}} ({{when}}). Ouvre : {{url}}",
+    "cancelMinyan": "Annuler ce minyan",
+    "cancelMinyanConfirm": "Annuler ce minyan pour tout le monde ? Irréversible.",
+    "cancelledOk": "Minyan annulé",
+    "cancelTooLate": "Annulation impossible",
+    "cancelWindowClosed": "Délai d'annulation dépassé (moins de 20 min avant le début)",
     "share": "Partager",
     "nusach": "Nusach",
     "groupChat": "Chat de groupe",
     "autoCloses": "Se ferme dans",
     "scheduled": "Planifié",
     "chatJoinFirst": "Rejoins d'abord le minyan pour accéder au chat de groupe.",
-    "cancelMinyanHint": "Annule le minyan pour tout le monde — irréversible."
+    "cancelMinyanHint": "Annule le minyan pour tout le monde — irréversible.",
+    "missing1": "Manque 1",
+    "nusachAri": "Nusach Ari",
+    "dist": "600 m · 4 min à pied",
+    "walking": "{{walking}} à pied · {{driving}} en voiture",
+    "hosted": "73 minyanim organisés"
   },
   "kaddish": {
     "title": "Demander un minyan pour Kaddish",
@@ -677,5 +728,48 @@
         "body": "Une question sur tes données ? Écris à support@minyannowapp.com"
       }
     }
+  },
+  "splash": {
+    "tagline": "Lance un minyan <gold>partout, à chaque instant</gold>.",
+    "places": "Rue · Aéroport · Hôtel · Partout",
+    "mission": "10 juifs, 1 tap, partout",
+    "begin": "Commencer",
+    "haveAccount": "J'ai déjà un compte"
+  },
+  "support": {
+    "title": "Support",
+    "subtitle": "Nous sommes là pour t'aider.",
+    "intro": "FAQ, signalement de bug et aide sur le compte.",
+    "contactTitle": "Nous contacter",
+    "contactBody": "Écris à {{email}} et nous te répondrons dès que possible. Merci d'indiquer ton appareil, la version de l'app et une courte description de ce qu'il s'est passé.",
+    "faqTitle": "Questions fréquentes",
+    "faq": {
+      "notifQ": "Je ne reçois pas les notifications",
+      "notifA": "L'envoi push n'est pas encore actif — Paramètres → Notifications explique que les préférences sont enregistrées localement pour une future mise à jour. Quand le push sera prêt, autorise aussi les notifications système pour MinyanNow sur ton appareil.",
+      "nearbyQ": "Les minyanim autour ne s'affichent pas",
+      "nearbyA": "MinyanNow a besoin de ta position pour afficher les minyanim près de toi. Ouvre Réglages → Localisation et autorise l'accès « Pendant l'utilisation ».",
+      "langQ": "Comment changer la langue ?",
+      "langA": "Ouvre Paramètres → Langue et choisis parmi les langues prises en charge. Le changement est instantané.",
+      "createQ": "Comment créer un minyan ?",
+      "createA": "Tape sur le bouton + dans la barre du bas, choisis une prière, définis le lieu et l'heure, puis appuie sur Créer. Les autres utilisateurs à proximité le verront immédiatement.",
+      "cancelQ": "Puis-je annuler un minyan que j'ai créé ?",
+      "cancelA": "Oui. Ouvre le minyan, appuie sur Annuler. Les minyanim planifiés ne peuvent pas être annulés moins de 20 minutes avant leur début, pour protéger ceux qui ont rejoint.",
+      "freeQ": "MinyanNow est-il gratuit ?",
+      "freeA": "Oui. MinyanNow est entièrement gratuit."
+    },
+    "bugTitle": "Signaler un bug",
+    "bugIntro": "Tu as trouvé quelque chose qui ne va pas ? Envoie un email à {{email}} avec :",
+    "bugWhat": "Ce que tu essayais de faire",
+    "bugInstead": "Ce qui s'est passé à la place",
+    "bugDevice": "Appareil + version de l'OS (ex. iPhone 15, iOS 17.4)",
+    "bugVersion": "Version de l'app (Paramètres → À propos)",
+    "bugScreenshot": "Une capture d'écran si tu en as une",
+    "reportTitle": "Signaler un contenu inapproprié",
+    "reportBody": "MinyanNow ne tolère aucun harcèlement, discours de haine, faux minyanim ou contenu ciblant d'autres utilisateurs. Dans un chat, appuie sur le drapeau d'un message pour le signaler directement dans l'app. Tu peux aussi écrire à {{email}}. Les signalements sont examinés sous 24 heures et nous prenons des mesures contre les comptes qui violent nos <terms>conditions</terms>.",
+    "accountTitle": "Assistance & suppression de compte",
+    "accountBody": "Tu peux supprimer ton compte à tout moment depuis <settings>Paramètres → Supprimer le compte</settings>. La suppression est définitive et efface ton profil, tes données de présence, tes tokens push, ton historique de participation et ton appartenance aux chats. Si tu ne peux pas supprimer depuis l'app, écris à {{email}} et nous traiterons la suppression manuellement."
+  },
+  "termsPage": {
+    "intro": "Conditions régissant ton utilisation de MinyanNow."
   }
 }

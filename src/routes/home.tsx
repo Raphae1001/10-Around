@@ -243,7 +243,7 @@ function Home() {
                 toggleTheme();
               }}
               onPointerDown={(e) => e.stopPropagation()}
-              aria-label="Toggle dark mode"
+              aria-label={t("common.toggleTheme")}
               className="h-10 w-10 rounded-full bg-surface shadow-soft flex items-center justify-center text-ink-soft active:scale-[0.97]"
             >
               {theme === "dark" ? (

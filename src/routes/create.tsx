@@ -223,7 +223,7 @@ function Create() {
               <button
                 onClick={() => setPresent(Math.max(1, present - 1))}
                 className="h-12 w-12 rounded-xl bg-surface-muted flex items-center justify-center active:scale-[0.97] transition-transform"
-                aria-label="Less"
+                aria-label={t("common.less")}
               >
                 <Minus className="h-4 w-4" />
               </button>
@@ -236,9 +236,10 @@ function Create() {
                 </div>
               </div>
               <button
+                type="button"
                 onClick={() => setPresent(present + 1)}
                 className="h-12 w-12 rounded-xl bg-accent text-accent-foreground flex items-center justify-center active:scale-[0.97] transition-transform"
-                aria-label="More"
+                aria-label={t("common.more")}
               >
                 <Plus className="h-4 w-4" />
               </button>

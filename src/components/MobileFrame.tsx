@@ -40,11 +40,8 @@ export function MobileFrame({
             : "min-h-dvh h-dvh max-h-dvh max-w-[440px] md:my-6 md:h-[calc(100dvh-3rem)] md:max-h-[calc(100dvh-3rem)] md:rounded-3xl md:shadow-2xl"
         }`}
         style={
-          native
-            ? {
-                ...(bg !== "map" ? { paddingTop: "env(safe-area-inset-top)" } : {}),
-                paddingBottom: "env(safe-area-inset-bottom)",
-              }
+          native && bg !== "map"
+            ? { paddingTop: "env(safe-area-inset-top)" }
             : undefined
         }
       >

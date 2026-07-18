@@ -1,7 +1,7 @@
 /// <reference types="google.maps" />
-import { APIProvider, Circle, Map, useMap } from "@vis.gl/react-google-maps";
+import { APIProvider, Map, useMap } from "@vis.gl/react-google-maps";
 import type { Cluster } from "@googlemaps/markerclusterer";
-import { Fragment, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { mapStyleForTheme } from "@/lib/map-styles";
 import { tapLight } from "@/lib/haptics";
 
@@ -21,7 +21,7 @@ export type MapPinDatum = {
   onClick?: () => void;
 };
 
-/** Blurred density halo — no label, intensity drives opacity/size only. */
+/** Blurred density zone — badge only (no geo radius rings). */
 export type DensityHalo = {
   id: string;
   lat: number;
@@ -369,59 +369,7 @@ function UserAvatarOverlay({
   return null;
 }
 
-/** Soft CSS radial bloom over geo Circles — breathes without React re-renders. */
-function DensityHaloBloom({
-  position,
-  intensity,
-}: {
-  position: { lat: number; lng: number };
-  intensity: number;
-}) {
-  const map = useMap();
-  const overlayRef = useRef<HtmlOverlayHandle | null>(null);
-
-  useEffect(() => {
-    if (!map || typeof google === "undefined") return;
-
-    const size = Math.round(120 + intensity * 100);
-    const alpha = 0.22 + intensity * 0.35;
-
-    const div = document.createElement("div");
-    div.style.position = "absolute";
-    div.style.transform = "translate(-50%, -50%)";
-    div.style.pointerEvents = "none";
-    div.style.zIndex = "20";
-
-    const bloom = document.createElement("div");
-    bloom.className = "breathe-density";
-    bloom.style.cssText = [
-      `width:${size}px`,
-      `height:${size}px`,
-      "border-radius:9999px",
-      `background:radial-gradient(circle, oklch(0.6 0.135 38 / ${alpha}) 0%, oklch(0.6 0.135 38 / ${alpha * 0.45}) 38%, oklch(0.6 0.135 38 / 0) 72%)`,
-    ].join(";");
-
-    div.appendChild(bloom);
-
-    const overlay = createHtmlOverlay(position, div);
-    overlay.setMap(map);
-    overlayRef.current = overlay;
-
-    return () => {
-      overlay.setMap(null);
-      overlayRef.current = null;
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [map, intensity]);
-
-  useEffect(() => {
-    overlayRef.current?.setPosition(position);
-  }, [position.lat, position.lng, position]);
-
-  return null;
-}
-
-/** Floating count badge at a density halo's center — small pill with a people glyph + number. */
+/** Floating count badge at a density zone's center — compact pill with the member count. */
 function DensityCountBadge({
   position,
   count,
@@ -529,42 +477,6 @@ export function GoogleMapCanvas({
           <ThemeStyler theme={theme} />
           <ArrivalZoom center={center} />
           <Recenter center={center} nonce={recenterNonce} />
-          {densityHalos.map((h) => {
-            const outer = Math.round(520 + h.intensity * 280);
-            const mid = Math.round(300 + h.intensity * 160);
-            const inner = Math.round(150 + h.intensity * 90);
-            return (
-              <Fragment key={h.id}>
-                <Circle
-                  center={{ lat: h.lat, lng: h.lng }}
-                  radius={outer}
-                  fillColor="#C25A2E"
-                  fillOpacity={0.03 + h.intensity * 0.06}
-                  strokeOpacity={0}
-                  clickable={false}
-                />
-                <Circle
-                  center={{ lat: h.lat, lng: h.lng }}
-                  radius={mid}
-                  fillColor="#C25A2E"
-                  fillOpacity={0.07 + h.intensity * 0.14}
-                  strokeOpacity={0}
-                  clickable={false}
-                />
-                <Circle
-                  center={{ lat: h.lat, lng: h.lng }}
-                  radius={inner}
-                  fillColor="#C25A2E"
-                  fillOpacity={0.12 + h.intensity * 0.28}
-                  strokeColor="#C25A2E"
-                  strokeOpacity={0.2 + h.intensity * 0.3}
-                  strokeWeight={1}
-                  clickable={false}
-                />
-                <DensityHaloBloom position={{ lat: h.lat, lng: h.lng }} intensity={h.intensity} />
-              </Fragment>
-            );
-          })}
           {densityHalos
             .filter((h) => (h.memberCount ?? 0) > 0)
             .map((h) => (

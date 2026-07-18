@@ -47,11 +47,20 @@ Deno.serve(async (req) => {
 
     const admin = createClient(SUPABASE_URL, SERVICE_ROLE);
 
-    // Explicit cleanup before auth delete (CASCADE also covers these).
-    await admin.from("member_presence").delete().eq("user_id", ures.user.id);
-    await admin.from("user_push_tokens").delete().eq("user_id", ures.user.id);
+    // Explicit cleanup before auth delete (CASCADE also covers profiles).
+    const uid = ures.user.id;
+    await admin.from("member_presence").delete().eq("user_id", uid);
+    await admin.from("user_push_tokens").delete().eq("user_id", uid);
+    await admin.from("travel_presence").delete().eq("user_id", uid);
+    await admin.from("minyan_participants").delete().eq("user_id", uid);
+    await admin.from("minyan_confirmations").delete().eq("user_id", uid);
+    await admin.from("chat_thread_members").delete().eq("user_id", uid);
+    await admin.from("chat_messages").delete().eq("user_id", uid);
+    await admin.from("content_reports").delete().eq("reporter_id", uid);
+    await admin.from("content_reports").delete().eq("reported_user_id", uid);
+    await admin.from("minyanim").delete().eq("creator_id", uid);
 
-    const { error: delErr } = await admin.auth.admin.deleteUser(ures.user.id);
+    const { error: delErr } = await admin.auth.admin.deleteUser(uid);
     if (delErr) {
       return new Response(JSON.stringify({ error: delErr.message }), {
         status: 500,
