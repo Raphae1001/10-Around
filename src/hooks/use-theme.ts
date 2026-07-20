@@ -1,35 +1,73 @@
 import { useEffect, useState } from "react";
 import { Capacitor } from "@capacitor/core";
+import { isDaytime } from "@/lib/sun";
 
 type Theme = "light" | "dark";
+/** "auto" follows sunrise/sunset at the user's last known location. */
+type ThemeMode = Theme | "auto";
 
 const STORAGE_KEY = "minyannow-theme";
+/** Written by useGeolocation on every GPS fix — reused here so auto mode
+ * never has to request location permission itself. */
+const LAST_POSITION_KEY = "minyan:last-position";
+const RECHECK_MS = 10 * 60 * 1000; // re-evaluate sun position every 10 min
 
 function getSystemTheme(): Theme {
   if (typeof window === "undefined") return "light";
   return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 }
 
-function readStoredTheme(): Theme | null {
+function readLastPosition(): { lat: number; lng: number } | null {
   if (typeof window === "undefined") return null;
+  try {
+    const raw = localStorage.getItem(LAST_POSITION_KEY);
+    if (!raw) return null;
+    const pos = JSON.parse(raw) as { lat?: number; lng?: number };
+    if (typeof pos.lat === "number" && typeof pos.lng === "number") {
+      return { lat: pos.lat, lng: pos.lng };
+    }
+  } catch {
+    /* ignore */
+  }
+  return null;
+}
+
+/** Sun position at the last known location; system preference until a fix exists. */
+function resolveAutoTheme(): Theme {
+  const pos = readLastPosition();
+  if (!pos) return getSystemTheme();
+  return isDaytime(pos.lat, pos.lng) ? "light" : "dark";
+}
+
+function readStoredMode(): ThemeMode {
+  if (typeof window === "undefined") return "auto";
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored === "dark" || stored === "light") return stored;
   } catch {
     /* private mode / WKWebView storage pressure */
   }
-  return null;
+  return "auto";
 }
 
-function persistTheme(theme: Theme) {
+function resolveTheme(mode: ThemeMode): Theme {
+  return mode === "auto" ? resolveAutoTheme() : mode;
+}
+
+function persistMode(mode: ThemeMode) {
   try {
-    localStorage.setItem(STORAGE_KEY, theme);
+    if (mode === "auto") localStorage.removeItem(STORAGE_KEY);
+    else localStorage.setItem(STORAGE_KEY, mode);
   } catch {
     /* ignore */
   }
   if (Capacitor.isNativePlatform()) {
     void import("@capacitor/preferences")
-      .then(({ Preferences }) => Preferences.set({ key: STORAGE_KEY, value: theme }))
+      .then(({ Preferences }) =>
+        mode === "auto"
+          ? Preferences.remove({ key: STORAGE_KEY })
+          : Preferences.set({ key: STORAGE_KEY, value: mode }),
+      )
       .catch(() => {});
   }
 }
@@ -64,12 +102,38 @@ export function applyTheme(theme: Theme) {
 }
 
 export function useTheme() {
-  const [theme, setTheme] = useState<Theme>(() => readStoredTheme() ?? getSystemTheme());
+  const [mode, setMode] = useState<ThemeMode>(() => readStoredMode());
+  const [theme, setTheme] = useState<Theme>(() => resolveTheme(mode));
 
   useEffect(() => {
-    applyTheme(theme);
-    persistTheme(theme);
-  }, [theme]);
+    const next = resolveTheme(mode);
+    setTheme(next);
+    applyTheme(next);
+  }, [mode]);
+
+  // Auto mode: re-check the sun position periodically and whenever the app
+  // comes back to the foreground (covers "opened the app at a different
+  // time of day" without needing a location permission request of our own).
+  useEffect(() => {
+    if (mode !== "auto") return;
+    const recheck = () => {
+      const next = resolveAutoTheme();
+      setTheme((prev) => {
+        if (prev === next) return prev;
+        applyTheme(next);
+        return next;
+      });
+    };
+    const interval = setInterval(recheck, RECHECK_MS);
+    const onVisible = () => {
+      if (document.visibilityState === "visible") recheck();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener("visibilitychange", onVisible);
+    };
+  }, [mode]);
 
   // Restore from Preferences if localStorage was empty (iOS storage eviction).
   useEffect(() => {
@@ -79,12 +143,9 @@ export function useTheme() {
       .then(async ({ Preferences }) => {
         const { value } = await Preferences.get({ key: STORAGE_KEY });
         if (cancelled) return;
-        if (value === "dark" || value === "light") {
-          if (readStoredTheme() == null) {
-            persistTheme(value);
-            setTheme(value);
-            applyTheme(value);
-          }
+        if ((value === "dark" || value === "light") && readStoredMode() === "auto") {
+          persistMode(value);
+          setMode(value);
         }
       })
       .catch(() => {});
@@ -93,22 +154,25 @@ export function useTheme() {
     };
   }, []);
 
+  /** Explicit override, opposite of what's currently shown (auto or manual). */
   const toggle = () => {
-    setTheme((t) => {
-      const next: Theme = t === "dark" ? "light" : "dark";
+    setMode((prevMode) => {
+      const current = resolveTheme(prevMode);
+      const next: Theme = current === "dark" ? "light" : "dark";
       // Apply immediately so the first paint after tap isn't one frame late
       // (important on WKWebView where batched updates can feel like "nothing happened").
       applyTheme(next);
-      persistTheme(next);
+      setTheme(next);
+      persistMode(next);
       return next;
     });
   };
 
-  return { theme, setTheme, toggle };
+  return { theme, mode, toggle };
 }
 
-/** Call once at app root to apply the saved theme before first paint. */
+/** Call once at app root to apply the saved/auto theme before first paint. */
 export function initTheme() {
   if (typeof window === "undefined") return;
-  applyTheme(readStoredTheme() ?? getSystemTheme());
+  applyTheme(resolveTheme(readStoredMode()));
 }
