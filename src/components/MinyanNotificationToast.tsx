@@ -5,16 +5,16 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 
 type NotificationPayload = {
-  kind: "grace_extended" | "minyan_cancelled";
+  kind: "minyan_confirmed_arriving" | "minyan_needs_decision" | "minyan_cancelled";
   data: { prayer?: string; address?: string } | null;
 };
 
 /**
- * Root-mounted: fires a toast the instant a street-minyan grace/cancellation
+ * Root-mounted: fires a toast the instant a street-minyan confirmation
  * notification lands for the signed-in user, wherever they are in the app.
  * Same subscribe-by-user-id pattern as ConfirmationPrompt.
  */
-export function GraceNotificationToast() {
+export function MinyanNotificationToast() {
   const { t } = useTranslation();
   const { user } = useAuth();
 
@@ -37,7 +37,29 @@ export function GraceNotificationToast() {
           });
           const place = row.data?.address ?? t("confirm.yourMinyan");
 
-          if (row.kind === "minyan_cancelled") {
+          if (row.kind === "minyan_confirmed_arriving") {
+            toast.success(
+              t("notifications.items.arrivingTitle", { defaultValue: "Minyan confirmed!" }),
+              {
+                description: t("notifications.items.arrivingBody", {
+                  prayer,
+                  place,
+                  defaultValue: `${prayer} starting soon — meet at ${place}.`,
+                }),
+              },
+            );
+          } else if (row.kind === "minyan_needs_decision") {
+            toast(
+              t("notifications.items.decisionTitle", { defaultValue: "Minyan not confirmed yet" }),
+              {
+                description: t("notifications.items.decisionBody", {
+                  prayer,
+                  place,
+                  defaultValue: `Not enough people yet for ${prayer} at ${place} — is there a minyan?`,
+                }),
+              },
+            );
+          } else {
             toast.error(
               t("notifications.items.cancelledTitle", { defaultValue: "Minyan cancelled" }),
               {
@@ -45,19 +67,6 @@ export function GraceNotificationToast() {
                   prayer,
                   place,
                   defaultValue: `${prayer} at ${place} was cancelled — not enough people joined in time.`,
-                }),
-              },
-            );
-          } else {
-            toast(
-              t("notifications.items.graceExtendedTitle", {
-                defaultValue: "Start delayed 10 min",
-              }),
-              {
-                description: t("notifications.items.graceExtendedBody", {
-                  prayer,
-                  place,
-                  defaultValue: `${prayer} at ${place} is starting 10 minutes later — still waiting for a minyan.`,
                 }),
               },
             );

@@ -376,8 +376,10 @@
       "startingTitle": "Minyan starting soon",
       "startingBody": "Shacharit at Lincoln Square in 25 minutes.",
       "startingTime": "1h ago",
-      "graceExtendedTitle": "Start delayed 10 min",
-      "graceExtendedBody": "{{prayer}} at {{place}} is starting 10 minutes later — still waiting for a minyan.",
+      "arrivingTitle": "Minyan confirmed!",
+      "arrivingBody": "{{prayer}} starting soon — meet at {{place}}.",
+      "decisionTitle": "Minyan not confirmed yet",
+      "decisionBody": "Not enough people yet for {{prayer}} at {{place}} — is there a minyan?",
       "cancelledTitle": "Minyan cancelled",
       "cancelledBody": "{{prayer}} at {{place}} was cancelled — not enough people joined in time.",
       "viewMinyan": "View"
@@ -546,7 +548,19 @@
     "autoCloses": "Auto-closes in",
     "scheduled": "Scheduled",
     "chatJoinFirst": "Join the minyan first to access the group chat.",
-    "cancelMinyanHint": "This cancels the minyan for everyone — irreversible."
+    "cancelMinyanHint": "This cancels the minyan for everyone — irreversible.",
+    "readyNow": "I'm ready now",
+    "willWait": "Wait for the deadline",
+    "willWaitCta": "I'll wait instead",
+    "waitingForConfirmation": "Waiting for confirmation",
+    "confirmationCountdown": "{{count}} min left",
+    "confirmedWaiting": "Confirmed — starting at {{time}}",
+    "confirmedArriving": "Confirmed! Meet up in {{count}} min",
+    "decisionPrompt": "Not enough people confirmed in time. Is there a minyan?",
+    "decisionYes": "Yes, we're here",
+    "decisionCancel": "Cancel minyan",
+    "decisionYesOk": "Minyan confirmed!",
+    "decisionPendingOther": "Waiting for the organizer's decision"
   },
   "kaddish": {
     "title": "Request a minyan for Kaddish",

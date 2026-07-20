@@ -243,18 +243,21 @@ export type Database = {
           id: string
           joined_at: string
           minyan_id: string
+          ready_now: boolean
           user_id: string
         }
         Insert: {
           id?: string
           joined_at?: string
           minyan_id: string
+          ready_now?: boolean
           user_id: string
         }
         Update: {
           id?: string
           joined_at?: string
           minyan_id?: string
+          ready_now?: boolean
           user_id?: string
         }
         Relationships: [
@@ -270,12 +273,15 @@ export type Database = {
       minyanim: {
         Row: {
           address: string | null
+          arrival_deadline: string | null
+          awaiting_creator_decision: boolean
           city: string | null
+          confirmation_path: string | null
+          confirmed_at: string | null
           created_at: string
           creator_id: string
           expires_at: string
           extra_present: number
-          grace_extended: boolean
           id: string
           is_live: boolean
           latitude: number
@@ -294,12 +300,15 @@ export type Database = {
         }
         Insert: {
           address?: string | null
+          arrival_deadline?: string | null
+          awaiting_creator_decision?: boolean
           city?: string | null
+          confirmation_path?: string | null
+          confirmed_at?: string | null
           created_at?: string
           creator_id: string
           expires_at?: string
           extra_present?: number
-          grace_extended?: boolean
           id?: string
           is_live?: boolean
           latitude: number
@@ -318,12 +327,15 @@ export type Database = {
         }
         Update: {
           address?: string | null
+          arrival_deadline?: string | null
+          awaiting_creator_decision?: boolean
           city?: string | null
+          confirmation_path?: string | null
+          confirmed_at?: string | null
           created_at?: string
           creator_id?: string
           expires_at?: string
           extra_present?: number
-          grace_extended?: boolean
           id?: string
           is_live?: boolean
           latitude?: number
@@ -528,6 +540,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      _call_edge_function: {
+        Args: { _fn_name: string; _payload: Json }
+        Returns: undefined
+      }
       _geohash6_decode_center: {
         Args: { _zone: string }
         Returns: Record<string, unknown>
@@ -555,7 +571,7 @@ export type Database = {
         Returns: boolean
       }
       cancel_my_minyan: { Args: { _id: string }; Returns: undefined }
-      check_minyan_grace: { Args: never; Returns: number }
+      check_minyan_confirmation: { Args: never; Returns: number }
       cleanup_expired_minyanim: { Args: never; Returns: undefined }
       cleanup_stale_presence: { Args: never; Returns: number }
       count_minyanim_within: {
@@ -565,6 +581,10 @@ export type Database = {
       count_travelers_in_city: {
         Args: { _city_key: string; _from: string; _to: string }
         Returns: number
+      }
+      creator_decide_minyan: {
+        Args: { _has_minyan: boolean; _id: string }
+        Returns: undefined
       }
       ensure_minyan_chat: { Args: { _minyan_id: string }; Returns: string }
       get_app_config_int: {
@@ -650,12 +670,15 @@ export type Database = {
         Args: { lat: number; lng: number; radius_m?: number }
         Returns: {
           address: string | null
+          arrival_deadline: string | null
+          awaiting_creator_decision: boolean
           city: string | null
+          confirmation_path: string | null
+          confirmed_at: string | null
           created_at: string
           creator_id: string
           expires_at: string
           extra_present: number
-          grace_extended: boolean
           id: string
           is_live: boolean
           latitude: number
@@ -696,12 +719,15 @@ export type Database = {
         Args: { _city_key?: string }
         Returns: {
           address: string | null
+          arrival_deadline: string | null
+          awaiting_creator_decision: boolean
           city: string | null
+          confirmation_path: string | null
+          confirmed_at: string | null
           created_at: string
           creator_id: string
           expires_at: string
           extra_present: number
-          grace_extended: boolean
           id: string
           is_live: boolean
           latitude: number

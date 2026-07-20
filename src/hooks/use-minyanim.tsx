@@ -77,13 +77,13 @@ export function useNearbyMinyanim(
   return { data, loading, error, refresh };
 }
 
-export async function joinMinyan(minyanId: string, userId: string) {
+export async function joinMinyan(minyanId: string, userId: string, readyNow: boolean) {
   const result = await supabase
     .from("minyan_participants")
-    .insert({ minyan_id: minyanId, user_id: userId });
+    .insert({ minyan_id: minyanId, user_id: userId, ready_now: readyNow });
   if (!result.error) {
     void import("@/lib/analytics").then(({ track }) =>
-      track("join_minyan", { minyan_id: minyanId }),
+      track("join_minyan", { minyan_id: minyanId, ready_now: readyNow }),
     );
   }
   return result;

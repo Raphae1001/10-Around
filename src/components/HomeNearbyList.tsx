@@ -54,9 +54,9 @@ export function HomeNearbyList({ position, userId }: Props) {
       });
   }, [userId, minyanim]);
 
-  const confirmJoin = async () => {
+  const confirmJoin = async (readyNow: boolean) => {
     if (!pending) return;
-    const { error } = await joinMinyan(pending.id, userId);
+    const { error } = await joinMinyan(pending.id, userId, readyNow);
     if (error) {
       toast.error(t("auth.signInFailed"), { description: error.message });
     } else {
@@ -178,7 +178,12 @@ export function HomeNearbyList({ position, userId }: Props) {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>{t("home.notYet")}</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmJoin}>{t("home.commit")}</AlertDialogAction>
+            <AlertDialogAction onClick={() => confirmJoin(false)}>
+              {t("minyan.willWait")}
+            </AlertDialogAction>
+            <AlertDialogAction onClick={() => confirmJoin(true)}>
+              {t("minyan.readyNow")}
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
