@@ -1,46 +1,49 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { MobileFrame } from "@/components/MobileFrame";
-import { ScreenHeader, LiveBadge } from "@/components/ui-bits";
-import { Flame, Users, CheckCircle2, Bell } from "lucide-react";
+import { ScreenHeader, LiveBadge, EmptyState } from "@/components/ui-bits";
+import { AlertTriangle, Bell, Clock } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/notifications")({ component: Notifications });
 
+type NotificationRow = {
+  id: string;
+  minyan_id: string | null;
+  kind: "grace_extended" | "minyan_cancelled";
+  data: { prayer?: string; address?: string } | null;
+  created_at: string;
+};
+
 function Notifications() {
   const { t } = useTranslation();
-  const items = [
-    {
-      icon: Flame,
-      tone: "urgent",
-      titleKey: "missing1Title",
-      bodyKey: "missing1Body",
-      timeKey: "missing1Time",
-      ctaKey: "missing1Cta",
-    },
-    {
-      icon: Users,
-      tone: "gold",
-      titleKey: "joinedTitle",
-      bodyKey: "joinedBody",
-      timeKey: "joinedTime",
-      ctaKey: "joinedCta",
-    },
-    {
-      icon: CheckCircle2,
-      tone: "success",
-      titleKey: "confirmedTitle",
-      bodyKey: "confirmedBody",
-      timeKey: "confirmedTime",
-    },
-    {
-      icon: Bell,
-      tone: "sky",
-      titleKey: "startingTitle",
-      bodyKey: "startingBody",
-      timeKey: "startingTime",
-    },
-  ];
-  const filters = ["all", "urgent", "confirmed", "nearby"] as const;
+  const { user } = useAuth();
+  const [rows, setRows] = useState<NotificationRow[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!user) {
+      setLoading(false);
+      return;
+    }
+    let cancelled = false;
+    void supabase
+      .from("user_notifications")
+      .select("id, minyan_id, kind, data, created_at")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false })
+      .limit(50)
+      .then(({ data }) => {
+        if (cancelled) return;
+        setRows((data as NotificationRow[]) ?? []);
+        setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [user]);
 
   return (
     <MobileFrame>
@@ -50,70 +53,82 @@ function Notifications() {
         right={<LiveBadge>{t("common.live")}</LiveBadge>}
       />
 
-      <div className="px-6 flex gap-2 mb-4 overflow-x-auto hide-scrollbar">
-        {filters.map((f, i) => (
-          <button
-            key={f}
-            className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-medium border ${i === 0 ? "bg-foreground text-background border-foreground" : "bg-surface border-border"}`}
-          >
-            {t(`notifications.filters.${f}` as any)}
-          </button>
-        ))}
-      </div>
-
       <div className="px-6 space-y-3 pb-8">
-        {items.map((n, i) => {
-          const Icon = n.icon;
-          const toneBg =
-            n.tone === "urgent"
-              ? "bg-urgent/10 text-urgent"
-              : n.tone === "gold"
-                ? "gold-gradient text-gold-foreground"
-                : n.tone === "success"
-                  ? "bg-success/15 text-success"
-                  : "bg-accent text-accent-foreground";
-          const isUrgent = n.tone === "urgent";
-          return (
-            <div
-              key={i}
-              className={`rounded-2xl border p-4 shadow-soft ${isUrgent ? "border-urgent/30 bg-urgent/5" : "border-border bg-surface"}`}
-            >
-              <div className="flex items-start gap-3">
-                <div
-                  className={`h-10 w-10 rounded-2xl flex items-center justify-center shrink-0 ${toneBg}`}
-                >
-                  <Icon className="h-5 w-5" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between gap-2">
-                    <h3 className="text-sm font-semibold leading-tight">
-                      {t(`notifications.items.${n.titleKey}` as any)}
-                    </h3>
-                    <span className="text-[10px] text-muted-foreground shrink-0">
-                      {t(`notifications.items.${n.timeKey}` as any)}
-                    </span>
+        {loading ? (
+          <div className="py-16 text-center text-sm text-muted-foreground">
+            {t("common.loading")}
+          </div>
+        ) : rows.length === 0 ? (
+          <EmptyState
+            icon={Bell}
+            title={t("notifications.emptyTitle", { defaultValue: "No notifications yet" })}
+            description={t("notifications.emptyDesc", {
+              defaultValue: "You'll see updates here about minyanim you've joined.",
+            })}
+          />
+        ) : (
+          rows.map((n) => {
+            const prayer = t(`prayer.${n.data?.prayer}`, {
+              defaultValue: n.data?.prayer ?? "",
+            });
+            const place = n.data?.address ?? t("confirm.yourMinyan");
+            const isCancelled = n.kind === "minyan_cancelled";
+            const title = isCancelled
+              ? t("notifications.items.cancelledTitle", { defaultValue: "Minyan cancelled" })
+              : t("notifications.items.graceExtendedTitle", {
+                  defaultValue: "Start delayed 10 min",
+                });
+            const body = isCancelled
+              ? t("notifications.items.cancelledBody", {
+                  prayer,
+                  place,
+                  defaultValue: `${prayer} at ${place} was cancelled — not enough people joined in time.`,
+                })
+              : t("notifications.items.graceExtendedBody", {
+                  prayer,
+                  place,
+                  defaultValue: `${prayer} at ${place} is starting 10 minutes later — still waiting for a minyan.`,
+                });
+            const Icon = isCancelled ? AlertTriangle : Clock;
+            const time = new Date(n.created_at).toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            });
+
+            return (
+              <div
+                key={n.id}
+                className={`rounded-2xl border p-4 shadow-soft ${isCancelled ? "border-urgent/30 bg-urgent/5" : "border-border bg-surface"}`}
+              >
+                <div className="flex items-start gap-3">
+                  <div
+                    className={`h-10 w-10 rounded-2xl flex items-center justify-center shrink-0 ${isCancelled ? "bg-urgent/10 text-urgent" : "gold-gradient text-gold-foreground"}`}
+                  >
+                    <Icon className="h-5 w-5" />
                   </div>
-                  <p className="text-xs text-muted-foreground mt-1 leading-snug">
-                    {t(`notifications.items.${n.bodyKey}` as any)}
-                  </p>
-                  {n.ctaKey && (
-                    <div className="mt-3 flex items-center gap-2">
-                      <Link
-                        to="/minyan"
-                        className={`text-xs font-semibold rounded-xl px-3.5 py-2 ${isUrgent ? "bg-urgent text-white" : "bg-foreground text-background"}`}
-                      >
-                        {t(`notifications.items.${n.ctaKey}` as any)}
-                      </Link>
-                      <button className="text-xs text-muted-foreground px-2">
-                        {t("notifications.snooze")}
-                      </button>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-2">
+                      <h3 className="text-sm font-semibold leading-tight">{title}</h3>
+                      <span className="text-[10px] text-muted-foreground shrink-0">{time}</span>
                     </div>
-                  )}
+                    <p className="text-xs text-muted-foreground mt-1 leading-snug">{body}</p>
+                    {n.minyan_id && !isCancelled && (
+                      <div className="mt-3">
+                        <Link
+                          to="/minyan"
+                          search={{ id: n.minyan_id }}
+                          className="text-xs font-semibold rounded-xl px-3.5 py-2 bg-foreground text-background inline-block"
+                        >
+                          {t("notifications.items.viewMinyan", { defaultValue: "View" })}
+                        </Link>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })
+        )}
       </div>
     </MobileFrame>
   );

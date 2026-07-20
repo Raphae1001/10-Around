@@ -353,6 +353,8 @@
     "requestKaddish": "Demander un minyan pour Kaddish",
     "requestKaddishSub": "Pour yahrzeit, shloshim ou shiva",
     "open": "Ouvert",
+    "emptyTitle": "Aucune notification pour l'instant",
+    "emptyDesc": "Tu verras ici les mises à jour des minyanim que tu as rejoints.",
     "items": {
       "missing1Title": "Il ne manque qu'1 personne",
       "missing1Body": "Minha près de chez toi · 4 min à pied · démarre dans 12 min",
@@ -371,7 +373,12 @@
       "confirmedTime": "il y a 20 min",
       "startingTitle": "Minyan bientôt",
       "startingBody": "Chaharit à Lincoln Square dans 25 minutes.",
-      "startingTime": "il y a 1h"
+      "startingTime": "il y a 1h",
+      "graceExtendedTitle": "Départ décalé de 10 min",
+      "graceExtendedBody": "{{prayer}} à {{place}} démarre 10 minutes plus tard — toujours en attente d'un minyan.",
+      "cancelledTitle": "Minyan annulé",
+      "cancelledBody": "{{prayer}} à {{place}} a été annulé faute de participants suffisants.",
+      "viewMinyan": "Voir"
     }
   },
   "share": {
