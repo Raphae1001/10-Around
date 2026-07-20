@@ -123,9 +123,9 @@
   --ink-soft: oklch(0.7 0.01 250);
   --hairline: oklch(1 0 0 / 12%);
 
-  --accent: oklch(0.66 0.135 38);
+  --accent: oklch(0.66 0.22 32);
   --accent-foreground: oklch(0.99 0.005 60);
-  --accent-soft: oklch(0.32 0.06 38);
+  --accent-soft: oklch(0.32 0.09 32);
 
   --dark-surface: oklch(0.18 0.012 250);
   --dark-surface-foreground: oklch(0.97 0.004 250);
