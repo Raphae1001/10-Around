@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { encodeGeohash } from "@/lib/geo";
 import { getPresenceLevel, isPresenceLevel, type PresenceLevel } from "@/lib/presence-prefs";
@@ -27,6 +27,10 @@ function movedEnough(prev: { lat: number; lng: number } | null, next: GeoPositio
 export function usePresence(position: GeoPosition | null, enabled = true, userId?: string) {
   const lastUpsertRef = useRef<{ lat: number; lng: number; zone: string } | null>(null);
   const [level, setLevel] = useState<PresenceLevel>("ponctual");
+
+  // Latest inputs, so refresh() can force-upsert without stale closures.
+  const stateRef = useRef({ position, level, enabled, userId });
+  stateRef.current = { position, level, enabled, userId };
 
   useEffect(() => {
     let cancelled = false;
@@ -64,4 +68,26 @@ export function usePresence(position: GeoPosition | null, enabled = true, userId
       }
     });
   }, [enabled, position?.lat, position?.lng, position, level, userId]);
+
+  /**
+   * Force-renew presence for the current position, bypassing the movement /
+   * same-zone guard. Server sets last_seen_at = now(), so a stationary user
+   * stays inside the freshness window (counted on the map for another hour).
+   */
+  const refresh = useCallback(async () => {
+    const s = stateRef.current;
+    if (!s.enabled || !s.position || s.level === "off") return;
+    const zone = encodeGeohash(s.position.lat, s.position.lng);
+    const { error } = await supabase.rpc("upsert_presence", { zone });
+    if (error) return;
+    lastUpsertRef.current = { lat: s.position.lat, lng: s.position.lng, zone };
+    if (s.userId && s.level !== "ponctual") {
+      await supabase
+        .from("member_presence")
+        .update({ presence_level: s.level, opt_out: false })
+        .eq("user_id", s.userId);
+    }
+  }, []);
+
+  return { refresh };
 }

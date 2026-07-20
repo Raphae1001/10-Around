@@ -13,6 +13,7 @@ import { useTranslation } from "react-i18next";
 import appCss from "../styles.css?url";
 import { Toaster } from "@/components/ui/sonner";
 import { ConfirmationPrompt } from "@/components/ConfirmationPrompt";
+import { GraceNotificationToast } from "@/components/GraceNotificationToast";
 import "@/i18n";
 import { applySavedLang } from "@/i18n";
 import { initTheme } from "@/hooks/use-theme";
@@ -193,6 +194,7 @@ function RootComponent() {
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
       <ConfirmationPrompt />
+      <GraceNotificationToast />
       <Toaster position="top-center" />
     </QueryClientProvider>
   );

@@ -353,6 +353,8 @@
     "requestKaddish": "Request a Kaddish minyan",
     "requestKaddishSub": "For yahrzeit, shloshim, or shiva",
     "open": "Open",
+    "emptyTitle": "No notifications yet",
+    "emptyDesc": "You'll see updates here about minyanim you've joined.",
     "items": {
       "missing1Title": "Only 1 person missing",
       "missing1Body": "Mincha at Aaron's Loft · 4 min walk · starts in 12 min",
@@ -371,7 +373,12 @@
       "confirmedTime": "20 min ago",
       "startingTitle": "Minyan starting soon",
       "startingBody": "Shacharit at Lincoln Square in 25 minutes.",
-      "startingTime": "1h ago"
+      "startingTime": "1h ago",
+      "graceExtendedTitle": "Start delayed 10 min",
+      "graceExtendedBody": "{{prayer}} at {{place}} is starting 10 minutes later — still waiting for a minyan.",
+      "cancelledTitle": "Minyan cancelled",
+      "cancelledBody": "{{prayer}} at {{place}} was cancelled — not enough people joined in time.",
+      "viewMinyan": "View"
     }
   },
   "share": {

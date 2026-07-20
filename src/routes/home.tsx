@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useMemo, useRef, useState, type PointerEvent } from "react";
 import { useTranslation } from "react-i18next";
-import { Loader2, Moon, SunMedium, X } from "lucide-react";
+import { Loader2, LocateFixed, Moon, SunMedium, X } from "lucide-react";
 import { MobileFrame } from "@/components/MobileFrame";
 import { Wordmark } from "@/components/Logo";
 import { GoogleMapCanvas, type DensityHalo, type MapPinDatum } from "@/components/GoogleMap";
@@ -52,7 +52,7 @@ function Home() {
   const { zones, activeCount, lastUpdatedAt, loading: densityLoading } = useDensity(position, 1000);
   const { data: allMinyanim } = useNearbyMinyanim(position, 5000);
   const minyanim = useMemo(() => allMinyanim.filter((m) => isLiveOnMap(m)), [allMinyanim]);
-  usePresence(position, !!user, user?.id);
+  const { refresh: refreshPresence } = usePresence(position, !!user, user?.id);
   const [firstName, setFirstName] = useState("");
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [primerOpen, setPrimerOpen] = useState(false);
@@ -138,6 +138,19 @@ function Home() {
   const goToCreate = useCallback(() => {
     navigate({ to: "/create", search: { from: "map" } });
   }, [navigate]);
+
+  const [refreshingPos, setRefreshingPos] = useState(false);
+  const refreshPosition = useCallback(async () => {
+    void tapLight();
+    setRefreshingPos(true);
+    try {
+      await requestGeo();
+      await refreshPresence();
+      setRecenterNonce((n) => n + 1);
+    } finally {
+      setRefreshingPos(false);
+    }
+  }, [requestGeo, refreshPresence]);
 
   const handlePrimerAllow = useCallback(async () => {
     allowingRef.current = true;
@@ -260,6 +273,23 @@ function Home() {
             </Link>
           </div>
         </div>
+
+        {/* Discreet "refresh my position" control — renews presence + recenters. */}
+        {listSheet === "closed" && (
+          <button
+            type="button"
+            onClick={() => void refreshPosition()}
+            disabled={refreshingPos}
+            aria-label={t("home.presence.recenter", { defaultValue: "Refresh my position" })}
+            className="absolute right-5 z-40 top-[max(4.5rem,calc(env(safe-area-inset-top)+3.75rem))] h-9 w-9 rounded-full bg-surface/90 backdrop-blur shadow-soft border border-border/60 flex items-center justify-center text-ink-soft active:scale-[0.96] disabled:opacity-60"
+          >
+            {refreshingPos ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <LocateFixed className="h-4 w-4" />
+            )}
+          </button>
+        )}
 
         {position && listSheet === "closed" && (
           <HomePresenceCard

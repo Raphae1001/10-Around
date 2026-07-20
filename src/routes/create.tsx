@@ -20,6 +20,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useGeolocation } from "@/hooks/use-geolocation";
 import { supabase } from "@/integrations/supabase/client";
 import { reverseGeocode } from "@/lib/geocoding";
+import { notifyNearbyMinyan } from "@/lib/notify-nearby";
 
 export const Route = createFileRoute("/create")({
   validateSearch: (s: Record<string, unknown>): { from?: "map" } => ({
@@ -407,6 +408,9 @@ function Create() {
       await supabase
         .from("minyan_participants")
         .insert({ minyan_id: created.id, user_id: user.id });
+
+      // Fan out push to opted-in members with fresh presence within ~1 km.
+      notifyNearbyMinyan(created.id);
 
       void import("@/lib/analytics").then(({ track }) =>
         track("create_minyan", {
