@@ -60,6 +60,11 @@ function Home() {
   const [neighborhood, setNeighborhood] = useState<string | null>(null);
   const [listSheet, setListSheet] = useState<ListSheet>("closed");
   const [recenterNonce, setRecenterNonce] = useState(0);
+  const [nowTick, setNowTick] = useState(() => Date.now());
+  useEffect(() => {
+    const i = setInterval(() => setNowTick(Date.now()), 15_000);
+    return () => clearInterval(i);
+  }, []);
   const pendingCreateRef = useRef(false);
   const allowingRef = useRef(false);
   const lastGeoRef = useRef<{ lat: number; lng: number } | null>(null);
@@ -189,16 +194,20 @@ function Home() {
     () =>
       minyanim.map((m) => {
         const present = m.present_count ?? 1;
+        // Confirmed street minyan in its 10-min arrival window — surface the
+        // countdown on the pin itself, visible even to non-participants.
+        const arrivalDeadline = m.arrival_deadline ? new Date(m.arrival_deadline).getTime() : null;
+        const arriving = arrivalDeadline != null && arrivalDeadline > nowTick;
         return {
           id: m.id,
           lat: m.latitude,
           lng: m.longitude,
-          label: String(present),
-          tone: present >= 10 ? "success" : present >= 9 ? "urgent" : "gold",
+          label: arriving ? `${Math.max(0, Math.ceil((arrivalDeadline - nowTick) / 60000))}m` : String(present),
+          tone: arriving ? "success" : present >= 10 ? "success" : present >= 9 ? "urgent" : "gold",
           onClick: () => navigate({ to: "/minyan", search: { id: m.id } }),
         } satisfies MapPinDatum;
       }),
-    [minyanim, navigate],
+    [minyanim, navigate, nowTick],
   );
 
   const initial = useMemo(

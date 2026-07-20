@@ -379,7 +379,7 @@ function Create() {
 
       await supabase
         .from("minyan_participants")
-        .insert({ minyan_id: created.id, user_id: user.id });
+        .insert({ minyan_id: created.id, user_id: user.id, ready_now: true });
 
       // Fan out push to opted-in members with fresh presence within ~1 km.
       notifyNearbyMinyan(created.id);

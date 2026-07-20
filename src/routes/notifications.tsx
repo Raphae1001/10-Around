@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { MobileFrame } from "@/components/MobileFrame";
 import { ScreenHeader, LiveBadge, EmptyState } from "@/components/ui-bits";
-import { AlertTriangle, Bell, Clock } from "lucide-react";
+import { AlertTriangle, Bell, CheckCircle2, HelpCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 
@@ -12,7 +12,7 @@ export const Route = createFileRoute("/notifications")({ component: Notification
 type NotificationRow = {
   id: string;
   minyan_id: string | null;
-  kind: "grace_extended" | "minyan_cancelled";
+  kind: "minyan_confirmed_arriving" | "minyan_needs_decision" | "minyan_cancelled";
   data: { prayer?: string; address?: string } | null;
   created_at: string;
 };
@@ -73,23 +73,30 @@ function Notifications() {
             });
             const place = n.data?.address ?? t("confirm.yourMinyan");
             const isCancelled = n.kind === "minyan_cancelled";
+            const isDecision = n.kind === "minyan_needs_decision";
             const title = isCancelled
               ? t("notifications.items.cancelledTitle", { defaultValue: "Minyan cancelled" })
-              : t("notifications.items.graceExtendedTitle", {
-                  defaultValue: "Start delayed 10 min",
-                });
+              : isDecision
+                ? t("notifications.items.decisionTitle", { defaultValue: "Minyan not confirmed yet" })
+                : t("notifications.items.arrivingTitle", { defaultValue: "Minyan confirmed!" });
             const body = isCancelled
               ? t("notifications.items.cancelledBody", {
                   prayer,
                   place,
                   defaultValue: `${prayer} at ${place} was cancelled — not enough people joined in time.`,
                 })
-              : t("notifications.items.graceExtendedBody", {
-                  prayer,
-                  place,
-                  defaultValue: `${prayer} at ${place} is starting 10 minutes later — still waiting for a minyan.`,
-                });
-            const Icon = isCancelled ? AlertTriangle : Clock;
+              : isDecision
+                ? t("notifications.items.decisionBody", {
+                    prayer,
+                    place,
+                    defaultValue: `Not enough people yet for ${prayer} at ${place} — is there a minyan?`,
+                  })
+                : t("notifications.items.arrivingBody", {
+                    prayer,
+                    place,
+                    defaultValue: `${prayer} starting soon — meet at ${place}.`,
+                  });
+            const Icon = isCancelled ? AlertTriangle : isDecision ? HelpCircle : CheckCircle2;
             const time = new Date(n.created_at).toLocaleTimeString([], {
               hour: "2-digit",
               minute: "2-digit",

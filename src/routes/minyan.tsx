@@ -35,6 +35,10 @@ const NEEDED = 10;
 const SECONDARY_BTN =
   "flex items-center justify-center gap-2 rounded-2xl bg-surface-muted text-ink py-3.5 text-[14px] font-medium active:scale-[0.99] disabled:opacity-45 disabled:cursor-not-allowed";
 
+function minutesLeft(targetMs: number, nowMs: number): number {
+  return Math.max(0, Math.ceil((targetMs - nowMs) / 60000));
+}
+
 function relTime(iso: string | null, t: (k: string, o?: any) => string) {
   if (!iso) return t("home.liveNow");
   const diffMin = Math.round((new Date(iso).getTime() - Date.now()) / 60000);
@@ -134,6 +138,12 @@ function Details() {
     };
   }, [id]);
 
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    const i = setInterval(() => setNow(Date.now()), 15_000);
+    return () => clearInterval(i);
+  }, []);
+
   const startsAtIso = minyan?.scheduled_at ?? minyan?.created_at ?? null;
   const startsAt = startsAtIso ? new Date(startsAtIso) : null;
   const scheduledAt = minyan?.scheduled_at ? new Date(minyan.scheduled_at) : null;
@@ -151,11 +161,11 @@ function Details() {
   const isOrganizer = !!user && !!minyan && minyan.creator_id === user.id;
   const isScheduled = minyan?.type === "scheduled";
 
-  async function handleJoin() {
+  async function handleJoin(readyNow: boolean) {
     if (!minyan || !user) return;
     void tapMedium();
     setBusy(true);
-    const { error } = await joinMinyan(minyan.id, user.id);
+    const { error } = await joinMinyan(minyan.id, user.id, readyNow);
     setBusy(false);
     if (error) toast.error(error.message);
     else {
@@ -165,6 +175,29 @@ function Details() {
       );
       toast.success(t("minyan.youreIn"));
       navigate({ to: "/success", search: { id: minyan.id } });
+    }
+  }
+
+  async function handleCreatorDecide(hasMinyan: boolean) {
+    if (!minyan) return;
+    void tapMedium();
+    setBusy(true);
+    const { error } = await supabase.rpc("creator_decide_minyan", {
+      _id: minyan.id,
+      _has_minyan: hasMinyan,
+    });
+    setBusy(false);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    if (hasMinyan) {
+      toast.success(t("minyan.decisionYesOk"));
+    } else {
+      toast.success(t("minyan.cancelledOk"));
+      navigateBack(router.history, () => {
+        void navigate({ to: "/home" });
+      });
     }
   }
 
@@ -280,12 +313,30 @@ function Details() {
   const orgName = isOrganizer
     ? t("minyan.you")
     : (organizer?.display_name ?? t("minyan.organizer"));
+  // Street minyanim: organizer can cancel any time. Scheduled keeps the
+  // 20-min-before-start protection for joiners (matches cancel_my_minyan).
   const canCancel =
-    isOrganizer && (!scheduledAt || scheduledAt.getTime() - Date.now() > 20 * 60_000);
+    isOrganizer &&
+    (!isScheduled || !scheduledAt || scheduledAt.getTime() - Date.now() > 20 * 60_000);
   const cancelWindowClosed =
-    isOrganizer && scheduledAt && scheduledAt.getTime() - Date.now() <= 20 * 60_000;
+    isOrganizer && isScheduled && scheduledAt && scheduledAt.getTime() - Date.now() <= 20 * 60_000;
 
   const detailSubtitle = prayerLabel;
+
+  const isStreet = minyan.type === "street";
+  const deadlineMs = startsAtIso ? new Date(startsAtIso).getTime() : null;
+  const arrivalDeadlineMs = minyan.arrival_deadline ? new Date(minyan.arrival_deadline).getTime() : null;
+  const confirmationState: "pending" | "waiting" | "arriving" | "started" | "decision" | null = !isStreet
+    ? null
+    : minyan.awaiting_creator_decision
+      ? "decision"
+      : arrivalDeadlineMs != null
+        ? now < arrivalDeadlineMs
+          ? "arriving"
+          : "started"
+        : minyan.confirmed_at
+          ? "waiting"
+          : "pending";
 
   const startsPrimary = isScheduled
     ? scheduledAt
@@ -319,6 +370,64 @@ function Details() {
             </h1>
             <p className="text-[13px] text-ink-soft mt-1">{detailSubtitle}</p>
           </div>
+
+          {confirmationState && confirmationState !== "started" && (
+            <div
+              className={`rounded-2xl p-4 mb-3 text-center ${
+                confirmationState === "arriving"
+                  ? "bg-success/12 border border-success/30"
+                  : "bg-surface shadow-soft"
+              }`}
+            >
+              {confirmationState === "pending" && deadlineMs != null && (
+                <p className="text-[13px] text-ink-soft">
+                  {t("minyan.waitingForConfirmation")} ·{" "}
+                  {t("minyan.confirmationCountdown", { count: minutesLeft(deadlineMs, now) })}
+                </p>
+              )}
+              {confirmationState === "waiting" && deadlineMs != null && (
+                <p className="text-[13px] text-ink-soft">
+                  {t("minyan.confirmedWaiting", {
+                    time: new Date(deadlineMs).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    }),
+                  })}
+                </p>
+              )}
+              {confirmationState === "arriving" && arrivalDeadlineMs != null && (
+                <p className="text-[15px] font-semibold text-success">
+                  {t("minyan.confirmedArriving", { count: minutesLeft(arrivalDeadlineMs, now) })}
+                </p>
+              )}
+              {confirmationState === "decision" &&
+                (isOrganizer ? (
+                  <div className="space-y-3">
+                    <p className="text-[13px] text-ink-soft">{t("minyan.decisionPrompt")}</p>
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        disabled={busy}
+                        onClick={() => handleCreatorDecide(false)}
+                        className="flex-1 rounded-xl bg-surface-muted py-2.5 text-sm font-semibold disabled:opacity-50"
+                      >
+                        {t("minyan.decisionCancel")}
+                      </button>
+                      <button
+                        type="button"
+                        disabled={busy}
+                        onClick={() => handleCreatorDecide(true)}
+                        className="flex-1 rounded-xl bg-accent text-accent-foreground py-2.5 text-sm font-semibold disabled:opacity-50"
+                      >
+                        {t("minyan.decisionYes")}
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-[13px] text-ink-soft">{t("minyan.decisionPendingOther")}</p>
+                ))}
+            </div>
+          )}
 
           <div className="space-y-3">
             {/* Carte présence */}
@@ -387,13 +496,23 @@ function Details() {
                 <X className="h-5 w-5" /> {t("minyan.cancel")}
               </button>
             ) : (
-              <button
-                disabled={busy || !user}
-                onClick={handleJoin}
-                className="w-full bg-accent text-accent-foreground font-semibold py-4 rounded-2xl shadow-fab flex items-center justify-center gap-2 disabled:opacity-50 active:scale-[0.99] transition-transform"
-              >
-                <Check className="h-5 w-5" /> {t("common.join")}
-              </button>
+              <>
+                <button
+                  disabled={busy || !user}
+                  onClick={() => handleJoin(true)}
+                  className="w-full bg-accent text-accent-foreground font-semibold py-4 rounded-2xl shadow-fab flex items-center justify-center gap-2 disabled:opacity-50 active:scale-[0.99] transition-transform"
+                >
+                  <Check className="h-5 w-5" /> {t("minyan.readyNow")}
+                </button>
+                <button
+                  type="button"
+                  disabled={busy || !user}
+                  onClick={() => handleJoin(false)}
+                  className="w-full text-center text-[13px] font-semibold text-accent py-1 active:opacity-60 transition-opacity disabled:opacity-40"
+                >
+                  {t("minyan.willWaitCta")}
+                </button>
+              </>
             )}
             <div className="grid grid-cols-2 gap-2.5">
               <button type="button" onClick={handleDirections} className={SECONDARY_BTN}>
