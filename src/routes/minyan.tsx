@@ -285,8 +285,7 @@ function Details() {
   const cancelWindowClosed =
     isOrganizer && scheduledAt && scheduledAt.getTime() - Date.now() <= 20 * 60_000;
 
-  const nusachLabel = minyan.nusach ?? t("minyan.nusachAny");
-  const detailSubtitle = `${prayerLabel} · ${nusachLabel}`;
+  const detailSubtitle = prayerLabel;
 
   const startsPrimary = isScheduled
     ? scheduledAt

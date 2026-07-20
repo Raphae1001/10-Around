@@ -270,6 +270,7 @@ export type Database = {
       minyanim: {
         Row: {
           address: string | null
+          city: string | null
           created_at: string
           creator_id: string
           expires_at: string
@@ -286,12 +287,14 @@ export type Database = {
           present_count: number
           scheduled_at: string | null
           trip_end_date: string | null
+          trip_prayer_interests: Json
           trip_start_date: string | null
           type: Database["public"]["Enums"]["minyan_type"]
           updated_at: string
         }
         Insert: {
           address?: string | null
+          city?: string | null
           created_at?: string
           creator_id: string
           expires_at?: string
@@ -308,12 +311,14 @@ export type Database = {
           present_count?: number
           scheduled_at?: string | null
           trip_end_date?: string | null
+          trip_prayer_interests?: Json
           trip_start_date?: string | null
           type: Database["public"]["Enums"]["minyan_type"]
           updated_at?: string
         }
         Update: {
           address?: string | null
+          city?: string | null
           created_at?: string
           creator_id?: string
           expires_at?: string
@@ -330,6 +335,7 @@ export type Database = {
           present_count?: number
           scheduled_at?: string | null
           trip_end_date?: string | null
+          trip_prayer_interests?: Json
           trip_start_date?: string | null
           type?: Database["public"]["Enums"]["minyan_type"]
           updated_at?: string
@@ -644,6 +650,7 @@ export type Database = {
         Args: { lat: number; lng: number; radius_m?: number }
         Returns: {
           address: string | null
+          city: string | null
           created_at: string
           creator_id: string
           expires_at: string
@@ -660,6 +667,7 @@ export type Database = {
           present_count: number
           scheduled_at: string | null
           trip_end_date: string | null
+          trip_prayer_interests: Json
           trip_start_date: string | null
           type: Database["public"]["Enums"]["minyan_type"]
           updated_at: string
@@ -684,6 +692,39 @@ export type Database = {
         }[]
       }
       normalize_city: { Args: { _addr: string }; Returns: string }
+      planned_minyanim: {
+        Args: { _city_key?: string }
+        Returns: {
+          address: string | null
+          city: string | null
+          created_at: string
+          creator_id: string
+          expires_at: string
+          extra_present: number
+          grace_extended: boolean
+          id: string
+          is_live: boolean
+          latitude: number
+          location: unknown
+          longitude: number
+          message: string | null
+          nusach: string | null
+          prayer: Database["public"]["Enums"]["minyan_prayer"]
+          present_count: number
+          scheduled_at: string | null
+          trip_end_date: string | null
+          trip_prayer_interests: Json
+          trip_start_date: string | null
+          type: Database["public"]["Enums"]["minyan_type"]
+          updated_at: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "minyanim"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       request_confirmations: {
         Args: { _minyan_id: string }
         Returns: undefined

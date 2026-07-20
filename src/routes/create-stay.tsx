@@ -15,11 +15,8 @@ export const Route = createFileRoute("/create-stay")({
   component: CreateStay,
 });
 
-const PRAYER_MAP: Record<string, "shacharit" | "mincha" | "maariv"> = {
-  Shacharit: "shacharit",
-  Mincha: "mincha",
-  Maariv: "maariv",
-};
+type PrayerKey = "shacharit" | "mincha" | "maariv";
+type PrayerInterest = { time: string; note: string };
 
 function CreateStay() {
   const { t } = useTranslation();
@@ -36,18 +33,33 @@ function CreateStay() {
   const [dateStart, setDateStart] = useState("");
   const [dateEnd, setDateEnd] = useState("");
   const [note, setNote] = useState("");
-  const [addMinyan, setAddMinyan] = useState(false);
-  const [minyanDate, setMinyanDate] = useState("");
-  const [minyanTime, setMinyanTime] = useState("");
-  const [prayer, setPrayer] = useState("Mincha");
-  const [nusach, setNusach] = useState("Any");
+  const [interests, setInterests] = useState<Record<PrayerKey, PrayerInterest | null>>({
+    shacharit: null,
+    mincha: null,
+    maariv: null,
+  });
 
   const todayStr = new Date().toISOString().slice(0, 10);
-  const prayers = [
-    { name: "Shacharit", icon: Sunrise },
-    { name: "Mincha", icon: Sun },
-    { name: "Maariv", icon: Moon },
+  const prayers: { key: PrayerKey; icon: typeof Sunrise }[] = [
+    { key: "shacharit", icon: Sunrise },
+    { key: "mincha", icon: Sun },
+    { key: "maariv", icon: Moon },
   ];
+
+  function toggleInterest(key: PrayerKey) {
+    setInterests((prev) => ({
+      ...prev,
+      [key]: prev[key] ? null : { time: "", note: "" },
+    }));
+  }
+
+  function updateInterest(key: PrayerKey, patch: Partial<PrayerInterest>) {
+    setInterests((prev) => {
+      const cur = prev[key];
+      if (!cur) return prev;
+      return { ...prev, [key]: { ...cur, ...patch } };
+    });
+  }
 
   return (
     <MobileFrame>
@@ -100,96 +112,61 @@ function CreateStay() {
         </Section>
 
         <div className="rounded-2xl border border-border bg-surface p-4 space-y-4">
-          <button
-            type="button"
-            onClick={() => setAddMinyan((v) => !v)}
-            className="w-full flex items-center justify-between gap-3 text-left"
-          >
-            <span className="text-sm font-medium text-ink">{t("createStay.addMinyan")}</span>
-            <span
-              className={`shrink-0 inline-flex rounded-full p-0.5 text-[11px] font-semibold ${
-                addMinyan ? "bg-accent/15" : "bg-surface-muted"
-              }`}
-            >
-              <span
-                className={`px-2.5 py-1 rounded-full transition-colors ${
-                  !addMinyan ? "bg-surface text-ink shadow-soft" : "text-ink-soft"
-                }`}
-              >
-                {t("profile.backupOff")}
-              </span>
-              <span
-                className={`px-2.5 py-1 rounded-full transition-colors ${
-                  addMinyan ? "bg-accent text-accent-foreground shadow-soft" : "text-ink-soft"
-                }`}
-              >
-                {t("profile.backupOn")}
-              </span>
+          <div>
+            <span className="text-sm font-medium text-ink">
+              {t("createStay.prayerInterests")}
             </span>
-          </button>
-          {addMinyan && (
-            <div className="space-y-4 pt-1 border-t border-border/60">
-              <p className="text-[11px] text-muted-foreground">{t("createStay.addMinyanHint")}</p>
-              <div className="grid grid-cols-1 gap-3">
-                <DateTimeField
-                  type="date"
-                  value={minyanDate}
-                  min={dateStart || todayStr}
-                  max={dateEnd || undefined}
-                  onChange={setMinyanDate}
-                  label={t("createScheduled.date")}
-                  emptyHint={t("createStay.minyanDateHint")}
-                />
+            <p className="text-[11px] text-muted-foreground mt-1">
+              {t("createStay.prayerInterestsHint")}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-3 gap-2 w-full">
+            {prayers.map(({ key, icon: Icon }) => {
+              const active = !!interests[key];
+              return (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => toggleInterest(key)}
+                  className={`min-w-0 flex flex-col items-center gap-1 py-3 px-1 rounded-xl transition-all ${
+                    active ? "bg-accent text-accent-foreground" : "bg-surface-muted text-ink"
+                  }`}
+                >
+                  <Icon className={`h-4 w-4 ${active ? "text-accent-foreground" : "text-ink-soft"}`} />
+                  <span className="text-[11px] font-semibold truncate w-full text-center">
+                    {t(`prayer.${key}`)}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+
+          {prayers.map(({ key }) => {
+            const interest = interests[key];
+            if (!interest) return null;
+            return (
+              <div key={key} className="space-y-2.5 pt-2 border-t border-border/60">
+                <div className="text-[11px] font-semibold text-ink-soft uppercase tracking-wide">
+                  {t(`prayer.${key}`)}
+                </div>
                 <DateTimeField
                   type="time"
-                  value={minyanTime}
-                  onChange={setMinyanTime}
+                  value={interest.time}
+                  onChange={(v) => updateInterest(key, { time: v })}
                   label={t("createScheduled.time")}
-                  emptyHint={t("createStay.minyanTimeHint")}
+                  emptyHint={t("createStay.prayerTimeHint")}
+                />
+                <textarea
+                  rows={2}
+                  value={interest.note}
+                  onChange={(e) => updateInterest(key, { note: e.target.value })}
+                  placeholder={t("createStay.prayerNotePh")}
+                  className="w-full rounded-2xl border border-border bg-surface p-3 text-sm outline-none focus:border-accent"
                 />
               </div>
-              <div className="grid grid-cols-3 gap-2 w-full">
-                {prayers.map(({ name, icon: Icon }) => {
-                  const active = prayer === name;
-                  return (
-                    <button
-                      key={name}
-                      type="button"
-                      onClick={() => setPrayer(name)}
-                      className={`min-w-0 flex flex-col items-center gap-1 py-3 px-1 rounded-xl transition-all ${
-                        active
-                          ? "bg-accent text-accent-foreground"
-                          : "bg-surface-muted text-ink"
-                      }`}
-                    >
-                      <Icon
-                        className={`h-4 w-4 ${active ? "text-accent-foreground" : "text-ink-soft"}`}
-                      />
-                      <span className="text-[11px] font-semibold truncate w-full text-center">
-                        {t(`prayer.${PRAYER_MAP[name]}`)}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {["Any", "Ashkenaz", "Sephard"].map((n) => (
-                  <button
-                    key={n}
-                    type="button"
-                    onClick={() => setNusach(n)}
-                    className={`rounded-full px-3 py-1.5 text-xs font-medium shrink-0 ${
-                      nusach === n
-                        ? "bg-accent text-accent-foreground"
-                        : "bg-surface-muted text-ink"
-                    }`}
-                  >
-                    {n}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
+            );
+          })}
         </div>
 
         <div className="pt-1">
@@ -235,27 +212,19 @@ function CreateStay() {
       return;
     }
 
-    if (addMinyan) {
-      if (!minyanDate || !minyanTime) {
-        toast.error(t("createScheduled.errNoDate"));
-        return;
-      }
-      if (minyanDate < dateStart || minyanDate > dateEnd) {
-        toast.error(t("createStay.errMinyanInRange"));
-        return;
-      }
-      const scheduledAt = new Date(`${minyanDate}T${minyanTime}`);
-      if (scheduledAt.getTime() <= Date.now()) {
-        toast.error(t("createScheduled.errPast"));
-        return;
-      }
-    }
-
     setPublishing(true);
     try {
       const lat = pick.lat ?? 0;
       const lng = pick.lng ?? 0;
       const expiresAt = new Date(`${dateEnd}T23:59:59`).toISOString();
+
+      const tripPrayerInterests = (Object.keys(interests) as PrayerKey[])
+        .filter((key) => interests[key])
+        .map((key) => ({
+          prayer: key,
+          time: interests[key]!.time || null,
+          note: interests[key]!.note.trim() || null,
+        }));
 
       const { data: stay, error: stayErr } = await supabase
         .from("minyanim")
@@ -263,7 +232,6 @@ function CreateStay() {
           creator_id: user.id,
           type: "stay",
           prayer: "mincha",
-          nusach: "Any",
           message: note || null,
           address: cityLabel,
           latitude: lat,
@@ -271,6 +239,7 @@ function CreateStay() {
           is_live: false,
           trip_start_date: dateStart,
           trip_end_date: dateEnd,
+          trip_prayer_interests: tripPrayerInterests,
           expires_at: expiresAt,
           present_count: 0,
           extra_present: 0,
@@ -281,33 +250,6 @@ function CreateStay() {
       if (stayErr) throw stayErr;
 
       await supabase.from("minyan_participants").insert({ minyan_id: stay.id, user_id: user.id });
-
-      if (addMinyan && minyanDate && minyanTime) {
-        const scheduledAt = new Date(`${minyanDate}T${minyanTime}`);
-        const { data: sched, error: schedErr } = await supabase
-          .from("minyanim")
-          .insert({
-            creator_id: user.id,
-            type: "scheduled",
-            prayer: PRAYER_MAP[prayer] ?? "mincha",
-            nusach,
-            message: note || null,
-            address: pick.address || cityLabel,
-            latitude: lat,
-            longitude: lng,
-            is_live: false,
-            scheduled_at: scheduledAt.toISOString(),
-            expires_at: new Date(scheduledAt.getTime() + 40 * 60 * 1000).toISOString(),
-            present_count: 0,
-            extra_present: 0,
-          })
-          .select()
-          .single();
-        if (schedErr) throw schedErr;
-        await supabase
-          .from("minyan_participants")
-          .insert({ minyan_id: sched.id, user_id: user.id });
-      }
 
       void import("@/lib/analytics").then(({ track }) => track("create_minyan", { type: "stay" }));
       toast.success(t("createStay.published"));

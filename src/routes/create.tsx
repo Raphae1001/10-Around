@@ -43,7 +43,6 @@ const PRAYER_DISPLAY: Record<string, string> = {
 
 type LastMinyan = {
   prayer: string;
-  nusach: string;
   present_count: number | null;
   message: string | null;
 };
@@ -63,7 +62,6 @@ function Create() {
   const [prayer, setPrayer] = useState("Mincha");
   const [when, setWhen] = useState("Now");
   const [present, setPresent] = useState(3);
-  const [nusach, setNusach] = useState("Any");
   const [comment, setComment] = useState("");
   const [street, setStreet] = useState("");
   const [streetAuto, setStreetAuto] = useState(false);
@@ -75,7 +73,7 @@ function Create() {
     let cancelled = false;
     void supabase
       .from("minyanim")
-      .select("prayer,nusach,present_count,message")
+      .select("prayer,present_count,message")
       .eq("creator_id", user.id)
       .eq("type", "street")
       .order("created_at", { ascending: false })
@@ -92,7 +90,6 @@ function Create() {
   function repeatLast() {
     if (!lastMinyan) return;
     setPrayer(PRAYER_DISPLAY[lastMinyan.prayer] ?? "Mincha");
-    setNusach(lastMinyan.nusach || "Any");
     setPresent(Math.max(1, lastMinyan.present_count ?? 3));
     setComment(lastMinyan.message ?? "");
     setRepeated(true);
@@ -144,8 +141,7 @@ function Create() {
             <div className="min-w-0 flex-1">
               <div className="text-sm font-semibold leading-tight">{t("create.repeatLast")}</div>
               <div className="text-[11px] text-muted-foreground truncate">
-                {t(`prayer.${lastMinyan.prayer}`, { defaultValue: lastMinyan.prayer })} ·{" "}
-                {lastMinyan.nusach}
+                {t(`prayer.${lastMinyan.prayer}`, { defaultValue: lastMinyan.prayer })}
               </div>
             </div>
           </button>
@@ -259,27 +255,7 @@ function Create() {
           </div>
         </Section>
 
-        <Section step="5" title={t("create.nusach")}>
-          <div className="flex flex-wrap gap-2">
-            {["Any", "Ashkenaz", "Sephard", "Nusach Ari", "Edot Mizrach"].map((n) => {
-              const a = nusach === n;
-              return (
-                <button
-                  key={n}
-                  type="button"
-                  onClick={() => setNusach(n)}
-                  className={`rounded-full px-3 py-2 text-xs font-medium transition-colors shrink-0 ${
-                    a ? "bg-accent text-accent-foreground" : "bg-surface-muted text-ink"
-                  }`}
-                >
-                  {n}
-                </button>
-              );
-            })}
-          </div>
-        </Section>
-
-        <Section step="6" title={t("create.commentLabel")}>
+        <Section step="5" title={t("create.commentLabel")}>
           <textarea
             rows={2}
             value={comment}
@@ -304,9 +280,6 @@ function Create() {
             <div className="flex items-start gap-1.5">
               <MapPin className="h-3.5 w-3.5 mt-0.5 shrink-0 text-accent" />
               <span className="truncate">{locationSummary}</span>
-            </div>
-            <div>
-              {t("create.nusach")}: <span className="text-foreground">{nusach}</span>
             </div>
             {comment && <div className="italic">"{comment}"</div>}
           </div>
@@ -389,7 +362,6 @@ function Create() {
           creator_id: user.id,
           type: "street",
           prayer: PRAYER_MAP[prayer] ?? "mincha",
-          nusach,
           message: comment || null,
           address: locationSummary,
           latitude: lat,
