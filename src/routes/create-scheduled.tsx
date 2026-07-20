@@ -38,7 +38,6 @@ function CreateScheduled() {
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const [prayer, setPrayer] = useState("Mincha");
-  const [nusach, setNusach] = useState("Any");
   const [comment, setComment] = useState("");
 
   const prayers = [
@@ -120,27 +119,7 @@ function CreateScheduled() {
           </div>
         </Section>
 
-        <Section step="4" title={t("create.nusach")}>
-          <div className="flex flex-wrap gap-2">
-            {["Any", "Ashkenaz", "Sephard", "Nusach Ari", "Edot Mizrach"].map((n) => {
-              const a = nusach === n;
-              return (
-                <button
-                  key={n}
-                  type="button"
-                  onClick={() => setNusach(n)}
-                  className={`rounded-full px-3 py-2 text-xs font-medium transition-colors shrink-0 ${
-                    a ? "bg-accent text-accent-foreground" : "bg-surface-muted text-ink"
-                  }`}
-                >
-                  {n}
-                </button>
-              );
-            })}
-          </div>
-        </Section>
-
-        <Section step="5" title={t("create.commentLabel")}>
+        <Section step="4" title={t("create.commentLabel")}>
           <textarea
             rows={2}
             value={comment}
@@ -170,9 +149,7 @@ function CreateScheduled() {
               <MapPin className="h-3.5 w-3.5 mt-0.5 shrink-0 text-accent" />
               <span className="truncate">{address || t("createScheduled.previewNoAddress")}</span>
             </div>
-            <div>
-              {t(`prayer.${PRAYER_MAP[prayer]}`)} · {nusach}
-            </div>
+            <div>{t(`prayer.${PRAYER_MAP[prayer]}`)}</div>
           </div>
         </div>
 
@@ -241,9 +218,9 @@ function CreateScheduled() {
           creator_id: user.id,
           type: "scheduled",
           prayer: PRAYER_MAP[prayer] ?? "mincha",
-          nusach,
           message: comment || null,
           address: pick.address,
+          city: pick.city,
           latitude: pick.lat,
           longitude: pick.lng,
           is_live: false,
