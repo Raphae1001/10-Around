@@ -1,7 +1,7 @@
 /// <reference types="google.maps" />
 import { APIProvider, Map, useMap } from "@vis.gl/react-google-maps";
 import type { Cluster } from "@googlemaps/markerclusterer";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { mapStyleForTheme } from "@/lib/map-styles";
 import { tapLight } from "@/lib/haptics";
 
@@ -33,15 +33,24 @@ export type DensityHalo = {
 };
 
 /**
- * Map pin fills — same family as --gold / --urgent / --success, but desaturated
- * so they stay sober next to the navy–gold UI (no Material / coral / teal pop).
+ * Map pin fills. "gold" (the default tone) always follows the live
+ * --accent CSS variable — read live since these SVGs are detached data
+ * URIs that Google's renderer draws outside the page's CSS cascade, so
+ * var(--accent) inside them would never resolve. urgent/success/sky stay
+ * fixed semantic colors regardless of theme.
  */
-const toneColor: Record<NonNullable<MapPinDatum["tone"]>, string> = {
-  gold: "#C9A24A",
+const toneColor: Record<Exclude<NonNullable<MapPinDatum["tone"]>, "gold">, string> = {
   urgent: "#A88B72",
   success: "#6E7F74",
   sky: "#7A8FA3",
 };
+
+/** Reads a CSS custom property's live value off <html> (theme-aware). */
+function readCssVar(name: string, fallback: string): string {
+  if (typeof window === "undefined") return fallback;
+  const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  return v || fallback;
+}
 
 /** Navy label on every tone — same typography treatment as gold / avatar. */
 const PIN_LABEL = "#1A1A2E";
@@ -162,7 +171,7 @@ function ArrivalZoom({ center }: { center: { lat: number; lng: number } }) {
  * Count is baked into the SVG so Google's Marker label can't diverge per tone.
  */
 function pinIcon(tone: NonNullable<MapPinDatum["tone"]>, label?: string) {
-  const fill = toneColor[tone];
+  const fill = tone === "gold" ? readCssVar("--accent", "#C9A24A") : toneColor[tone];
   const size = 40;
   const r = 15;
   const fid = `pin-shadow-${tone}`;
@@ -182,6 +191,7 @@ function pinIcon(tone: NonNullable<MapPinDatum["tone"]>, label?: string) {
 }
 
 function makeClusterRenderer() {
+  const accent = readCssVar("--accent", "#C25A2E");
   return {
     render(cluster: Cluster) {
       const { count, position } = cluster;
@@ -193,7 +203,7 @@ function makeClusterRenderer() {
         </filter>
       </defs>
       <g filter="url(#s)">
-        <circle cx="${(size + 8) / 2}" cy="${(size + 8) / 2}" r="${size / 2}" fill="#1a1a2e" stroke="#C25A2E" stroke-width="2.5"/>
+        <circle cx="${(size + 8) / 2}" cy="${(size + 8) / 2}" r="${size / 2}" fill="#1a1a2e" stroke="${accent}" stroke-width="2.5"/>
       </g>
     </svg>`;
       return new google.maps.Marker({
@@ -206,7 +216,7 @@ function makeClusterRenderer() {
         },
         label: {
           text: String(count),
-          color: "#C25A2E",
+          color: accent,
           fontSize: "13px",
           fontWeight: "800",
         },
@@ -220,7 +230,7 @@ function makeClusterRenderer() {
  * Couche pins clusterisée — import dynamique du clusterer (évite crash SSR/CJS)
  * et ne s'exécute qu'une fois google.maps disponible via useMap().
  */
-function ClusteredPins({ pins }: { pins: MapPinDatum[] }) {
+function ClusteredPins({ pins, theme }: { pins: MapPinDatum[]; theme: "light" | "dark" }) {
   const map = useMap();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const clustererRef = useRef<any>(null);
@@ -237,9 +247,12 @@ function ClusteredPins({ pins }: { pins: MapPinDatum[] }) {
       const MarkerClusterer = mod.MarkerClusterer ?? mod.default?.MarkerClusterer;
       if (!MarkerClusterer) return;
 
-      if (!clustererRef.current) {
-        clustererRef.current = new MarkerClusterer({ map, renderer: makeClusterRenderer() });
-      }
+      // Recreated on theme change too — the renderer/icons bake in the
+      // resolved accent color at creation time (detached SVG data URIs
+      // can't read CSS vars live), so a stale clusterer would keep the
+      // old theme's color until the next pins update.
+      clustererRef.current?.clearMarkers();
+      clustererRef.current = new MarkerClusterer({ map, renderer: makeClusterRenderer() });
       const clusterer = clustererRef.current;
 
       const markers = pins.map((p) => {
@@ -270,7 +283,7 @@ function ClusteredPins({ pins }: { pins: MapPinDatum[] }) {
       cancelled = true;
       clustererRef.current?.clearMarkers();
     };
-  }, [map, pins]);
+  }, [map, pins, theme]);
 
   useEffect(() => {
     return () => {
@@ -313,10 +326,12 @@ function UserAvatarOverlay({
     wrap.style.cssText =
       "position:relative;width:44px;height:44px;display:flex;align-items:center;justify-content:center;";
 
-    /* Compact radial halo — ~95px radius */
+    /* Compact radial halo — ~95px radius. var(--accent) resolves live
+       against the page's cascade (unlike the SVG data URIs above), so this
+       tracks light/dark theme changes automatically without a re-render. */
     const halo = document.createElement("div");
     halo.style.cssText =
-      "position:absolute;left:50%;top:50%;width:190px;height:190px;margin-left:-95px;margin-top:-95px;border-radius:9999px;pointer-events:none;background:radial-gradient(circle, oklch(0.6 0.135 38 / 0.55) 0%, oklch(0.6 0.135 38 / 0.15) 70%, oklch(0.6 0.135 38 / 0) 100%);";
+      "position:absolute;left:50%;top:50%;width:190px;height:190px;margin-left:-95px;margin-top:-95px;border-radius:9999px;pointer-events:none;background:radial-gradient(circle, color-mix(in oklch, var(--accent) 55%, transparent) 0%, color-mix(in oklch, var(--accent) 15%, transparent) 70%, transparent 100%);";
 
     const avatar = document.createElement("div");
     avatar.style.cssText =
@@ -396,7 +411,7 @@ function DensityCountBadge({
 
     const disc = document.createElement("div");
     disc.style.cssText =
-      "position:relative;display:flex;align-items:center;justify-content:center;min-width:36px;height:36px;padding:0 10px;border-radius:9999px;background:oklch(0.6 0.135 38);box-shadow:0 4px 14px oklch(0.6 0.135 38 / 0.45);border:2px solid #fff;";
+      "position:relative;display:flex;align-items:center;justify-content:center;min-width:36px;height:36px;padding:0 10px;border-radius:9999px;background:var(--accent);box-shadow:0 4px 14px color-mix(in oklch, var(--accent) 45%, transparent);border:2px solid #fff;";
 
     const countEl = document.createElement("span");
     countEl.style.cssText =
@@ -453,6 +468,27 @@ export function GoogleMapCanvas({
   recenterNonce?: number;
   className?: string;
 }) {
+  const [loadError, setLoadError] = useState<string | null>(null);
+
+  // Google Maps calls this global when the key/referrer is rejected (RefererNotAllowedMapError).
+  useEffect(() => {
+    const previous = (window as Window & { gm_authFailure?: () => void }).gm_authFailure;
+    (window as Window & { gm_authFailure?: () => void }).gm_authFailure = () => {
+      const href = typeof window !== "undefined" ? window.location.href : "";
+      const keyHint = API_KEY ? `…${API_KEY.slice(-4)}` : "missing";
+      setLoadError(
+        `RefererNotAllowedMapError. URL=${href} clé=${keyHint}. GCP → cette clé → Application restrictions = « Sites web » (PAS « apps iOS ») → ajoute capacitor://minyannow.app/* et *://minyannow.app/* → Enregistrer. Ou mets « Aucune » pour tester.`,
+      );
+    };
+    return () => {
+      (window as Window & { gm_authFailure?: () => void }).gm_authFailure = previous;
+    };
+  }, []);
+
+  useEffect(() => {
+    console.info("[GoogleMap] origin", window.location.href, "key…", API_KEY?.slice(-4));
+  }, []);
+
   if (!API_KEY) {
     return (
       <div
@@ -462,9 +498,33 @@ export function GoogleMapCanvas({
       </div>
     );
   }
+
+  if (loadError) {
+    return (
+      <div
+        className={`flex flex-col items-center justify-center gap-2 text-center text-xs text-muted-foreground p-6 ${className}`}
+      >
+        <p className="font-medium text-ink">Carte indisponible</p>
+        <p className="max-w-sm break-words opacity-80">{loadError}</p>
+      </div>
+    );
+  }
+
   return (
     <div className={className}>
-      <APIProvider apiKey={API_KEY}>
+      <APIProvider
+        apiKey={API_KEY}
+        onError={(error) => {
+          const message =
+            error instanceof Error
+              ? error.message
+              : typeof error === "string"
+                ? error
+                : "Google Maps JavaScript API failed to load";
+          setLoadError(message);
+          console.error("[GoogleMap]", error);
+        }}
+      >
         <Map
           defaultCenter={center}
           defaultZoom={ARRIVAL_START_ZOOM}
@@ -489,7 +549,7 @@ export function GoogleMapCanvas({
           {user && (
             <UserAvatarOverlay position={user} avatarUrl={userAvatarUrl} initial={userInitial} />
           )}
-          <ClusteredPins pins={pins} />
+          <ClusteredPins pins={pins} theme={theme} />
         </Map>
       </APIProvider>
     </div>

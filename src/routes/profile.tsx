@@ -171,7 +171,7 @@ function Profile() {
               className="h-16 w-16 rounded-2xl flex items-center justify-center text-xl font-bold shrink-0 text-dark-surface-foreground"
               style={{
                 background: "oklch(0.32 0.015 250)",
-                boxShadow: "0 0 0 2px oklch(0.6 0.135 38)",
+                boxShadow: "0 0 0 2px var(--accent)",
               }}
             >
               {initial}
