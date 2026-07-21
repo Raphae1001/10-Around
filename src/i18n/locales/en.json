@@ -238,6 +238,7 @@
     "gpsDetected": "GPS",
     "dropPin": "Drop pin on your exact spot",
     "locationFromGps": "Address filled from your current location — you can edit it.",
+    "locationFromPick": "Custom location — not your current position.",
     "streetPh": "Street, corner, landmark…",
     "airportPh": "Airport (e.g. JFK, CDG)",
     "gatePh": "Terminal / Gate (e.g. T2 · B14)",

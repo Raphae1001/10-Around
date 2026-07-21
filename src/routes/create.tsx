@@ -21,6 +21,7 @@ import { useGeolocation } from "@/hooks/use-geolocation";
 import { supabase } from "@/integrations/supabase/client";
 import { reverseGeocode } from "@/lib/geocoding";
 import { notifyNearbyMinyan } from "@/lib/notify-nearby";
+import { AddressAutocomplete, type AddressPick } from "@/components/AddressAutocomplete";
 
 export const Route = createFileRoute("/create")({
   validateSearch: (s: Record<string, unknown>): { from?: "map" } => ({
@@ -65,6 +66,10 @@ function Create() {
   const [comment, setComment] = useState("");
   const [street, setStreet] = useState("");
   const [streetAuto, setStreetAuto] = useState(false);
+  // Non-null once the user actively picks a different address; publish()
+  // uses this over the live GPS position when set. Cleared on manual edit
+  // so a stale pick never gets sent silently.
+  const [pick, setPick] = useState<AddressPick | null>(null);
   const [lastMinyan, setLastMinyan] = useState<LastMinyan | null>(null);
   const [repeated, setRepeated] = useState(false);
 
@@ -151,13 +156,17 @@ function Create() {
           <div className="relative rounded-2xl border border-border bg-surface focus-within:border-gold transition-colors">
             <div className="flex items-center gap-2 px-3 pt-3">
               <MapPin className="h-4 w-4 text-gold shrink-0" strokeWidth={2.2} />
-              <input
+              <AddressAutocomplete
                 value={street}
-                onChange={(e) => setStreet(e.target.value)}
+                onChange={(v) => {
+                  setStreet(v);
+                  setPick(null);
+                }}
+                onPick={setPick}
                 placeholder={t("create.streetPh")}
                 className="flex-1 min-w-0 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
               />
-              {position && (
+              {position && !pick && (
                 <span className="shrink-0 inline-flex items-center gap-1 rounded-full bg-success/12 text-success px-2 py-0.5 text-[10px] font-semibold tracking-wide">
                   <Check className="h-3 w-3" strokeWidth={2.6} />
                   {t("create.gpsDetected")}
@@ -165,7 +174,11 @@ function Create() {
               )}
             </div>
             <p className="px-3 pb-2.5 pt-1 text-[11px] text-muted-foreground leading-snug pl-9">
-              {position ? t("create.locationFromGps") : t("create.allowLocationToPublish")}
+              {pick
+                ? t("create.locationFromPick", { defaultValue: "Custom location — not your GPS." })
+                : position
+                  ? t("create.locationFromGps")
+                  : t("create.allowLocationToPublish")}
             </p>
           </div>
         </Section>
@@ -314,7 +327,7 @@ function Create() {
       return;
     }
 
-    if (!position) {
+    if (!position && !pick) {
       requestGeo();
       toast.error(t("create.needLocationLive"));
       return;
@@ -322,8 +335,15 @@ function Create() {
 
     setPublishing(true);
     try {
-      const lat = position.lat;
-      const lng = position.lng;
+      // A manual address pick overrides the live GPS position; otherwise
+      // the minyan is created at the creator's current location, as before.
+      const lat = pick?.lat ?? position?.lat ?? null;
+      const lng = pick?.lng ?? position?.lng ?? null;
+      if (lat == null || lng == null) {
+        toast.error(t("create.needLocationLive"));
+        setPublishing(false);
+        return;
+      }
       const now = Date.now();
 
       let scheduled_at: string | null = null;
