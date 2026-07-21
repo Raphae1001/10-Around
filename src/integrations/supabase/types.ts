@@ -639,6 +639,7 @@ export type Database = {
           display_name: string
           is_me: boolean
           note: string
+          trip_prayer_interests: Json
           user_id: string
         }[]
       }

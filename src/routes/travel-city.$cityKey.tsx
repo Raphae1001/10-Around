@@ -2,7 +2,18 @@ import { createFileRoute, Link, useNavigate, useParams, useSearch } from "@tanst
 import { useEffect, useState } from "react";
 import { MobileFrame } from "@/components/MobileFrame";
 import { ScreenHeader } from "@/components/ui-bits";
-import { MessageCircle, Users, Loader2, CalendarDays, Share2, Trash2 } from "lucide-react";
+import {
+  MessageCircle,
+  Users,
+  Loader2,
+  CalendarDays,
+  Share2,
+  Trash2,
+  Sunrise,
+  Sun,
+  Moon,
+} from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
@@ -17,6 +28,12 @@ export const Route = createFileRoute("/travel-city/$cityKey")({
   }),
 });
 
+type PrayerInterest = {
+  prayer: "shacharit" | "mincha" | "maariv";
+  time: string | null;
+  note: string | null;
+};
+
 type Peer = {
   user_id: string;
   display_name: string;
@@ -24,10 +41,14 @@ type Peer = {
   date_start: string;
   date_end: string;
   note: string | null;
+  trip_prayer_interests: PrayerInterest[] | null;
   is_me: boolean;
 };
 
+const PRAYER_ICON = { shacharit: Sunrise, mincha: Sun, maariv: Moon } as const;
+
 function TravelCityPage() {
+  const { t } = useTranslation();
   const { cityKey } = useParams({ from: "/travel-city/$cityKey" });
   const { from: searchFrom, to: searchTo } = useSearch({ from: "/travel-city/$cityKey" });
   const { user, loading: authLoading } = useAuth();
@@ -270,6 +291,32 @@ function TravelCityPage() {
                     {p.note && (
                       <div className="text-xs text-muted-foreground mt-1 italic">
                         &quot;{p.note}&quot;
+                      </div>
+                    )}
+                    {p.trip_prayer_interests && p.trip_prayer_interests.length > 0 && (
+                      <div className="mt-2 space-y-1.5 border-t border-border/60 pt-2">
+                        {p.trip_prayer_interests.map((interest, i) => {
+                          const Icon = PRAYER_ICON[interest.prayer] ?? Sun;
+                          const label = t(`prayer.${interest.prayer}`, {
+                            defaultValue: interest.prayer,
+                          });
+                          return (
+                            <div key={i} className="flex items-start gap-1.5 text-xs">
+                              <Icon className="h-3.5 w-3.5 text-gold shrink-0 mt-0.5" />
+                              <div className="min-w-0">
+                                <span className="font-medium text-foreground">{label}</span>
+                                {interest.time && (
+                                  <span className="text-muted-foreground"> · {interest.time}</span>
+                                )}
+                                {interest.note && (
+                                  <div className="text-muted-foreground italic truncate">
+                                    &quot;{interest.note}&quot;
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
                     )}
                   </div>
