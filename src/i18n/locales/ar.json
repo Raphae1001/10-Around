@@ -8,6 +8,7 @@
   },
   "common": {
     "back": "رجوع",
+    "anonymousUser": "مستخدم",
     "cancel": "إلغاء",
     "save": "حفظ",
     "loading": "جار التحميل…",

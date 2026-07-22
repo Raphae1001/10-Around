@@ -8,6 +8,7 @@
   },
   "common": {
     "back": "Back",
+    "anonymousUser": "User",
     "cancel": "Cancel",
     "save": "Save",
     "loading": "Loading…",

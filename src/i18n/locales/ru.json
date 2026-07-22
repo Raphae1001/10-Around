@@ -8,6 +8,7 @@
   },
   "common": {
     "back": "Назад",
+    "anonymousUser": "Пользователь",
     "cancel": "Отмена",
     "save": "Сохранить",
     "loading": "Загрузка…",

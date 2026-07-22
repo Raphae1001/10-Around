@@ -195,7 +195,8 @@ function ChatPage() {
           messages.map((m) => {
             const mine = m.user_id === user?.id;
             const p = profiles[m.user_id];
-            const name = p?.display_name ?? t("chats.someone");
+            // Never show another member's real name — privacy, group chats included.
+            const name = t("common.anonymousUser");
             const initial = (name[0] ?? "?").toUpperCase();
             return (
               <div key={m.id} className={`flex gap-2 ${mine ? "justify-end" : "justify-start"}`}>

@@ -64,7 +64,6 @@ function Details() {
   const { id } = Route.useSearch();
   const { user } = useAuth();
   const [minyan, setMinyan] = useState<MinyanRow | null>(null);
-  const [organizer, setOrganizer] = useState<{ display_name: string | null } | null>(null);
   const [joined, setJoined] = useState(false);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
@@ -96,13 +95,6 @@ function Details() {
         return;
       }
       setMinyan(data as MinyanRow);
-
-      const { data: prof } = await supabase
-        .from("profiles")
-        .select("display_name")
-        .eq("id", (data as any).creator_id)
-        .maybeSingle();
-      if (!cancelled) setOrganizer(prof as any);
 
       if (user) {
         const { data: p } = await supabase
@@ -310,9 +302,8 @@ function Details() {
     );
   }
 
-  const orgName = isOrganizer
-    ? t("minyan.you")
-    : (organizer?.display_name ?? t("minyan.organizer"));
+  // Never show the organizer's real name to other participants — privacy.
+  const orgName = isOrganizer ? t("minyan.you") : t("minyan.organizer");
   // Street minyanim: organizer can cancel any time. Scheduled keeps the
   // 20-min-before-start protection for joiners (matches cancel_my_minyan).
   const canCancel =

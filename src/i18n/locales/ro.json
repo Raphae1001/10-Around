@@ -8,6 +8,7 @@
   },
   "common": {
     "back": "Înapoi",
+    "anonymousUser": "Utilizator",
     "cancel": "Anulează",
     "save": "Salvează",
     "loading": "Se încarcă…",
