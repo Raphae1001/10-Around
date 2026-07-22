@@ -20,6 +20,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useGeolocation } from "@/hooks/use-geolocation";
 import { supabase } from "@/integrations/supabase/client";
 import { reverseGeocode } from "@/lib/geocoding";
+import { currentPrayerWindow } from "@/lib/sun";
 import { notifyNearbyMinyan } from "@/lib/notify-nearby";
 import { AddressAutocomplete, type AddressPick } from "@/components/AddressAutocomplete";
 
@@ -72,6 +73,9 @@ function Create() {
   const [pick, setPick] = useState<AddressPick | null>(null);
   const [lastMinyan, setLastMinyan] = useState<LastMinyan | null>(null);
   const [repeated, setRepeated] = useState(false);
+  // True until the user taps a prayer button themselves or repeats a past
+  // minyan — keeps the GPS-driven auto-pick from clobbering their choice.
+  const [prayerAuto, setPrayerAuto] = useState(true);
 
   useEffect(() => {
     if (!user) return;
@@ -95,10 +99,17 @@ function Create() {
   function repeatLast() {
     if (!lastMinyan) return;
     setPrayer(PRAYER_DISPLAY[lastMinyan.prayer] ?? "Mincha");
+    setPrayerAuto(false);
     setPresent(Math.max(1, lastMinyan.present_count ?? 3));
     setComment(lastMinyan.message ?? "");
     setRepeated(true);
   }
+
+  useEffect(() => {
+    if (!position || !prayerAuto) return;
+    const window = currentPrayerWindow(position.lat, position.lng);
+    setPrayer(PRAYER_DISPLAY[window]);
+  }, [position, prayerAuto]);
 
   useEffect(() => {
     if (from === "map") void requestGeo();
@@ -191,7 +202,10 @@ function Create() {
                 <button
                   key={name}
                   type="button"
-                  onClick={() => setPrayer(name)}
+                  onClick={() => {
+                    setPrayer(name);
+                    setPrayerAuto(false);
+                  }}
                   className={`min-w-0 flex flex-col items-center gap-2 py-4 px-1 rounded-2xl transition-all active:scale-[0.97] ${
                     active
                       ? "bg-accent text-accent-foreground"
