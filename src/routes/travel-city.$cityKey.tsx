@@ -262,7 +262,10 @@ function TravelCityPage() {
           </p>
         ) : (
           <ul className="space-y-2">
-            {peers.map((p) => (
+            {peers.map((p) => {
+              // Never show another traveler's real name — privacy.
+              const name = p.is_me ? p.display_name : t("common.anonymousUser");
+              return (
               <li
                 key={`${p.user_id}-${p.date_start}`}
                 className="rounded-2xl border border-border bg-surface p-3"
@@ -272,16 +275,16 @@ function TravelCityPage() {
                     {p.avatar_url ? (
                       <img
                         src={p.avatar_url}
-                        alt={p.display_name}
+                        alt={name}
                         className="h-full w-full object-cover"
                       />
                     ) : (
-                      (p.display_name?.[0] ?? "?").toUpperCase()
+                      (name?.[0] ?? "?").toUpperCase()
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="text-sm font-semibold truncate">
-                      {p.display_name}
+                      {name}
                       {p.is_me && <span className="text-muted-foreground font-normal"> · you</span>}
                     </div>
                     <div className="text-xs text-muted-foreground flex items-center gap-1">
@@ -322,7 +325,8 @@ function TravelCityPage() {
                   </div>
                 </div>
               </li>
-            ))}
+              );
+            })}
           </ul>
         )}
       </div>

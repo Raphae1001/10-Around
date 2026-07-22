@@ -17,9 +17,25 @@ export function Logo({ size = 56, glow = false }: { size?: number; glow?: boolea
   );
 }
 
-/** Brand wordmark — Fraunces, uniform ink (no bicolor). Pass className to override the default text-ink (e.g. on a fixed dark background). */
-export function Wordmark({ className = "text-ink" }: { className?: string }) {
+/**
+ * Brand wordmark — Fraunces, uniform ink (no bicolor). Pass className to
+ * override the default text-ink (e.g. on a fixed dark background).
+ * legacyFont restores the pre-Helvetica-Neue Fraunces stack (--font-display)
+ * for spots that should keep the original wordmark typeface.
+ */
+export function Wordmark({
+  className = "text-ink",
+  legacyFont = false,
+}: {
+  className?: string;
+  legacyFont?: boolean;
+}) {
   return (
-    <span className={`font-serif-brand font-medium tracking-tight ${className}`}>MinyanNow</span>
+    <span
+      className={`font-serif-brand font-medium tracking-tight ${className}`}
+      style={legacyFont ? { fontFamily: "var(--font-display)" } : undefined}
+    >
+      MinyanNow
+    </span>
   );
 }

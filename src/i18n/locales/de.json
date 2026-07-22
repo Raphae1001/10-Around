@@ -8,6 +8,7 @@
   },
   "common": {
     "back": "Zurück",
+    "anonymousUser": "Nutzer",
     "cancel": "Abbrechen",
     "save": "Speichern",
     "loading": "Laden…",

@@ -254,7 +254,7 @@ function Home() {
 
         {/* Header — wordmark + round surface control (theme) */}
         <div className="absolute top-0 left-0 right-0 z-50 px-5 pt-[max(0.75rem,env(safe-area-inset-top))] pb-4 flex items-center justify-between pointer-events-none bg-gradient-to-b from-background/90 via-background/50 to-transparent">
-          <Wordmark className="text-[22px] pointer-events-auto" />
+          <Wordmark className="text-[22px] pointer-events-auto" legacyFont />
           <div className="flex items-center gap-2 pointer-events-auto relative z-50">
             <button
               type="button"

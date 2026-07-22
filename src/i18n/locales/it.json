@@ -8,6 +8,7 @@
   },
   "common": {
     "back": "Indietro",
+    "anonymousUser": "Utente",
     "cancel": "Annulla",
     "save": "Salva",
     "loading": "Caricamento…",

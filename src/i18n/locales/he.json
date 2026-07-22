@@ -8,6 +8,7 @@
   },
   "common": {
     "back": "חזרה",
+    "anonymousUser": "משתמש",
     "cancel": "ביטול",
     "save": "שמור",
     "loading": "טוען…",
