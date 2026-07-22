@@ -75,7 +75,7 @@ function Splash() {
               <Logo size={72} glow />
             </div>
             <h1 className="mt-8 font-semibold text-5xl tracking-tight">
-              <Wordmark />
+              <Wordmark className="text-white" />
             </h1>
             <p className="mt-4 text-base text-white/80 max-w-xs mx-auto leading-snug">
               <Trans

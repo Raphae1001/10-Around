@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Logo, Wordmark } from "@/components/Logo";
-import { MapPin, Users, Plane, ChevronRight, ArrowRight } from "lucide-react";
+import { MapPin, Users, Sunrise, ArrowRight } from "lucide-react";
 
 export const Route = createFileRoute("/onboarding")({
   head: () => ({
@@ -25,14 +25,15 @@ export const Route = createFileRoute("/onboarding")({
   component: Onboarding,
 });
 
+const TOTAL_STEPS = 3;
+
 function Onboarding() {
   const { t } = useTranslation();
   const [step, setStep] = useState(0);
   const navigate = useNavigate();
-  const total = 3;
 
   const next = () => {
-    if (step < total - 1) setStep(step + 1);
+    if (step < TOTAL_STEPS) setStep(step + 1);
     else navigate({ to: "/auth" });
   };
 
@@ -54,12 +55,15 @@ function Onboarding() {
 
         <div className="relative flex justify-between items-center px-6 pt-6">
           <div className="flex gap-1.5">
-            {Array.from({ length: total }).map((_, i) => (
-              <span
-                key={i}
-                className={`h-1.5 rounded-full transition-all ${i === step ? "w-6 bg-gold" : "w-1.5 bg-white/25"}`}
-              />
-            ))}
+            {step > 0 &&
+              Array.from({ length: TOTAL_STEPS }).map((_, i) => (
+                <span
+                  key={i}
+                  className={`h-1.5 rounded-full transition-all ${
+                    i === step - 1 ? "w-6 bg-gold" : "w-1.5 bg-white/25"
+                  }`}
+                />
+              ))}
           </div>
           <Link to="/auth" className="text-xs text-white/60">
             {t("common.skip")}
@@ -67,32 +71,38 @@ function Onboarding() {
         </div>
 
         <div className="relative flex-1 flex flex-col">
-          {step === 0 && (
+          {step === 0 && <HeroSlide />}
+          {step === 1 && (
             <ContentSlide
               icon={<MapPin className="h-8 w-8" />}
               iconClass="gold-gradient text-gold-foreground"
               kicker={t("onboarding.step1Kicker")}
               title={t("onboarding.step1Title")}
+              subtitle={t("onboarding.step1Subtitle")}
               body={t("onboarding.step1Body")}
+              tags={t("onboarding.step1Tags")}
             />
           )}
-          {step === 1 && (
+          {step === 2 && (
             <ContentSlide
               icon={<Users className="h-8 w-8" />}
               iconClass="bg-urgent text-white"
               kicker={t("onboarding.step2Kicker")}
               title={t("onboarding.step2Title")}
+              subtitle={t("onboarding.step2Subtitle")}
               body={t("onboarding.step2Body")}
+              tags={t("onboarding.step2Tags")}
             />
           )}
-          {step === 2 && (
+          {step === 3 && (
             <ContentSlide
-              icon={<Plane className="h-8 w-8" />}
+              icon={<Sunrise className="h-8 w-8" />}
               iconClass="bg-sky text-white"
               kicker={t("onboarding.step3Kicker")}
               title={t("onboarding.step3Title")}
+              subtitle={t("onboarding.step3Subtitle")}
               body={t("onboarding.step3Body")}
-              final
+              tags={t("onboarding.step3Tags")}
             />
           )}
         </div>
@@ -102,7 +112,11 @@ function Onboarding() {
             onClick={next}
             className="w-full flex items-center justify-center gap-2 gold-gradient text-gold-foreground font-semibold py-4 rounded-2xl shadow-glow-gold"
           >
-            {step === total - 1 ? t("onboarding.join") : t("common.continue")}
+            {step === 0
+              ? t("onboarding.begin")
+              : step === TOTAL_STEPS
+                ? t("onboarding.join")
+                : t("common.continue")}
 
             <ArrowRight className="h-4 w-4" />
           </button>
@@ -124,19 +138,24 @@ function HeroSlide() {
   const { t } = useTranslation();
   return (
     <div className="flex-1 flex flex-col items-center justify-center px-8 text-center">
-      <div className="h-16 w-16 rounded-2xl flex items-center justify-center shadow-glow-gold gold-gradient text-gold-foreground">
-        <Logo size={48} />
+      <div className="float-slow">
+        <Logo size={64} glow />
       </div>
       <p className="mt-6 text-[11px] tracking-[0.3em] uppercase text-gold/80">
         {t("onboarding.welcome")}
       </p>
       <h2 className="mt-2 font-semibold text-4xl tracking-tight leading-tight">
-        <Wordmark />
+        <Wordmark className="text-white" />
       </h2>
       <p className="mt-4 text-base text-white/75 max-w-xs leading-relaxed">
         {t("onboarding.tagline")}
       </p>
-      <p className="mt-2 text-xs text-white/50 max-w-xs mx-auto">{t("onboarding.places")}</p>
+      <p className="mt-2 text-sm text-white/60 max-w-xs mx-auto leading-relaxed">
+        {t("onboarding.heroBody")}
+      </p>
+      <p className="mt-4 text-[11px] tracking-[0.15em] uppercase text-gold/70">
+        {t("onboarding.places")}
+      </p>
     </div>
   );
 }
@@ -146,17 +165,18 @@ function ContentSlide({
   iconClass,
   kicker,
   title,
+  subtitle,
   body,
-  final = false,
+  tags,
 }: {
   icon: React.ReactNode;
   iconClass: string;
   kicker: string;
   title: string;
+  subtitle: string;
   body: string;
-  final?: boolean;
+  tags: string;
 }) {
-  const { t } = useTranslation();
   return (
     <div className="flex-1 flex flex-col items-center justify-center px-8 text-center">
       <div
@@ -166,12 +186,9 @@ function ContentSlide({
       </div>
       <p className="mt-6 text-[11px] tracking-[0.3em] uppercase text-gold/80">{kicker}</p>
       <h2 className="mt-2 font-semibold text-4xl tracking-tight leading-tight">{title}</h2>
-      <p className="mt-4 text-base text-white/75 max-w-xs leading-relaxed">{body}</p>
-      {final && (
-        <div className="mt-8 inline-flex items-center gap-1.5 text-xs text-gold">
-          {t("onboarding.ready")} <ChevronRight className="h-3 w-3" />
-        </div>
-      )}
+      <p className="mt-4 text-lg font-medium text-white/90 max-w-xs leading-snug">{subtitle}</p>
+      <p className="mt-2 text-sm text-white/60 max-w-xs leading-relaxed">{body}</p>
+      <p className="mt-6 text-[11px] tracking-[0.05em] text-gold/70 max-w-xs">{tags}</p>
     </div>
   );
 }
