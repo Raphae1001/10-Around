@@ -9,6 +9,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { AddressAutocomplete, type AddressPick } from "@/components/AddressAutocomplete";
 import { DateTimeField } from "@/components/DateTimeField";
+import { currentPrayerWindow } from "@/lib/sun";
 
 export const Route = createFileRoute("/create-scheduled")({
   validateSearch: (s: Record<string, unknown>): { repeat?: string } => ({
@@ -21,6 +22,12 @@ const PRAYER_MAP: Record<string, "shacharit" | "mincha" | "maariv"> = {
   Shacharit: "shacharit",
   Mincha: "mincha",
   Maariv: "maariv",
+};
+
+const PRAYER_DISPLAY: Record<string, string> = {
+  shacharit: "Shacharit",
+  mincha: "Mincha",
+  maariv: "Maariv",
 };
 
 function CreateScheduled() {
@@ -38,7 +45,18 @@ function CreateScheduled() {
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const [prayer, setPrayer] = useState("Mincha");
+  // True until the user taps a prayer button — keeps the address/time-driven
+  // auto-pick from clobbering their choice.
+  const [prayerAuto, setPrayerAuto] = useState(true);
   const [comment, setComment] = useState("");
+
+  useEffect(() => {
+    if (!pick?.lat || !pick?.lng || !date || !time || !prayerAuto) return;
+    const at = new Date(`${date}T${time}`);
+    if (Number.isNaN(at.getTime())) return;
+    const window = currentPrayerWindow(pick.lat, pick.lng, at);
+    setPrayer(PRAYER_DISPLAY[window]);
+  }, [pick, date, time, prayerAuto]);
 
   const prayers = [
     { name: "Shacharit", icon: Sunrise },
@@ -100,7 +118,10 @@ function CreateScheduled() {
                 <button
                   key={name}
                   type="button"
-                  onClick={() => setPrayer(name)}
+                  onClick={() => {
+                    setPrayer(name);
+                    setPrayerAuto(false);
+                  }}
                   className={`min-w-0 flex flex-col items-center gap-1.5 py-3 px-1 rounded-2xl transition-all active:scale-[0.97] ${
                     active
                       ? "bg-accent text-accent-foreground"
