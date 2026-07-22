@@ -21,7 +21,7 @@ import {
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { tapLight } from "@/lib/haptics";
-import { deleteAccountAndLeave, goToWelcomeAfterLeave } from "@/lib/leave-account";
+import { deleteAccountAndLeave } from "@/lib/leave-account";
 
 export const Route = createFileRoute("/profile")({ component: Profile });
 
@@ -139,9 +139,11 @@ function Profile() {
 
   async function signOut() {
     void import("@/lib/analytics").then(({ track }) => track("sign_out"));
+    // Navigate first (client-side, no reload) so the account teardown keeps
+    // running in the background instead of blocking the screen transition.
+    navigate({ to: "/onboarding" });
     try {
       await deleteAccountAndLeave();
-      goToWelcomeAfterLeave();
     } catch (e) {
       toast.error(t("common.couldNotSignOut"), { description: (e as Error).message });
     }

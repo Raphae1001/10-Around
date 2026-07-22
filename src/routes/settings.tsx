@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { MobileFrame } from "@/components/MobileFrame";
 import { ScreenHeader } from "@/components/ui-bits";
@@ -47,6 +47,7 @@ export const Route = createFileRoute("/settings")({
 
 function Settings() {
   const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { user } = useAuth();
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -84,9 +85,11 @@ function Settings() {
     try {
       queryClient.clear();
     } catch {}
+    // Navigate first (client-side, no reload) so the account teardown keeps
+    // running in the background instead of blocking the screen transition.
+    navigate({ to: "/onboarding" });
     try {
       await deleteAccountAndLeave();
-      goToWelcomeAfterLeave();
     } catch (e) {
       toast.error(t("common.couldNotSignOut"), { description: (e as Error).message });
     }
