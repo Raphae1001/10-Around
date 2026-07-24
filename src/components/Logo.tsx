@@ -8,8 +8,8 @@ export function Logo({ size = 56, glow = false }: { size?: number; glow?: boolea
       style={{ width: size, height: size }}
     >
       <span
-        className="font-serif-brand font-medium leading-none text-accent"
-        style={{ fontSize: size * 0.52 }}
+        className="font-sans font-extrabold leading-none text-accent"
+        style={{ fontSize: size * 0.5, letterSpacing: "-0.03em" }}
       >
         10
       </span>
