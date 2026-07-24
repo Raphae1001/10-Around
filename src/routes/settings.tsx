@@ -16,7 +16,7 @@ import {
   Users,
   Check,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 import { track, setAnalyticsEnabled, isAnalyticsEnabled } from "@/lib/analytics";
@@ -49,12 +49,17 @@ function Settings() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [confirmText, setConfirmText] = useState("");
   const [deleting, setDeleting] = useState(false);
   const [presenceLevel, setPresenceLevelState] = useState<PresenceLevel>("ponctual");
   const [presenceLoading, setPresenceLoading] = useState(true);
+  const signingOutRef = useRef(false);
+
+  useEffect(() => {
+    if (!authLoading && !user) navigate({ to: "/auth" });
+  }, [authLoading, user, navigate]);
 
   useEffect(() => {
     let cancelled = false;
@@ -78,6 +83,10 @@ function Settings() {
   }
 
   async function signOut() {
+    // Guards a double-tap: navigation is instant now, so nothing else
+    // disables the button in between the click and the route change.
+    if (signingOutRef.current) return;
+    signingOutRef.current = true;
     track("sign_out");
     try {
       await queryClient.cancelQueries();

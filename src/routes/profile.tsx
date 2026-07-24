@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { MobileFrame } from "@/components/MobileFrame";
@@ -137,7 +137,13 @@ function Profile() {
     }
   }
 
+  const signingOutRef = useRef(false);
+
   async function signOut() {
+    // Guards a double-tap: navigation is instant now, so nothing else
+    // disables the button in between the click and the route change.
+    if (signingOutRef.current) return;
+    signingOutRef.current = true;
     void import("@/lib/analytics").then(({ track }) => track("sign_out"));
     // Navigate first (client-side, no reload) so the account teardown keeps
     // running in the background instead of blocking the screen transition.
