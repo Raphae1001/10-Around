@@ -203,7 +203,11 @@
     "errNoDates": "Elige fechas de inicio y fin.",
     "errDateOrder": "La fecha de fin debe ser posterior a la de inicio.",
     "errMinyanInRange": "La fecha del minyan debe caer dentro de tu viaje.",
-    "errPublish": "No se pudo publicar el viaje"
+    "errPublish": "No se pudo publicar el viaje",
+    "prayerInterests": "Oraciones que esperas hacer",
+    "prayerInterestsHint": "Elige las que te gustaría rezar durante este viaje — opcional, ayuda a otros a planificar contigo.",
+    "prayerTimeHint": "Hora preferida",
+    "prayerNotePh": "¿Algo más? (p. ej. cerca del hotel)"
   },
   "time": {
     "justNow": "ahora mismo",
@@ -280,7 +284,8 @@
     "afternoon": "Tarde",
     "evening": "Noche",
     "custom": "Personalizado",
-    "now": "Ahora"
+    "now": "Ahora",
+    "locationFromPick": "Ubicación personalizada — no tu posición actual."
   },
   "onboarding": {
     "welcome": "Bienvenido",
@@ -380,8 +385,17 @@
       "confirmedTime": "hace 20 min",
       "startingTitle": "Minyan empezará pronto",
       "startingBody": "Shajarit en Lincoln Square en 25 minutos.",
-      "startingTime": "hace 1h"
-    }
+      "startingTime": "hace 1h",
+      "arrivingTitle": "¡Minyan confirmado!",
+      "arrivingBody": "{{prayer}} empieza pronto — encuéntrate en {{place}}.",
+      "decisionTitle": "Minyan aún no confirmado",
+      "decisionBody": "Todavía no hay suficiente gente para {{prayer}} en {{place}} — ¿hay minyan?",
+      "cancelledTitle": "Minyan cancelado",
+      "cancelledBody": "{{prayer}} en {{place}} fue cancelado — no se unió suficiente gente a tiempo.",
+      "viewMinyan": "Ver"
+    },
+    "emptyTitle": "Aún no hay notificaciones",
+    "emptyDesc": "Aquí verás novedades sobre los minyanim a los que te has unido."
   },
   "share": {
     "title": "Compartir minyan",
@@ -551,7 +565,19 @@
     "nusachAri": "Nusaj Arí",
     "dist": "600 m · 4 min andando",
     "walking": "{{walking}} andando · {{driving}} en coche",
-    "hosted": "73 minyanim organizados"
+    "hosted": "73 minyanim organizados",
+    "readyNow": "Estoy listo ahora",
+    "willWait": "Esperar hasta el plazo",
+    "willWaitCta": "Prefiero esperar",
+    "waitingForConfirmation": "Esperando confirmación",
+    "confirmationCountdown": "quedan {{count}} min",
+    "confirmedWaiting": "Confirmado — empieza a las {{time}}",
+    "confirmedArriving": "¡Confirmado! Encuentro en {{count}} min",
+    "decisionPrompt": "No se confirmó suficiente gente a tiempo. ¿Hay minyan?",
+    "decisionYes": "Sí, estamos aquí",
+    "decisionCancel": "Cancelar minyan",
+    "decisionYesOk": "¡Minyan confirmado!",
+    "decisionPendingOther": "Esperando la decisión del organizador"
   },
   "kaddish": {
     "title": "Solicitar minyan para Kaddish",

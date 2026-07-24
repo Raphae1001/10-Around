@@ -203,7 +203,11 @@
     "errNoDates": "בחר תאריכי התחלה וסיום.",
     "errDateOrder": "תאריך הסיום חייב להיות אחרי תאריך ההתחלה.",
     "errMinyanInRange": "תאריך המניין חייב להיות במהלך הטיול.",
-    "errPublish": "פרסום הטיול נכשל"
+    "errPublish": "פרסום הטיול נכשל",
+    "prayerInterests": "תפילות שאתה מקווה להתפלל",
+    "prayerInterestsHint": "בחר את אלה שתרצה להתפלל במהלך הטיול הזה — אופציונלי, עוזר לאחרים לתכנן איתך.",
+    "prayerTimeHint": "שעה מועדפת",
+    "prayerNotePh": "עוד משהו? (למשל, קרוב למלון)"
   },
   "time": {
     "justNow": "כעת",
@@ -280,7 +284,8 @@
     "afternoon": "צהריים",
     "evening": "ערב",
     "custom": "מותאם",
-    "now": "עכשיו"
+    "now": "עכשיו",
+    "locationFromPick": "מיקום מותאם אישית — לא המיקום הנוכחי שלך."
   },
   "onboarding": {
     "welcome": "ברוך הבא",
@@ -380,8 +385,17 @@
       "confirmedTime": "לפני 20 דק׳",
       "startingTitle": "מניין מתחיל בקרוב",
       "startingBody": "שחרית בלינקולן סקוור בעוד 25 דק׳.",
-      "startingTime": "לפני שעה"
-    }
+      "startingTime": "לפני שעה",
+      "arrivingTitle": "המניין אושר!",
+      "arrivingBody": "{{prayer}} מתחיל בקרוב — הפגישה ב-{{place}}.",
+      "decisionTitle": "המניין עדיין לא אושר",
+      "decisionBody": "עדיין אין מספיק אנשים ל-{{prayer}} ב-{{place}} — האם יש מניין?",
+      "cancelledTitle": "המניין בוטל",
+      "cancelledBody": "{{prayer}} ב-{{place}} בוטל — לא הצטרפו מספיק אנשים בזמן.",
+      "viewMinyan": "צפה"
+    },
+    "emptyTitle": "אין עדיין התראות",
+    "emptyDesc": "כאן תראה עדכונים על מניינים שהצטרפת אליהם."
   },
   "share": {
     "title": "שתף מניין",
@@ -551,7 +565,19 @@
     "nusachAri": "נוסח האר״י",
     "dist": "600 מ׳ · 4 דק׳ הליכה",
     "walking": "{{walking}} הולכים · {{driving}} נוסעים",
-    "hosted": "ארגן 73 מניינים"
+    "hosted": "ארגן 73 מניינים",
+    "readyNow": "אני מוכן עכשיו",
+    "willWait": "לחכות עד המועד האחרון",
+    "willWaitCta": "אני מעדיף לחכות",
+    "waitingForConfirmation": "ממתין לאישור",
+    "confirmationCountdown": "נותרו {{count}} דק'",
+    "confirmedWaiting": "אושר — מתחיל בשעה {{time}}",
+    "confirmedArriving": "אושר! מפגש בעוד {{count}} דק'",
+    "decisionPrompt": "לא מספיק אנשים אישרו בזמן. האם יש מניין?",
+    "decisionYes": "כן, אנחנו כאן",
+    "decisionCancel": "בטל מניין",
+    "decisionYesOk": "המניין אושר!",
+    "decisionPendingOther": "ממתין להחלטת המארגן"
   },
   "kaddish": {
     "title": "בקש מניין לקדיש",

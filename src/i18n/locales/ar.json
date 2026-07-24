@@ -203,7 +203,11 @@
     "errNoDates": "اختر تاريخي البدء والانتهاء.",
     "errDateOrder": "يجب أن يكون تاريخ الانتهاء بعد تاريخ البدء.",
     "errMinyanInRange": "يجب أن يقع تاريخ المنيان ضمن رحلتك.",
-    "errPublish": "تعذّر نشر الرحلة"
+    "errPublish": "تعذّر نشر الرحلة",
+    "prayerInterests": "الصلوات التي تأمل في أدائها",
+    "prayerInterestsHint": "اختر تلك التي ترغب في الصلاة بها خلال هذه الرحلة — اختياري، يساعد الآخرين على التخطيط معك.",
+    "prayerTimeHint": "الوقت المفضل",
+    "prayerNotePh": "أي شيء آخر؟ (مثلاً، قريب من الفندق)"
   },
   "time": {
     "justNow": "الآن",
@@ -280,7 +284,8 @@
     "afternoon": "ظهيرة",
     "evening": "مساء",
     "custom": "مخصص",
-    "now": "الآن"
+    "now": "الآن",
+    "locationFromPick": "موقع مخصص — ليس موقعك الحالي."
   },
   "onboarding": {
     "welcome": "أهلاً بك",
@@ -380,8 +385,17 @@
       "confirmedTime": "منذ 20 دقيقة",
       "startingTitle": "المينيان يبدأ قريبًا",
       "startingBody": "شاحاريت في Lincoln Square بعد 25 دقيقة.",
-      "startingTime": "منذ ساعة"
-    }
+      "startingTime": "منذ ساعة",
+      "arrivingTitle": "تم تأكيد المينيان!",
+      "arrivingBody": "{{prayer}} يبدأ قريبًا — الالتقاء عند {{place}}.",
+      "decisionTitle": "المينيان لم يُؤكَّد بعد",
+      "decisionBody": "لا يوجد عدد كافٍ من الأشخاص بعد لـ {{prayer}} عند {{place}} — هل يوجد مينيان؟",
+      "cancelledTitle": "تم إلغاء المينيان",
+      "cancelledBody": "تم إلغاء {{prayer}} عند {{place}} — لم ينضم عدد كافٍ من الأشخاص في الوقت المحدد.",
+      "viewMinyan": "عرض"
+    },
+    "emptyTitle": "لا توجد إشعارات بعد",
+    "emptyDesc": "ستظهر هنا التحديثات حول المينيانات التي انضممت إليها."
   },
   "share": {
     "title": "مشاركة المينيان",
@@ -551,7 +565,19 @@
     "nusachAri": "نوساخ آري",
     "dist": "0.4 ميل · 4 دقائق مشيًا",
     "walking": "{{walking}} يسيرون · {{driving}} يقودون",
-    "hosted": "استضاف 73 مينيان"
+    "hosted": "استضاف 73 مينيان",
+    "readyNow": "أنا جاهز الآن",
+    "willWait": "الانتظار حتى الموعد النهائي",
+    "willWaitCta": "أفضّل الانتظار",
+    "waitingForConfirmation": "بانتظار التأكيد",
+    "confirmationCountdown": "تبقّى {{count}} دقيقة",
+    "confirmedWaiting": "تم التأكيد — يبدأ في {{time}}",
+    "confirmedArriving": "تم التأكيد! الالتقاء خلال {{count}} دقيقة",
+    "decisionPrompt": "لم يؤكد عدد كافٍ من الأشخاص في الوقت المحدد. هل يوجد مينيان؟",
+    "decisionYes": "نعم، نحن هنا",
+    "decisionCancel": "إلغاء المينيان",
+    "decisionYesOk": "تم تأكيد المينيان!",
+    "decisionPendingOther": "بانتظار قرار المنظّم"
   },
   "kaddish": {
     "title": "اطلب مينيان لصلابة القاديش",
