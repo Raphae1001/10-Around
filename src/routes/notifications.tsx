@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { MobileFrame } from "@/components/MobileFrame";
@@ -19,9 +19,14 @@ type NotificationRow = {
 
 function Notifications() {
   const { t } = useTranslation();
-  const { user } = useAuth();
+  const navigate = useNavigate();
+  const { user, loading: authLoading } = useAuth();
   const [rows, setRows] = useState<NotificationRow[]>([]);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!authLoading && !user) navigate({ to: "/auth" });
+  }, [authLoading, user, navigate]);
 
   useEffect(() => {
     if (!user) {

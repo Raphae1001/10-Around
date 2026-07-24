@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { MobileFrame } from "@/components/MobileFrame";
@@ -11,13 +11,18 @@ export const Route = createFileRoute("/trust")({ component: Trust });
 
 function Trust() {
   const { t } = useTranslation();
-  const { user } = useAuth();
+  const navigate = useNavigate();
+  const { user, loading: authLoading } = useAuth();
   const [stats, setStats] = useState<{
     minyanim_count: number;
     completed_count: number;
     streak_days: number;
     stars: number;
   } | null>(null);
+
+  useEffect(() => {
+    if (!authLoading && !user) navigate({ to: "/auth" });
+  }, [authLoading, user, navigate]);
 
   useEffect(() => {
     if (!user) return;
