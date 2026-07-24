@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Logo, Wordmark } from "@/components/Logo";
+import { BRAND_BLUE, BRAND_TEXT, BRAND_TEXT_SOFT, BRAND_HALO, BRAND_SHADOW } from "@/lib/brand";
 import { MapPin, Users, Sunrise, ArrowRight } from "lucide-react";
 
 export const Route = createFileRoute("/onboarding")({
@@ -26,9 +27,6 @@ export const Route = createFileRoute("/onboarding")({
 });
 
 const TOTAL_STEPS = 3;
-// Fixed brand blue sampled from the logo mark (public/logo/logo-10.png) —
-// this screen is a fixed-palette brand moment, not theme-adaptive.
-const BRAND_BLUE = "#006dfe";
 
 function Onboarding() {
   const { t } = useTranslation();
@@ -43,19 +41,16 @@ function Onboarding() {
   return (
     <div className="min-h-dvh w-full bg-white flex items-stretch justify-center">
       <div className="relative w-full max-w-[440px] min-h-dvh bg-white overflow-hidden flex flex-col">
+        {/* Barely-there halo + dot field — a detail you notice after, not before. */}
         <div
-          className="absolute -top-24 -left-24 h-72 w-72 rounded-full blur-3xl pointer-events-none"
-          style={{ backgroundColor: `${BRAND_BLUE}1a` }}
-        />
-        <div
-          className="absolute -bottom-32 -right-20 h-80 w-80 rounded-full blur-3xl pointer-events-none"
-          style={{ backgroundColor: `${BRAND_BLUE}14` }}
+          className="absolute -top-32 left-1/2 -translate-x-1/2 h-96 w-96 rounded-full blur-3xl pointer-events-none"
+          style={{ backgroundColor: BRAND_HALO }}
         />
         <svg
           className="absolute inset-0 w-full h-full opacity-[0.05] pointer-events-none"
           viewBox="0 0 400 800"
         >
-          {Array.from({ length: 120 }).map((_, i) => {
+          {Array.from({ length: 90 }).map((_, i) => {
             const x = (i * 53) % 400;
             const y = (i * 97) % 800;
             return <circle key={i} cx={x} cy={y} r={1} fill={BRAND_BLUE} />;
@@ -71,12 +66,12 @@ function Onboarding() {
                   className="h-1.5 rounded-full transition-all"
                   style={{
                     width: i === step - 1 ? 24 : 6,
-                    backgroundColor: i === step - 1 ? BRAND_BLUE : "#00000022",
+                    backgroundColor: i === step - 1 ? BRAND_BLUE : "#e4e6ea",
                   }}
                 />
               ))}
           </div>
-          <Link to="/auth" className="text-xs text-ink-soft">
+          <Link to="/auth" className="text-xs" style={{ color: BRAND_TEXT_SOFT }}>
             {t("common.skip")}
           </Link>
         </div>
@@ -118,21 +113,21 @@ function Onboarding() {
         <div className="relative px-6 pb-10 space-y-3">
           <button
             onClick={next}
-            className="w-full flex items-center justify-center gap-2 text-white font-semibold py-4 rounded-2xl shadow-lg"
-            style={{ backgroundColor: BRAND_BLUE, boxShadow: `0 8px 24px -8px ${BRAND_BLUE}80` }}
+            className="w-full h-14 flex items-center justify-center gap-2 text-white font-semibold rounded-2xl"
+            style={{ backgroundColor: BRAND_BLUE, boxShadow: BRAND_SHADOW }}
           >
             {step === 0
               ? t("onboarding.begin")
               : step === TOTAL_STEPS
                 ? t("onboarding.join")
                 : t("common.continue")}
-
             <ArrowRight className="h-4 w-4" />
           </button>
           {step > 0 && (
             <button
               onClick={() => setStep(step - 1)}
-              className="block w-full text-center text-ink-soft/70 text-sm py-1"
+              className="block w-full text-center text-sm py-1"
+              style={{ color: BRAND_TEXT_SOFT }}
             >
               {t("common.back")}
             </button>
@@ -147,27 +142,25 @@ function HeroSlide() {
   const { t } = useTranslation();
   return (
     <div className="flex-1 flex flex-col items-center justify-center px-8 text-center">
-      <div className="float-slow">
-        <Logo size={64} glow />
-      </div>
-      <p
-        className="mt-6 text-[11px] tracking-[0.3em] uppercase"
-        style={{ color: BRAND_BLUE }}
-      >
+      <Logo size={64} />
+      <p className="mt-6 text-[11px] tracking-[0.3em] uppercase" style={{ color: BRAND_BLUE }}>
         {t("onboarding.welcome")}
       </p>
-      <h2 className="mt-2 font-semibold text-4xl tracking-tight leading-tight">
-        <Wordmark className="text-ink" />
+      <h2 className="mt-2 text-4xl tracking-tight leading-tight">
+        <Wordmark style={{ color: BRAND_TEXT, fontWeight: 700 }} />
       </h2>
-      <p className="mt-4 text-base text-ink-soft max-w-xs leading-relaxed">
+      <p className="mt-4 text-base max-w-xs leading-relaxed" style={{ color: BRAND_TEXT }}>
         {t("onboarding.tagline")}
       </p>
-      <p className="mt-2 text-sm text-ink-soft/70 max-w-xs mx-auto leading-relaxed">
+      <p
+        className="mt-2 text-sm max-w-xs mx-auto leading-relaxed"
+        style={{ color: BRAND_TEXT_SOFT }}
+      >
         {t("onboarding.heroBody")}
       </p>
       <p
         className="mt-4 text-[11px] tracking-[0.15em] uppercase"
-        style={{ color: `${BRAND_BLUE}b3` }}
+        style={{ color: BRAND_BLUE }}
       >
         {t("onboarding.places")}
       </p>
@@ -193,23 +186,24 @@ function ContentSlide({
   return (
     <div className="flex-1 flex flex-col items-center justify-center px-8 text-center">
       <div
-        className="h-16 w-16 rounded-2xl flex items-center justify-center text-white shadow-lg"
-        style={{ backgroundColor: BRAND_BLUE, boxShadow: `0 8px 24px -8px ${BRAND_BLUE}80` }}
+        className="h-16 w-16 rounded-2xl flex items-center justify-center text-white"
+        style={{ backgroundColor: BRAND_BLUE, boxShadow: BRAND_SHADOW }}
       >
         {icon}
       </div>
       <p className="mt-6 text-[11px] tracking-[0.3em] uppercase" style={{ color: BRAND_BLUE }}>
         {kicker}
       </p>
-      <h2 className="mt-2 font-semibold text-4xl tracking-tight leading-tight text-ink">
+      <h2 className="mt-2 font-bold text-4xl tracking-tight leading-tight" style={{ color: BRAND_TEXT }}>
         {title}
       </h2>
-      <p className="mt-4 text-lg font-medium text-ink max-w-xs leading-snug">{subtitle}</p>
-      <p className="mt-2 text-sm text-ink-soft max-w-xs leading-relaxed">{body}</p>
-      <p
-        className="mt-6 text-[11px] tracking-[0.05em] max-w-xs"
-        style={{ color: `${BRAND_BLUE}b3` }}
-      >
+      <p className="mt-4 text-lg font-medium max-w-xs leading-snug" style={{ color: BRAND_TEXT }}>
+        {subtitle}
+      </p>
+      <p className="mt-2 text-sm max-w-xs leading-relaxed" style={{ color: BRAND_TEXT_SOFT }}>
+        {body}
+      </p>
+      <p className="mt-6 text-[11px] tracking-[0.05em] max-w-xs" style={{ color: BRAND_BLUE }}>
         {tags}
       </p>
     </div>

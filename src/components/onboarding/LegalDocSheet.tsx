@@ -8,6 +8,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { TERMS_SECTIONS, PRIVACY_LEGAL_SECTIONS } from "@/lib/legal-content";
+import { BRAND_BLUE } from "@/lib/brand";
 
 export type LegalDocKind = "terms" | "privacy";
 
@@ -31,7 +32,10 @@ export function LegalDocSheet({ kind, onClose }: Props) {
       >
         <SheetHeader className="px-6 pt-6 pb-4 border-b border-border text-left shrink-0">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-2xl gold-gradient text-gold-foreground flex items-center justify-center shrink-0">
+            <div
+              className="h-10 w-10 rounded-2xl text-white flex items-center justify-center shrink-0"
+              style={{ backgroundColor: BRAND_BLUE }}
+            >
               {isTerms ? <FileText className="h-5 w-5" /> : <Lock className="h-5 w-5" />}
             </div>
             <div className="min-w-0">

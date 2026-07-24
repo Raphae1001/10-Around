@@ -1,9 +1,10 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Logo, Wordmark } from "@/components/Logo";
 import { useEffect, useState } from "react";
-import { MapPin } from "lucide-react";
+import { MapPin, ArrowRight } from "lucide-react";
 import { Trans, useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
+import { BRAND_BLUE, BRAND_TEXT, BRAND_TEXT_SOFT, BRAND_HALO, BRAND_SHADOW } from "@/lib/brand";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -18,10 +19,6 @@ export const Route = createFileRoute("/")({
   }),
   component: Splash,
 });
-
-// Fixed brand blue sampled from the logo mark (public/logo/logo-10.png) —
-// this screen is a fixed-palette brand moment, not theme-adaptive.
-const BRAND_BLUE = "#006dfe";
 
 function Splash() {
   const { t } = useTranslation();
@@ -60,16 +57,11 @@ function Splash() {
     <div className="min-h-dvh w-full bg-white flex items-stretch justify-center">
       <div className="relative w-full max-w-[440px] min-h-dvh bg-white overflow-hidden flex flex-col">
         <div
-          className="absolute -top-24 -left-24 h-72 w-72 rounded-full blur-3xl"
-          style={{ backgroundColor: `${BRAND_BLUE}1f` }}
+          className="absolute -top-32 left-1/2 -translate-x-1/2 h-96 w-96 rounded-full blur-3xl"
+          style={{ backgroundColor: BRAND_HALO }}
         />
-        <div
-          className="absolute -bottom-32 -right-20 h-80 w-80 rounded-full blur-3xl"
-          style={{ backgroundColor: `${BRAND_BLUE}14` }}
-        />
-
         <svg className="absolute inset-0 w-full h-full opacity-[0.05]" viewBox="0 0 400 800">
-          {Array.from({ length: 120 }).map((_, i) => {
+          {Array.from({ length: 90 }).map((_, i) => {
             const x = (i * 53) % 400;
             const y = (i * 97) % 800;
             return <circle key={i} cx={x} cy={y} r={1} fill={BRAND_BLUE} />;
@@ -80,23 +72,17 @@ function Splash() {
           <div
             className={`transition-all duration-700 ${show ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"}`}
           >
-            <div className="relative inline-block float-slow">
-              <span
-                className="absolute inset-0 rounded-2xl blur-xl"
-                style={{ backgroundColor: `${BRAND_BLUE}40` }}
-              />
-              <Logo size={72} glow />
-            </div>
-            <h1 className="mt-8 font-semibold text-5xl tracking-tight">
-              <Wordmark className="text-ink" />
+            <Logo size={72} />
+            <h1 className="mt-8 text-5xl tracking-tight">
+              <Wordmark style={{ color: BRAND_TEXT, fontWeight: 700 }} />
             </h1>
-            <p className="mt-4 text-base text-ink-soft max-w-xs mx-auto leading-snug">
+            <p className="mt-4 text-base max-w-xs mx-auto leading-snug" style={{ color: BRAND_TEXT }}>
               <Trans
                 i18nKey="splash.tagline"
                 components={{ gold: <span style={{ color: BRAND_BLUE }} /> }}
               />
             </p>
-            <p className="mt-1 text-xs text-ink-soft/70 max-w-xs mx-auto">
+            <p className="mt-1 text-xs max-w-xs mx-auto" style={{ color: BRAND_TEXT_SOFT }}>
               {t("splash.places")}
             </p>
           </div>
@@ -104,9 +90,9 @@ function Splash() {
           <div className="absolute bottom-32 left-0 right-0 flex justify-center">
             <div
               className="flex items-center gap-2 text-[11px] tracking-[0.3em] uppercase"
-              style={{ color: `${BRAND_BLUE}99` }}
+              style={{ color: BRAND_BLUE }}
             >
-              <MapPin className="h-3 w-3" style={{ color: BRAND_BLUE }} />
+              <MapPin className="h-3 w-3" />
               {t("splash.mission")}
             </div>
           </div>
@@ -115,12 +101,13 @@ function Splash() {
         <div className="px-6 pb-10 space-y-3 relative">
           <Link
             to="/onboarding"
-            className="block w-full text-center text-white font-semibold py-4 rounded-2xl shadow-lg"
-            style={{ backgroundColor: BRAND_BLUE, boxShadow: `0 8px 24px -8px ${BRAND_BLUE}80` }}
+            className="flex items-center justify-center gap-2 w-full h-14 text-white font-semibold rounded-2xl"
+            style={{ backgroundColor: BRAND_BLUE, boxShadow: BRAND_SHADOW }}
           >
             {t("splash.begin")}
+            <ArrowRight className="h-4 w-4" />
           </Link>
-          <Link to="/auth" className="block text-center text-ink-soft/70 text-sm py-2">
+          <Link to="/auth" className="block text-center text-sm py-2" style={{ color: BRAND_TEXT_SOFT }}>
             {t("splash.haveAccount")}
           </Link>
         </div>
