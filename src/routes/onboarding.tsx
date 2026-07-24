@@ -1,7 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Logo, Wordmark } from "@/components/Logo";
 import { BRAND_BLUE, BRAND_TEXT, BRAND_TEXT_SOFT, BRAND_HALO, BRAND_SHADOW } from "@/lib/brand";
 import { MapPin, Users, Sunrise, ArrowRight } from "lucide-react";
 
@@ -30,7 +29,7 @@ const TOTAL_STEPS = 3;
 
 function Onboarding() {
   const { t } = useTranslation();
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(1);
   const navigate = useNavigate();
 
   const next = () => {
@@ -59,17 +58,16 @@ function Onboarding() {
 
         <div className="relative flex justify-between items-center px-6 pt-6">
           <div className="flex gap-1.5">
-            {step > 0 &&
-              Array.from({ length: TOTAL_STEPS }).map((_, i) => (
-                <span
-                  key={i}
-                  className="h-1.5 rounded-full transition-all"
-                  style={{
-                    width: i === step - 1 ? 24 : 6,
-                    backgroundColor: i === step - 1 ? BRAND_BLUE : "#e4e6ea",
-                  }}
-                />
-              ))}
+            {Array.from({ length: TOTAL_STEPS }).map((_, i) => (
+              <span
+                key={i}
+                className="h-1.5 rounded-full transition-all"
+                style={{
+                  width: i === step - 1 ? 24 : 6,
+                  backgroundColor: i === step - 1 ? BRAND_BLUE : "#e4e6ea",
+                }}
+              />
+            ))}
           </div>
           <Link to="/auth" className="text-xs" style={{ color: BRAND_TEXT_SOFT }}>
             {t("common.skip")}
@@ -77,7 +75,6 @@ function Onboarding() {
         </div>
 
         <div className="relative flex-1 flex flex-col">
-          {step === 0 && <HeroSlide />}
           {step === 1 && (
             <ContentSlide
               icon={<MapPin className="h-8 w-8" />}
@@ -116,14 +113,10 @@ function Onboarding() {
             className="w-full h-14 flex items-center justify-center gap-2 text-white font-semibold rounded-2xl"
             style={{ backgroundColor: BRAND_BLUE, boxShadow: BRAND_SHADOW }}
           >
-            {step === 0
-              ? t("onboarding.begin")
-              : step === TOTAL_STEPS
-                ? t("onboarding.join")
-                : t("common.continue")}
+            {step === TOTAL_STEPS ? t("onboarding.join") : t("common.continue")}
             <ArrowRight className="h-4 w-4" />
           </button>
-          {step > 0 && (
+          {step > 1 && (
             <button
               onClick={() => setStep(step - 1)}
               className="block w-full text-center text-sm py-1"
@@ -134,36 +127,6 @@ function Onboarding() {
           )}
         </div>
       </div>
-    </div>
-  );
-}
-
-function HeroSlide() {
-  const { t } = useTranslation();
-  return (
-    <div className="flex-1 flex flex-col items-center justify-center px-8 text-center">
-      <Logo size={64} />
-      <p className="mt-6 text-[11px] tracking-[0.3em] uppercase" style={{ color: BRAND_BLUE }}>
-        {t("onboarding.welcome")}
-      </p>
-      <h2 className="mt-2 text-4xl tracking-tight leading-tight">
-        <Wordmark style={{ color: BRAND_TEXT, fontWeight: 700 }} />
-      </h2>
-      <p className="mt-4 text-base max-w-xs leading-relaxed" style={{ color: BRAND_TEXT }}>
-        {t("onboarding.tagline")}
-      </p>
-      <p
-        className="mt-2 text-sm max-w-xs mx-auto leading-relaxed"
-        style={{ color: BRAND_TEXT_SOFT }}
-      >
-        {t("onboarding.heroBody")}
-      </p>
-      <p
-        className="mt-4 text-[11px] tracking-[0.15em] uppercase"
-        style={{ color: BRAND_BLUE }}
-      >
-        {t("onboarding.places")}
-      </p>
     </div>
   );
 }
