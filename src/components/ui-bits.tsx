@@ -141,6 +141,7 @@ export function MinyanCard({ m, compact = false }: { m: Minyan; compact?: boolea
   return (
     <Link
       to="/minyan"
+      search={{ id: m.id }}
       className="block bg-surface rounded-2xl border border-border shadow-card p-4 active:scale-[0.99] transition-transform"
     >
       <div className="flex items-start justify-between gap-3">
