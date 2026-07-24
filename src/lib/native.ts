@@ -47,10 +47,13 @@ export async function requestLocationPermission(): Promise<boolean> {
 /** Open the OS settings page for this app (needed when location was permanently denied). */
 export async function openAppSettings(): Promise<void> {
   if (!isNative()) return;
-  const { App } = await import("@capacitor/app");
+  // @capacitor/app dropped openUrl (Capacitor 8), and @capacitor/browser's Browser.open
+  // only accepts http(s) — it rejects custom schemes outright. WKWebView itself still
+  // hands an unrecognized scheme like this to the OS on a plain window.open, which is
+  // exactly what's needed for a settings deep link (no plugin call involved).
   // iOS: app-settings: opens this app's Settings pane.
   // Android: same URL is handled by Capacitor as APPLICATION_DETAILS_SETTINGS on recent runtimes.
-  await App.openUrl({ url: "app-settings:" });
+  window.open("app-settings:", "_system");
 }
 
 export async function getCurrentPosition(opts?: { highAccuracy?: boolean }): Promise<{

@@ -66,6 +66,7 @@ function Siddur() {
       <div className="px-5 pt-2 pb-3 flex items-center justify-between sticky top-0 bg-background/95 backdrop-blur z-10 border-b border-border">
         <Link
           to="/success"
+          search={{ id: undefined }}
           className="h-9 w-9 rounded-full bg-surface border border-border flex items-center justify-center"
         >
           <ChevronLeft className="h-5 w-5" />

@@ -61,6 +61,7 @@ function Kaddish() {
       <div className="px-6 pb-10 space-y-3">
         <Link
           to="/success"
+          search={{ id: undefined }}
           className="block w-full text-center gold-gradient text-gold-foreground font-semibold py-4 rounded-2xl shadow-glow-gold"
         >
           {t("kaddish.send")}

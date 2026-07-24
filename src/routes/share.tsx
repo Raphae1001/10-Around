@@ -112,7 +112,11 @@ https://minyanlive.app/m/aaronloft`;
           </div>
         </div>
 
-        <Link to="/minyan" className="block text-center text-xs text-muted-foreground py-3">
+        <Link
+          to="/minyan"
+          search={{ id: undefined }}
+          className="block text-center text-xs text-muted-foreground py-3"
+        >
           {t("share.back")}
         </Link>
       </div>

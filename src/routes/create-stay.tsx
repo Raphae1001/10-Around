@@ -256,6 +256,7 @@ function CreateStay() {
       navigate({
         to: "/travel-city/$cityKey",
         params: { cityKey: stayCityKey(cityLabel) },
+        search: { from: undefined, to: undefined },
       });
     } catch (e) {
       toast.error(t("createStay.errPublish"), { description: (e as Error).message });

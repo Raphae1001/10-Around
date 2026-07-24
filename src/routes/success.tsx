@@ -115,7 +115,7 @@ function Success() {
       <div className="px-6 pb-10 pt-6 space-y-3 relative">
         <Link
           to="/minyan"
-          search={id ? { id } : undefined}
+          search={{ id }}
           className="flex items-center justify-center gap-2 w-full font-semibold py-4 rounded-2xl gold-gradient text-gold-foreground shadow-glow-gold"
         >
           <Navigation2 className="h-5 w-5" /> {t("success.getDirections")}
