@@ -26,6 +26,9 @@ export const Route = createFileRoute("/onboarding")({
 });
 
 const TOTAL_STEPS = 3;
+// Fixed brand blue sampled from the logo mark (public/logo/logo-10.png) —
+// this screen is a fixed-palette brand moment, not theme-adaptive.
+const BRAND_BLUE = "#006dfe";
 
 function Onboarding() {
   const { t } = useTranslation();
@@ -38,18 +41,24 @@ function Onboarding() {
   };
 
   return (
-    <div className="min-h-dvh w-full bg-muted/40 flex items-stretch justify-center">
-      <div className="relative w-full max-w-[440px] min-h-dvh navy-gradient text-white overflow-hidden flex flex-col">
-        <div className="absolute -top-24 -left-24 h-72 w-72 rounded-full bg-gold/15 blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-32 -right-20 h-80 w-80 rounded-full bg-sky/10 blur-3xl pointer-events-none" />
+    <div className="min-h-dvh w-full bg-white flex items-stretch justify-center">
+      <div className="relative w-full max-w-[440px] min-h-dvh bg-white overflow-hidden flex flex-col">
+        <div
+          className="absolute -top-24 -left-24 h-72 w-72 rounded-full blur-3xl pointer-events-none"
+          style={{ backgroundColor: `${BRAND_BLUE}1a` }}
+        />
+        <div
+          className="absolute -bottom-32 -right-20 h-80 w-80 rounded-full blur-3xl pointer-events-none"
+          style={{ backgroundColor: `${BRAND_BLUE}14` }}
+        />
         <svg
-          className="absolute inset-0 w-full h-full opacity-[0.08] pointer-events-none"
+          className="absolute inset-0 w-full h-full opacity-[0.05] pointer-events-none"
           viewBox="0 0 400 800"
         >
           {Array.from({ length: 120 }).map((_, i) => {
             const x = (i * 53) % 400;
             const y = (i * 97) % 800;
-            return <circle key={i} cx={x} cy={y} r={1} fill="white" />;
+            return <circle key={i} cx={x} cy={y} r={1} fill={BRAND_BLUE} />;
           })}
         </svg>
 
@@ -59,13 +68,15 @@ function Onboarding() {
               Array.from({ length: TOTAL_STEPS }).map((_, i) => (
                 <span
                   key={i}
-                  className={`h-1.5 rounded-full transition-all ${
-                    i === step - 1 ? "w-6 bg-gold" : "w-1.5 bg-white/25"
-                  }`}
+                  className="h-1.5 rounded-full transition-all"
+                  style={{
+                    width: i === step - 1 ? 24 : 6,
+                    backgroundColor: i === step - 1 ? BRAND_BLUE : "#00000022",
+                  }}
                 />
               ))}
           </div>
-          <Link to="/auth" className="text-xs text-white/60">
+          <Link to="/auth" className="text-xs text-ink-soft">
             {t("common.skip")}
           </Link>
         </div>
@@ -75,7 +86,6 @@ function Onboarding() {
           {step === 1 && (
             <ContentSlide
               icon={<MapPin className="h-8 w-8" />}
-              iconClass="gold-gradient text-gold-foreground"
               kicker={t("onboarding.step1Kicker")}
               title={t("onboarding.step1Title")}
               subtitle={t("onboarding.step1Subtitle")}
@@ -86,7 +96,6 @@ function Onboarding() {
           {step === 2 && (
             <ContentSlide
               icon={<Users className="h-8 w-8" />}
-              iconClass="bg-urgent text-white"
               kicker={t("onboarding.step2Kicker")}
               title={t("onboarding.step2Title")}
               subtitle={t("onboarding.step2Subtitle")}
@@ -97,7 +106,6 @@ function Onboarding() {
           {step === 3 && (
             <ContentSlide
               icon={<Sunrise className="h-8 w-8" />}
-              iconClass="bg-sky text-white"
               kicker={t("onboarding.step3Kicker")}
               title={t("onboarding.step3Title")}
               subtitle={t("onboarding.step3Subtitle")}
@@ -110,7 +118,8 @@ function Onboarding() {
         <div className="relative px-6 pb-10 space-y-3">
           <button
             onClick={next}
-            className="w-full flex items-center justify-center gap-2 gold-gradient text-gold-foreground font-semibold py-4 rounded-2xl shadow-glow-gold"
+            className="w-full flex items-center justify-center gap-2 text-white font-semibold py-4 rounded-2xl shadow-lg"
+            style={{ backgroundColor: BRAND_BLUE, boxShadow: `0 8px 24px -8px ${BRAND_BLUE}80` }}
           >
             {step === 0
               ? t("onboarding.begin")
@@ -123,7 +132,7 @@ function Onboarding() {
           {step > 0 && (
             <button
               onClick={() => setStep(step - 1)}
-              className="block w-full text-center text-white/50 text-sm py-1"
+              className="block w-full text-center text-ink-soft/70 text-sm py-1"
             >
               {t("common.back")}
             </button>
@@ -141,19 +150,25 @@ function HeroSlide() {
       <div className="float-slow">
         <Logo size={64} glow />
       </div>
-      <p className="mt-6 text-[11px] tracking-[0.3em] uppercase text-gold/80">
+      <p
+        className="mt-6 text-[11px] tracking-[0.3em] uppercase"
+        style={{ color: BRAND_BLUE }}
+      >
         {t("onboarding.welcome")}
       </p>
       <h2 className="mt-2 font-semibold text-4xl tracking-tight leading-tight">
-        <Wordmark className="text-white" />
+        <Wordmark className="text-ink" />
       </h2>
-      <p className="mt-4 text-base text-white/75 max-w-xs leading-relaxed">
+      <p className="mt-4 text-base text-ink-soft max-w-xs leading-relaxed">
         {t("onboarding.tagline")}
       </p>
-      <p className="mt-2 text-sm text-white/60 max-w-xs mx-auto leading-relaxed">
+      <p className="mt-2 text-sm text-ink-soft/70 max-w-xs mx-auto leading-relaxed">
         {t("onboarding.heroBody")}
       </p>
-      <p className="mt-4 text-[11px] tracking-[0.15em] uppercase text-gold/70">
+      <p
+        className="mt-4 text-[11px] tracking-[0.15em] uppercase"
+        style={{ color: `${BRAND_BLUE}b3` }}
+      >
         {t("onboarding.places")}
       </p>
     </div>
@@ -162,7 +177,6 @@ function HeroSlide() {
 
 function ContentSlide({
   icon,
-  iconClass,
   kicker,
   title,
   subtitle,
@@ -170,7 +184,6 @@ function ContentSlide({
   tags,
 }: {
   icon: React.ReactNode;
-  iconClass: string;
   kicker: string;
   title: string;
   subtitle: string;
@@ -180,15 +193,25 @@ function ContentSlide({
   return (
     <div className="flex-1 flex flex-col items-center justify-center px-8 text-center">
       <div
-        className={`h-16 w-16 rounded-2xl flex items-center justify-center shadow-glow-gold ${iconClass}`}
+        className="h-16 w-16 rounded-2xl flex items-center justify-center text-white shadow-lg"
+        style={{ backgroundColor: BRAND_BLUE, boxShadow: `0 8px 24px -8px ${BRAND_BLUE}80` }}
       >
         {icon}
       </div>
-      <p className="mt-6 text-[11px] tracking-[0.3em] uppercase text-gold/80">{kicker}</p>
-      <h2 className="mt-2 font-semibold text-4xl tracking-tight leading-tight">{title}</h2>
-      <p className="mt-4 text-lg font-medium text-white/90 max-w-xs leading-snug">{subtitle}</p>
-      <p className="mt-2 text-sm text-white/60 max-w-xs leading-relaxed">{body}</p>
-      <p className="mt-6 text-[11px] tracking-[0.05em] text-gold/70 max-w-xs">{tags}</p>
+      <p className="mt-6 text-[11px] tracking-[0.3em] uppercase" style={{ color: BRAND_BLUE }}>
+        {kicker}
+      </p>
+      <h2 className="mt-2 font-semibold text-4xl tracking-tight leading-tight text-ink">
+        {title}
+      </h2>
+      <p className="mt-4 text-lg font-medium text-ink max-w-xs leading-snug">{subtitle}</p>
+      <p className="mt-2 text-sm text-ink-soft max-w-xs leading-relaxed">{body}</p>
+      <p
+        className="mt-6 text-[11px] tracking-[0.05em] max-w-xs"
+        style={{ color: `${BRAND_BLUE}b3` }}
+      >
+        {tags}
+      </p>
     </div>
   );
 }
