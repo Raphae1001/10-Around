@@ -61,6 +61,7 @@ function TravelCityPage() {
   const [threadId, setThreadId] = useState<string | null>(null);
   const [registered, setRegistered] = useState(false);
   const [myStayId, setMyStayId] = useState<string | null>(null);
+  const [cancelling, setCancelling] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !user) navigate({ to: "/auth" });
@@ -167,14 +168,16 @@ function TravelCityPage() {
   }
 
   async function cancelTrip() {
-    if (!user || !myStayId) return;
+    if (!user || !myStayId || cancelling) return;
     if (!confirm(`Cancel your trip to ${cityLabel || cityKey}?`)) return;
+    setCancelling(true);
     const { error } = await supabase
       .from("minyanim")
       .delete()
       .eq("id", myStayId)
       .eq("creator_id", user.id);
     if (error) {
+      setCancelling(false);
       toast.error(error.message);
       return;
     }
@@ -244,7 +247,8 @@ function TravelCityPage() {
         ) : (
           <button
             onClick={() => void cancelTrip()}
-            className="w-full rounded-2xl border border-destructive/40 bg-destructive/5 text-destructive py-3 text-sm font-semibold flex items-center justify-center gap-2 active:scale-[0.99]"
+            disabled={cancelling}
+            className="w-full rounded-2xl border border-destructive/40 bg-destructive/5 text-destructive py-3 text-sm font-semibold flex items-center justify-center gap-2 active:scale-[0.99] disabled:opacity-50"
           >
             <Trash2 className="h-4 w-4" /> Cancel this trip
           </button>
