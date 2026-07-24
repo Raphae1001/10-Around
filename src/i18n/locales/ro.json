@@ -203,7 +203,11 @@
     "errNoDates": "Alege datele de început și sfârșit.",
     "errDateOrder": "Data de sfârșit trebuie să fie după data de început.",
     "errMinyanInRange": "Data minianului trebuie să fie în timpul călătoriei.",
-    "errPublish": "Nu s-a putut publica călătoria"
+    "errPublish": "Nu s-a putut publica călătoria",
+    "prayerInterests": "Rugăciuni pe care speri să le faci",
+    "prayerInterestsHint": "Alege-le pe cele pe care ai vrea să le rostești în această călătorie — opțional, îi ajută pe alții să planifice cu tine.",
+    "prayerTimeHint": "Ora preferată",
+    "prayerNotePh": "Altceva? (ex. aproape de hotel)"
   },
   "time": {
     "justNow": "chiar acum",
@@ -280,7 +284,8 @@
     "afternoon": "După-amiază",
     "evening": "Seară",
     "custom": "Personalizat",
-    "now": "Acum"
+    "now": "Acum",
+    "locationFromPick": "Locație personalizată — nu poziția ta actuală."
   },
   "onboarding": {
     "welcome": "Bun venit",
@@ -380,8 +385,17 @@
       "confirmedTime": "acum 20 min",
       "startingTitle": "Minyan-ul începe în curând",
       "startingBody": "Shacharit la Lincoln Square în 25 de minute.",
-      "startingTime": "acum 1h"
-    }
+      "startingTime": "acum 1h",
+      "arrivingTitle": "Minyan confirmat!",
+      "arrivingBody": "{{prayer}} începe curând — întâlnire la {{place}}.",
+      "decisionTitle": "Minyan neconfirmat încă",
+      "decisionBody": "Încă nu sunt suficienți oameni pentru {{prayer}} la {{place}} — există un minyan?",
+      "cancelledTitle": "Minyan anulat",
+      "cancelledBody": "{{prayer}} la {{place}} a fost anulat — nu s-au alăturat suficienți oameni la timp.",
+      "viewMinyan": "Vezi"
+    },
+    "emptyTitle": "Încă nicio notificare",
+    "emptyDesc": "Aici vei vedea actualizări despre minyanim la care te-ai alăturat."
   },
   "share": {
     "title": "Partajează minyan",
@@ -551,7 +565,19 @@
     "nusachAri": "Nusach Ari",
     "dist": "0.4 mi · 4 min de mers",
     "walking": "{{walking}} pe jos · {{driving}} cu mașina",
-    "hosted": "73 minyanim găzduite"
+    "hosted": "73 minyanim găzduite",
+    "readyNow": "Sunt gata acum",
+    "willWait": "Aștept termenul limită",
+    "willWaitCta": "Prefer să aștept",
+    "waitingForConfirmation": "Se așteaptă confirmarea",
+    "confirmationCountdown": "mai sunt {{count}} min",
+    "confirmedWaiting": "Confirmat — începe la {{time}}",
+    "confirmedArriving": "Confirmat! Întâlnire în {{count}} min",
+    "decisionPrompt": "Nu s-au confirmat suficienți oameni la timp. Există un minyan?",
+    "decisionYes": "Da, suntem aici",
+    "decisionCancel": "Anulează minyan",
+    "decisionYesOk": "Minyan confirmat!",
+    "decisionPendingOther": "Se așteaptă decizia organizatorului"
   },
   "kaddish": {
     "title": "Cere un minyan pentru Kaddish",

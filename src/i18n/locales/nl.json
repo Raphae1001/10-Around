@@ -203,7 +203,11 @@
     "errNoDates": "Kies start- en einddatum.",
     "errDateOrder": "Einddatum moet na startdatum liggen.",
     "errMinyanInRange": "Minyan-datum moet binnen je reis vallen.",
-    "errPublish": "Reis publiceren mislukt"
+    "errPublish": "Reis publiceren mislukt",
+    "prayerInterests": "Gebeden waarop je hoopt",
+    "prayerInterestsHint": "Kies degene die je tijdens deze reis wilt bidden — optioneel, helpt anderen om met jou te plannen.",
+    "prayerTimeHint": "Voorkeurstijd",
+    "prayerNotePh": "Nog iets? (bijv. dicht bij het hotel)"
   },
   "time": {
     "justNow": "zojuist",
@@ -280,7 +284,8 @@
     "afternoon": "Middag",
     "evening": "Avond",
     "custom": "Aangepast",
-    "now": "Nu"
+    "now": "Nu",
+    "locationFromPick": "Aangepaste locatie — niet je huidige positie."
   },
   "onboarding": {
     "welcome": "Welkom",
@@ -380,8 +385,17 @@
       "confirmedTime": "20 min geleden",
       "startingTitle": "Minyan begint binnenkort",
       "startingBody": "Shacharit bij Lincoln Square over 25 minuten.",
-      "startingTime": "1u geleden"
-    }
+      "startingTime": "1u geleden",
+      "arrivingTitle": "Minyan bevestigd!",
+      "arrivingBody": "{{prayer}} begint binnenkort — kom naar {{place}}.",
+      "decisionTitle": "Minyan nog niet bevestigd",
+      "decisionBody": "Nog niet genoeg mensen voor {{prayer}} bij {{place}} — is er een minyan?",
+      "cancelledTitle": "Minyan geannuleerd",
+      "cancelledBody": "{{prayer}} bij {{place}} is geannuleerd — niet genoeg mensen op tijd aangesloten.",
+      "viewMinyan": "Bekijken"
+    },
+    "emptyTitle": "Nog geen meldingen",
+    "emptyDesc": "Hier zie je updates over minyanim waaraan je hebt deelgenomen."
   },
   "share": {
     "title": "Deel minyan",
@@ -551,7 +565,19 @@
     "nusachAri": "Nusach Ari",
     "dist": "0.4 mi · 4 min lopen",
     "walking": "{{walking}} lopend · {{driving}} rijdend",
-    "hosted": "73 minyanim gehost"
+    "hosted": "73 minyanim gehost",
+    "readyNow": "Ik ben nu klaar",
+    "willWait": "Wachten op de deadline",
+    "willWaitCta": "Ik wacht liever",
+    "waitingForConfirmation": "Wachten op bevestiging",
+    "confirmationCountdown": "nog {{count}} min",
+    "confirmedWaiting": "Bevestigd — begint om {{time}}",
+    "confirmedArriving": "Bevestigd! Ontmoeting over {{count}} min",
+    "decisionPrompt": "Niet genoeg mensen op tijd bevestigd. Is er een minyan?",
+    "decisionYes": "Ja, we zijn er",
+    "decisionCancel": "Minyan annuleren",
+    "decisionYesOk": "Minyan bevestigd!",
+    "decisionPendingOther": "Wachten op de beslissing van de organisator"
   },
   "kaddish": {
     "title": "Vraag een minyan aan voor Kaddisj",
