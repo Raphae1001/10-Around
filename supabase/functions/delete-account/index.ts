@@ -39,8 +39,10 @@ Deno.serve(async (req) => {
     });
     const { data: ures, error: uerr } = await userClient.auth.getUser();
     if (uerr || !ures.user) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
+      // Idempotent: a double-tap on Sign out/Delete, or a retry after the
+      // account was already removed, means there's nothing left to delete —
+      // an invalid/expired token here IS the desired end state, not a failure.
+      return new Response(JSON.stringify({ ok: true }), {
         headers: { ...corsHeaders, "content-type": "application/json" },
       });
     }
