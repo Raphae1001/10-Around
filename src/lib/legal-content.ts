@@ -10,7 +10,7 @@ export const TERMS_SECTIONS: LegalSection[] = [
   },
   {
     title: "2. Eligibility & accounts",
-    body: "You must be at least 13 years old to use MinyanNow. You are responsible for the activity on your account. MinyanNow currently uses anonymous sign-in with a display name; do not impersonate others.",
+    body: "You must be at least 13 years old to use MinyanNow. You are responsible for the activity on your account. You can sign in with Apple, Google, or as a guest with anonymous authentication; do not impersonate others.",
   },
   {
     title: "3. User responsibilities",
@@ -54,7 +54,7 @@ export const TERMS_SECTIONS: LegalSection[] = [
 export const PRIVACY_LEGAL_SECTIONS: LegalSection[] = [
   {
     title: "Account creation & authentication",
-    body: "MinyanNow uses anonymous authentication: you enter a first and last name to create a session. We store a unique user identifier and your display name (and an optional avatar if you add one). We do not require an email address or a third-party social login (Apple, Google, etc.) at this time.",
+    body: "You can sign in with Apple or Google, or continue as a guest using anonymous authentication. We store a unique user identifier and your display name (and an optional avatar if you add one). Guest accounts can be upgraded to Apple or Google sign-in at any time from Profile without losing your history.",
   },
   {
     title: "Location & blurred presence",

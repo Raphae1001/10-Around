@@ -2,11 +2,12 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { takePendingTermsAcceptedAt } from "@/lib/pending-terms";
 
 /**
- * Web-only auth callback page kept for backwards-compatibility with old
- * email magic-link / OAuth redirects that may still be in the wild. The
- * native app no longer uses any OAuth flow (anonymous onboarding only).
+ * Web OAuth callback (Apple/Google via supabase.auth.signInWithOAuth).
+ * The native app doesn't use this route — it catches the OAuth redirect via
+ * a `minyannow://auth-callback` deep link instead (see lib/native-auth.ts).
  */
 export const Route = createFileRoute("/auth/callback")({
   ssr: false,
@@ -44,6 +45,14 @@ function AuthCallback() {
 
       const { data } = await supabase.auth.getSession();
       if (data.session) {
+        const acceptedAt = takePendingTermsAcceptedAt();
+        if (acceptedAt) {
+          const { error: upErr } = await supabase
+            .from("profiles")
+            .update({ terms_accepted_at: acceptedAt })
+            .eq("id", data.session.user.id);
+          if (upErr) console.warn("profile update failed", upErr);
+        }
         navigate({ to: "/home", replace: true });
       } else {
         setMessage("Sign-in did not complete. Returning…");

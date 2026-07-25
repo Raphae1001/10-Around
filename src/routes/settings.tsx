@@ -23,7 +23,7 @@ import { track, setAnalyticsEnabled, isAnalyticsEnabled } from "@/lib/analytics"
 import { toast } from "sonner";
 import { tapLight } from "@/lib/haptics";
 import { getAppPref, setAppPref } from "@/lib/app-prefs";
-import { deleteAccountAndLeave, goToWelcomeAfterLeave } from "@/lib/leave-account";
+import { deleteAccountAndLeave, goToWelcomeAfterLeave, signOutAndLeave } from "@/lib/leave-account";
 import {
   getPresenceLevel,
   setPresenceLevel,
@@ -98,7 +98,11 @@ function Settings() {
     // running in the background instead of blocking the screen transition.
     navigate({ to: "/onboarding" });
     try {
-      await deleteAccountAndLeave();
+      if (user?.is_anonymous) {
+        await deleteAccountAndLeave();
+      } else {
+        await signOutAndLeave();
+      }
     } catch (e) {
       toast.error(t("common.couldNotSignOut"), { description: (e as Error).message });
     }

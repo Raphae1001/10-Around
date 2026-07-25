@@ -21,7 +21,8 @@ import {
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { tapLight } from "@/lib/haptics";
-import { deleteAccountAndLeave } from "@/lib/leave-account";
+import { deleteAccountAndLeave, signOutAndLeave } from "@/lib/leave-account";
+import { linkProviderIdentity } from "@/lib/native-auth";
 
 export const Route = createFileRoute("/profile")({ component: Profile });
 
@@ -138,6 +139,20 @@ function Profile() {
   }
 
   const signingOutRef = useRef(false);
+  const [upgrading, setUpgrading] = useState<"apple" | "google" | null>(null);
+
+  async function upgradeAccount(provider: "apple" | "google") {
+    if (upgrading) return;
+    setUpgrading(provider);
+    try {
+      await linkProviderIdentity(provider);
+      toast.success(t("auth.upgradeSuccess"));
+    } catch (e) {
+      toast.error(t("auth.upgradeError"), { description: (e as Error).message });
+    } finally {
+      setUpgrading(null);
+    }
+  }
 
   async function signOut() {
     // Guards a double-tap: navigation is instant now, so nothing else
@@ -149,7 +164,11 @@ function Profile() {
     // running in the background instead of blocking the screen transition.
     navigate({ to: "/onboarding" });
     try {
-      await deleteAccountAndLeave();
+      if (user?.is_anonymous) {
+        await deleteAccountAndLeave();
+      } else {
+        await signOutAndLeave();
+      }
     } catch (e) {
       toast.error(t("common.couldNotSignOut"), { description: (e as Error).message });
     }
@@ -341,6 +360,35 @@ function Profile() {
             ))
           )}
         </ProfileSection>
+
+        {user?.is_anonymous && (
+          <section className="rounded-2xl bg-surface shadow-soft p-4 space-y-3">
+            <div>
+              <h2 className="text-sm font-semibold text-ink">{t("auth.upgradeTitle")}</h2>
+              <p className="text-[13px] text-muted-foreground mt-1 leading-relaxed">
+                {t("auth.upgradeBody")}
+              </p>
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => void upgradeAccount("apple")}
+                disabled={upgrading !== null}
+                className="flex-1 h-11 flex items-center justify-center gap-2 rounded-2xl bg-black text-white text-sm font-semibold disabled:opacity-60"
+              >
+                {upgrading === "apple" && <Loader2 className="h-4 w-4 animate-spin" />}
+                {t("auth.upgradeApple")}
+              </button>
+              <button
+                onClick={() => void upgradeAccount("google")}
+                disabled={upgrading !== null}
+                className="flex-1 h-11 flex items-center justify-center gap-2 rounded-2xl border border-border bg-white text-[#1f1f1f] text-sm font-semibold disabled:opacity-60"
+              >
+                {upgrading === "google" && <Loader2 className="h-4 w-4 animate-spin" />}
+                {t("auth.upgradeGoogle")}
+              </button>
+            </div>
+          </section>
+        )}
 
         <button
           onClick={signOut}
