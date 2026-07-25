@@ -19,7 +19,6 @@ export function useAuth() {
       setLoading(false);
     });
 
-    // Anonymous-only auth: no OAuth callback parsing needed.
     supabase.auth.getSession().then(({ data }) => {
       if (!mounted) return;
       setSession(data.session);

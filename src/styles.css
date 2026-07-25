@@ -88,9 +88,11 @@
   --ink-soft: oklch(0.48 0.01 250);
   --hairline: oklch(0.92 0.004 250);
 
-  --accent: oklch(0.62 0.14 220);
+  /* Single brand primary — see also src/lib/brand.ts for the fixed-palette
+     onboarding/splash screens, which intentionally use the same hex. */
+  --accent: #1f95bc;
   --accent-foreground: oklch(0.99 0.005 60);
-  --accent-soft: oklch(0.94 0.03 220);
+  --accent-soft: color-mix(in srgb, #1f95bc 12%, white);
 
   --dark-surface: oklch(0.22 0.012 250);
   --dark-surface-foreground: oklch(0.97 0.004 250);

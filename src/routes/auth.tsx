@@ -6,11 +6,12 @@ import { Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { OnboardingShell } from "@/components/onboarding/OnboardingShell";
 import { WelcomeTermsStep } from "@/components/onboarding/steps/WelcomeTermsStep";
-import { NameStep } from "@/components/onboarding/steps/NameStep";
+import { AuthMethodStep } from "@/components/onboarding/steps/AuthMethodStep";
 import { LocationPrimerDialog } from "@/components/LocationPrimerDialog";
 import { NotificationsPrimerDialog } from "@/components/onboarding/NotificationsPrimerDialog";
 import { track } from "@/lib/analytics";
 import { setAppPref } from "@/lib/app-prefs";
+import { setPendingTermsAcceptedAt, takePendingTermsAcceptedAt } from "@/lib/pending-terms";
 import {
   registerPushNotifications,
   requestLocationPermission,
@@ -22,7 +23,8 @@ export const Route = createFileRoute("/auth")({
   component: Onboarding,
 });
 
-type Step = 0 | 1 | 2;
+type Step = 0 | 1;
+type Method = "apple" | "google" | "guest";
 
 /** Same key as home.tsx — avoid re-showing the primer after we already prompted. */
 const PRIMER_SEEN_KEY = "minyan:location-primer-seen";
@@ -51,8 +53,7 @@ function Onboarding() {
   const [termsAccepted, setTermsAccepted] = useState(false);
   /** ISO timestamp captured when the user checks the box; written to profiles at finish. */
   const [termsAcceptedAt, setTermsAcceptedAt] = useState<string | null>(null);
-  const [first, setFirst] = useState("");
-  const [last, setLast] = useState("");
+  const [pendingMethod, setPendingMethod] = useState<Method | null>(null);
   const [busy, setBusy] = useState(false);
   const [entering, setEntering] = useState(true);
   const [locDialogOpen, setLocDialogOpen] = useState(false);
@@ -81,15 +82,19 @@ function Onboarding() {
 
   function handleWelcomeContinue() {
     if (!termsAccepted || !termsAcceptedAt) return;
+    setPendingTermsAcceptedAt(termsAcceptedAt);
     setStep(1);
   }
 
-  function handleFirstNameContinue() {
-    setStep(2);
+  /** Apple/Google session already exists at this point — go straight to the primer dialogs. */
+  function handleProviderContinue(provider: "apple" | "google") {
+    setPendingMethod(provider);
+    setLocDialogOpen(true);
   }
 
-  /** After last name → show in-app location dialog (works on web + native). */
-  function handleLastNameContinue() {
+  /** Guest defers the actual anonymous sign-in until after the primer dialogs, same as before. */
+  function handleGuestContinue() {
+    setPendingMethod("guest");
     setLocDialogOpen(true);
   }
 
@@ -107,54 +112,49 @@ function Onboarding() {
     await requestNotifications().catch((e) => {
       console.warn("notifications permission failed", e);
     });
-    await createAccountAndEnter();
+    await finalizeAndEnter();
   }
 
   async function handleNotifSkip() {
     setNotifDialogOpen(false);
-    await createAccountAndEnter();
+    await finalizeAndEnter();
   }
 
-  async function createAccountAndEnter() {
-    if (busy || !termsAcceptedAt) return;
+  async function finalizeAndEnter() {
+    if (busy || !pendingMethod) return;
     setBusy(true);
     try {
-      const firstT = first.trim();
-      const lastT = last.trim();
-      const display = [firstT, lastT].filter(Boolean).join(" ") || null;
+      let userId: string;
 
-      const { data, error } = await supabase.auth.signInAnonymously({
-        options: {
-          data: {
-            first_name: firstT || undefined,
-            last_name: lastT || undefined,
-            full_name: display ?? undefined,
-          },
-        },
-      });
-      if (error || !data.user) throw error ?? new Error("No user returned");
+      if (pendingMethod === "guest") {
+        const { data, error } = await supabase.auth.signInAnonymously();
+        if (error || !data.user) throw error ?? new Error("No user returned");
+        userId = data.user.id;
+      } else {
+        const { data } = await supabase.auth.getSession();
+        if (!data.session) throw new Error("No session after sign-in");
+        userId = data.session.user.id;
+      }
 
-      const { error: upErr } = await supabase
-        .from("profiles")
-        .update({
-          first_name: firstT || null,
-          last_name: lastT || null,
-          display_name: display,
-          terms_accepted_at: termsAcceptedAt,
-        })
-        .eq("id", data.user.id);
-      if (upErr) console.warn("profile update failed", upErr);
+      const acceptedAt = takePendingTermsAcceptedAt() ?? termsAcceptedAt;
+      if (acceptedAt) {
+        const { error: upErr } = await supabase
+          .from("profiles")
+          .update({ terms_accepted_at: acceptedAt })
+          .eq("id", userId);
+        if (upErr) console.warn("profile update failed", upErr);
+      }
 
       if (pendingPushToken) {
         const tok = pendingPushToken;
         pendingPushToken = null;
         const { error: pushErr } = await supabase
           .from("user_push_tokens")
-          .upsert({ user_id: data.user.id, token: tok });
+          .upsert({ user_id: userId, token: tok });
         if (pushErr) console.warn("push token persist failed", pushErr);
       }
 
-      track("sign_up", { method: "anonymous" });
+      track("sign_up", { method: pendingMethod });
       navigate({ to: "/home" });
     } catch (e) {
       toast.error(t("auth.authFailed"), { description: (e as Error).message });
@@ -187,19 +187,9 @@ function Onboarding() {
           />
         )}
         {step === 1 && (
-          <NameStep
-            kind="first"
-            value={first}
-            onChange={setFirst}
-            onContinue={handleFirstNameContinue}
-          />
-        )}
-        {step === 2 && (
-          <NameStep
-            kind="last"
-            value={last}
-            onChange={setLast}
-            onContinue={handleLastNameContinue}
+          <AuthMethodStep
+            onProviderContinue={handleProviderContinue}
+            onGuestContinue={handleGuestContinue}
           />
         )}
       </div>
