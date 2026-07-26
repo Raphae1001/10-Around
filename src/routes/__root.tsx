@@ -17,6 +17,7 @@ import { MinyanNotificationToast } from "@/components/MinyanNotificationToast";
 import "@/i18n";
 import { applySavedLang } from "@/i18n";
 import { initTheme } from "@/hooks/use-theme";
+import { initDeepLinkHandler } from "@/lib/deep-links";
 
 // Apply saved theme synchronously before first paint to avoid flash
 if (typeof window !== "undefined") initTheme();
@@ -170,6 +171,7 @@ function RootComponent() {
   useEffect(() => {
     applySavedLang();
   }, []);
+  useEffect(() => initDeepLinkHandler(router), [router]);
   useEffect(() => {
     // Fire-and-forget analytics page_view on every route change. No-ops
     // when analytics is disabled or not configured. Lazy-imported so the

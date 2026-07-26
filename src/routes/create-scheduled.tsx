@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { AddressAutocomplete, type AddressPick } from "@/components/AddressAutocomplete";
 import { DateTimeField } from "@/components/DateTimeField";
 import { currentPrayerWindow } from "@/lib/sun";
+import { timezoneForCoords, zonedTimeToUtc } from "@/lib/timezone";
 
 export const Route = createFileRoute("/create-scheduled")({
   validateSearch: (s: Record<string, unknown>): { repeat?: string } => ({
@@ -52,7 +53,11 @@ function CreateScheduled() {
 
   useEffect(() => {
     if (!pick?.lat || !pick?.lng || !date || !time || !prayerAuto) return;
-    const at = new Date(`${date}T${time}`);
+    // Parse in the venue's own timezone, not the device's — a bare
+    // `new Date(`${date}T${time}`)` would use the device's local offset,
+    // which is wrong for any address in a different zone than the viewer.
+    const tz = timezoneForCoords(pick.lat, pick.lng);
+    const at = zonedTimeToUtc(`${date}T${time}`, tz);
     if (Number.isNaN(at.getTime())) return;
     const window = currentPrayerWindow(pick.lat, pick.lng, at);
     setPrayer(PRAYER_DISPLAY[window]);
@@ -64,7 +69,13 @@ function CreateScheduled() {
     { name: "Maariv", icon: Moon },
   ];
 
-  const todayStr = new Date().toISOString().slice(0, 10);
+  // Local date, not UTC — `toISOString()` would floor to yesterday for
+  // anyone east of UTC late at night, and block scheduling later today for
+  // anyone west of UTC in the evening.
+  const now = new Date();
+  const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(
+    now.getDate(),
+  ).padStart(2, "0")}`;
 
   return (
     <MobileFrame>
@@ -211,7 +222,12 @@ function CreateScheduled() {
       return;
     }
 
-    const scheduledAt = new Date(`${date}T${time}`);
+    // Same fix as the auto-pick effect above: resolve the venue's own
+    // timezone instead of silently using the device's, so "Mincha 13:30"
+    // for a Jerusalem address stores 13:30 Jerusalem time even when the
+    // person scheduling it is sitting in Paris.
+    const tz = timezoneForCoords(pick.lat, pick.lng);
+    const scheduledAt = zonedTimeToUtc(`${date}T${time}`, tz);
     if (scheduledAt.getTime() <= Date.now()) {
       toast.error(t("createScheduled.errPast"));
       return;
