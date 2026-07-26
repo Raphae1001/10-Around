@@ -102,6 +102,23 @@ function crossingTimesUtcMin(
 export type PrayerWindow = "shacharit" | "mincha" | "maariv";
 
 /**
+ * `crossingTimesUtcMin` returns minutes-since-UTC-midnight computed from
+ * solar noon (`720 - 4*lng - eqtime`), which falls outside [0, 1440) — and
+ * can even be negative — for longitudes east of roughly ±90°. `nowMin` is
+ * always in [0, 1440), so comparing them directly breaks with no modular
+ * wraparound (e.g. Auckland, Beijing). Shift `value` by a multiple of 1440
+ * so it lands within ±12h of `reference` — safe here because the whole
+ * alot→shkia span is always well under 24h, so shifting each crossing time
+ * independently can't reorder them relative to each other.
+ */
+function normalizeNear(value: number, reference: number): number {
+  let v = value;
+  while (v < reference - 720) v += 1440;
+  while (v >= reference + 720) v -= 1440;
+  return v;
+}
+
+/**
  * Shacharit: alot hashachar (dawn) → chatzot (halachic midday, i.e. solar noon).
  * Mincha: chatzot → shkia (sunset). The gap most poskim call "mincha gedola"
  * (starting ~30–60 min after chatzot) has no separate bucket here — it's
@@ -118,7 +135,10 @@ export function currentPrayerWindow(
   if (!shkia || !alot) return isDaytime(lat, lng, at) ? "shacharit" : "maariv";
 
   const nowMin = at.getUTCHours() * 60 + at.getUTCMinutes() + at.getUTCSeconds() / 60;
-  if (nowMin >= alot.rise && nowMin < shkia.noon) return "shacharit";
-  if (nowMin >= shkia.noon && nowMin < shkia.set) return "mincha";
+  const alotRise = normalizeNear(alot.rise, nowMin);
+  const chatzot = normalizeNear(shkia.noon, nowMin);
+  const shkiaSet = normalizeNear(shkia.set, nowMin);
+  if (nowMin >= alotRise && nowMin < chatzot) return "shacharit";
+  if (nowMin >= chatzot && nowMin < shkiaSet) return "mincha";
   return "maariv";
 }

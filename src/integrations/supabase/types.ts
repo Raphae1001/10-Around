@@ -788,6 +788,20 @@ export type Database = {
           isSetofReturn: true
         }
       }
+      public_minyan_summary: {
+        Args: { _id: string }
+        Returns: {
+          city: string
+          confirmed_at: string
+          expires_at: string
+          id: string
+          is_live: boolean
+          prayer: Database["public"]["Enums"]["minyan_prayer"]
+          present_count: number
+          scheduled_at: string
+          type: Database["public"]["Enums"]["minyan_type"]
+        }[]
+      }
       request_confirmations: {
         Args: { _minyan_id: string }
         Returns: undefined

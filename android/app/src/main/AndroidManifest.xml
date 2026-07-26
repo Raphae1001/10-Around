@@ -30,6 +30,25 @@
                 <data android:scheme="minyannow" android:host="auth-callback" />
             </intent-filter>
 
+            <!-- App Links for shared minyan/travel-city links (WhatsApp, etc).
+                 autoVerify requires a matching assetlinks.json at
+                 https://minyan-now-18mb.vercel.app/.well-known/assetlinks.json
+                 with the REAL release-keystore SHA-256 fingerprint — the file
+                 currently ships a placeholder (see public/.well-known/assetlinks.json). -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="https"
+                    android:host="minyan-now-18mb.vercel.app"
+                    android:pathPrefix="/minyan" />
+                <data
+                    android:scheme="https"
+                    android:host="minyan-now-18mb.vercel.app"
+                    android:pathPrefix="/travel-city" />
+            </intent-filter>
+
         </activity>
 
         <provider
