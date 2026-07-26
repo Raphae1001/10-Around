@@ -26,9 +26,7 @@ function Success() {
     let cancelled = false;
     async function load() {
       const { data } = await supabase
-        .from("minyanim")
-        .select("present_count,address,prayer")
-        .eq("id", id!)
+        .rpc("get_minyan_by_id", { _id: id! })
         .maybeSingle();
       if (cancelled || !data) return;
       setPresent((data as any).present_count ?? 0);

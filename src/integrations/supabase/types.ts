@@ -591,6 +591,42 @@ export type Database = {
         Args: { _default: number; _key: string }
         Returns: number
       }
+      get_minyan_by_id: {
+        Args: { _id: string }
+        Returns: {
+          address: string | null
+          arrival_deadline: string | null
+          awaiting_creator_decision: boolean
+          city: string | null
+          confirmation_path: string | null
+          confirmed_at: string | null
+          created_at: string
+          creator_id: string
+          expires_at: string
+          extra_present: number
+          id: string
+          is_live: boolean
+          latitude: number
+          location: unknown
+          longitude: number
+          message: string | null
+          nusach: string | null
+          prayer: Database["public"]["Enums"]["minyan_prayer"]
+          present_count: number
+          scheduled_at: string | null
+          trip_end_date: string | null
+          trip_prayer_interests: Json
+          trip_start_date: string | null
+          type: Database["public"]["Enums"]["minyan_type"]
+          updated_at: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "minyanim"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       get_my_profile: {
         Args: never
         Returns: {
