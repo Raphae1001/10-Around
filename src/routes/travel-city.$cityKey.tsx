@@ -19,8 +19,10 @@ import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
 import { shareWhatsApp, appOrigin } from "@/lib/share";
 import { stayCityKey } from "@/lib/stay";
+import { guardLegacyScreen } from "@/lib/legacy-route";
 
 export const Route = createFileRoute("/travel-city/$cityKey")({
+  beforeLoad: guardLegacyScreen,
   component: TravelCityPage,
   validateSearch: (search: Record<string, unknown>) => ({
     from: typeof search.from === "string" ? search.from : undefined,

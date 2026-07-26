@@ -79,9 +79,7 @@ function Details() {
       }
       setLoading(true);
       const { data, error } = await supabase
-        .from("minyanim")
-        .select("*")
-        .eq("id", id)
+        .rpc("get_minyan_by_id", { _id: id })
         .maybeSingle();
       if (cancelled) return;
       if (error) {
@@ -129,6 +127,23 @@ function Details() {
       supabase.removeChannel(ch);
     };
   }, [id]);
+
+  // Realtime above only delivers once you've joined or created this minyan
+  // (RLS-gated, by design — see 20260726121500_close_world_read_rls.sql).
+  // While just browsing, poll the live count instead so "7/10" still ticks
+  // up before you decide to join.
+  useEffect(() => {
+    if (!id || joined) return;
+    const i = setInterval(() => {
+      void supabase
+        .rpc("get_minyan_by_id", { _id: id })
+        .maybeSingle()
+        .then(({ data }) => {
+          if (data) setMinyan(data as MinyanRow);
+        });
+    }, 8000);
+    return () => clearInterval(i);
+  }, [id, joined]);
 
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
