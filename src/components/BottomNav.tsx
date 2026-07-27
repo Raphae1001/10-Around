@@ -29,15 +29,15 @@ export function BottomNav() {
             const label = t(`nav.${key}`);
             if (primary) {
               return (
-                <li key={to} className="flex flex-col items-center -mt-5">
+                <li key={to} className="flex justify-center -mt-5">
                   <Link
                     to={to}
-                    className="h-14 w-14 rounded-full bg-accent text-accent-foreground flex items-center justify-center shadow-fab transition-transform active:scale-[0.97]"
+                    className="h-14 w-14 rounded-full bg-accent text-accent-foreground flex flex-col items-center justify-center gap-0.5 shadow-fab transition-transform active:scale-[0.97]"
                     aria-label={label}
                   >
-                    <Icon className="h-6 w-6" strokeWidth={2.4} />
+                    <Icon className="h-4 w-4" strokeWidth={2.6} />
+                    <span className="text-[10px] font-bold leading-none">{label}</span>
                   </Link>
-                  <span className="text-[10px] font-medium text-ink-soft mt-1">{label}</span>
                 </li>
               );
             }
