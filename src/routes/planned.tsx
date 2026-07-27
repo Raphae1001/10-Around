@@ -31,21 +31,24 @@ function CreateTextButton({ label, onClick }: { label: string; onClick: () => vo
 
 function PlannedSection({
   title,
+  hint,
   action,
   children,
 }: {
   title: string;
+  hint?: string;
   action?: ReactNode;
   children: ReactNode;
 }) {
   return (
     <section className="mb-8">
-      <div className="px-6 flex items-center justify-between gap-3 mb-3">
+      <div className="px-6 flex items-center justify-between gap-3 mb-1">
         <h2 className="text-[13px] font-semibold uppercase tracking-[0.14em] text-ink-soft">
           {title}
         </h2>
         {action}
       </div>
+      {hint && <p className="px-6 text-[12px] text-ink-soft/80 mb-3 leading-snug">{hint}</p>}
       {children}
     </section>
   );
@@ -77,6 +80,7 @@ function Planned() {
           <>
             <PlannedSection
               title={t("planned.scheduledSection")}
+              hint={t("planned.scheduledHint")}
               action={
                 <CreateTextButton
                   label={t("planned.addScheduled")}
@@ -119,6 +123,7 @@ function Planned() {
 
             <PlannedSection
               title={t("planned.staySection")}
+              hint={t("planned.travelHint")}
               action={
                 <CreateTextButton
                   label={t("planned.addStay")}

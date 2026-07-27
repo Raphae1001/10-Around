@@ -3,7 +3,7 @@
     "home": "בית",
     "map": "מפה",
     "planned": "מתוכנן",
-    "create": "יצירה",
+    "create": "עכשיו",
     "profile": "פרופיל"
   },
   "common": {
@@ -136,7 +136,9 @@
     "title": "מתוכנן",
     "subtitle": "מניינים מתוכננים וטיולים בחו״ל",
     "scheduledSection": "מניינים מתוכננים",
+    "scheduledHint": "קבע שעה ומקום מראש.",
     "staySection": "טיולים בחו״ל",
+    "travelHint": "בנסיעה? עדכן אחרים ותארגנו מניין ביחד.",
     "addScheduled": "תכנן",
     "addStay": "טיול",
     "emptyScheduled": "אין מניין מתוכנן עדיין.",
