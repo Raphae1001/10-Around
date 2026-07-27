@@ -32,11 +32,10 @@ export function BottomNav() {
                 <li key={to} className="flex justify-center -mt-5">
                   <Link
                     to={to}
-                    className="h-14 w-14 rounded-full bg-accent text-accent-foreground flex flex-col items-center justify-center shadow-fab transition-transform active:scale-[0.97]"
+                    className="h-14 w-14 rounded-full bg-accent text-accent-foreground flex items-center justify-center shadow-fab transition-transform active:scale-[0.97]"
                     aria-label={label}
                   >
-                    <span className="text-lg font-bold leading-none">10</span>
-                    <span className="text-[10px] font-bold leading-none mt-0.5">{label}</span>
+                    <Icon className="h-6 w-6" strokeWidth={2.4} />
                   </Link>
                 </li>
               );
