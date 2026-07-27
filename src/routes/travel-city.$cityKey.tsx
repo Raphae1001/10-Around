@@ -190,7 +190,7 @@ function TravelCityPage() {
   function shareCity() {
     const dates = myStart && myEnd ? ` (${fmtDate(myStart)} → ${fmtDate(myEnd)})` : "";
     shareWhatsApp(
-      `I'll be in ${cityLabel}${dates}. Join me on MinyanNow to coordinate a minyan.`,
+      `I'll be in ${cityLabel}${dates}. Join me on 10 Around to coordinate a minyan.`,
       `${appOrigin()}/travel-city/${encodeURIComponent(cityKey)}`,
     );
   }

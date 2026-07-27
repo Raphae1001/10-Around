@@ -100,7 +100,7 @@ function MapsTest() {
             className="w-full"
             onClick={() =>
               shareAny({
-                title: "Test MinyanNow",
+                title: "Test 10 Around",
                 text: "Minyan test à " + (label || "destination"),
                 url: urls?.web,
               })

@@ -161,7 +161,7 @@ function Share() {
             {copied ? t("share.copied") : t("share.copyText")}
           </button>
           <button
-            onClick={() => shareAny({ title: "MinyanNow", text: message, url: shareUrl })}
+            onClick={() => shareAny({ title: "10 Around", text: message, url: shareUrl })}
             className="btn-secondary active:scale-[0.99]"
           >
             <Send className="h-4 w-4" /> {t("share.otherApps")}

@@ -264,7 +264,7 @@ function Details() {
       when,
       url,
     });
-    void shareAny({ title: `MinyanNow — ${prayerLabel}`, text, url });
+    void shareAny({ title: `10 Around — ${prayerLabel}`, text, url });
   }
 
   async function handleOpenChat() {

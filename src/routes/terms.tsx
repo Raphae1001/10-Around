@@ -8,14 +8,14 @@ import { useTranslation } from "react-i18next";
 export const Route = createFileRoute("/terms")({
   head: () => ({
     meta: [
-      { title: "Terms of Service — MinyanNow" },
+      { title: "Terms of Service — 10 Around" },
       {
         name: "description",
         content:
-          "Terms governing your use of MinyanNow — community guidelines, responsibilities, and liability.",
+          "Terms governing your use of 10 Around — community guidelines, responsibilities, and liability.",
       },
-      { property: "og:title", content: "Terms of Service — MinyanNow" },
-      { property: "og:description", content: "Terms governing your use of MinyanNow." },
+      { property: "og:title", content: "Terms of Service — 10 Around" },
+      { property: "og:description", content: "Terms governing your use of 10 Around." },
     ],
   }),
   component: Terms,

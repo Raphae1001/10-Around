@@ -105,14 +105,14 @@ const rootRouteOptions: Parameters<
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
-      { title: "MinyanNow — Start a minyan, anywhere, right now" },
+      { title: "10 Around — Start a minyan, anywhere, right now" },
       {
         name: "description",
         content:
           "Create or join a minyan right where you stand — street, airport, hotel, anywhere in the world.",
       },
-      { name: "author", content: "MinyanNow" },
-      { property: "og:title", content: "MinyanNow — Start a minyan, anywhere, right now" },
+      { name: "author", content: "10 Around" },
+      { property: "og:title", content: "10 Around — Start a minyan, anywhere, right now" },
       {
         property: "og:description",
         content:
@@ -120,7 +120,7 @@ const rootRouteOptions: Parameters<
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
-      { name: "twitter:title", content: "MinyanNow" },
+      { name: "twitter:title", content: "10 Around" },
       {
         name: "twitter:description",
         content: "Start a minyan right where you stand — in under 10 seconds.",

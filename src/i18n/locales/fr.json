@@ -93,7 +93,7 @@
     "createFab": "Lancer un minyan ici",
     "locationPrimer": {
       "title": "Voir qui prie autour de toi",
-      "body": "MinyanNow utilise ta position pour afficher la présence communautaire autour de toi et t'aider à lancer un minyan là où tu es.",
+      "body": "10 Around utilise ta position pour afficher la présence communautaire autour de toi et t'aider à lancer un minyan là où tu es.",
       "privacy": "Ta position exacte n'est jamais stockée — seulement une zone floutée (~1 km) pour le comptage.",
       "allow": "Autoriser la localisation",
       "later": "Pas maintenant"
@@ -425,7 +425,7 @@
     "back": "Retour au minyan",
     "messageHeader": "URGENT — Le minyan a besoin de participants",
     "messageStatus": "Statut : 9/10 — Plus qu'une personne",
-    "messageCta": "Confirme ta présence instantanément via MinyanNow"
+    "messageCta": "Confirme ta présence instantanément via 10 Around"
   },
   "success": {
     "confirmed": "Minyan confirmé",
@@ -520,7 +520,7 @@
   "flight": {
     "title": "Coordination de vol",
     "question": "Y a-t-il des Juifs sur ton vol ?",
-    "subtitle": "Entre ton numéro de vol. On te connectera discrètement aux autres membres MinyanNow à bord.",
+    "subtitle": "Entre ton numéro de vol. On te connectera discrètement aux autres membres 10 Around à bord.",
     "flightNumber": "Numéro de vol",
     "departs": "Départ dans {{time}}",
     "matchFound": "Correspondance trouvée",
@@ -558,7 +558,7 @@
     "notFound": "Minyan introuvable — il est peut-être terminé.",
     "expiresAt": "Fermeture auto à {{when}}",
     "whatsapp": "WhatsApp",
-    "shareText": "Rejoins mon minyan sur MinyanNow — {{prayer}} à {{address}} ({{when}}). Ouvre : {{url}}",
+    "shareText": "Rejoins mon minyan sur 10 Around — {{prayer}} à {{address}} ({{when}}). Ouvre : {{url}}",
     "cancelMinyan": "Annuler ce minyan",
     "cancelMinyanConfirm": "Annuler ce minyan pour tout le monde ? Irréversible.",
     "cancelledOk": "Minyan annulé",
@@ -611,7 +611,7 @@
     "yourPlan": "Ton plan de Chabbat",
     "ratio": "{{done}}/{{total}} validés",
     "preConfirm": "Pré-confirmer",
-    "notice": "MinyanNow met en pause toutes les notifications en temps réel de l'allumage à Havdala. Coordonne maintenant — repose-toi ensuite.",
+    "notice": "10 Around met en pause toutes les notifications en temps réel de l'allumage à Havdala. Coordonne maintenant — repose-toi ensuite.",
     "preConfirmAll": "Tout pré-confirmer"
   },
   "siddur": {
@@ -721,7 +721,7 @@
     "presenceSaved": "Préférence de présence enregistrée",
     "notifComingSoon": "L'envoi des notifications push arrive dans une prochaine mise à jour. Les préférences sont enregistrées localement pour l'instant.",
     "analytics": "Analytique",
-    "analyticsHelp": "Aider à améliorer MinyanNow",
+    "analyticsHelp": "Aider à améliorer 10 Around",
     "analyticsDesc": "Statistiques d'usage anonymes. Aucune donnée personnelle.",
     "privacyPolicy": "Politique de confidentialité",
     "termsOfService": "Conditions d'utilisation",
@@ -746,7 +746,7 @@
   "privacy": {
     "title": "Politique de confidentialité",
     "updated": "Dernière mise à jour : juillet 2026",
-    "intro": "MinyanNow aide les Juifs à trouver ou lancer un minyan partout dans le monde. Nous prenons ta vie privée très au sérieux.",
+    "intro": "10 Around aide les Juifs à trouver ou lancer un minyan partout dans le monde. Nous prenons ta vie privée très au sérieux.",
     "sections": {
       "data": {
         "title": "Données collectées",
@@ -790,17 +790,17 @@
     "faqTitle": "Questions fréquentes",
     "faq": {
       "notifQ": "Je ne reçois pas les notifications",
-      "notifA": "L'envoi push n'est pas encore actif — Paramètres → Notifications explique que les préférences sont enregistrées localement pour une future mise à jour. Quand le push sera prêt, autorise aussi les notifications système pour MinyanNow sur ton appareil.",
+      "notifA": "L'envoi push n'est pas encore actif — Paramètres → Notifications explique que les préférences sont enregistrées localement pour une future mise à jour. Quand le push sera prêt, autorise aussi les notifications système pour 10 Around sur ton appareil.",
       "nearbyQ": "Les minyanim autour ne s'affichent pas",
-      "nearbyA": "MinyanNow a besoin de ta position pour afficher les minyanim près de toi. Ouvre Réglages → Localisation et autorise l'accès « Pendant l'utilisation ».",
+      "nearbyA": "10 Around a besoin de ta position pour afficher les minyanim près de toi. Ouvre Réglages → Localisation et autorise l'accès « Pendant l'utilisation ».",
       "langQ": "Comment changer la langue ?",
       "langA": "Ouvre Paramètres → Langue et choisis parmi les langues prises en charge. Le changement est instantané.",
       "createQ": "Comment créer un minyan ?",
       "createA": "Tape sur le bouton + dans la barre du bas, choisis une prière, définis le lieu et l'heure, puis appuie sur Créer. Les autres utilisateurs à proximité le verront immédiatement.",
       "cancelQ": "Puis-je annuler un minyan que j'ai créé ?",
       "cancelA": "Oui. Ouvre le minyan, appuie sur Annuler. Les minyanim planifiés ne peuvent pas être annulés moins de 20 minutes avant leur début, pour protéger ceux qui ont rejoint.",
-      "freeQ": "MinyanNow est-il gratuit ?",
-      "freeA": "Oui. MinyanNow est entièrement gratuit."
+      "freeQ": "10 Around est-il gratuit ?",
+      "freeA": "Oui. 10 Around est entièrement gratuit."
     },
     "bugTitle": "Signaler un bug",
     "bugIntro": "Tu as trouvé quelque chose qui ne va pas ? Envoie un email à {{email}} avec :",
@@ -810,11 +810,11 @@
     "bugVersion": "Version de l'app (Paramètres → À propos)",
     "bugScreenshot": "Une capture d'écran si tu en as une",
     "reportTitle": "Signaler un contenu inapproprié",
-    "reportBody": "MinyanNow ne tolère aucun harcèlement, discours de haine, faux minyanim ou contenu ciblant d'autres utilisateurs. Dans un chat, appuie sur le drapeau d'un message pour le signaler directement dans l'app. Tu peux aussi écrire à {{email}}. Les signalements sont examinés sous 24 heures et nous prenons des mesures contre les comptes qui violent nos <terms>conditions</terms>.",
+    "reportBody": "10 Around ne tolère aucun harcèlement, discours de haine, faux minyanim ou contenu ciblant d'autres utilisateurs. Dans un chat, appuie sur le drapeau d'un message pour le signaler directement dans l'app. Tu peux aussi écrire à {{email}}. Les signalements sont examinés sous 24 heures et nous prenons des mesures contre les comptes qui violent nos <terms>conditions</terms>.",
     "accountTitle": "Assistance & suppression de compte",
     "accountBody": "Tu peux supprimer ton compte à tout moment depuis <settings>Paramètres → Supprimer le compte</settings>. La suppression est définitive et efface ton profil, tes données de présence, tes tokens push, ton historique de participation et ton appartenance aux chats. Si tu ne peux pas supprimer depuis l'app, écris à {{email}} et nous traiterons la suppression manuellement."
   },
   "termsPage": {
-    "intro": "Conditions régissant ton utilisation de MinyanNow."
+    "intro": "Conditions régissant ton utilisation de 10 Around."
   }
 }

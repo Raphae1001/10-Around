@@ -55,19 +55,19 @@ export const Route = createFileRoute("/minyan_/$id")({
     if (!m) {
       return {
         meta: [
-          { title: "Minyan — MinyanNow" },
-          { name: "description", content: "Join a minyan on MinyanNow." },
+          { title: "Minyan — 10 Around" },
+          { name: "description", content: "Join a minyan on 10 Around." },
         ],
       };
     }
     const prayerLabel = PRAYER_LABEL[m.prayer] ?? "Minyan";
     const title = `${m.present_count}/${NEEDED} · ${prayerLabel}${m.city ? " · " + m.city : ""}`;
     const description = m.confirmed_at
-      ? "This minyan is confirmed — join now on MinyanNow."
-      : `${m.present_count}/${NEEDED} confirmed so far — help make the minyan on MinyanNow.`;
+      ? "This minyan is confirmed — join now on 10 Around."
+      : `${m.present_count}/${NEEDED} confirmed so far — help make the minyan on 10 Around.`;
     return {
       meta: [
-        { title: `${title} — MinyanNow` },
+        { title: `${title} — 10 Around` },
         { name: "description", content: description },
         { property: "og:title", content: title },
         { property: "og:description", content: description },
@@ -94,7 +94,7 @@ function PublicMinyanPage() {
           This minyan is no longer available.
         </h1>
         <Link to="/" className="mt-6 text-sm underline" style={{ color: BRAND_BLUE }}>
-          Open MinyanNow
+          Open 10 Around
         </Link>
       </div>
     );
@@ -129,7 +129,7 @@ function PublicMinyanPage() {
       </h1>
       <p className="text-sm mt-2 max-w-xs leading-relaxed" style={{ color: BRAND_TEXT_SOFT }}>
         {confirmed
-          ? "This minyan is happening — join on MinyanNow to see exactly where."
+          ? "This minyan is happening — join on 10 Around to see exactly where."
           : `${count} of ${NEEDED} confirmed so far. Open the app to join and see the location.`}
       </p>
 
@@ -144,10 +144,10 @@ function PublicMinyanPage() {
         style={{ backgroundColor: BRAND_BLUE }}
       >
         <Download className="h-4 w-4" />
-        Open in MinyanNow
+        Open in 10 Around
       </a>
       <Link to="/" className="mt-4 text-xs underline" style={{ color: BRAND_TEXT_SOFT }}>
-        Don't have the app? Get MinyanNow
+        Don't have the app? Get 10 Around
       </Link>
     </div>
   );

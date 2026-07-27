@@ -6,11 +6,11 @@ export type LegalSection = { title: string; body: string };
 export const TERMS_SECTIONS: LegalSection[] = [
   {
     title: "1. Acceptance of terms",
-    body: "By creating an account or using MinyanNow you agree to these terms. If you do not agree, please do not use the app.",
+    body: "By creating an account or using 10 Around you agree to these terms. If you do not agree, please do not use the app.",
   },
   {
     title: "2. Eligibility & accounts",
-    body: "You must be at least 13 years old to use MinyanNow. You are responsible for the activity on your account. You can sign in with Apple, Google, or as a guest with anonymous authentication; do not impersonate others.",
+    body: "You must be at least 13 years old to use 10 Around. You are responsible for the activity on your account. You can sign in with Apple, Google, or as a guest with anonymous authentication; do not impersonate others.",
   },
   {
     title: "3. User responsibilities",
@@ -22,7 +22,7 @@ export const TERMS_SECTIONS: LegalSection[] = [
   },
   {
     title: "5. Community behavior & chat",
-    body: "MinyanNow is a respectful community of Jewish daveners. Harassment, hate speech, discriminatory content, sexual content, advertising, or any content that targets, mocks, or excludes other users is prohibited — including in group chats. Moderators may remove content and suspend accounts that violate these rules.",
+    body: "10 Around is a respectful community of Jewish daveners. Harassment, hate speech, discriminatory content, sexual content, advertising, or any content that targets, mocks, or excludes other users is prohibited — including in group chats. Moderators may remove content and suspend accounts that violate these rules.",
   },
   {
     title: "6. Reporting",
@@ -30,11 +30,11 @@ export const TERMS_SECTIONS: LegalSection[] = [
   },
   {
     title: "7. Service availability",
-    body: "We work hard to keep MinyanNow available, but we do not guarantee uninterrupted service. Features may change, be added, or be removed without notice. We may perform maintenance that briefly interrupts the service.",
+    body: "We work hard to keep 10 Around available, but we do not guarantee uninterrupted service. Features may change, be added, or be removed without notice. We may perform maintenance that briefly interrupts the service.",
   },
   {
     title: "8. Limitation of liability",
-    body: 'MinyanNow is provided "as is" without warranty of any kind. To the maximum extent allowed by law, we are not liable for any indirect, incidental, or consequential damages arising from your use of the app, including reliance on minyan times, locations, or attendance counts.',
+    body: '10 Around is provided "as is" without warranty of any kind. To the maximum extent allowed by law, we are not liable for any indirect, incidental, or consequential damages arising from your use of the app, including reliance on minyan times, locations, or attendance counts.',
   },
   {
     title: "9. Termination",
@@ -42,7 +42,7 @@ export const TERMS_SECTIONS: LegalSection[] = [
   },
   {
     title: "10. Changes to these terms",
-    body: "We may update these terms from time to time. Material changes will be communicated through the app. Continued use of MinyanNow after changes take effect constitutes acceptance of the updated terms.",
+    body: "We may update these terms from time to time. Material changes will be communicated through the app. Continued use of 10 Around after changes take effect constitutes acceptance of the updated terms.",
   },
   {
     title: "11. Contact",

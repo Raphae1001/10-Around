@@ -93,7 +93,7 @@
     "createFab": "Pornește un minian aici",
     "locationPrimer": {
       "title": "Vezi cine se roagă în apropiere",
-      "body": "MinyanNow folosește locația ta pentru a arăta prezența comunității în jurul tău și a te ajuta să pornești un minian exact unde stai.",
+      "body": "10 Around folosește locația ta pentru a arăta prezența comunității în jurul tău și a te ajuta să pornești un minian exact unde stai.",
       "privacy": "Poziția ta exactă nu este niciodată stocată — doar o zonă estompată (~1 km) pentru numărare.",
       "allow": "Permite locația",
       "later": "Nu acum"
@@ -427,7 +427,7 @@
     "back": "Înapoi la minyan",
     "messageHeader": "URGENT — Minyan are nevoie de participanți",
     "messageStatus": "Status: 9/10 — Mai e nevoie de 1 persoană",
-    "messageCta": "Confirmă prezența instant prin MinyanNow"
+    "messageCta": "Confirmă prezența instant prin 10 Around"
   },
   "success": {
     "confirmed": "Minyan confirmat",
@@ -522,7 +522,7 @@
   "flight": {
     "title": "Coordonare zbor",
     "question": "Sunt evrei în zborul tău?",
-    "subtitle": "Introdu numărul zborului. Te vom conecta discret cu alți membri MinyanNow de la bord.",
+    "subtitle": "Introdu numărul zborului. Te vom conecta discret cu alți membri 10 Around de la bord.",
     "flightNumber": "Număr zbor",
     "departs": "Pleacă în {{time}}",
     "matchFound": "Potrivire găsită",
@@ -560,7 +560,7 @@
     "notFound": "Minian negăsit — poate s-a încheiat.",
     "expiresAt": "Se închide automat la {{when}}",
     "whatsapp": "WhatsApp",
-    "shareText": "Alătură-te minianului meu pe MinyanNow — {{prayer}} la {{address}} ({{when}}). Deschide: {{url}}",
+    "shareText": "Alătură-te minianului meu pe 10 Around — {{prayer}} la {{address}} ({{when}}). Deschide: {{url}}",
     "cancelMinyan": "Anulează acest minian",
     "cancelMinyanConfirm": "Anulezi acest minian pentru toată lumea? Nu se poate anula.",
     "cancelledOk": "Minian anulat",
@@ -613,7 +613,7 @@
     "yourPlan": "Planul tău de Shabbat",
     "ratio": "{{done}}/{{total}} stabilit",
     "preConfirm": "Pre-confirmă",
-    "notice": "MinyanNow întrerupe toate notificările în timp real de la aprinderea lumânărilor până la Havdalah. Coordonează acum — odihnește-te atunci.",
+    "notice": "10 Around întrerupe toate notificările în timp real de la aprinderea lumânărilor până la Havdalah. Coordonează acum — odihnește-te atunci.",
     "preConfirmAll": "Pre-confirmă tot ce a rămas"
   },
   "siddur": {
@@ -723,7 +723,7 @@
     "presenceSaved": "Preferința de prezență salvată",
     "notifComingSoon": "Livrarea push vine într-o actualizare viitoare. Preferințele sunt salvate local deocamdată.",
     "analytics": "Analitică",
-    "analyticsHelp": "Ajută la îmbunătățirea MinyanNow",
+    "analyticsHelp": "Ajută la îmbunătățirea 10 Around",
     "analyticsDesc": "Statistici de utilizare anonime. Fără date personale.",
     "privacyPolicy": "Politica de confidențialitate",
     "termsOfService": "Termeni de utilizare",
@@ -792,17 +792,17 @@
     "faqTitle": "Întrebări frecvente",
     "faq": {
       "notifQ": "Nu primesc notificări",
-      "notifA": "Livrarea push nu este încă activă — Setări → Notificări explică că preferințele sunt salvate local pentru o actualizare viitoare. Când push-ul va fi disponibil, permite și notificările de sistem pentru MinyanNow pe dispozitiv.",
+      "notifA": "Livrarea push nu este încă activă — Setări → Notificări explică că preferințele sunt salvate local pentru o actualizare viitoare. Când push-ul va fi disponibil, permite și notificările de sistem pentru 10 Around pe dispozitiv.",
       "nearbyQ": "Minianim din apropiere nu apar",
-      "nearbyA": "MinyanNow are nevoie de locația ta pentru a arăta minianim lângă tine. Deschide Setări → Locație și permite accesul „În timpul utilizării” aplicației.",
+      "nearbyA": "10 Around are nevoie de locația ta pentru a arăta minianim lângă tine. Deschide Setări → Locație și permite accesul „În timpul utilizării” aplicației.",
       "langQ": "Cum schimb limba?",
       "langA": "Deschide Setări → Limbă și alege din limbile suportate. Schimbarea este instantanee.",
       "createQ": "Cum creez un minian?",
       "createA": "Atinge butonul + din bara de jos, alege o rugăciune, setează locația și ora, apoi atinge Creează. Alți utilizatori din apropiere îl vor vedea imediat.",
       "cancelQ": "Pot anula un minian pe care l-am creat?",
       "cancelA": "Da. Deschide minianul, atinge Anulează. Minianim programate nu pot fi anulate cu mai puțin de 20 de minute înainte de început, pentru a proteja participanții.",
-      "freeQ": "MinyanNow este gratuit?",
-      "freeA": "Da. MinyanNow este gratuit."
+      "freeQ": "10 Around este gratuit?",
+      "freeA": "Da. 10 Around este gratuit."
     },
     "bugTitle": "Raportează un bug",
     "bugIntro": "Ai găsit ceva stricat? Scrie la {{email}} cu:",
@@ -812,11 +812,11 @@
     "bugVersion": "Versiunea aplicației (Setări → Despre)",
     "bugScreenshot": "O captură de ecran dacă ai una",
     "reportTitle": "Raportează conținut inadecvat",
-    "reportBody": "MinyanNow are toleranță zero față de hărțuire, discurs de ură, minianim false sau conținut care vizează alți utilizatori. Într-un chat, atinge steagul unui mesaj pentru a-l raporta în aplicație. Poți scrie și la {{email}}. Rapoartele sunt examinate în 24 de ore și acționăm împotriva conturilor care încalcă <terms>termenii</terms> noștri.",
+    "reportBody": "10 Around are toleranță zero față de hărțuire, discurs de ură, minianim false sau conținut care vizează alți utilizatori. Într-un chat, atinge steagul unui mesaj pentru a-l raporta în aplicație. Poți scrie și la {{email}}. Rapoartele sunt examinate în 24 de ore și acționăm împotriva conturilor care încalcă <terms>termenii</terms> noștri.",
     "accountTitle": "Asistență cont și ștergere",
     "accountBody": "Poți șterge contul oricând din <settings>Setări → Șterge contul</settings>. Ștergerea este permanentă și elimină profilul, datele de prezență, token-urile push, istoricul de participare și apartenența la chat-uri. Dacă nu poți șterge din aplicație, scrie la {{email}} și vom procesa ștergerea manual."
   },
   "termsPage": {
-    "intro": "Termeni care reglementează utilizarea MinyanNow."
+    "intro": "Termeni care reglementează utilizarea 10 Around."
   }
 }

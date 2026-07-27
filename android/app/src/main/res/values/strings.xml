@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">MinyanNow</string>
-    <string name="title_activity_main">MinyanNow</string>
+    <string name="app_name">10 Around</string>
+    <string name="title_activity_main">10 Around</string>
     <string name="package_name">com.raphaelkalfon.minyannow</string>
     <string name="custom_url_scheme">com.raphaelkalfon.minyannow</string>
 </resources>
