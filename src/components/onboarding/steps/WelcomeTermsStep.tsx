@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
+import { MapPin } from "lucide-react";
 import { Logo, Wordmark } from "@/components/Logo";
 import { LegalDocSheet, type LegalDocKind } from "@/components/onboarding/LegalDocSheet";
 import { cn } from "@/lib/utils";
@@ -31,16 +32,24 @@ export function WelcomeTermsStep({ accepted, onAcceptedChange, onContinue }: Pro
           </h1>
           <p
             className="mt-3 text-sm max-w-xs mx-auto leading-relaxed"
-            style={{ color: BRAND_TEXT_SOFT }}
+            style={{ color: BRAND_TEXT }}
           >
-            {t("onboarding.tagline")}
+            <Trans i18nKey="splash.tagline" components={{ gold: <span style={{ color: BRAND_BLUE }} /> }} />
           </p>
-          <p className="mt-2 text-xs max-w-xs mx-auto" style={{ color: BRAND_TEXT_SOFT }}>
-            {t("onboarding.places")}
+          <p className="mt-1 text-xs max-w-xs mx-auto" style={{ color: BRAND_TEXT_SOFT }}>
+            {t("splash.places")}
           </p>
         </div>
 
-        <div className="flex-1" />
+        <div className="flex-1 flex items-center justify-center">
+          <div
+            className="flex items-center gap-2 text-[11px] tracking-[0.3em] uppercase"
+            style={{ color: BRAND_BLUE }}
+          >
+            <MapPin className="h-3 w-3" />
+            {t("splash.mission")}
+          </div>
+        </div>
 
         <label
           className={cn(
