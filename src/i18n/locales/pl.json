@@ -46,6 +46,8 @@
   },
   "auth": {
     "welcome": "Witamy w",
+    "welcomeTagline": "Jeszcze jeden krok i jesteś w środku.",
+    "welcomeSub": "Bez formularzy, bez czekania — zaakceptuj poniżej i gotowe.",
     "subtitle": "Zaloguj się, aby dołączyć do sieci minyanów na żywo w Twojej społeczności.",
     "continueApple": "Kontynuuj z Apple",
     "continueGoogle": "Kontynuuj z Google",

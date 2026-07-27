@@ -46,6 +46,8 @@
   },
   "auth": {
     "welcome": "Welcome to",
+    "welcomeTagline": "Just one quick step before you're in.",
+    "welcomeSub": "No forms. No waiting — accept below and go.",
     "subtitle": "Let's create your profile. This only takes a few seconds.",
     "continueApple": "Continue with Apple",
     "continueGoogle": "Continue with Google",

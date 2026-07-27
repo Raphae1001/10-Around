@@ -46,6 +46,8 @@
   },
   "auth": {
     "welcome": "Bun venit la",
+    "welcomeTagline": "Încă un pas rapid și ești înăuntru.",
+    "welcomeSub": "Fără formulare, fără așteptare — acceptă mai jos și gata.",
     "subtitle": "Conectează-te pentru a te alătura rețelei live de minyan a comunității tale.",
     "continueApple": "Continuă cu Apple",
     "continueGoogle": "Continuă cu Google",

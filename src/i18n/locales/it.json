@@ -46,6 +46,8 @@
   },
   "auth": {
     "welcome": "Benvenuto su",
+    "welcomeTagline": "Solo un ultimo passo prima di entrare.",
+    "welcomeSub": "Niente moduli, niente attese — accetta qui sotto e via.",
     "subtitle": "Accedi per unirti alla rete di minyanim della tua comunità.",
     "continueApple": "Continua con Apple",
     "continueGoogle": "Continua con Google",
