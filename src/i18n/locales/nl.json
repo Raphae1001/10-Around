@@ -3,7 +3,7 @@
     "home": "Thuis",
     "map": "Kaart",
     "planned": "Gepland",
-    "create": "Starten",
+    "create": "Nu",
     "profile": "Profiel"
   },
   "common": {
@@ -136,7 +136,9 @@
     "title": "Gepland",
     "subtitle": "Geplande minyanim en reizen naar het buitenland",
     "scheduledSection": "Geplande minyanim",
+    "scheduledHint": "Leg van tevoren een tijd en plaats vast.",
     "staySection": "Reizen naar het buitenland",
+    "travelHint": "Op reis? Laat het anderen weten en organiseer samen een minyan.",
     "addScheduled": "Plannen",
     "addStay": "Reis",
     "emptyScheduled": "Nog geen geplande minyanim.",

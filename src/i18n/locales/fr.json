@@ -3,7 +3,7 @@
     "home": "Accueil",
     "map": "Carte",
     "planned": "Planifié",
-    "create": "Créer",
+    "create": "Maintenant",
     "profile": "Profil"
   },
   "common": {
@@ -136,7 +136,9 @@
     "title": "Planifié",
     "subtitle": "Minyanim planifiés et séjours à l'étranger",
     "scheduledSection": "Minyanim planifiés",
+    "scheduledHint": "Fixe une heure et un lieu à l'avance.",
     "staySection": "Séjours à l'étranger",
+    "travelHint": "En voyage ? Préviens les autres et organisez un minyan ensemble.",
     "addScheduled": "Planifier",
     "addStay": "Séjour",
     "emptyScheduled": "Aucun minyan planifié pour l'instant.",

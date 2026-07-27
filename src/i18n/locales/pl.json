@@ -3,7 +3,7 @@
     "home": "Strona główna",
     "map": "Mapa",
     "planned": "Zaplanowane",
-    "create": "Utwórz",
+    "create": "Teraz",
     "profile": "Profil"
   },
   "common": {
@@ -136,7 +136,9 @@
     "title": "Zaplanowane",
     "subtitle": "Zaplanowane minjanim i wyjazdy za granicę",
     "scheduledSection": "Zaplanowane minjanim",
+    "scheduledHint": "Ustal godzinę i miejsce z wyprzedzeniem.",
     "staySection": "Wyjazdy za granicę",
+    "travelHint": "W podróży? Daj znać innym i zorganizujcie minjan razem.",
     "addScheduled": "Zaplanuj",
     "addStay": "Wyjazd",
     "emptyScheduled": "Brak zaplanowanych minjanim.",

@@ -3,7 +3,7 @@
     "home": "Acasă",
     "map": "Hartă",
     "planned": "Planificat",
-    "create": "Creează",
+    "create": "Acum",
     "profile": "Profil"
   },
   "common": {
@@ -136,7 +136,9 @@
     "title": "Planificat",
     "subtitle": "Minianim programate și călătorii în străinătate",
     "scheduledSection": "Minianim programate",
+    "scheduledHint": "Stabilește o oră și un loc în avans.",
     "staySection": "Călătorii în străinătate",
+    "travelHint": "Călătorești? Anunță-i pe ceilalți și organizați un minian împreună.",
     "addScheduled": "Planifică",
     "addStay": "Călătorie",
     "emptyScheduled": "Niciun minian programat încă.",

@@ -3,7 +3,7 @@
     "home": "Home",
     "map": "Mappa",
     "planned": "Programmato",
-    "create": "Crea",
+    "create": "Ora",
     "profile": "Profilo"
   },
   "common": {
@@ -136,7 +136,9 @@
     "title": "Programmato",
     "subtitle": "Minyanim programmati e viaggi all'estero",
     "scheduledSection": "Minyanim programmati",
+    "scheduledHint": "Fissa un orario e un luogo in anticipo.",
     "staySection": "Viaggi all'estero",
+    "travelHint": "In viaggio? Avvisa gli altri e organizzate un minian insieme.",
     "addScheduled": "Programma",
     "addStay": "Viaggio",
     "emptyScheduled": "Ancora nessun minyan programmato.",

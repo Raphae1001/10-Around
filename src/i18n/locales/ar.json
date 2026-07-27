@@ -3,7 +3,7 @@
     "home": "الرئيسية",
     "map": "الخريطة",
     "planned": "مخطط",
-    "create": "إنشاء",
+    "create": "الآن",
     "profile": "الملف الشخصي"
   },
   "common": {
@@ -136,7 +136,9 @@
     "title": "مخطط",
     "subtitle": "منانيم مجدولة ورحلات إلى الخارج",
     "scheduledSection": "منانيم مجدولة",
+    "scheduledHint": "حدد وقتًا ومكانًا مسبقًا.",
     "staySection": "رحلات إلى الخارج",
+    "travelHint": "مسافر؟ أخبر الآخرين ونظّموا منيان معًا.",
     "addScheduled": "خطّط",
     "addStay": "رحلة",
     "emptyScheduled": "لا توجد منانيم مجدولة بعد.",
