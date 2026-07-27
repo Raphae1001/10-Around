@@ -126,7 +126,7 @@ export function downloadIcs(opts: {
   const ics = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
-    "PRODID:-//MinyanNow//EN",
+    "PRODID:-//10 Around//EN",
     "BEGIN:VEVENT",
     `UID:${Date.now()}@minyannow`,
     `DTSTAMP:${fmt(new Date())}`,

@@ -93,7 +93,7 @@
     "createFab": "Iniciar um minyan aqui",
     "locationPrimer": {
       "title": "Veja quem está rezando por perto",
-      "body": "O MinyanNow usa sua localização para mostrar a presença da comunidade ao seu redor e ajudar você a iniciar um minyan exatamente onde está.",
+      "body": "O 10 Around usa sua localização para mostrar a presença da comunidade ao seu redor e ajudar você a iniciar um minyan exatamente onde está.",
       "privacy": "Sua posição exata nunca é armazenada — apenas uma área desfocada (~1 km) para contagem.",
       "allow": "Permitir localização",
       "later": "Agora não"
@@ -427,7 +427,7 @@
     "back": "Voltar ao minyan",
     "messageHeader": "URGENTE — Minyan precisa de participantes",
     "messageStatus": "Estado: 9/10 — Falta apenas mais 1 pessoa",
-    "messageCta": "Confirme presença instantaneamente via MinyanNow"
+    "messageCta": "Confirme presença instantaneamente via 10 Around"
   },
   "success": {
     "confirmed": "Minyan confirmado",
@@ -522,7 +522,7 @@
   "flight": {
     "title": "Coordenação de Voo",
     "question": "Há judeus no seu voo?",
-    "subtitle": "Insira o número do seu voo. Nós o conectaremos discretamente com outros membros do MinyanNow a bordo.",
+    "subtitle": "Insira o número do seu voo. Nós o conectaremos discretamente com outros membros do 10 Around a bordo.",
     "flightNumber": "Número do voo",
     "departs": "Parte em {{time}}",
     "matchFound": "Correspondência encontrada",
@@ -560,7 +560,7 @@
     "notFound": "Minyan não encontrado — pode ter terminado.",
     "expiresAt": "Fecha automaticamente às {{when}}",
     "whatsapp": "WhatsApp",
-    "shareText": "Participe do meu minyan no MinyanNow — {{prayer}} em {{address}} ({{when}}). Abrir: {{url}}",
+    "shareText": "Participe do meu minyan no 10 Around — {{prayer}} em {{address}} ({{when}}). Abrir: {{url}}",
     "cancelMinyan": "Cancelar este minyan",
     "cancelMinyanConfirm": "Cancelar este minyan para todos? Isso não pode ser desfeito.",
     "cancelledOk": "Minyan cancelado",
@@ -613,7 +613,7 @@
     "yourPlan": "O seu plano para o Shabat",
     "ratio": "{{done}}/{{total}} definido",
     "preConfirm": "Pré-confirmar",
-    "notice": "MinyanNow pausa todas as notificações em tempo real desde o acendimento das velas até à Havdalah. Coordene agora — descanse depois.",
+    "notice": "10 Around pausa todas as notificações em tempo real desde o acendimento das velas até à Havdalah. Coordene agora — descanse depois.",
     "preConfirmAll": "Pré-confirmar todos os restantes"
   },
   "siddur": {
@@ -723,7 +723,7 @@
     "presenceSaved": "Preferência de presença salva",
     "notifComingSoon": "A entrega push virá em uma atualização futura. As preferências são salvas localmente por enquanto.",
     "analytics": "Análises",
-    "analyticsHelp": "Ajude a melhorar o MinyanNow",
+    "analyticsHelp": "Ajude a melhorar o 10 Around",
     "analyticsDesc": "Estatísticas de uso anônimas. Sem dados pessoais.",
     "privacyPolicy": "Política de Privacidade",
     "termsOfService": "Termos de Serviço",
@@ -792,17 +792,17 @@
     "faqTitle": "Perguntas frequentes",
     "faq": {
       "notifQ": "Não estou recebendo notificações",
-      "notifA": "A entrega push ainda não está ativa — Configurações → Notificações explica que as preferências são salvas localmente para uma atualização futura. Quando o push estiver disponível, permita também as notificações do sistema para o MinyanNow no seu dispositivo.",
+      "notifA": "A entrega push ainda não está ativa — Configurações → Notificações explica que as preferências são salvas localmente para uma atualização futura. Quando o push estiver disponível, permita também as notificações do sistema para o 10 Around no seu dispositivo.",
       "nearbyQ": "Minyanim próximos não aparecem",
-      "nearbyA": "O MinyanNow precisa da sua localização para mostrar minyanim perto de você. Abra Configurações → Localização e permita o acesso „Durante o uso” do app.",
+      "nearbyA": "O 10 Around precisa da sua localização para mostrar minyanim perto de você. Abra Configurações → Localização e permita o acesso „Durante o uso” do app.",
       "langQ": "Como mudo o idioma?",
       "langA": "Abra Configurações → Idioma e escolha entre os idiomas suportados. A mudança é imediata.",
       "createQ": "Como crio um minyan?",
       "createA": "Toque no botão + na barra inferior, escolha uma oração, defina local e horário e toque em Criar. Outros usuários próximos verão imediatamente.",
       "cancelQ": "Posso cancelar um minyan que criei?",
       "cancelA": "Sim. Abra o minyan e toque em Cancelar. Minyanim agendados não podem ser cancelados menos de 20 minutos antes do início, para proteger quem entrou.",
-      "freeQ": "O MinyanNow é gratuito?",
-      "freeA": "Sim. O MinyanNow é gratuito."
+      "freeQ": "O 10 Around é gratuito?",
+      "freeA": "Sim. O 10 Around é gratuito."
     },
     "bugTitle": "Relatar um bug",
     "bugIntro": "Encontrou algo quebrado? Envie um e-mail para {{email}} com:",
@@ -812,11 +812,11 @@
     "bugVersion": "Versão do app (Configurações → Sobre)",
     "bugScreenshot": "Uma captura de tela se tiver",
     "reportTitle": "Denunciar conteúdo inadequado",
-    "reportBody": "O MinyanNow tem tolerância zero a assédio, discurso de ódio, minyanim falsos ou conteúdo que mira outros usuários. Em um chat, toque na bandeira de uma mensagem para denunciar no app. Você também pode enviar e-mail para {{email}}. As denúncias são analisadas em 24 horas e tomamos medidas contra contas que violam nossos <terms>termos</terms>.",
+    "reportBody": "O 10 Around tem tolerância zero a assédio, discurso de ódio, minyanim falsos ou conteúdo que mira outros usuários. Em um chat, toque na bandeira de uma mensagem para denunciar no app. Você também pode enviar e-mail para {{email}}. As denúncias são analisadas em 24 horas e tomamos medidas contra contas que violam nossos <terms>termos</terms>.",
     "accountTitle": "Ajuda com a conta e exclusão",
     "accountBody": "Você pode excluir sua conta a qualquer momento em <settings>Configurações → Excluir conta</settings>. A exclusão é permanente e remove seu perfil, dados de presença, tokens push, histórico de participação e associação a chats. Se não conseguir excluir pelo app, envie e-mail para {{email}} e processaremos a exclusão manualmente."
   },
   "termsPage": {
-    "intro": "Termos que regem o seu uso do MinyanNow."
+    "intro": "Termos que regem o seu uso do 10 Around."
   }
 }

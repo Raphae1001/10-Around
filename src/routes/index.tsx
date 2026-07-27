@@ -9,7 +9,7 @@ import { BRAND_BLUE, BRAND_TEXT, BRAND_TEXT_SOFT, BRAND_HALO, BRAND_SHADOW } fro
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "MinyanNow — Start a minyan, anywhere, right now" },
+      { title: "10 Around — Start a minyan, anywhere, right now" },
       {
         name: "description",
         content:

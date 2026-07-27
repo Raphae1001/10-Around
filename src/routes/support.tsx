@@ -8,14 +8,14 @@ import { SUPPORT_EMAIL } from "@/lib/support-email";
 export const Route = createFileRoute("/support")({
   head: () => ({
     meta: [
-      { title: "Support — MinyanNow" },
+      { title: "Support — 10 Around" },
       {
         name: "description",
         content:
-          "Get help with MinyanNow — FAQ, bug reports, content reports, and account assistance.",
+          "Get help with 10 Around — FAQ, bug reports, content reports, and account assistance.",
       },
-      { property: "og:title", content: "Support — MinyanNow" },
-      { property: "og:description", content: "Help and account assistance for MinyanNow." },
+      { property: "og:title", content: "Support — 10 Around" },
+      { property: "og:description", content: "Help and account assistance for 10 Around." },
     ],
   }),
   component: Support,

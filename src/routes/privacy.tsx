@@ -21,12 +21,12 @@ import { SUPPORT_EMAIL } from "@/lib/support-email";
 export const Route = createFileRoute("/privacy")({
   head: () => ({
     meta: [
-      { title: "Privacy Policy — MinyanNow" },
+      { title: "Privacy Policy — 10 Around" },
       {
         name: "description",
-        content: "MinyanNow privacy policy: what data we collect, how we use it, and your rights.",
+        content: "10 Around privacy policy: what data we collect, how we use it, and your rights.",
       },
-      { property: "og:title", content: "Privacy Policy — MinyanNow" },
+      { property: "og:title", content: "Privacy Policy — 10 Around" },
       {
         property: "og:description",
         content: "Transparent data practices for the global minyan network.",

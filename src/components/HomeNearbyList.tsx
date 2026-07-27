@@ -65,7 +65,7 @@ export function HomeNearbyList({ position, userId }: Props) {
       const start = pending.scheduled_at ? new Date(pending.scheduled_at) : new Date();
       downloadIcs({
         title: `Minyan · ${pending.prayer}`,
-        description: pending.message ?? "Minyan via MinyanNow",
+        description: pending.message ?? "Minyan via 10 Around",
         location: pending.address ?? undefined,
         start,
         durationMinutes: 20,

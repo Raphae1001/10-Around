@@ -93,7 +93,7 @@
     "createFab": "Start hier een minyan",
     "locationPrimer": {
       "title": "Zie wie er in de buurt bidt",
-      "body": "MinyanNow gebruikt je locatie om community-aanwezigheid om je heen te tonen en je te helpen een minyan te starten precies waar je staat.",
+      "body": "10 Around gebruikt je locatie om community-aanwezigheid om je heen te tonen en je te helpen een minyan te starten precies waar je staat.",
       "privacy": "Je exacte positie wordt nooit opgeslagen — alleen een vervaagd gebied (~1 km) voor telling.",
       "allow": "Locatie toestaan",
       "later": "Niet nu"
@@ -427,7 +427,7 @@
     "back": "Terug naar minyan",
     "messageHeader": "URGENT — Minyan heeft deelnemers nodig",
     "messageStatus": "Status: 9/10 — Nog maar 1 persoon nodig",
-    "messageCta": "Bevestig aanwezigheid direct via MinyanNow"
+    "messageCta": "Bevestig aanwezigheid direct via 10 Around"
   },
   "success": {
     "confirmed": "Minyan bevestigd",
@@ -522,7 +522,7 @@
   "flight": {
     "title": "Vluchtcoördinatie",
     "question": "Zijn er Joden op jouw vlucht?",
-    "subtitle": "Voer je vluchtnummer in. We verbinden je discreet met andere MinyanNow-leden aan boord.",
+    "subtitle": "Voer je vluchtnummer in. We verbinden je discreet met andere 10 Around-leden aan boord.",
     "flightNumber": "Vluchtnummer",
     "departs": "Vertrekt over {{time}}",
     "matchFound": "Match gevonden",
@@ -560,7 +560,7 @@
     "notFound": "Minyan niet gevonden — hij is mogelijk beëindigd.",
     "expiresAt": "Sluit automatisch om {{when}}",
     "whatsapp": "WhatsApp",
-    "shareText": "Doe mee aan mijn minyan op MinyanNow — {{prayer}} bij {{address}} ({{when}}). Open: {{url}}",
+    "shareText": "Doe mee aan mijn minyan op 10 Around — {{prayer}} bij {{address}} ({{when}}). Open: {{url}}",
     "cancelMinyan": "Deze minyan annuleren",
     "cancelMinyanConfirm": "Deze minyan voor iedereen annuleren? Dit kan niet ongedaan worden gemaakt.",
     "cancelledOk": "Minyan geannuleerd",
@@ -613,7 +613,7 @@
     "yourPlan": "Jouw Sjabbat-plan",
     "ratio": "{{done}}/{{total}} ingesteld",
     "preConfirm": "Vooraf bevestigen",
-    "notice": "MinyanNow pauzeert alle real-time meldingen van het aansteken van de kaarsen tot Havdalah. Coördineer nu — rust dan.",
+    "notice": "10 Around pauzeert alle real-time meldingen van het aansteken van de kaarsen tot Havdalah. Coördineer nu — rust dan.",
     "preConfirmAll": "Bevestig alle overige vooraf"
   },
   "siddur": {
@@ -723,7 +723,7 @@
     "presenceSaved": "Aanwezigheidsvoorkeur opgeslagen",
     "notifComingSoon": "Pushbezorging komt in een toekomstige update. Voorkeuren worden voorlopig lokaal opgeslagen.",
     "analytics": "Analytics",
-    "analyticsHelp": "Help MinyanNow te verbeteren",
+    "analyticsHelp": "Help 10 Around te verbeteren",
     "analyticsDesc": "Anonieme gebruiksstatistieken. Geen persoonlijke gegevens.",
     "privacyPolicy": "Privacybeleid",
     "termsOfService": "Gebruiksvoorwaarden",
@@ -792,17 +792,17 @@
     "faqTitle": "Veelgestelde vragen",
     "faq": {
       "notifQ": "Ik ontvang geen meldingen",
-      "notifA": "Pushbezorging is nog niet live — Instellingen → Meldingen legt uit dat voorkeuren lokaal worden opgeslagen voor een toekomstige update. Wanneer push beschikbaar is, sta ook systeemmeldingen toe voor MinyanNow op je apparaat.",
+      "notifA": "Pushbezorging is nog niet live — Instellingen → Meldingen legt uit dat voorkeuren lokaal worden opgeslagen voor een toekomstige update. Wanneer push beschikbaar is, sta ook systeemmeldingen toe voor 10 Around op je apparaat.",
       "nearbyQ": "Minyanim in de buurt worden niet getoond",
-      "nearbyA": "MinyanNow heeft je locatie nodig om minyanim bij jou in de buurt te tonen. Open Instellingen → Locatie en sta toegang toe „Tijdens gebruik” van de app.",
+      "nearbyA": "10 Around heeft je locatie nodig om minyanim bij jou in de buurt te tonen. Open Instellingen → Locatie en sta toegang toe „Tijdens gebruik” van de app.",
       "langQ": "Hoe wijzig ik de taal?",
       "langA": "Open Instellingen → Taal en kies uit de ondersteunde talen. De wijziging is direct.",
       "createQ": "Hoe maak ik een minyan?",
       "createA": "Tik op de + knop in de onderste navigatie, kies een gebed, stel locatie en tijd in, en tik op Maken. Andere gebruikers in de buurt zien het meteen.",
       "cancelQ": "Kan ik een minyan die ik heb gemaakt annuleren?",
       "cancelA": "Ja. Open de minyan, tik op Annuleren. Geplande minyanim kunnen niet minder dan 20 minuten voor start worden geannuleerd om deelnemers te beschermen.",
-      "freeQ": "Is MinyanNow gratis?",
-      "freeA": "Ja. MinyanNow is gratis te gebruiken."
+      "freeQ": "Is 10 Around gratis?",
+      "freeA": "Ja. 10 Around is gratis te gebruiken."
     },
     "bugTitle": "Een bug melden",
     "bugIntro": "Iets kapot gevonden? Mail {{email}} met:",
@@ -812,11 +812,11 @@
     "bugVersion": "Appversie (Instellingen → Info)",
     "bugScreenshot": "Een screenshot als je die hebt",
     "reportTitle": "Ongepaste inhoud melden",
-    "reportBody": "MinyanNow tolereert geen intimidatie, haatzaaien, nepminyanim of inhoud die andere gebruikers treft. Tik in een chat op de vlag bij een bericht om het in de app te melden. Je kunt ook mailen naar {{email}}. Meldingen worden binnen 24 uur bekeken en we ondernemen actie tegen accounts die onze <terms>voorwaarden</terms> schenden.",
+    "reportBody": "10 Around tolereert geen intimidatie, haatzaaien, nepminyanim of inhoud die andere gebruikers treft. Tik in een chat op de vlag bij een bericht om het in de app te melden. Je kunt ook mailen naar {{email}}. Meldingen worden binnen 24 uur bekeken en we ondernemen actie tegen accounts die onze <terms>voorwaarden</terms> schenden.",
     "accountTitle": "Accountassistentie & verwijdering",
     "accountBody": "Je kunt je account op elk moment verwijderen via <settings>Instellingen → Account verwijderen</settings>. Verwijdering is permanent en verwijdert je profiel, aanwezigheidsgegevens, push-tokens, deelnamegeschiedenis en chatlidmaatschap. Kun je niet vanuit de app verwijderen, mail dan {{email}} en we verwerken de verwijdering handmatig."
   },
   "termsPage": {
-    "intro": "Voorwaarden die je gebruik van MinyanNow regelen."
+    "intro": "Voorwaarden die je gebruik van 10 Around regelen."
   }
 }

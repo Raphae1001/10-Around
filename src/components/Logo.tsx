@@ -15,7 +15,7 @@ export function Logo({ size = 56 }: { size?: number }) {
     >
       <img
         src="/logo/logo-10.png"
-        alt="MinyanNow"
+        alt="10 Around"
         width={size}
         height={size}
         className="h-full w-full object-cover"
@@ -44,7 +44,7 @@ export function Wordmark({
       className={`font-serif-brand font-medium tracking-tight ${className}`}
       style={{ ...(legacyFont ? { fontFamily: "var(--font-display)" } : {}), ...style }}
     >
-      MinyanNow
+      10 Around
     </span>
   );
 }
