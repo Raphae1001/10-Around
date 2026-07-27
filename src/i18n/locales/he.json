@@ -46,6 +46,8 @@
   },
   "auth": {
     "welcome": "ברוכים הבאים ל",
+    "welcomeTagline": "עוד צעד קטן אחד ואתה בפנים.",
+    "welcomeSub": "בלי טפסים, בלי המתנה — אשר למטה וזהו.",
     "subtitle": "התחבר כדי להצטרף לרשת המניינים החיה של הקהילה שלך.",
     "continueApple": "המשך עם Apple",
     "continueGoogle": "המשך עם Google",

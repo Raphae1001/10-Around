@@ -34,10 +34,10 @@ export function WelcomeTermsStep({ accepted, onAcceptedChange, onContinue }: Pro
             className="mt-3 text-sm max-w-xs mx-auto leading-relaxed"
             style={{ color: BRAND_TEXT }}
           >
-            <Trans i18nKey="splash.tagline" components={{ gold: <span style={{ color: BRAND_BLUE }} /> }} />
+            {t("auth.welcomeTagline")}
           </p>
           <p className="mt-1 text-xs max-w-xs mx-auto" style={{ color: BRAND_TEXT_SOFT }}>
-            {t("splash.places")}
+            {t("auth.welcomeSub")}
           </p>
         </div>
 

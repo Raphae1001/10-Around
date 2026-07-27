@@ -46,6 +46,8 @@
   },
   "auth": {
     "welcome": "Bienvenido a",
+    "welcomeTagline": "Solo un paso rápido y estás dentro.",
+    "welcomeSub": "Sin formularios, sin esperas — acepta abajo y listo.",
     "subtitle": "Inicia sesión para unirte a la red en vivo de minyanim de tu comunidad.",
     "continueApple": "Continuar con Apple",
     "continueGoogle": "Continuar con Google",

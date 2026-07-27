@@ -46,6 +46,8 @@
   },
   "auth": {
     "welcome": "Bienvenue sur",
+    "welcomeTagline": "Encore une petite étape avant d'y être.",
+    "welcomeSub": "Pas de formulaire, pas d'attente — accepte ci-dessous et c'est parti.",
     "subtitle": "Connecte-toi pour rejoindre le réseau live des minyanim de ta communauté.",
     "continueApple": "Continuer avec Apple",
     "continueGoogle": "Continuer avec Google",

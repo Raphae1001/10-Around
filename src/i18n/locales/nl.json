@@ -46,6 +46,8 @@
   },
   "auth": {
     "welcome": "Welkom bij",
+    "welcomeTagline": "Nog één korte stap en je bent erbij.",
+    "welcomeSub": "Geen formulieren, geen wachttijd — accepteer hieronder en ga.",
     "subtitle": "Log in om deel te nemen aan het live minyan-netwerk van je gemeenschap.",
     "continueApple": "Ga door met Apple",
     "continueGoogle": "Ga door met Google",

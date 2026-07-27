@@ -46,6 +46,8 @@
   },
   "auth": {
     "welcome": "Bem-vindo(a) a",
+    "welcomeTagline": "Só mais um passo rápido antes de entrar.",
+    "welcomeSub": "Sem formulários, sem espera — aceite abaixo e pronto.",
     "subtitle": "Faça login para se juntar à rede de minyan ao vivo da sua comunidade.",
     "continueApple": "Continuar com Apple",
     "continueGoogle": "Continuar com Google",
