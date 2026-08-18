@@ -2,11 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<!-- aps-environment intentionally omitted for now — Push Notifications
-	     requires a paid Apple Developer account (see commit
-	     b15372d "Unlink push entitlements..."); re-add it alongside
-	     re-linking CODE_SIGN_ENTITLEMENTS once that's active. Associated
-	     Domains has no such restriction, so it's safe to enable now. -->
+	<key>aps-environment</key>
+	<string>development</string>
 	<key>com.apple.developer.associated-domains</key>
 	<array>
 		<string>applinks:minyan-now-18mb.vercel.app</string>
