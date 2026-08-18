@@ -339,6 +339,8 @@
     "backupUpdateError": "Не вдалося оновити режим підтримки",
     "trustReliability": "Довіра та надійність",
     "trustSub": "Ваш 98% показник присутності зміцнює громаду",
+    "zmanim": "Зманім",
+    "zmanimSub": "Галахічні часи для вашого місця",
     "recent": "Недавня участь",
     "noHistory": "Ще немає міньянів — ваша історія з'явиться тут.",
     "stats": {
@@ -820,5 +822,28 @@
   },
   "termsPage": {
     "intro": "Умови, що регулюють використання 10 Around."
+  },
+  "zmanim": {
+    "title": "Зманім",
+    "subtitle": "Галахічні часи молитов для вашого місця",
+    "needLocation": "Увімкніть геолокацію, щоб побачити сьогоднішні зманім.",
+    "enableLocation": "Увімкнути геолокацію",
+    "saved": "Збережено",
+    "sepharadeNote": "Сефардський варіант зараз використовує той самий розрахунок сходу/заходу сонця, що й ашкеназький — єдиного кодифікованого open source методу для сефардських равинів не існує.",
+    "alotHashachar": "Alot Hashachar",
+    "netzHachama": "Netz Hachama",
+    "sofZmanShema": "Sof Zman Shema",
+    "sofZmanTefila": "Sof Zman Tefila",
+    "chatzot": "Chatzot",
+    "minchaGedola": "Mincha Gedola",
+    "minchaKetana": "Mincha Ketana",
+    "plagHamincha": "Plag Hamincha",
+    "shkiatHachama": "Shkiat Hachama",
+    "tzeitHakochavim": "Tzeit Hakochavim",
+    "opinion": {
+      "ashkenaze": "Ашкеназький",
+      "sepharade": "Сефардський",
+      "habad": "Хабад"
+    }
   }
 }

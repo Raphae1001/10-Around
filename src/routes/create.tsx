@@ -20,7 +20,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useGeolocation } from "@/hooks/use-geolocation";
 import { supabase } from "@/integrations/supabase/client";
 import { reverseGeocode } from "@/lib/geocoding";
-import { currentPrayerWindow } from "@/lib/sun";
+import { currentPrayerWindowZmanim, type ZmanimOpinion } from "@/lib/zmanim";
 import { notifyNearbyMinyan } from "@/lib/notify-nearby";
 import { AddressAutocomplete, type AddressPick } from "@/components/AddressAutocomplete";
 
@@ -76,6 +76,20 @@ function Create() {
   // True until the user taps a prayer button themselves or repeats a past
   // minyan — keeps the GPS-driven auto-pick from clobbering their choice.
   const [prayerAuto, setPrayerAuto] = useState(true);
+  const [zmanimOpinion, setZmanimOpinion] = useState<ZmanimOpinion>("ashkenaze");
+
+  useEffect(() => {
+    if (!user) return;
+    void supabase
+      .rpc("get_my_profile")
+      .then(({ data }) => {
+        const row = Array.isArray(data) ? data[0] : data;
+        const saved = row?.zmanim_opinion as ZmanimOpinion | undefined;
+        if (saved === "ashkenaze" || saved === "sepharade" || saved === "habad") {
+          setZmanimOpinion(saved);
+        }
+      });
+  }, [user]);
 
   useEffect(() => {
     if (!user) return;
@@ -107,9 +121,9 @@ function Create() {
 
   useEffect(() => {
     if (!position || !prayerAuto) return;
-    const window = currentPrayerWindow(position.lat, position.lng);
+    const window = currentPrayerWindowZmanim(position.lat, position.lng, zmanimOpinion);
     setPrayer(PRAYER_DISPLAY[window]);
-  }, [position, prayerAuto]);
+  }, [position, prayerAuto, zmanimOpinion]);
 
   useEffect(() => {
     if (from === "map") void requestGeo();

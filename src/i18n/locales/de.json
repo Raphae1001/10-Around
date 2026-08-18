@@ -339,6 +339,8 @@
     "backupUpdateError": "Backup-Modus konnte nicht aktualisiert werden",
     "trustReliability": "Vertrauen & Zuverlässigkeit",
     "trustSub": "Deine 98%ige Anwesenheitsquote stärkt die Community",
+    "zmanim": "Zmanim",
+    "zmanimSub": "Halachische Zeiten für deinen Standort",
     "recent": "Letzte Teilnahmen",
     "noHistory": "Noch keine Minyanim – dein Verlauf wird hier erscheinen.",
     "stats": {
@@ -820,5 +822,28 @@
   },
   "termsPage": {
     "intro": "Bedingungen für deine Nutzung von 10 Around."
+  },
+  "zmanim": {
+    "title": "Zmanim",
+    "subtitle": "Halachische Gebetszeiten für deinen Standort",
+    "needLocation": "Aktiviere den Standort, um die heutigen Zmanim zu sehen.",
+    "enableLocation": "Standort aktivieren",
+    "saved": "Gespeichert",
+    "sepharadeNote": "Sephardisch verwendet derzeit dieselbe Sonnenauf-/-untergangsberechnung wie Aschkenasisch — es gibt keine einzige kodifizierte Open-Source-Methode für sephardische Poskim.",
+    "alotHashachar": "Alot Hashachar",
+    "netzHachama": "Netz Hachama",
+    "sofZmanShema": "Sof Zman Shema",
+    "sofZmanTefila": "Sof Zman Tefila",
+    "chatzot": "Chatzot",
+    "minchaGedola": "Mincha Gedola",
+    "minchaKetana": "Mincha Ketana",
+    "plagHamincha": "Plag Hamincha",
+    "shkiatHachama": "Shkiat Hachama",
+    "tzeitHakochavim": "Tzeit Hakochavim",
+    "opinion": {
+      "ashkenaze": "Aschkenasisch",
+      "sepharade": "Sephardisch",
+      "habad": "Chabad"
+    }
   }
 }

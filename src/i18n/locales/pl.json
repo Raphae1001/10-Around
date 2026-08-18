@@ -339,6 +339,8 @@
     "backupUpdateError": "Nie można zaktualizować trybu rezerwowego",
     "trustReliability": "Zaufanie i Niezawodność",
     "trustSub": "Twoja 98% frekwencja utrzymuje siłę społeczności",
+    "zmanim": "Zmanim",
+    "zmanimSub": "Czasy halachiczne dla Twojej lokalizacji",
     "recent": "Ostatnia aktywność",
     "noHistory": "Jeszcze brak minyanów — Twoja historia pojawi się tutaj.",
     "stats": {
@@ -820,5 +822,28 @@
   },
   "termsPage": {
     "intro": "Warunki regulujące korzystanie z 10 Around."
+  },
+  "zmanim": {
+    "title": "Zmanim",
+    "subtitle": "Halachiczne czasy modlitw dla Twojej lokalizacji",
+    "needLocation": "Włącz lokalizację, aby zobaczyć dzisiejsze zmanim.",
+    "enableLocation": "Włącz lokalizację",
+    "saved": "Zapisano",
+    "sepharadeNote": "Sefardyjski używa obecnie tego samego obliczenia wschodu/zachodu słońca co Aszkenazyjski — nie istnieje jedna skodyfikowana metoda open source dla sefardyjskich poskim.",
+    "alotHashachar": "Alot Hashachar",
+    "netzHachama": "Netz Hachama",
+    "sofZmanShema": "Sof Zman Shema",
+    "sofZmanTefila": "Sof Zman Tefila",
+    "chatzot": "Chatzot",
+    "minchaGedola": "Mincha Gedola",
+    "minchaKetana": "Mincha Ketana",
+    "plagHamincha": "Plag Hamincha",
+    "shkiatHachama": "Shkiat Hachama",
+    "tzeitHakochavim": "Tzeit Hakochavim",
+    "opinion": {
+      "ashkenaze": "Aszkenazyjski",
+      "sepharade": "Sefardyjski",
+      "habad": "Chabad"
+    }
   }
 }

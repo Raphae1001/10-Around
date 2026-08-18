@@ -11,6 +11,7 @@ import {
   Settings,
   ChevronRight,
   Shield,
+  Clock,
   CalendarCheck,
   LogOut,
   MessageCircle,
@@ -314,6 +315,12 @@ function Profile() {
             label={t("profile.trustReliability")}
             sub={t("profile.trustSub")}
             icon={Shield}
+          />
+          <NavRow
+            to="/zmanim"
+            label={t("profile.zmanim")}
+            sub={t("profile.zmanimSub")}
+            icon={Clock}
           />
           <NavRow
             to="/chats"

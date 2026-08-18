@@ -339,6 +339,8 @@
     "backupUpdateError": "קען נישט דערהייַנטיקן רעזערוו מאָדע",
     "trustReliability": "צוטרוי & פֿאַרלעסלעכקייט",
     "trustSub": "אײַער 98% אָנוועזנהייט-ראַטע האַלט די קהילה שטאַרק",
+    "zmanim": "זמנים",
+    "zmanimSub": "הלכה-זמנים פֿאַר דײַן אָרט",
     "recent": "לעצטע אָנטייל",
     "noHistory": "נאָך קיין מנינים נישט — אײַער געשיכטע וועט דאָ באַווייזן.",
     "stats": {
@@ -820,5 +822,28 @@
   },
   "termsPage": {
     "intro": "תנאים וואָס רעגולירן אײַער ניצן פֿון 10 Around."
+  },
+  "zmanim": {
+    "title": "זמנים",
+    "subtitle": "הלכה תפילה-זמנים פֿאַר דײַן אָרט",
+    "needLocation": "שאַלט אָן מיקום צו זען הײַנטיקע זמנים.",
+    "enableLocation": "אָנשאַלטן מיקום",
+    "saved": "אָפּגעהיט",
+    "sepharadeNote": "ספֿרד ניצט איצט דעם זעלבן זונאויפֿגאַנג/זונפֿאַרגאַנג־רעכענונג ווי אַשכּנז — קיין איין קאָדירטע אָפֿן-מקור מעטאָד עקזיסטירט נישט פֿאַר ספֿרדישע פּוסקים.",
+    "alotHashachar": "Alot Hashachar",
+    "netzHachama": "Netz Hachama",
+    "sofZmanShema": "Sof Zman Shema",
+    "sofZmanTefila": "Sof Zman Tefila",
+    "chatzot": "Chatzot",
+    "minchaGedola": "Mincha Gedola",
+    "minchaKetana": "Mincha Ketana",
+    "plagHamincha": "Plag Hamincha",
+    "shkiatHachama": "Shkiat Hachama",
+    "tzeitHakochavim": "Tzeit Hakochavim",
+    "opinion": {
+      "ashkenaze": "אַשכּנז",
+      "sepharade": "ספֿרד",
+      "habad": "חב״ד"
+    }
   }
 }
