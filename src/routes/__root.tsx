@@ -18,6 +18,8 @@ import "@/i18n";
 import { applySavedLang } from "@/i18n";
 import { initTheme } from "@/hooks/use-theme";
 import { initDeepLinkHandler } from "@/lib/deep-links";
+import { syncPushRegistration } from "@/lib/push-sync";
+import { useAuth } from "@/hooks/use-auth";
 
 // Apply saved theme synchronously before first paint to avoid flash
 if (typeof window !== "undefined") initTheme();
@@ -168,10 +170,23 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
+  const { user } = useAuth();
   useEffect(() => {
     applySavedLang();
   }, []);
   useEffect(() => initDeepLinkHandler(router), [router]);
+  // Push registration for any already-authenticated session (returning
+  // users, re-logins) — the onboarding primer flow (auth.tsx) still handles
+  // brand-new signups on its own; this covers everyone else. Keyed on the
+  // user id specifically so it only re-runs on an actual account change,
+  // not on unrelated re-renders.
+  useEffect(() => {
+    if (user) void syncPushRegistration(user.id);
+    // Intentionally keyed on the id only (not the user object reference)
+    // below, so this doesn't re-fire on unrelated session refreshes for
+    // the same account.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id]);
   useEffect(() => {
     // Fire-and-forget analytics page_view on every route change. No-ops
     // when analytics is disabled or not configured. Lazy-imported so the
