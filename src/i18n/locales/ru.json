@@ -339,6 +339,8 @@
     "backupUpdateError": "Не удалось обновить режим подстраховки",
     "trustReliability": "Доверие и надежность",
     "trustSub": "Ваш 98% показатель явки укрепляет сообщество",
+    "zmanim": "Зманим",
+    "zmanimSub": "Галахические времена для вашего местоположения",
     "recent": "Недавнее участие",
     "noHistory": "Пока нет миньянов — ваша история появится здесь.",
     "stats": {
@@ -820,5 +822,28 @@
   },
   "termsPage": {
     "intro": "Условия, регулирующие использование 10 Around."
+  },
+  "zmanim": {
+    "title": "Зманим",
+    "subtitle": "Галахические времена молитв для вашего местоположения",
+    "needLocation": "Включите геолокацию, чтобы увидеть сегодняшние зманим.",
+    "enableLocation": "Включить геолокацию",
+    "saved": "Сохранено",
+    "sepharadeNote": "Сефардский вариант сейчас использует тот же расчёт восхода/заката, что и ашкеназский — единого кодифицированного open source метода для сефардских раввинов не существует.",
+    "alotHashachar": "Alot Hashachar",
+    "netzHachama": "Netz Hachama",
+    "sofZmanShema": "Sof Zman Shema",
+    "sofZmanTefila": "Sof Zman Tefila",
+    "chatzot": "Chatzot",
+    "minchaGedola": "Mincha Gedola",
+    "minchaKetana": "Mincha Ketana",
+    "plagHamincha": "Plag Hamincha",
+    "shkiatHachama": "Shkiat Hachama",
+    "tzeitHakochavim": "Tzeit Hakochavim",
+    "opinion": {
+      "ashkenaze": "Ашкеназский",
+      "sepharade": "Сефардский",
+      "habad": "Хабад"
+    }
   }
 }

@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ZmanimRouteImport } from './routes/zmanim'
 import { Route as TrustRouteImport } from './routes/trust'
 import { Route as TravelerRouteImport } from './routes/traveler'
 import { Route as TravelRouteImport } from './routes/travel'
@@ -43,6 +44,11 @@ import { Route as TravelCityCityKeyRouteImport } from './routes/travel-city.$cit
 import { Route as MinyanIdRouteImport } from './routes/minyan_.$id'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
 
+const ZmanimRoute = ZmanimRouteImport.update({
+  id: '/zmanim',
+  path: '/zmanim',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TrustRoute = TrustRouteImport.update({
   id: '/trust',
   path: '/trust',
@@ -240,6 +246,7 @@ export interface FileRoutesByFullPath {
   '/travel': typeof TravelRoute
   '/traveler': typeof TravelerRoute
   '/trust': typeof TrustRoute
+  '/zmanim': typeof ZmanimRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/minyan/$id': typeof MinyanIdRoute
   '/travel-city/$cityKey': typeof TravelCityCityKeyRoute
@@ -275,6 +282,7 @@ export interface FileRoutesByTo {
   '/travel': typeof TravelRoute
   '/traveler': typeof TravelerRoute
   '/trust': typeof TrustRoute
+  '/zmanim': typeof ZmanimRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/minyan/$id': typeof MinyanIdRoute
   '/travel-city/$cityKey': typeof TravelCityCityKeyRoute
@@ -311,6 +319,7 @@ export interface FileRoutesById {
   '/travel': typeof TravelRoute
   '/traveler': typeof TravelerRoute
   '/trust': typeof TrustRoute
+  '/zmanim': typeof ZmanimRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/minyan_/$id': typeof MinyanIdRoute
   '/travel-city/$cityKey': typeof TravelCityCityKeyRoute
@@ -348,6 +357,7 @@ export interface FileRouteTypes {
     | '/travel'
     | '/traveler'
     | '/trust'
+    | '/zmanim'
     | '/auth/callback'
     | '/minyan/$id'
     | '/travel-city/$cityKey'
@@ -383,6 +393,7 @@ export interface FileRouteTypes {
     | '/travel'
     | '/traveler'
     | '/trust'
+    | '/zmanim'
     | '/auth/callback'
     | '/minyan/$id'
     | '/travel-city/$cityKey'
@@ -418,6 +429,7 @@ export interface FileRouteTypes {
     | '/travel'
     | '/traveler'
     | '/trust'
+    | '/zmanim'
     | '/auth/callback'
     | '/minyan_/$id'
     | '/travel-city/$cityKey'
@@ -454,12 +466,20 @@ export interface RootRouteChildren {
   TravelRoute: typeof TravelRoute
   TravelerRoute: typeof TravelerRoute
   TrustRoute: typeof TrustRoute
+  ZmanimRoute: typeof ZmanimRoute
   MinyanIdRoute: typeof MinyanIdRoute
   TravelCityCityKeyRoute: typeof TravelCityCityKeyRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/zmanim': {
+      id: '/zmanim'
+      path: '/zmanim'
+      fullPath: '/zmanim'
+      preLoaderRoute: typeof ZmanimRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/trust': {
       id: '/trust'
       path: '/trust'
@@ -735,6 +755,7 @@ const rootRouteChildren: RootRouteChildren = {
   TravelRoute: TravelRoute,
   TravelerRoute: TravelerRoute,
   TrustRoute: TrustRoute,
+  ZmanimRoute: ZmanimRoute,
   MinyanIdRoute: MinyanIdRoute,
   TravelCityCityKeyRoute: TravelCityCityKeyRoute,
 }

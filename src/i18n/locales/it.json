@@ -339,6 +339,8 @@
     "backupUpdateError": "Impossibile aggiornare la modalità backup",
     "trustReliability": "Fiducia e Affidabilità",
     "trustSub": "Il tuo tasso di presenza del 98% mantiene forte la comunità",
+    "zmanim": "Zmanim",
+    "zmanimSub": "Orari halachici per la tua posizione",
     "recent": "Partecipazione recente",
     "noHistory": "Nessun minyan ancora — la tua cronologia apparirà qui.",
     "stats": {
@@ -820,5 +822,28 @@
   },
   "termsPage": {
     "intro": "Termini che regolano il tuo utilizzo di 10 Around."
+  },
+  "zmanim": {
+    "title": "Zmanim",
+    "subtitle": "Orari di preghiera halachici per la tua posizione",
+    "needLocation": "Attiva la posizione per vedere gli zmanim di oggi.",
+    "enableLocation": "Attiva posizione",
+    "saved": "Salvato",
+    "sepharadeNote": "Sefardita attualmente usa lo stesso calcolo alba/tramonto di Ashkenazita — non esiste un unico metodo open source codificato per i posekim sefarditi.",
+    "alotHashachar": "Alot Hashachar",
+    "netzHachama": "Netz Hachama",
+    "sofZmanShema": "Sof Zman Shema",
+    "sofZmanTefila": "Sof Zman Tefila",
+    "chatzot": "Chatzot",
+    "minchaGedola": "Mincha Gedola",
+    "minchaKetana": "Mincha Ketana",
+    "plagHamincha": "Plag Hamincha",
+    "shkiatHachama": "Shkiat Hachama",
+    "tzeitHakochavim": "Tzeit Hakochavim",
+    "opinion": {
+      "ashkenaze": "Ashkenazita",
+      "sepharade": "Sefardita",
+      "habad": "Habad"
+    }
   }
 }

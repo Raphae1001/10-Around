@@ -339,6 +339,8 @@
     "backupUpdateError": "No se pudo actualizar el modo refuerzo",
     "trustReliability": "Confianza y fiabilidad",
     "trustSub": "Tu tasa de asistencia del 98% fortalece la comunidad",
+    "zmanim": "Zmanim",
+    "zmanimSub": "Horarios halájicos para tu ubicación",
     "recent": "Participación reciente",
     "noHistory": "Aún no hay minyanim — tu historial aparecerá aquí.",
     "stats": {
@@ -820,5 +822,28 @@
   },
   "termsPage": {
     "intro": "Términos que rigen tu uso de 10 Around."
+  },
+  "zmanim": {
+    "title": "Zmanim",
+    "subtitle": "Horarios de oración halájicos para tu ubicación",
+    "needLocation": "Activa la ubicación para ver los zmanim de hoy.",
+    "enableLocation": "Activar ubicación",
+    "saved": "Guardado",
+    "sepharadeNote": "Sefardí usa actualmente el mismo cálculo de amanecer/atardecer que Asquenazí — no existe un método open source codificado único para los posekim sefardíes.",
+    "alotHashachar": "Alot Hashachar",
+    "netzHachama": "Netz Hachama",
+    "sofZmanShema": "Sof Zman Shema",
+    "sofZmanTefila": "Sof Zman Tefila",
+    "chatzot": "Chatzot",
+    "minchaGedola": "Mincha Gedola",
+    "minchaKetana": "Mincha Ketana",
+    "plagHamincha": "Plag Hamincha",
+    "shkiatHachama": "Shkiat Hachama",
+    "tzeitHakochavim": "Tzeit Hakochavim",
+    "opinion": {
+      "ashkenaze": "Asquenazí",
+      "sepharade": "Sefardí",
+      "habad": "Habad"
+    }
   }
 }

@@ -337,6 +337,8 @@
     "backupUpdateError": "Impossible de mettre à jour le mode renfort",
     "trustReliability": "Confiance & fiabilité",
     "trustSub": "Ton taux de présence de 98% renforce la communauté",
+    "zmanim": "Zmanim",
+    "zmanimSub": "Heures halakhiques pour ta position",
     "recent": "Participation récente",
     "noHistory": "Aucun minyan pour l'instant — ton historique apparaîtra ici.",
     "stats": {
@@ -818,5 +820,28 @@
   },
   "termsPage": {
     "intro": "Conditions régissant ton utilisation de 10 Around."
+  },
+  "zmanim": {
+    "title": "Zmanim",
+    "subtitle": "Heures de prière halakhiques pour ta position",
+    "needLocation": "Active la localisation pour voir les zmanim du jour.",
+    "enableLocation": "Activer la localisation",
+    "saved": "Enregistré",
+    "sepharadeNote": "Séfarade utilise actuellement le même calcul lever/coucher qu'Achkénaze — aucune méthode open source codifiée n'existe pour les décisionnaires séfarades.",
+    "alotHashachar": "Alot Hashachar",
+    "netzHachama": "Netz Hachama",
+    "sofZmanShema": "Sof Zman Shema",
+    "sofZmanTefila": "Sof Zman Tefila",
+    "chatzot": "Chatzot",
+    "minchaGedola": "Mincha Gedola",
+    "minchaKetana": "Mincha Ketana",
+    "plagHamincha": "Plag Hamincha",
+    "shkiatHachama": "Shkiat Hachama",
+    "tzeitHakochavim": "Tzeit Hakochavim",
+    "opinion": {
+      "ashkenaze": "Achkénaze",
+      "sepharade": "Séfarade",
+      "habad": "Habad"
+    }
   }
 }

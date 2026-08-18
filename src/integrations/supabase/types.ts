@@ -368,6 +368,7 @@ export type Database = {
           terms_accepted_at: string | null
           trust_score: number
           updated_at: string
+          zmanim_opinion: string
         }
         Insert: {
           avatar_url?: string | null
@@ -382,6 +383,7 @@ export type Database = {
           terms_accepted_at?: string | null
           trust_score?: number
           updated_at?: string
+          zmanim_opinion?: string
         }
         Update: {
           avatar_url?: string | null
@@ -396,6 +398,7 @@ export type Database = {
           terms_accepted_at?: string | null
           trust_score?: number
           updated_at?: string
+          zmanim_opinion?: string
         }
         Relationships: []
       }
@@ -640,6 +643,7 @@ export type Database = {
           language: string
           last_name: string
           trust_score: number
+          zmanim_opinion: string
           updated_at: string
         }[]
       }

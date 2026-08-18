@@ -339,6 +339,8 @@
     "backupUpdateError": "Nu s-a putut actualiza modul de rezervă",
     "trustReliability": "Încredere și Fiabilitate",
     "trustSub": "Rata ta de prezență de 98% menține comunitatea puternică",
+    "zmanim": "Zmanim",
+    "zmanimSub": "Ore halahice pentru locația ta",
     "recent": "Participare recentă",
     "noHistory": "Niciun minyan încă — istoricul tău va apărea aici.",
     "stats": {
@@ -820,5 +822,28 @@
   },
   "termsPage": {
     "intro": "Termeni care reglementează utilizarea 10 Around."
+  },
+  "zmanim": {
+    "title": "Zmanim",
+    "subtitle": "Ore de rugăciune halahice pentru locația ta",
+    "needLocation": "Activează locația pentru a vedea zmanim de azi.",
+    "enableLocation": "Activează locația",
+    "saved": "Salvat",
+    "sepharadeNote": "Sefard folosește în prezent același calcul răsărit/apus ca Așchenaz — nu există o metodă open source codificată unică pentru poskim sefarzi.",
+    "alotHashachar": "Alot Hashachar",
+    "netzHachama": "Netz Hachama",
+    "sofZmanShema": "Sof Zman Shema",
+    "sofZmanTefila": "Sof Zman Tefila",
+    "chatzot": "Chatzot",
+    "minchaGedola": "Mincha Gedola",
+    "minchaKetana": "Mincha Ketana",
+    "plagHamincha": "Plag Hamincha",
+    "shkiatHachama": "Shkiat Hachama",
+    "tzeitHakochavim": "Tzeit Hakochavim",
+    "opinion": {
+      "ashkenaze": "Așchenaz",
+      "sepharade": "Sefard",
+      "habad": "Habad"
+    }
   }
 }

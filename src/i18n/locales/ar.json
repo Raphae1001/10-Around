@@ -339,6 +339,8 @@
     "backupUpdateError": "تعذر تحديث وضع الدعم",
     "trustReliability": "الثقة والموثوقية",
     "trustSub": "معدل حضورك بنسبة 98% يحافظ على قوة المجتمع",
+    "zmanim": "الزمانيم",
+    "zmanimSub": "الأوقات الهلاخية لموقعك",
     "recent": "المشاركة الأخيرة",
     "noHistory": "لا يوجد مينيان بعد — سيظهر تاريخك هنا.",
     "stats": {
@@ -820,5 +822,28 @@
   },
   "termsPage": {
     "intro": "شروط تحكم استخدامك لـ 10 Around."
+  },
+  "zmanim": {
+    "title": "الزمانيم",
+    "subtitle": "أوقات الصلاة الهلاخية لموقعك",
+    "needLocation": "فعّل الموقع لرؤية زمانيم اليوم.",
+    "enableLocation": "تفعيل الموقع",
+    "saved": "تم الحفظ",
+    "sepharadeNote": "يستخدم النمط السفاردي حاليًا نفس حساب الشروق/الغروب المستخدم في النمط الأشكنازي — لا توجد طريقة مفتوحة المصدر موحدة ومعتمدة للحاخامات السفارديم.",
+    "alotHashachar": "Alot Hashachar",
+    "netzHachama": "Netz Hachama",
+    "sofZmanShema": "Sof Zman Shema",
+    "sofZmanTefila": "Sof Zman Tefila",
+    "chatzot": "Chatzot",
+    "minchaGedola": "Mincha Gedola",
+    "minchaKetana": "Mincha Ketana",
+    "plagHamincha": "Plag Hamincha",
+    "shkiatHachama": "Shkiat Hachama",
+    "tzeitHakochavim": "Tzeit Hakochavim",
+    "opinion": {
+      "ashkenaze": "أشكنازي",
+      "sepharade": "سفاردي",
+      "habad": "حباד"
+    }
   }
 }

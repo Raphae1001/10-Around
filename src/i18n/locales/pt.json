@@ -339,6 +339,8 @@
     "backupUpdateError": "Não foi possível atualizar o modo de reforço",
     "trustReliability": "Confiança e Fiabilidade",
     "trustSub": "A sua taxa de comparência de 98% mantém a comunidade forte",
+    "zmanim": "Zmanim",
+    "zmanimSub": "Horários halárquicos para a sua localização",
     "recent": "Participação recente",
     "noHistory": "Ainda sem minyanim — o seu histórico aparecerá aqui.",
     "stats": {
@@ -820,5 +822,28 @@
   },
   "termsPage": {
     "intro": "Termos que regem o seu uso do 10 Around."
+  },
+  "zmanim": {
+    "title": "Zmanim",
+    "subtitle": "Horários de oração halárquicos para a sua localização",
+    "needLocation": "Ative a localização para ver os zmanim de hoje.",
+    "enableLocation": "Ativar localização",
+    "saved": "Guardado",
+    "sepharadeNote": "Sefardita atualmente usa o mesmo cálculo de nascer/pôr do sol que Asquenazita — não existe um método open source codificado único para os poskim sefarditas.",
+    "alotHashachar": "Alot Hashachar",
+    "netzHachama": "Netz Hachama",
+    "sofZmanShema": "Sof Zman Shema",
+    "sofZmanTefila": "Sof Zman Tefila",
+    "chatzot": "Chatzot",
+    "minchaGedola": "Mincha Gedola",
+    "minchaKetana": "Mincha Ketana",
+    "plagHamincha": "Plag Hamincha",
+    "shkiatHachama": "Shkiat Hachama",
+    "tzeitHakochavim": "Tzeit Hakochavim",
+    "opinion": {
+      "ashkenaze": "Asquenazita",
+      "sepharade": "Sefardita",
+      "habad": "Habad"
+    }
   }
 }

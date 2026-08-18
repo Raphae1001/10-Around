@@ -337,6 +337,8 @@
     "backupUpdateError": "Could not update backup mode",
     "trustReliability": "Trust & Reliability",
     "trustSub": "Your 98% show-rate keeps the community strong",
+    "zmanim": "Zmanim",
+    "zmanimSub": "Halachic times for your location",
     "recent": "Recent participation",
     "noHistory": "No minyanim yet — your history will appear here.",
     "stats": {
@@ -813,5 +815,28 @@
   },
   "termsPage": {
     "intro": "Terms governing your use of 10 Around."
+  },
+  "zmanim": {
+    "title": "Zmanim",
+    "subtitle": "Halachic prayer times for where you are",
+    "needLocation": "Turn on location to see today's zmanim.",
+    "enableLocation": "Enable location",
+    "saved": "Saved",
+    "sepharadeNote": "Sepharade currently uses the same sunrise/sunset calculation as Ashkenaze — no single codified open-source method exists for Sephardic poskim.",
+    "alotHashachar": "Alot Hashachar",
+    "netzHachama": "Netz Hachama",
+    "sofZmanShema": "Sof Zman Shema",
+    "sofZmanTefila": "Sof Zman Tefila",
+    "chatzot": "Chatzot",
+    "minchaGedola": "Mincha Gedola",
+    "minchaKetana": "Mincha Ketana",
+    "plagHamincha": "Plag Hamincha",
+    "shkiatHachama": "Shkiat Hachama",
+    "tzeitHakochavim": "Tzeit Hakochavim",
+    "opinion": {
+      "ashkenaze": "Ashkenaze",
+      "sepharade": "Sepharade",
+      "habad": "Habad"
+    }
   }
 }

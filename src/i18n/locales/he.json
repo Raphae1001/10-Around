@@ -339,6 +339,8 @@
     "backupUpdateError": "לא ניתן לעדכן את מצב הגיבוי",
     "trustReliability": "אמינות והגעה",
     "trustSub": "שיעור ההגעה של 98% מחזק את הקהילה",
+    "zmanim": "זמנים",
+    "zmanimSub": "זמנים הלכתיים למיקום שלך",
     "recent": "השתתפות אחרונה",
     "noHistory": "אין מניינים עדיין — ההיסטוריה תופיע כאן.",
     "stats": {
@@ -820,5 +822,28 @@
   },
   "termsPage": {
     "intro": "תנאים המסדירים את השימוש שלך ב-10 Around."
+  },
+  "zmanim": {
+    "title": "זמנים",
+    "subtitle": "זמני תפילה הלכתיים למיקום שלך",
+    "needLocation": "הפעל מיקום כדי לראות את הזמנים של היום.",
+    "enableLocation": "הפעל מיקום",
+    "saved": "נשמר",
+    "sepharadeNote": "נוסח ספרד משתמש כרגע באותו חישוב זריחה/שקיעה כמו אשכנז — אין שיטת קוד פתוח מקודדת אחידה לפוסקים ספרדים.",
+    "alotHashachar": "Alot Hashachar",
+    "netzHachama": "Netz Hachama",
+    "sofZmanShema": "Sof Zman Shema",
+    "sofZmanTefila": "Sof Zman Tefila",
+    "chatzot": "Chatzot",
+    "minchaGedola": "Mincha Gedola",
+    "minchaKetana": "Mincha Ketana",
+    "plagHamincha": "Plag Hamincha",
+    "shkiatHachama": "Shkiat Hachama",
+    "tzeitHakochavim": "Tzeit Hakochavim",
+    "opinion": {
+      "ashkenaze": "אשכנז",
+      "sepharade": "ספרד",
+      "habad": "חב״ד"
+    }
   }
 }

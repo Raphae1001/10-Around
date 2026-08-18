@@ -339,6 +339,8 @@
     "backupUpdateError": "Kon back-upmodus niet bijwerken",
     "trustReliability": "Vertrouwen & Betrouwbaarheid",
     "trustSub": "Jouw 98% opkomstpercentage houdt de gemeenschap sterk",
+    "zmanim": "Zmanim",
+    "zmanimSub": "Halachische tijden voor jouw locatie",
     "recent": "Recente deelname",
     "noHistory": "Nog geen minyanim — je geschiedenis verschijnt hier.",
     "stats": {
@@ -820,5 +822,28 @@
   },
   "termsPage": {
     "intro": "Voorwaarden die je gebruik van 10 Around regelen."
+  },
+  "zmanim": {
+    "title": "Zmanim",
+    "subtitle": "Halachische gebedstijden voor jouw locatie",
+    "needLocation": "Zet locatie aan om de zmanim van vandaag te zien.",
+    "enableLocation": "Locatie inschakelen",
+    "saved": "Opgeslagen",
+    "sepharadeNote": "Sefardisch gebruikt momenteel dezelfde zonsopgang/-ondergang-berekening als Asjkenazisch — er bestaat geen enkele gecodificeerde open source methode voor sefardische poskiem.",
+    "alotHashachar": "Alot Hashachar",
+    "netzHachama": "Netz Hachama",
+    "sofZmanShema": "Sof Zman Shema",
+    "sofZmanTefila": "Sof Zman Tefila",
+    "chatzot": "Chatzot",
+    "minchaGedola": "Mincha Gedola",
+    "minchaKetana": "Mincha Ketana",
+    "plagHamincha": "Plag Hamincha",
+    "shkiatHachama": "Shkiat Hachama",
+    "tzeitHakochavim": "Tzeit Hakochavim",
+    "opinion": {
+      "ashkenaze": "Asjkenazisch",
+      "sepharade": "Sefardisch",
+      "habad": "Chabad"
+    }
   }
 }
