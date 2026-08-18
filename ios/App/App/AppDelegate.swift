@@ -70,6 +70,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return ApplicationDelegateProxy.shared.application(application, continue: userActivity, restorationHandler: restorationHandler)
     }
 
+    // Forwards the APNs device token (or registration failure) to
+    // @capacitor/push-notifications, which listens for these two
+    // notifications. Without this, PushNotifications.register() silently
+    // never resolves on the JS side — required manual step per the plugin's
+    // own README, not covered by ApplicationDelegateProxy.
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        NotificationCenter.default.post(
+            name: .capacitorDidRegisterForRemoteNotifications,
+            object: deviceToken
+        )
+    }
+
+    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        NotificationCenter.default.post(
+            name: .capacitorDidFailToRegisterForRemoteNotifications,
+            object: error
+        )
+    }
+
     private func lockWebView() {
         guard let bridge = window?.rootViewController as? CAPBridgeViewController else { return }
         webViewZoomLock.apply(to: bridge)

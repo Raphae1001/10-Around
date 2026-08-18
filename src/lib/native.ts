@@ -93,6 +93,34 @@ export async function getCurrentPosition(opts?: { highAccuracy?: boolean }): Pro
 }
 
 // ---------- Push notifications ----------
+// The 'registration'/'registrationError' native listeners are attached at
+// most once for the app's lifetime (module-level guard) — registerPushNotifications
+// can safely be called from multiple places (onboarding primer, app-start
+// session sync) without ever creating duplicate native listeners. Each
+// caller's onToken callback is just added to a shared subscriber set.
+let pushListenersAttached = false;
+const pushTokenSubscribers = new Set<(token: string) => void>();
+
+async function ensurePushListeners(): Promise<void> {
+  if (pushListenersAttached) return;
+  pushListenersAttached = true;
+  const { PushNotifications } = await import("@capacitor/push-notifications");
+  PushNotifications.addListener("registration", (token) => {
+    console.log(`[Push] APNs token received (length: ${token.value.length})`);
+    for (const subscriber of pushTokenSubscribers) subscriber(token.value);
+  });
+  PushNotifications.addListener("registrationError", (error) => {
+    console.error("[Push] Registration failed:", error);
+  });
+}
+
+/** Detaches a previously-added onToken subscriber (see push-sync.ts — used when
+ *  switching accounts within one running app session, so a stale callback
+ *  doesn't keep firing for a user who's no longer active). */
+export function unregisterPushTokenSubscriber(onToken: (token: string) => void): void {
+  pushTokenSubscribers.delete(onToken);
+}
+
 export async function registerPushNotifications(onToken: (token: string) => void) {
   if (!isNative()) {
     // Web push fallback: ask for browser notification permission
@@ -101,11 +129,15 @@ export async function registerPushNotifications(onToken: (token: string) => void
     }
     return;
   }
+  console.log("[Push] Requesting notification permission…");
   const { PushNotifications } = await import("@capacitor/push-notifications");
   const perm = await PushNotifications.requestPermissions();
+  console.log(`[Push] Permission result: ${perm.receive}`);
   if (perm.receive !== "granted") return;
+  pushTokenSubscribers.add(onToken);
+  await ensurePushListeners();
+  console.log("[Push] Calling PushNotifications.register()…");
   await PushNotifications.register();
-  PushNotifications.addListener("registration", (token) => onToken(token.value));
 }
 
 // ---------- Add to Calendar (universal .ics) ----------
