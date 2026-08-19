@@ -268,7 +268,7 @@
     "scheduleHint": "Reizigers kunnen vooruit plannen — kies wanneer de minyan begint.",
     "whichPrayer": "Welk gebed?",
     "startingIn": "Start over…",
-    "howMany": "Hoeveel van ons zijn hier al?",
+    "howMany": "Ik ben met {{count}} personen",
     "alreadyHere": "al hier",
     "howManyHint": "Jij + iedereen die al bij je is. Een minyan heeft 10 personen nodig, maar je kunt ook deelnemen aan een volle.",
     "nusach": "Nusach",

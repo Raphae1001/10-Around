@@ -268,7 +268,7 @@
     "scheduleHint": "Călătorii pot planifica din timp — alege când începe minyan-ul.",
     "whichPrayer": "Ce rugăciune?",
     "startingIn": "Începe în…",
-    "howMany": "Câți suntem deja aici?",
+    "howMany": "Sunt cu {{count}} persoane",
     "alreadyHere": "deja aici",
     "howManyHint": "Tu + oricine e deja cu tine. Un minyan necesită 10, dar te poți alătura și unuia plin.",
     "nusach": "Nusach",

@@ -255,7 +255,7 @@ function Create() {
           </div>
         </Section>
 
-        <Section step="4" title={t("create.howMany")}>
+        <Section step="4" title={t("create.howMany", { count: present })}>
           <div className="rounded-2xl bg-surface shadow-soft p-4">
             <div className="flex items-center justify-between">
               <button
