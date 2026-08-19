@@ -35,8 +35,8 @@
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>NSFallDetectionUsageDescription</key>
-	<string></string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>10 Around only uses your location while the app is open, never in the background.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>10 Around uses your location while the app is open to show nearby minyanim, let you create one where you are, and optionally count people in a blurred area (~1 km) — your exact GPS is never stored for density.</string>
 	<key>UIBackgroundModes</key>
