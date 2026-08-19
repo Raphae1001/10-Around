@@ -4,8 +4,9 @@
     {
       "name": "minyannow-dev",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev", "--", "--port", "5177"],
-      "port": 5177
+      "runtimeArgs": ["run", "dev"],
+      "port": 5177,
+      "autoPort": true
     }
   ]
 }

@@ -384,17 +384,51 @@ function UserAvatarOverlay({
   return null;
 }
 
-/** Floating count badge at a density zone's center — compact pill with the member count. */
-function DensityCountBadge({
+/** Deterministic 32-bit hash of a string, used to seed the per-zone PRNG. */
+function hashString(s: string): number {
+  let h = 2166136261;
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return h >>> 0;
+}
+
+/** Tiny seeded PRNG (mulberry32) — same seed always yields the same sequence. */
+function mulberry32(seed: number): () => number {
+  let a = seed;
+  return () => {
+    a |= 0;
+    a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+const DENSITY_DOTS_MAX = 20;
+const DENSITY_DOTS_SPREAD_PX = 76;
+
+/**
+ * Scattered presence dots at a density zone's center — one small dot per
+ * nearby member (capped), placed at a random (but seeded, so it doesn't
+ * reshuffle on re-render) spot within the zone rather than at anyone's
+ * real coordinates. The zone itself is already a blurred geohash cell, not
+ * an exact location — this keeps the on-map visual from implying more
+ * precision than the underlying data has.
+ */
+function DensityDotsOverlay({
   position,
   count,
+  seed,
 }: {
   position: { lat: number; lng: number };
   count: number;
+  seed: string;
 }) {
   const map = useMap();
   const overlayRef = useRef<HtmlOverlayHandle | null>(null);
-  const countRef = useRef<HTMLSpanElement | null>(null);
+  const dotsContainerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (!map || typeof google === "undefined") return;
@@ -405,23 +439,10 @@ function DensityCountBadge({
     div.style.pointerEvents = "none";
     div.style.zIndex = "40";
 
-    const wrap = document.createElement("div");
-    wrap.style.cssText =
-      "position:relative;display:flex;align-items:center;justify-content:center;";
-
-    const disc = document.createElement("div");
-    disc.style.cssText =
-      "position:relative;display:flex;align-items:center;justify-content:center;min-width:36px;height:36px;padding:0 10px;border-radius:9999px;background:var(--accent);box-shadow:0 4px 14px color-mix(in oklch, var(--accent) 45%, transparent);border:2px solid #fff;";
-
-    const countEl = document.createElement("span");
-    countEl.style.cssText =
-      "font-family:Fraunces,Georgia,serif;font-size:15px;font-weight:600;color:#fff;line-height:1;letter-spacing:-0.02em;";
-    countEl.textContent = String(count);
-    disc.appendChild(countEl);
-    countRef.current = countEl;
-
-    wrap.appendChild(disc);
-    div.appendChild(wrap);
+    const dots = document.createElement("div");
+    dots.style.cssText = "position:relative;width:1px;height:1px;";
+    div.appendChild(dots);
+    dotsContainerRef.current = dots;
 
     const overlay = createHtmlOverlay(position, div);
     overlay.setMap(map);
@@ -430,14 +451,28 @@ function DensityCountBadge({
     return () => {
       overlay.setMap(null);
       overlayRef.current = null;
-      countRef.current = null;
+      dotsContainerRef.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [map]);
 
   useEffect(() => {
-    if (countRef.current) countRef.current.textContent = String(count);
-  }, [count]);
+    const container = dotsContainerRef.current;
+    if (!container) return;
+    container.innerHTML = "";
+    const shown = Math.min(count, DENSITY_DOTS_MAX);
+    const rand = mulberry32(hashString(seed));
+    for (let i = 0; i < shown; i++) {
+      const angle = rand() * Math.PI * 2;
+      const r = Math.sqrt(rand()) * DENSITY_DOTS_SPREAD_PX;
+      const x = Math.cos(angle) * r;
+      const y = Math.sin(angle) * r;
+      const size = 8 + rand() * 4;
+      const dot = document.createElement("div");
+      dot.style.cssText = `position:absolute;left:${x}px;top:${y}px;width:${size}px;height:${size}px;margin-left:${-size / 2}px;margin-top:${-size / 2}px;border-radius:9999px;background:var(--accent);border:1.5px solid #fff;box-shadow:0 2px 6px color-mix(in oklch, var(--accent) 45%, transparent);opacity:${0.75 + rand() * 0.25};`;
+      container.appendChild(dot);
+    }
+  }, [count, seed]);
 
   useEffect(() => {
     overlayRef.current?.setPosition(position);
@@ -540,10 +575,11 @@ export function GoogleMapCanvas({
           {densityHalos
             .filter((h) => (h.memberCount ?? 0) > 0)
             .map((h) => (
-              <DensityCountBadge
-                key={`badge-${h.id}`}
+              <DensityDotsOverlay
+                key={`dots-${h.id}`}
                 position={{ lat: h.lat, lng: h.lng }}
                 count={h.memberCount ?? 0}
+                seed={h.id}
               />
             ))}
           {user && (
