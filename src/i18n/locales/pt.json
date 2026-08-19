@@ -268,7 +268,7 @@
     "scheduleHint": "Viajantes podem planear com antecedência — escolha quando o minyan começa.",
     "whichPrayer": "Qual oração?",
     "startingIn": "Começando em…",
-    "howMany": "Quantos de nós já estão aqui?",
+    "howMany": "Estou com {{count}} pessoas",
     "alreadyHere": "já aqui",
     "howManyHint": "Você + quem já está consigo. Um minyan precisa de 10, mas pode aderir a um já completo.",
     "nusach": "Nusach",

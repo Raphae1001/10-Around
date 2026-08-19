@@ -268,7 +268,7 @@
     "scheduleHint": "Reisende können vorausplanen – wähle, wann der Minyan beginnt.",
     "whichPrayer": "Welches Gebet?",
     "startingIn": "Beginnt in…",
-    "howMany": "Wie viele sind bereits hier?",
+    "howMany": "Ich bin mit {{count}} Personen",
     "alreadyHere": "bereits hier",
     "howManyHint": "Du + alle, die schon bei dir sind. Ein Minyan braucht 10, aber du kannst auch einem vollen beitreten.",
     "nusach": "Nusach",
