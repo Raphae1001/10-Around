@@ -324,18 +324,18 @@ function UserAvatarOverlay({
 
     const wrap = document.createElement("div");
     wrap.style.cssText =
-      "position:relative;width:44px;height:44px;display:flex;align-items:center;justify-content:center;";
+      "position:relative;width:30px;height:30px;display:flex;align-items:center;justify-content:center;";
 
-    /* Compact radial halo — ~95px radius. var(--accent) resolves live
+    /* Compact radial halo — ~75px radius. var(--accent) resolves live
        against the page's cascade (unlike the SVG data URIs above), so this
        tracks light/dark theme changes automatically without a re-render. */
     const halo = document.createElement("div");
     halo.style.cssText =
-      "position:absolute;left:50%;top:50%;width:190px;height:190px;margin-left:-95px;margin-top:-95px;border-radius:9999px;pointer-events:none;background:radial-gradient(circle, color-mix(in oklch, var(--accent) 55%, transparent) 0%, color-mix(in oklch, var(--accent) 15%, transparent) 70%, transparent 100%);";
+      "position:absolute;left:50%;top:50%;width:150px;height:150px;margin-left:-75px;margin-top:-75px;border-radius:9999px;pointer-events:none;background:radial-gradient(circle, color-mix(in oklch, var(--accent) 55%, transparent) 0%, color-mix(in oklch, var(--accent) 15%, transparent) 70%, transparent 100%);";
 
     const avatar = document.createElement("div");
     avatar.style.cssText =
-      `position:relative;width:44px;height:44px;border-radius:9999px;overflow:hidden;display:flex;align-items:center;justify-content:center;background:${INK_HEX};color:#fff;font-weight:700;font-size:15px;font-family:Inter,sans-serif;box-shadow:0 0 0 3px oklch(1 0 0), 0 6px 14px -4px oklch(0.2 0.02 250 / 0.35);`;
+      `position:relative;width:30px;height:30px;border-radius:9999px;overflow:hidden;display:flex;align-items:center;justify-content:center;background:${INK_HEX};color:#fff;font-weight:700;font-size:11px;font-family:Inter,sans-serif;box-shadow:0 0 0 2px oklch(1 0 0), 0 4px 10px -3px oklch(0.2 0.02 250 / 0.35);`;
 
     if (avatarUrl) {
       const img = document.createElement("img");
