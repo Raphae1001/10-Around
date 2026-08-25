@@ -8,6 +8,7 @@ import { PlannedMinyanRow } from "@/components/PlannedMinyanRow";
 import { useAuth } from "@/hooks/use-auth";
 import { usePlannedMinyanim } from "@/hooks/use-planned-minyanim";
 import { tapLight } from "@/lib/haptics";
+import { LEGACY_SCREENS_ENABLED } from "@/lib/feature-flags";
 
 export const Route = createFileRoute("/planned")({
   component: Planned,
@@ -121,48 +122,53 @@ function Planned() {
               )}
             </PlannedSection>
 
-            <PlannedSection
-              title={t("planned.staySection")}
-              hint={t("planned.travelHint")}
-              action={
-                <CreateTextButton
-                  label={t("planned.addStay")}
-                  onClick={() => navigate({ to: "/create-stay" })}
-                />
-              }
-            >
-              {stays.length > 0 ? (
-                <div className="mx-6 rounded-2xl bg-surface shadow-soft overflow-hidden">
-                  {stays.map((m, idx) => (
-                    <PlannedMinyanRow
-                      key={m.id}
-                      m={m}
-                      variant="stay"
-                      isLast={idx === stays.length - 1}
+            {(LEGACY_SCREENS_ENABLED || stays.length > 0) && (
+              <PlannedSection
+                title={t("planned.staySection")}
+                hint={t("planned.travelHint")}
+                action={
+                  LEGACY_SCREENS_ENABLED ? (
+                    <CreateTextButton
+                      label={t("planned.addStay")}
+                      onClick={() => navigate({ to: "/create-stay" })}
                     />
-                  ))}
-                </div>
-              ) : (
-                <div className="px-6">
-                  <EmptyState
-                    icon={Plane}
-                    title={t("planned.emptyStay")}
-                    action={
-                      <button
-                        type="button"
-                        onClick={() => {
-                          tapLight();
-                          navigate({ to: "/create-stay" });
-                        }}
-                        className="text-[13px] font-semibold text-accent active:opacity-70"
-                      >
-                        {t("planned.addStay")}
-                      </button>
-                    }
-                  />
-                </div>
-              )}
-            </PlannedSection>
+                  ) : undefined
+                }
+              >
+                {stays.length > 0 ? (
+                  <div className="mx-6 rounded-2xl bg-surface shadow-soft overflow-hidden">
+                    {stays.map((m, idx) => (
+                      <PlannedMinyanRow
+                        key={m.id}
+                        m={m}
+                        variant="stay"
+                        isLast={idx === stays.length - 1}
+                        linkable={LEGACY_SCREENS_ENABLED}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="px-6">
+                    <EmptyState
+                      icon={Plane}
+                      title={t("planned.emptyStay")}
+                      action={
+                        <button
+                          type="button"
+                          onClick={() => {
+                            tapLight();
+                            navigate({ to: "/create-stay" });
+                          }}
+                          className="text-[13px] font-semibold text-accent active:opacity-70"
+                        >
+                          {t("planned.addStay")}
+                        </button>
+                      }
+                    />
+                  </div>
+                )}
+              </PlannedSection>
+            )}
           </>
         )}
       </div>
