@@ -33,9 +33,11 @@ type Props = {
   m: MinyanRow;
   variant: "scheduled" | "stay";
   isLast?: boolean;
+  /** False while the stay's destination screen is feature-flagged off — renders the row inert instead of dead-ending on tap. */
+  linkable?: boolean;
 };
 
-export function PlannedMinyanRow({ m, variant, isLast }: Props) {
+export function PlannedMinyanRow({ m, variant, isLast, linkable = true }: Props) {
   const { t, i18n } = useTranslation();
   const locale = i18n.language;
   const present = m.present_count ?? 1;
@@ -73,9 +75,13 @@ export function PlannedMinyanRow({ m, variant, isLast }: Props) {
         <div className="font-semibold text-[15px] text-ink truncate leading-snug">{title}</div>
         <div className="text-[13px] text-ink-soft mt-0.5 truncate">{subtitle}</div>
       </div>
-      <ChevronRight className="h-4 w-4 text-ink-soft/60 shrink-0" strokeWidth={1.8} />
+      {linkable && <ChevronRight className="h-4 w-4 text-ink-soft/60 shrink-0" strokeWidth={1.8} />}
     </>
   );
+
+  if (variant === "stay" && !linkable) {
+    return <div className={rowClass}>{inner}</div>;
+  }
 
   if (variant === "stay" && m.address) {
     return (
