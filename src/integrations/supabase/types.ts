@@ -10,7 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.5"
+    PostgrestVersion: "14.17"
   }
   public: {
     Tables: {
@@ -585,6 +585,53 @@ export type Database = {
         Args: { _city_key: string; _from: string; _to: string }
         Returns: number
       }
+      create_street_minyan: {
+        Args: {
+          _address: string
+          _expires_at: string
+          _extra_present: number
+          _lat: number
+          _lng: number
+          // Nullable columns — the generator can't see that from the SQL
+          // parameter type alone, so these two are hand-corrected here.
+          _message: string | null
+          _prayer: Database["public"]["Enums"]["minyan_prayer"]
+          _scheduled_at: string | null
+        }
+        Returns: {
+          address: string | null
+          arrival_deadline: string | null
+          awaiting_creator_decision: boolean
+          city: string | null
+          confirmation_path: string | null
+          confirmed_at: string | null
+          created_at: string
+          creator_id: string
+          expires_at: string
+          extra_present: number
+          id: string
+          is_live: boolean
+          latitude: number
+          location: unknown
+          longitude: number
+          message: string | null
+          nusach: string | null
+          prayer: Database["public"]["Enums"]["minyan_prayer"]
+          present_count: number
+          scheduled_at: string | null
+          trip_end_date: string | null
+          trip_prayer_interests: Json
+          trip_start_date: string | null
+          type: Database["public"]["Enums"]["minyan_type"]
+          updated_at: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "minyanim"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       creator_decide_minyan: {
         Args: { _has_minyan: boolean; _id: string }
         Returns: undefined
@@ -643,8 +690,8 @@ export type Database = {
           language: string
           last_name: string
           trust_score: number
-          zmanim_opinion: string
           updated_at: string
+          zmanim_opinion: string
         }[]
       }
       get_my_recent_participations: {
