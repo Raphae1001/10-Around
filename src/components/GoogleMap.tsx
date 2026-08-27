@@ -410,6 +410,17 @@ const DENSITY_DOTS_MAX = 20;
 const DENSITY_DOTS_SPREAD_PX = 76;
 
 /**
+ * Display-only floor, separate from the server-side `density_min_threshold`
+ * that decides whether a zone is aggregated/counted at all (shared by
+ * zone_density and active_members_count, so it stays low for the textual
+ * "N active members" count to stay useful with few users). A zone with
+ * exactly one member scattered across a ~76px cloud is still a single,
+ * fairly precisely-implied dot — don't draw it, even though the zone data
+ * itself is still returned and still contributes to the text count.
+ */
+const DENSITY_DOTS_MIN_MEMBERS = 2;
+
+/**
  * Scattered presence dots at a density zone's center — one small dot per
  * nearby member (capped), placed at a random (but seeded, so it doesn't
  * reshuffle on re-render) spot within the zone rather than at anyone's
@@ -573,7 +584,7 @@ export function GoogleMapCanvas({
           <ArrivalZoom center={center} />
           <Recenter center={center} nonce={recenterNonce} />
           {densityHalos
-            .filter((h) => (h.memberCount ?? 0) > 0)
+            .filter((h) => (h.memberCount ?? 0) >= DENSITY_DOTS_MIN_MEMBERS)
             .map((h) => (
               <DensityDotsOverlay
                 key={`dots-${h.id}`}
