@@ -387,43 +387,34 @@ function Create() {
         }
       }
 
-      const startIso = scheduled_at ?? new Date(now).toISOString();
-      const { data: nearbyCount, error: rpcErr } = await supabase.rpc("count_minyanim_within", {
-        lat,
-        lng,
-        radius_m: 200,
-        _start: startIso,
-      });
-      if (rpcErr) throw rpcErr;
-      if ((nearbyCount ?? 0) > 0) {
-        toast.error(t("create.duplicateNearby"), { description: t("create.joinInstead") });
-        setPublishing(false);
-        return;
-      }
-
       const startMs = scheduled_at ? new Date(scheduled_at).getTime() : now;
       const expires_at = new Date(startMs + 2 * 60 * 60 * 1000).toISOString();
 
-      const { data: created, error } = await supabase
-        .from("minyanim")
-        .insert({
-          creator_id: user.id,
-          type: "street",
-          prayer: PRAYER_MAP[prayer] ?? "mincha",
-          message: comment || null,
-          address: locationSummary,
-          latitude: lat,
-          longitude: lng,
-          is_live: true,
-          scheduled_at,
-          present_count: present,
-          extra_present: Math.max(0, present - 1),
-          expires_at,
-        })
-        .select()
-        .single();
+      // Duplicate-check and insert happen atomically server-side (one
+      // transaction, serialized per creator via an advisory lock) so a
+      // double-tap on this button can't race two inserts past the check —
+      // see 20260827120000_atomic_street_minyan_create.sql.
+      const { data: createdRows, error } = await supabase.rpc("create_street_minyan", {
+        _prayer: PRAYER_MAP[prayer] ?? "mincha",
+        _message: comment || null,
+        _address: locationSummary,
+        _lat: lat,
+        _lng: lng,
+        _scheduled_at: scheduled_at,
+        _extra_present: Math.max(0, present - 1),
+        _expires_at: expires_at,
+      });
 
-      if (error) throw error;
+      if (error) {
+        if (error.message.includes("duplicate_nearby")) {
+          toast.error(t("create.duplicateNearby"), { description: t("create.joinInstead") });
+          setPublishing(false);
+          return;
+        }
+        throw error;
+      }
+      const created = createdRows?.[0];
+      if (!created) throw new Error("No minyan returned");
 
       await supabase
         .from("minyan_participants")
