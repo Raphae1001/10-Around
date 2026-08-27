@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { tapLight } from "@/lib/haptics";
 import { humanTimeAgo } from "@/lib/time";
+import { LEGACY_SCREENS_ENABLED } from "@/lib/feature-flags";
 
 type TravelCity = {
   city_key: string;
@@ -117,29 +118,48 @@ function ChatsPage() {
                   {t("chats.tripsSection")}
                 </h2>
                 <div className="rounded-2xl bg-surface border border-border overflow-hidden">
-                  {cities.map((c, idx) => (
-                    <Link
-                      key={c.city_key}
-                      to="/travel-city/$cityKey"
-                      params={{ cityKey: c.city_key }}
-                      search={{ from: c.date_start, to: c.date_end }}
-                      onClick={() => void tapLight()}
-                      className={`flex items-center gap-3 px-4 py-3.5 min-h-[68px] active:bg-muted/50 ${
-                        idx < cities.length - 1 ? "border-b border-border/60" : ""
-                      }`}
-                    >
-                      <div className="h-11 w-11 rounded-full bg-gold/10 text-gold flex items-center justify-center shrink-0">
-                        <MapPin className="h-5 w-5" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="text-[15px] font-medium truncate">{c.city_label}</div>
-                        <div className="text-[13px] text-muted-foreground mt-0.5 truncate">
-                          {t("chats.peerCount", { count: c.peer_count })}
+                  {cities.map((c, idx) => {
+                    const rowClass = `flex items-center gap-3 px-4 py-3.5 min-h-[68px] active:bg-muted/50 ${
+                      idx < cities.length - 1 ? "border-b border-border/60" : ""
+                    }`;
+                    const inner = (
+                      <>
+                        <div className="h-11 w-11 rounded-full bg-gold/10 text-gold flex items-center justify-center shrink-0">
+                          <MapPin className="h-5 w-5" />
                         </div>
-                      </div>
-                      <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
-                    </Link>
-                  ))}
+                        <div className="flex-1 min-w-0">
+                          <div className="text-[15px] font-medium truncate">{c.city_label}</div>
+                          <div className="text-[13px] text-muted-foreground mt-0.5 truncate">
+                            {t("chats.peerCount", { count: c.peer_count })}
+                          </div>
+                        </div>
+                        {LEGACY_SCREENS_ENABLED && (
+                          <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
+                        )}
+                      </>
+                    );
+                    // The travel-city screen is feature-flagged off (see PlannedMinyanRow.tsx) —
+                    // render the row inert instead of dead-ending on tap.
+                    if (!LEGACY_SCREENS_ENABLED) {
+                      return (
+                        <div key={c.city_key} className={rowClass}>
+                          {inner}
+                        </div>
+                      );
+                    }
+                    return (
+                      <Link
+                        key={c.city_key}
+                        to="/travel-city/$cityKey"
+                        params={{ cityKey: c.city_key }}
+                        search={{ from: c.date_start, to: c.date_end }}
+                        onClick={() => void tapLight()}
+                        className={rowClass}
+                      >
+                        {inner}
+                      </Link>
+                    );
+                  })}
                 </div>
               </section>
             )}
