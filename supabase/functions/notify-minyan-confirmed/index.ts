@@ -24,6 +24,35 @@ type Recipient = { user_id: string; token: string };
 
 const APNS_TOKEN_RE = /^[0-9a-fA-F]{64,200}$/;
 
+// Bounded worker pool: at most `limit` calls to `fn` in flight at once,
+// instead of either fully sequential (slow: N round trips end to end) or an
+// unbounded Promise.all (risks a burst of N simultaneous APNs requests).
+// Results are returned in the same order as `items`, regardless of which
+// finishes first. `fn` must not throw for a single item to abort the rest —
+// the call site below wraps its own risky work in try/catch accordingly.
+async function mapWithConcurrency<T, R>(
+  items: T[],
+  limit: number,
+  fn: (item: T) => Promise<R>,
+): Promise<R[]> {
+  const results: R[] = new Array(items.length);
+  let next = 0;
+  async function worker() {
+    while (next < items.length) {
+      const i = next++;
+      results[i] = await fn(items[i]);
+    }
+  }
+  await Promise.all(Array.from({ length: Math.min(limit, items.length) }, worker));
+  return results;
+}
+
+// Recipients here are naturally small (a single minyan's participants, or
+// exactly the creator) compared to notify-nearby-minyan's radius-based fan
+// out, but the same bounded pool keeps latency down without ever bursting
+// unbounded concurrent APNs requests.
+const PUSH_CONCURRENCY = 5;
+
 let cachedKey: CryptoKey | null = null;
 let cachedJwt: { token: string; issuedAt: number } | null = null;
 
@@ -181,32 +210,50 @@ Deno.serve(async (req) => {
       .in("user_id", notifyUserIds);
     const recipients = (tokenRows ?? []) as Recipient[];
 
+    // Delivery to each recipient is fully independent — bounded concurrency
+    // instead of one APNs round trip at a time. Each task catches its own
+    // errors so one recipient's failure can never abort the rest.
+    type DeliveryOutcome =
+      { status: "sent" } | { status: "queued" } | { status: "skipped"; reason: string };
+
+    const outcomes = await mapWithConcurrency(
+      recipients,
+      PUSH_CONCURRENCY,
+      async (r): Promise<DeliveryOutcome> => {
+        try {
+          const isApns = APNS_TOKEN_RE.test(r.token);
+          if (isApns && apnsConfigured) {
+            const result = await sendApns(
+              r.token,
+              { title, body: bodyText, minyanId: minyan.id, kind },
+              {
+                keyId: APNS_KEY_ID,
+                teamId: APNS_TEAM_ID,
+                authKeyPem: APNS_AUTH_KEY,
+                topic: APNS_TOPIC,
+                host: APNS_HOST,
+              },
+            );
+            if (result.ok) return { status: "sent" };
+            return { status: "skipped", reason: result.reason };
+          }
+          return { status: "queued" };
+        } catch (e) {
+          return { status: "skipped", reason: (e as Error).message };
+        }
+      },
+    );
+
     let sent = 0;
     let queued = 0;
     let skipped = 0;
     const deliveryErrors: string[] = [];
-
-    for (const r of recipients) {
-      const isApns = APNS_TOKEN_RE.test(r.token);
-      if (isApns && apnsConfigured) {
-        const result = await sendApns(
-          r.token,
-          { title, body: bodyText, minyanId: minyan.id, kind },
-          {
-            keyId: APNS_KEY_ID,
-            teamId: APNS_TEAM_ID,
-            authKeyPem: APNS_AUTH_KEY,
-            topic: APNS_TOPIC,
-            host: APNS_HOST,
-          },
-        );
-        if (result.ok) sent += 1;
-        else {
-          skipped += 1;
-          deliveryErrors.push(result.reason);
-        }
-      } else {
-        queued += 1;
+    for (const outcome of outcomes) {
+      if (outcome.status === "sent") sent += 1;
+      else if (outcome.status === "queued") queued += 1;
+      else {
+        skipped += 1;
+        deliveryErrors.push(outcome.reason);
       }
     }
 
