@@ -37,7 +37,6 @@ import { Route as CreateScheduledRouteImport } from './routes/create-scheduled'
 import { Route as CreateRouteImport } from './routes/create'
 import { Route as ChatsRouteImport } from './routes/chats'
 import { Route as ChatRouteImport } from './routes/chat'
-import { Route as BackupRouteImport } from './routes/backup'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TravelCityCityKeyRouteImport } from './routes/travel-city.$cityKey'
@@ -184,11 +183,6 @@ const ChatRoute = ChatRouteImport.update({
   path: '/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
-const BackupRoute = BackupRouteImport.update({
-  id: '/backup',
-  path: '/backup',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
@@ -218,7 +212,6 @@ const AuthCallbackRoute = AuthCallbackRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRouteWithChildren
-  '/backup': typeof BackupRoute
   '/chat': typeof ChatRoute
   '/chats': typeof ChatsRoute
   '/create': typeof CreateRoute
@@ -254,7 +247,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRouteWithChildren
-  '/backup': typeof BackupRoute
   '/chat': typeof ChatRoute
   '/chats': typeof ChatsRoute
   '/create': typeof CreateRoute
@@ -291,7 +283,6 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/auth': typeof AuthRouteWithChildren
-  '/backup': typeof BackupRoute
   '/chat': typeof ChatRoute
   '/chats': typeof ChatsRoute
   '/create': typeof CreateRoute
@@ -329,7 +320,6 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
-    | '/backup'
     | '/chat'
     | '/chats'
     | '/create'
@@ -365,7 +355,6 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
-    | '/backup'
     | '/chat'
     | '/chats'
     | '/create'
@@ -401,7 +390,6 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/auth'
-    | '/backup'
     | '/chat'
     | '/chats'
     | '/create'
@@ -438,7 +426,6 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRouteWithChildren
-  BackupRoute: typeof BackupRoute
   ChatRoute: typeof ChatRoute
   ChatsRoute: typeof ChatsRoute
   CreateRoute: typeof CreateRoute
@@ -669,13 +656,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ChatRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/backup': {
-      id: '/backup'
-      path: '/backup'
-      fullPath: '/backup'
-      preLoaderRoute: typeof BackupRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -727,7 +707,6 @@ const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRouteWithChildren,
-  BackupRoute: BackupRoute,
   ChatRoute: ChatRoute,
   ChatsRoute: ChatsRoute,
   CreateRoute: CreateRoute,
