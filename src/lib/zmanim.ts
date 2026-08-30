@@ -102,8 +102,16 @@ export function currentPrayerWindowZmanim(
 ): PrayerWindow {
   const z = getZmanim(lat, lng, opinion, at);
   if (!z.alotHashachar || !z.chatzot || !z.shkiatHachama) {
-    // Extreme-latitude fallback where some zmanim don't resolve.
-    const h = at.getHours();
+    // Extreme-latitude fallback where some zmanim don't resolve. Must use
+    // the coordinate's own local hour, not the device's — this location can
+    // be many hours away from wherever the app happens to be running.
+    const h = Number(
+      new Intl.DateTimeFormat("en-US", {
+        timeZone: timezoneForCoords(lat, lng),
+        hour: "2-digit",
+        hourCycle: "h23",
+      }).format(at),
+    );
     return h >= 5 && h < 12 ? "shacharit" : h < 18 ? "mincha" : "maariv";
   }
   const t = at.getTime();

@@ -13,6 +13,7 @@
     "cap:android": "npm run build:mobile && cap sync android && cap open android",
     "preview": "vite preview",
     "lint": "eslint .",
+    "test": "vitest run",
     "format": "prettier --write ."
   },
   "dependencies": {
@@ -71,6 +72,7 @@
     "@types/react-dom": "^19.2.0",
     "@types/tz-lookup": "^6.1.2",
     "@vitejs/plugin-react": "^5.0.4",
+    "@vitest/coverage-v8": "^4.1.11",
     "eslint": "^9.32.0",
     "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-prettier": "^5.2.6",
@@ -83,6 +85,7 @@
     "supabase": "^2.108.0",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.56.1",
-    "vite": "^7.3.1"
+    "vite": "^7.3.1",
+    "vitest": "^4.1.11"
   }
 }
