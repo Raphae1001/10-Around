@@ -48,9 +48,7 @@ function Share() {
     };
   }, [id]);
 
-  const prayerLabel = minyan
-    ? t(`prayer.${minyan.prayer}`, { defaultValue: minyan.prayer })
-    : "";
+  const prayerLabel = minyan ? t(`prayer.${minyan.prayer}`, { defaultValue: minyan.prayer }) : "";
   const place = minyan?.address || minyan?.city || "";
   const timeLabel = minyan?.scheduled_at
     ? new Date(minyan.scheduled_at).toLocaleTimeString(undefined, {

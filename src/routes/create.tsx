@@ -80,15 +80,13 @@ function Create() {
 
   useEffect(() => {
     if (!user) return;
-    void supabase
-      .rpc("get_my_profile")
-      .then(({ data }) => {
-        const row = Array.isArray(data) ? data[0] : data;
-        const saved = row?.zmanim_opinion as ZmanimOpinion | undefined;
-        if (saved === "ashkenaze" || saved === "sepharade" || saved === "habad") {
-          setZmanimOpinion(saved);
-        }
-      });
+    void supabase.rpc("get_my_profile").then(({ data }) => {
+      const row = Array.isArray(data) ? data[0] : data;
+      const saved = row?.zmanim_opinion as ZmanimOpinion | undefined;
+      if (saved === "ashkenaze" || saved === "sepharade" || saved === "habad") {
+        setZmanimOpinion(saved);
+      }
+    });
   }, [user]);
 
   useEffect(() => {
@@ -221,12 +219,12 @@ function Create() {
                     setPrayerAuto(false);
                   }}
                   className={`min-w-0 flex flex-col items-center gap-2 py-4 px-1 rounded-2xl transition-all active:scale-[0.97] ${
-                    active
-                      ? "bg-accent text-accent-foreground"
-                      : "bg-surface-muted text-ink"
+                    active ? "bg-accent text-accent-foreground" : "bg-surface-muted text-ink"
                   }`}
                 >
-                  <Icon className={`h-5 w-5 shrink-0 ${active ? "text-accent-foreground" : "text-ink-soft"}`} />
+                  <Icon
+                    className={`h-5 w-5 shrink-0 ${active ? "text-accent-foreground" : "text-ink-soft"}`}
+                  />
                   <span className="text-xs font-semibold truncate w-full text-center">
                     {t(`prayer.${PRAYER_MAP[name]}`)}
                   </span>

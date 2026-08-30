@@ -76,7 +76,10 @@ function Splash() {
             <h1 className="mt-8 text-5xl tracking-tight">
               <Wordmark style={{ color: BRAND_TEXT, fontWeight: 700 }} />
             </h1>
-            <p className="mt-4 text-base max-w-xs mx-auto leading-snug" style={{ color: BRAND_TEXT }}>
+            <p
+              className="mt-4 text-base max-w-xs mx-auto leading-snug"
+              style={{ color: BRAND_TEXT }}
+            >
               <Trans
                 i18nKey="splash.tagline"
                 components={{ gold: <span style={{ color: BRAND_BLUE }} /> }}
@@ -107,7 +110,11 @@ function Splash() {
             {t("splash.begin")}
             <ArrowRight className="h-4 w-4" />
           </Link>
-          <Link to="/auth" className="block text-center text-sm py-2" style={{ color: BRAND_TEXT_SOFT }}>
+          <Link
+            to="/auth"
+            className="block text-center text-sm py-2"
+            style={{ color: BRAND_TEXT_SOFT }}
+          >
             {t("splash.haveAccount")}
           </Link>
         </div>

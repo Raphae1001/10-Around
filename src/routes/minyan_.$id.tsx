@@ -44,9 +44,7 @@ const NEEDED = 10;
 export const Route = createFileRoute("/minyan_/$id")({
   ssr: true,
   loader: async ({ params }): Promise<PublicSummary> => {
-    const { data } = await supabase
-      .rpc("public_minyan_summary", { _id: params.id })
-      .maybeSingle();
+    const { data } = await supabase.rpc("public_minyan_summary", { _id: params.id }).maybeSingle();
     return (data as PublicSummary) ?? null;
   },
   head: ({ loaderData, params }) => {
@@ -116,10 +114,7 @@ function PublicMinyanPage() {
         {count}
         <span className="opacity-40">/{NEEDED}</span>
       </div>
-      <div
-        className="text-xs uppercase tracking-[0.25em] mt-3"
-        style={{ color: BRAND_TEXT_SOFT }}
-      >
+      <div className="text-xs uppercase tracking-[0.25em] mt-3" style={{ color: BRAND_TEXT_SOFT }}>
         {confirmed ? "Confirmed minyan" : "Forming now"}
       </div>
 

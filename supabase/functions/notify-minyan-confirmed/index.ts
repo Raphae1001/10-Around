@@ -39,7 +39,9 @@ async function importApnsKey(pem: string): Promise<CryptoKey> {
     .replace(/-----END PRIVATE KEY-----/, "")
     .replace(/\s+/g, "");
   const der = Uint8Array.from(atob(body), (c) => c.charCodeAt(0));
-  return crypto.subtle.importKey("pkcs8", der, { name: "ECDSA", namedCurve: "P-256" }, false, ["sign"]);
+  return crypto.subtle.importKey("pkcs8", der, { name: "ECDSA", namedCurve: "P-256" }, false, [
+    "sign",
+  ]);
 }
 
 async function getApnsJwt(keyId: string, teamId: string, authKeyPem: string): Promise<string> {
@@ -51,8 +53,14 @@ async function getApnsJwt(keyId: string, teamId: string, authKeyPem: string): Pr
   const payload = { iss: teamId, iat: now };
   const enc = new TextEncoder();
   const signingInput =
-    base64url(enc.encode(JSON.stringify(header))) + "." + base64url(enc.encode(JSON.stringify(payload)));
-  const sig = await crypto.subtle.sign({ name: "ECDSA", hash: "SHA-256" }, cachedKey, enc.encode(signingInput));
+    base64url(enc.encode(JSON.stringify(header))) +
+    "." +
+    base64url(enc.encode(JSON.stringify(payload)));
+  const sig = await crypto.subtle.sign(
+    { name: "ECDSA", hash: "SHA-256" },
+    cachedKey,
+    enc.encode(signingInput),
+  );
   const jwt = `${signingInput}.${base64url(new Uint8Array(sig))}`;
   cachedJwt = { token: jwt, issuedAt: now };
   return jwt;
@@ -123,7 +131,9 @@ Deno.serve(async (req) => {
     if (mErr || !minyan) return json({ error: mErr?.message ?? "Minyan not found" }, 404);
 
     const prayerLabel =
-      String(minyan.prayer ?? "minyan").charAt(0).toUpperCase() + String(minyan.prayer ?? "minyan").slice(1);
+      String(minyan.prayer ?? "minyan")
+        .charAt(0)
+        .toUpperCase() + String(minyan.prayer ?? "minyan").slice(1);
     const place = minyan.address ?? "the meeting point";
 
     let title: string;
@@ -182,7 +192,13 @@ Deno.serve(async (req) => {
         const result = await sendApns(
           r.token,
           { title, body: bodyText, minyanId: minyan.id, kind },
-          { keyId: APNS_KEY_ID, teamId: APNS_TEAM_ID, authKeyPem: APNS_AUTH_KEY, topic: APNS_TOPIC, host: APNS_HOST },
+          {
+            keyId: APNS_KEY_ID,
+            teamId: APNS_TEAM_ID,
+            authKeyPem: APNS_AUTH_KEY,
+            topic: APNS_TOPIC,
+            host: APNS_HOST,
+          },
         );
         if (result.ok) sent += 1;
         else {

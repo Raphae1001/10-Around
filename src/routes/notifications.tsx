@@ -82,7 +82,9 @@ function Notifications() {
             const title = isCancelled
               ? t("notifications.items.cancelledTitle", { defaultValue: "Minyan cancelled" })
               : isDecision
-                ? t("notifications.items.decisionTitle", { defaultValue: "Minyan not confirmed yet" })
+                ? t("notifications.items.decisionTitle", {
+                    defaultValue: "Minyan not confirmed yet",
+                  })
                 : t("notifications.items.arrivingTitle", { defaultValue: "Minyan confirmed!" });
             const body = isCancelled
               ? t("notifications.items.cancelledBody", {

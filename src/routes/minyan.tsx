@@ -78,9 +78,7 @@ function Details() {
         return;
       }
       setLoading(true);
-      const { data, error } = await supabase
-        .rpc("get_minyan_by_id", { _id: id })
-        .maybeSingle();
+      const { data, error } = await supabase.rpc("get_minyan_by_id", { _id: id }).maybeSingle();
       if (cancelled) return;
       if (error) {
         toast.error(t("minyan.loadFailed"));
@@ -177,9 +175,7 @@ function Details() {
     if (error) toast.error(error.message);
     else {
       setJoined(true);
-      setMinyan((m) =>
-        m ? { ...m, present_count: (m.present_count ?? 0) + 1 } : m,
-      );
+      setMinyan((m) => (m ? { ...m, present_count: (m.present_count ?? 0) + 1 } : m));
       toast.success(t("minyan.youreIn"));
       navigate({ to: "/success", search: { id: minyan.id } });
     }
@@ -217,11 +213,7 @@ function Details() {
     if (error) toast.error(error.message);
     else {
       setJoined(false);
-      setMinyan((m) =>
-        m
-          ? { ...m, present_count: Math.max(0, (m.present_count ?? 0) - 1) }
-          : m,
-      );
+      setMinyan((m) => (m ? { ...m, present_count: Math.max(0, (m.present_count ?? 0) - 1) } : m));
       toast.success(t("common.cancel"));
     }
   }
@@ -331,18 +323,21 @@ function Details() {
 
   const isStreet = minyan.type === "street";
   const deadlineMs = startsAtIso ? new Date(startsAtIso).getTime() : null;
-  const arrivalDeadlineMs = minyan.arrival_deadline ? new Date(minyan.arrival_deadline).getTime() : null;
-  const confirmationState: "pending" | "waiting" | "arriving" | "started" | "decision" | null = !isStreet
-    ? null
-    : minyan.awaiting_creator_decision
-      ? "decision"
-      : arrivalDeadlineMs != null
-        ? now < arrivalDeadlineMs
-          ? "arriving"
-          : "started"
-        : minyan.confirmed_at
-          ? "waiting"
-          : "pending";
+  const arrivalDeadlineMs = minyan.arrival_deadline
+    ? new Date(minyan.arrival_deadline).getTime()
+    : null;
+  const confirmationState: "pending" | "waiting" | "arriving" | "started" | "decision" | null =
+    !isStreet
+      ? null
+      : minyan.awaiting_creator_decision
+        ? "decision"
+        : arrivalDeadlineMs != null
+          ? now < arrivalDeadlineMs
+            ? "arriving"
+            : "started"
+          : minyan.confirmed_at
+            ? "waiting"
+            : "pending";
 
   const startsPrimary = isScheduled
     ? scheduledAt
@@ -584,7 +579,9 @@ function InfoRow({
       </div>
       <div className="min-w-0 flex-1">
         <div className="text-[15px] font-semibold text-ink leading-snug">{title}</div>
-        {subtitle && <div className="text-[12px] text-ink-soft mt-0.5 leading-snug">{subtitle}</div>}
+        {subtitle && (
+          <div className="text-[12px] text-ink-soft mt-0.5 leading-snug">{subtitle}</div>
+        )}
       </div>
     </div>
   );

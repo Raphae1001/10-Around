@@ -499,7 +499,9 @@ function BadgeRow({
   return (
     <div
       className={`flex items-center gap-3 px-4 py-3.5 relative ${
-        !isLast ? "after:absolute after:left-16 after:right-0 after:bottom-0 after:h-px after:bg-hairline" : ""
+        !isLast
+          ? "after:absolute after:left-16 after:right-0 after:bottom-0 after:h-px after:bg-hairline"
+          : ""
       } ${locked ? "opacity-50" : ""}`}
     >
       <div className="h-9 w-9 rounded-full bg-surface-muted flex items-center justify-center shrink-0">

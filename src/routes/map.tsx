@@ -258,9 +258,7 @@ function LiveMap() {
                       onSelect={() => handlePinSelect(m.id)}
                     />
                   ))}
-                {filtered.length === 0 && (
-                  <EmptyState icon={MapPin} title={t("map.noNearby")} />
-                )}
+                {filtered.length === 0 && <EmptyState icon={MapPin} title={t("map.noNearby")} />}
                 <button
                   onClick={() => navigate({ to: "/create" })}
                   className="w-full text-center text-sm font-semibold text-gold py-2 flex items-center justify-center gap-1"
@@ -290,9 +288,7 @@ function MapCard({ m, active, onSelect }: { m: MinyanRow; active: boolean; onSel
         <Icon className="h-5 w-5" />
       </div>
       <div className="flex-1 min-w-0">
-        <div className="text-sm font-semibold truncate">
-          {m.address ?? t("map.unknownSpot")}
-        </div>
+        <div className="text-sm font-semibold truncate">{m.address ?? t("map.unknownSpot")}</div>
         <div className="text-[11px] text-muted-foreground">
           {t(`prayer.${m.prayer}`, { defaultValue: m.prayer })} · {m.present_count}/10 · {m.type}
         </div>

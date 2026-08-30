@@ -113,9 +113,7 @@ function CreateStay() {
 
         <div className="rounded-2xl border border-border bg-surface p-4 space-y-4">
           <div>
-            <span className="text-sm font-medium text-ink">
-              {t("createStay.prayerInterests")}
-            </span>
+            <span className="text-sm font-medium text-ink">{t("createStay.prayerInterests")}</span>
             <p className="text-[11px] text-muted-foreground mt-1">
               {t("createStay.prayerInterestsHint")}
             </p>
@@ -133,7 +131,9 @@ function CreateStay() {
                     active ? "bg-accent text-accent-foreground" : "bg-surface-muted text-ink"
                   }`}
                 >
-                  <Icon className={`h-4 w-4 ${active ? "text-accent-foreground" : "text-ink-soft"}`} />
+                  <Icon
+                    className={`h-4 w-4 ${active ? "text-accent-foreground" : "text-ink-soft"}`}
+                  />
                   <span className="text-[11px] font-semibold truncate w-full text-center">
                     {t(`prayer.${key}`)}
                   </span>

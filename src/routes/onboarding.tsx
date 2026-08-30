@@ -157,7 +157,10 @@ function ContentSlide({
       <p className="mt-6 text-[11px] tracking-[0.3em] uppercase" style={{ color: BRAND_BLUE }}>
         {kicker}
       </p>
-      <h2 className="mt-2 font-bold text-4xl tracking-tight leading-tight" style={{ color: BRAND_TEXT }}>
+      <h2
+        className="mt-2 font-bold text-4xl tracking-tight leading-tight"
+        style={{ color: BRAND_TEXT }}
+      >
         {title}
       </h2>
       <p className="mt-4 text-lg font-medium max-w-xs leading-snug" style={{ color: BRAND_TEXT }}>

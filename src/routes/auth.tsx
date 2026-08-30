@@ -12,11 +12,7 @@ import { NotificationsPrimerDialog } from "@/components/onboarding/Notifications
 import { track } from "@/lib/analytics";
 import { setAppPref } from "@/lib/app-prefs";
 import { setPendingTermsAcceptedAt, takePendingTermsAcceptedAt } from "@/lib/pending-terms";
-import {
-  registerPushNotifications,
-  requestLocationPermission,
-  isNative,
-} from "@/lib/native";
+import { registerPushNotifications, requestLocationPermission, isNative } from "@/lib/native";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/auth")({

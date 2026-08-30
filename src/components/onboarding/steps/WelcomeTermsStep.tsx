@@ -56,7 +56,11 @@ export function WelcomeTermsStep({ accepted, onAcceptedChange, onContinue }: Pro
             "flex items-start gap-3 rounded-2xl border p-4 cursor-pointer transition-colors",
             accepted ? "border-border" : "border-border hover:border-border/80",
           )}
-          style={accepted ? { backgroundColor: `${BRAND_BLUE}0d`, borderColor: `${BRAND_BLUE}66` } : undefined}
+          style={
+            accepted
+              ? { backgroundColor: `${BRAND_BLUE}0d`, borderColor: `${BRAND_BLUE}66` }
+              : undefined
+          }
         >
           <input
             type="checkbox"
