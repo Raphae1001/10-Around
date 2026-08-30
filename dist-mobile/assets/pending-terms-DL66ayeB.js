@@ -1,1 +1,0 @@
-const t="minyan:pending-terms-accepted-at";function n(e){try{sessionStorage.setItem(t,e)}catch{}}function s(){try{const e=sessionStorage.getItem(t);return e&&sessionStorage.removeItem(t),e}catch{return null}}export{n as s,s as t};
