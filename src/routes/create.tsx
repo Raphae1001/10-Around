@@ -22,6 +22,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { reverseGeocode } from "@/lib/geocoding";
 import { currentPrayerWindowZmanim, type ZmanimOpinion } from "@/lib/zmanim";
 import { notifyNearbyMinyan } from "@/lib/notify-nearby";
+import { publishStreetMinyan, PublishMinyanError } from "@/lib/minyan-publish";
 import { AddressAutocomplete, type AddressPick } from "@/components/AddressAutocomplete";
 
 export const Route = createFileRoute("/create")({
@@ -388,38 +389,20 @@ function Create() {
       const startMs = scheduled_at ? new Date(scheduled_at).getTime() : now;
       const expires_at = new Date(startMs + 2 * 60 * 60 * 1000).toISOString();
 
-      // Duplicate-check and insert happen atomically server-side (one
-      // transaction, serialized per creator via an advisory lock) so a
-      // double-tap on this button can't race two inserts past the check —
-      // see 20260827120000_atomic_street_minyan_create.sql.
-      const { data: createdRows, error } = await supabase.rpc("create_street_minyan", {
-        _prayer: PRAYER_MAP[prayer] ?? "mincha",
-        _message: comment || null,
-        _address: locationSummary,
-        _lat: lat,
-        _lng: lng,
-        _scheduled_at: scheduled_at,
-        _extra_present: Math.max(0, present - 1),
-        _expires_at: expires_at,
+      const minyanId = await publishStreetMinyan({
+        userId: user.id,
+        prayer: PRAYER_MAP[prayer] ?? "mincha",
+        message: comment || null,
+        address: locationSummary,
+        lat,
+        lng,
+        scheduledAt: scheduled_at,
+        extraPresent: Math.max(0, present - 1),
+        expiresAt: expires_at,
       });
 
-      if (error) {
-        if (error.message.includes("duplicate_nearby")) {
-          toast.error(t("create.duplicateNearby"), { description: t("create.joinInstead") });
-          setPublishing(false);
-          return;
-        }
-        throw error;
-      }
-      const created = createdRows?.[0];
-      if (!created) throw new Error("No minyan returned");
-
-      await supabase
-        .from("minyan_participants")
-        .insert({ minyan_id: created.id, user_id: user.id, ready_now: true });
-
       // Fan out push to opted-in members with fresh presence within ~1 km.
-      notifyNearbyMinyan(created.id);
+      notifyNearbyMinyan(minyanId);
 
       void import("@/lib/analytics").then(({ track }) =>
         track("create_minyan", {
@@ -429,8 +412,12 @@ function Create() {
         }),
       );
       toast.success(t("create.published"));
-      navigate({ to: "/success", search: { id: created.id } });
+      navigate({ to: "/success", search: { id: minyanId } });
     } catch (e) {
+      if (e instanceof PublishMinyanError && e.kind === "duplicate_nearby") {
+        toast.error(t("create.duplicateNearby"), { description: t("create.joinInstead") });
+        return;
+      }
       toast.error(t("create.errPublish"), { description: (e as Error).message });
     } finally {
       setPublishing(false);
