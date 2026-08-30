@@ -6,11 +6,11 @@ import { MobileFrame } from "@/components/MobileFrame";
 import { ScreenHeader } from "@/components/ui-bits";
 import { Sunrise, Sun, Moon, MapPin, CalendarClock, Loader2 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
-import { supabase } from "@/integrations/supabase/client";
 import { AddressAutocomplete, type AddressPick } from "@/components/AddressAutocomplete";
 import { DateTimeField } from "@/components/DateTimeField";
 import { currentPrayerWindow } from "@/lib/sun";
 import { timezoneForCoords, zonedTimeToUtc } from "@/lib/timezone";
+import { publishScheduledMinyan, PublishMinyanError } from "@/lib/minyan-publish";
 
 export const Route = createFileRoute("/create-scheduled")({
   validateSearch: (s: Record<string, unknown>): { repeat?: string } => ({
@@ -233,52 +233,29 @@ function CreateScheduled() {
 
     setPublishing(true);
     try {
-      const { data: nearbyCount, error: rpcErr } = await supabase.rpc("count_minyanim_within", {
+      const expiresAt = new Date(scheduledAt.getTime() + 40 * 60 * 1000).toISOString();
+      const minyanId = await publishScheduledMinyan({
+        userId: user.id,
+        prayer: PRAYER_MAP[prayer] ?? "mincha",
+        message: comment || null,
+        address: pick.address,
+        city: pick.city,
         lat: pick.lat,
         lng: pick.lng,
-        radius_m: 200,
-        _start: scheduledAt.toISOString(),
+        scheduledAt: scheduledAt.toISOString(),
+        expiresAt,
       });
-      if (rpcErr) throw rpcErr;
-      if ((nearbyCount ?? 0) > 0) {
-        toast.error(t("create.duplicateNearby"), { description: t("create.joinInstead") });
-        setPublishing(false);
-        return;
-      }
-
-      const expiresAt = new Date(scheduledAt.getTime() + 40 * 60 * 1000).toISOString();
-      const { data: created, error } = await supabase
-        .from("minyanim")
-        .insert({
-          creator_id: user.id,
-          type: "scheduled",
-          prayer: PRAYER_MAP[prayer] ?? "mincha",
-          message: comment || null,
-          address: pick.address,
-          city: pick.city,
-          latitude: pick.lat,
-          longitude: pick.lng,
-          is_live: false,
-          scheduled_at: scheduledAt.toISOString(),
-          present_count: 1,
-          extra_present: 0,
-          expires_at: expiresAt,
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      await supabase
-        .from("minyan_participants")
-        .insert({ minyan_id: created.id, user_id: user.id });
 
       void import("@/lib/analytics").then(({ track }) =>
         track("create_minyan", { type: "scheduled", prayer: PRAYER_MAP[prayer], scheduled: true }),
       );
       toast.success(t("createScheduled.published"));
-      navigate({ to: "/success", search: { id: created.id } });
+      navigate({ to: "/success", search: { id: minyanId } });
     } catch (e) {
+      if (e instanceof PublishMinyanError && e.kind === "duplicate_nearby") {
+        toast.error(t("create.duplicateNearby"), { description: t("create.joinInstead") });
+        return;
+      }
       toast.error(t("createScheduled.errPublish"), { description: (e as Error).message });
     } finally {
       setPublishing(false);
