@@ -4,6 +4,7 @@ import type { Cluster } from "@googlemaps/markerclusterer";
 import { useEffect, useRef, useState } from "react";
 import { mapStyleForTheme } from "@/lib/map-styles";
 import { tapLight } from "@/lib/haptics";
+import { useHtmlOverlay } from "@/components/map/useHtmlOverlay";
 
 const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_BROWSER_KEY as string | undefined;
 
@@ -53,56 +54,6 @@ function readCssVar(name: string, fallback: string): string {
 
 /** Navy label on every tone — same typography treatment as gold / avatar. */
 const PIN_LABEL = "#1A1A2E";
-
-type HtmlOverlayHandle = google.maps.OverlayView & {
-  setPosition(position: google.maps.LatLngLiteral): void;
-};
-
-/**
- * Creates an OverlayView only after the Maps JS API is loaded.
- * Must NOT extend google.maps.OverlayView at module scope — google is undefined
- * until APIProvider finishes loading the script.
- */
-function createHtmlOverlay(
-  position: google.maps.LatLngLiteral,
-  div: HTMLDivElement,
-): HtmlOverlayHandle {
-  class Overlay extends google.maps.OverlayView {
-    private pos: google.maps.LatLngLiteral;
-    private readonly el: HTMLDivElement;
-
-    constructor(pos: google.maps.LatLngLiteral, el: HTMLDivElement) {
-      super();
-      this.pos = pos;
-      this.el = el;
-    }
-
-    onAdd() {
-      this.getPanes()?.overlayMouseTarget.appendChild(this.el);
-    }
-
-    draw() {
-      const proj = this.getProjection();
-      if (!proj) return;
-      const point = proj.fromLatLngToDivPixel(new google.maps.LatLng(this.pos));
-      if (point) {
-        this.el.style.left = `${point.x}px`;
-        this.el.style.top = `${point.y}px`;
-      }
-    }
-
-    onRemove() {
-      this.el.parentNode?.removeChild(this.el);
-    }
-
-    setPosition(pos: google.maps.LatLngLiteral) {
-      this.pos = pos;
-      this.draw();
-    }
-  }
-
-  return new Overlay(position, div);
-}
 
 function Recenter({
   center,
@@ -307,20 +258,10 @@ function UserAvatarOverlay({
   avatarUrl?: string | null;
   initial: string;
 }) {
-  const map = useMap();
-  const overlayRef = useRef<HtmlOverlayHandle | null>(null);
   const avatarImgRef = useRef<HTMLImageElement | null>(null);
   const initialRef = useRef<HTMLSpanElement | null>(null);
 
-  useEffect(() => {
-    if (!map || typeof google === "undefined") return;
-
-    const div = document.createElement("div");
-    div.style.position = "absolute";
-    div.style.transform = "translate(-50%, -50%)";
-    div.style.pointerEvents = "none";
-    div.style.zIndex = "50";
-
+  useHtmlOverlay(position, 50, (div) => {
     const wrap = document.createElement("div");
     wrap.style.cssText =
       "position:relative;width:30px;height:30px;display:flex;align-items:center;justify-content:center;";
@@ -355,18 +296,11 @@ function UserAvatarOverlay({
     wrap.appendChild(avatar);
     div.appendChild(wrap);
 
-    const overlay = createHtmlOverlay(position, div);
-    overlay.setMap(map);
-    overlayRef.current = overlay;
-
     return () => {
-      overlay.setMap(null);
-      overlayRef.current = null;
       avatarImgRef.current = null;
       initialRef.current = null;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [map]);
+  });
 
   useEffect(() => {
     if (!avatarUrl && initialRef.current) initialRef.current.textContent = initial;
@@ -374,10 +308,6 @@ function UserAvatarOverlay({
       avatarImgRef.current.src = avatarUrl;
     }
   }, [avatarUrl, initial]);
-
-  useEffect(() => {
-    overlayRef.current?.setPosition(position);
-  }, [position.lat, position.lng, position]);
 
   return null;
 }
@@ -435,35 +365,18 @@ function DensityDotsOverlay({
   count: number;
   seed: string;
 }) {
-  const map = useMap();
-  const overlayRef = useRef<HtmlOverlayHandle | null>(null);
   const dotsContainerRef = useRef<HTMLDivElement | null>(null);
 
-  useEffect(() => {
-    if (!map || typeof google === "undefined") return;
-
-    const div = document.createElement("div");
-    div.style.position = "absolute";
-    div.style.transform = "translate(-50%, -50%)";
-    div.style.pointerEvents = "none";
-    div.style.zIndex = "40";
-
+  useHtmlOverlay(position, 40, (div) => {
     const dots = document.createElement("div");
     dots.style.cssText = "position:relative;width:1px;height:1px;";
     div.appendChild(dots);
     dotsContainerRef.current = dots;
 
-    const overlay = createHtmlOverlay(position, div);
-    overlay.setMap(map);
-    overlayRef.current = overlay;
-
     return () => {
-      overlay.setMap(null);
-      overlayRef.current = null;
       dotsContainerRef.current = null;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [map]);
+  });
 
   useEffect(() => {
     const container = dotsContainerRef.current;
@@ -482,10 +395,6 @@ function DensityDotsOverlay({
       container.appendChild(dot);
     }
   }, [count, seed]);
-
-  useEffect(() => {
-    overlayRef.current?.setPosition(position);
-  }, [position.lat, position.lng, position]);
 
   return null;
 }
