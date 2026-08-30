@@ -1,8 +1,7 @@
 // Reverse geocoding helper — returns the best human-readable street/address
 // for given coordinates using Google Maps Geocoding API.
 
-const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_BROWSER_KEY as
-  string | undefined;
+const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_BROWSER_KEY as string | undefined;
 
 export async function reverseGeocode(lat: number, lng: number): Promise<string | null> {
   if (!API_KEY) return null;

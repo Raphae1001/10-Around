@@ -39,11 +39,7 @@ export function MobileFrame({
             ? "h-full"
             : "min-h-dvh h-dvh max-h-dvh max-w-[440px] md:my-6 md:h-[calc(100dvh-3rem)] md:max-h-[calc(100dvh-3rem)] md:rounded-3xl md:shadow-2xl"
         }`}
-        style={
-          native && bg !== "map"
-            ? { paddingTop: "env(safe-area-inset-top)" }
-            : undefined
-        }
+        style={native && bg !== "map" ? { paddingTop: "env(safe-area-inset-top)" } : undefined}
       >
         <div
           className={`flex-1 min-h-0 flex flex-col overflow-x-hidden ${

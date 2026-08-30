@@ -272,65 +272,66 @@ function TravelCityPage() {
               // Never show another traveler's real name — privacy.
               const name = p.is_me ? p.display_name : t("common.anonymousUser");
               return (
-              <li
-                key={`${p.user_id}-${p.date_start}`}
-                className="rounded-2xl border border-border bg-surface p-3"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-full bg-navy text-white flex items-center justify-center text-sm font-semibold overflow-hidden">
-                    {p.avatar_url ? (
-                      <img
-                        src={p.avatar_url}
-                        alt={name}
-                        className="h-full w-full object-cover"
-                      />
-                    ) : (
-                      (name?.[0] ?? "?").toUpperCase()
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-sm font-semibold truncate">
-                      {name}
-                      {p.is_me && <span className="text-muted-foreground font-normal"> · you</span>}
+                <li
+                  key={`${p.user_id}-${p.date_start}`}
+                  className="rounded-2xl border border-border bg-surface p-3"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-full bg-navy text-white flex items-center justify-center text-sm font-semibold overflow-hidden">
+                      {p.avatar_url ? (
+                        <img src={p.avatar_url} alt={name} className="h-full w-full object-cover" />
+                      ) : (
+                        (name?.[0] ?? "?").toUpperCase()
+                      )}
                     </div>
-                    <div className="text-xs text-muted-foreground flex items-center gap-1">
-                      <CalendarDays className="h-3 w-3" /> {fmtDate(p.date_start)} →{" "}
-                      {fmtDate(p.date_end)}
-                    </div>
-                    {p.note && (
-                      <div className="text-xs text-muted-foreground mt-1 italic">
-                        &quot;{p.note}&quot;
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm font-semibold truncate">
+                        {name}
+                        {p.is_me && (
+                          <span className="text-muted-foreground font-normal"> · you</span>
+                        )}
                       </div>
-                    )}
-                    {p.trip_prayer_interests && p.trip_prayer_interests.length > 0 && (
-                      <div className="mt-2 space-y-1.5 border-t border-border/60 pt-2">
-                        {p.trip_prayer_interests.map((interest, i) => {
-                          const Icon = PRAYER_ICON[interest.prayer] ?? Sun;
-                          const label = t(`prayer.${interest.prayer}`, {
-                            defaultValue: interest.prayer,
-                          });
-                          return (
-                            <div key={i} className="flex items-start gap-1.5 text-xs">
-                              <Icon className="h-3.5 w-3.5 text-gold shrink-0 mt-0.5" />
-                              <div className="min-w-0">
-                                <span className="font-medium text-foreground">{label}</span>
-                                {interest.time && (
-                                  <span className="text-muted-foreground"> · {interest.time}</span>
-                                )}
-                                {interest.note && (
-                                  <div className="text-muted-foreground italic truncate">
-                                    &quot;{interest.note}&quot;
-                                  </div>
-                                )}
+                      <div className="text-xs text-muted-foreground flex items-center gap-1">
+                        <CalendarDays className="h-3 w-3" /> {fmtDate(p.date_start)} →{" "}
+                        {fmtDate(p.date_end)}
+                      </div>
+                      {p.note && (
+                        <div className="text-xs text-muted-foreground mt-1 italic">
+                          &quot;{p.note}&quot;
+                        </div>
+                      )}
+                      {p.trip_prayer_interests && p.trip_prayer_interests.length > 0 && (
+                        <div className="mt-2 space-y-1.5 border-t border-border/60 pt-2">
+                          {p.trip_prayer_interests.map((interest, i) => {
+                            const Icon = PRAYER_ICON[interest.prayer] ?? Sun;
+                            const label = t(`prayer.${interest.prayer}`, {
+                              defaultValue: interest.prayer,
+                            });
+                            return (
+                              <div key={i} className="flex items-start gap-1.5 text-xs">
+                                <Icon className="h-3.5 w-3.5 text-gold shrink-0 mt-0.5" />
+                                <div className="min-w-0">
+                                  <span className="font-medium text-foreground">{label}</span>
+                                  {interest.time && (
+                                    <span className="text-muted-foreground">
+                                      {" "}
+                                      · {interest.time}
+                                    </span>
+                                  )}
+                                  {interest.note && (
+                                    <div className="text-muted-foreground italic truncate">
+                                      &quot;{interest.note}&quot;
+                                    </div>
+                                  )}
+                                </div>
                               </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              </li>
+                </li>
               );
             })}
           </ul>

@@ -42,13 +42,11 @@ function Zmanim() {
 
   useEffect(() => {
     if (!user) return;
-    void supabase
-      .rpc("get_my_profile")
-      .then(({ data }) => {
-        const row = Array.isArray(data) ? data[0] : data;
-        const saved = row?.zmanim_opinion as ZmanimOpinion | undefined;
-        if (saved && OPINIONS.includes(saved)) setOpinion(saved);
-      });
+    void supabase.rpc("get_my_profile").then(({ data }) => {
+      const row = Array.isArray(data) ? data[0] : data;
+      const saved = row?.zmanim_opinion as ZmanimOpinion | undefined;
+      if (saved && OPINIONS.includes(saved)) setOpinion(saved);
+    });
   }, [user]);
 
   async function chooseOpinion(next: ZmanimOpinion) {

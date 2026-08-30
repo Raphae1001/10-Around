@@ -68,7 +68,9 @@ function Planned() {
   return (
     <MobileFrame>
       <div className="px-6 pt-2 pb-4">
-        <h1 className="font-serif-brand text-[28px] text-ink leading-tight">{t("planned.title")}</h1>
+        <h1 className="font-serif-brand text-[28px] text-ink leading-tight">
+          {t("planned.title")}
+        </h1>
         <p className="text-[13px] text-ink-soft mt-1">{t("planned.subtitle")}</p>
       </div>
 

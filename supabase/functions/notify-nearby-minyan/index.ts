@@ -16,8 +16,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.4";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
@@ -41,13 +40,9 @@ async function importApnsKey(pem: string): Promise<CryptoKey> {
     .replace(/-----END PRIVATE KEY-----/, "")
     .replace(/\s+/g, "");
   const der = Uint8Array.from(atob(body), (c) => c.charCodeAt(0));
-  return crypto.subtle.importKey(
-    "pkcs8",
-    der,
-    { name: "ECDSA", namedCurve: "P-256" },
-    false,
-    ["sign"],
-  );
+  return crypto.subtle.importKey("pkcs8", der, { name: "ECDSA", namedCurve: "P-256" }, false, [
+    "sign",
+  ]);
 }
 
 /** ES256 JWT for APNs provider auth. Apple allows reuse for up to ~1h. */
@@ -164,15 +159,12 @@ Deno.serve(async (req) => {
     }
 
     const radius = 1000;
-    const { data: recipients, error: rErr } = await admin.rpc(
-      "nearby_push_recipients",
-      {
-        _lat: minyan.latitude,
-        _lng: minyan.longitude,
-        _radius_m: radius,
-        _exclude_user_id: minyan.creator_id,
-      },
-    );
+    const { data: recipients, error: rErr } = await admin.rpc("nearby_push_recipients", {
+      _lat: minyan.latitude,
+      _lng: minyan.longitude,
+      _radius_m: radius,
+      _exclude_user_id: minyan.creator_id,
+    });
 
     if (rErr) {
       return json({ error: rErr.message }, 500);
@@ -197,8 +189,9 @@ Deno.serve(async (req) => {
     }
 
     const prayerLabel =
-      String(minyan.prayer ?? "minyan").charAt(0).toUpperCase() +
-      String(minyan.prayer ?? "minyan").slice(1);
+      String(minyan.prayer ?? "minyan")
+        .charAt(0)
+        .toUpperCase() + String(minyan.prayer ?? "minyan").slice(1);
     const title = "Minyan nearby";
     const bodyText = `${prayerLabel} — ${minyan.address ?? "around you"}`;
 
@@ -251,7 +244,9 @@ Deno.serve(async (req) => {
       sent,
       queued,
       skipped,
-      warning: apnsConfigured ? undefined : "APNS secrets not set — iOS pushes queued, not delivered",
+      warning: apnsConfigured
+        ? undefined
+        : "APNS secrets not set — iOS pushes queued, not delivered",
       errors: deliveryErrors.slice(0, 5),
     });
   } catch (e) {

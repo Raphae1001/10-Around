@@ -202,7 +202,9 @@ function Home() {
           id: m.id,
           lat: m.latitude,
           lng: m.longitude,
-          label: arriving ? `${Math.max(0, Math.ceil((arrivalDeadline - nowTick) / 60000))}m` : String(present),
+          label: arriving
+            ? `${Math.max(0, Math.ceil((arrivalDeadline - nowTick) / 60000))}m`
+            : String(present),
           tone: arriving ? "success" : present >= 10 ? "success" : present >= 9 ? "urgent" : "gold",
           onClick: () => navigate({ to: "/minyan", search: { id: m.id } }),
         } satisfies MapPinDatum;
@@ -268,11 +270,7 @@ function Home() {
               aria-label={t("common.toggleTheme")}
               className="h-10 w-10 rounded-full bg-surface shadow-soft flex items-center justify-center text-ink-soft active:scale-[0.97]"
             >
-              {theme === "dark" ? (
-                <SunMedium className="h-4 w-4" />
-              ) : (
-                <Moon className="h-4 w-4" />
-              )}
+              {theme === "dark" ? <SunMedium className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </button>
             <Link
               to="/profile"

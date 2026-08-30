@@ -141,7 +141,9 @@ export function HomeNearbyList({ position, userId }: Props) {
                 <Users className="h-[18px] w-[18px]" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-[15px] font-medium text-ink leading-snug">{t("home.noneNearby")}</p>
+                <p className="text-[15px] font-medium text-ink leading-snug">
+                  {t("home.noneNearby")}
+                </p>
                 <Link
                   to="/create"
                   className="inline-block mt-1.5 text-[13px] font-semibold text-accent"
@@ -358,11 +360,7 @@ function NearbyRow({
           aria-label={t("common.join")}
           className={`h-9 px-3.5 rounded-full flex items-center justify-center gap-1 text-[13px] font-semibold transition-all active:scale-[0.97] shrink-0 ${joined ? "bg-success text-white" : "bg-accent text-accent-foreground"}`}
         >
-          {joined ? (
-            <Check className="h-4 w-4" strokeWidth={2.8} />
-          ) : (
-            t("common.join")
-          )}
+          {joined ? <Check className="h-4 w-4" strokeWidth={2.8} /> : t("common.join")}
         </button>
         <div
           className={`absolute bottom-0 left-0 h-[2px] ${complete ? "bg-success" : "bg-gold"}`}

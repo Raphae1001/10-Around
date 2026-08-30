@@ -5,8 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { mapStyleForTheme } from "@/lib/map-styles";
 import { tapLight } from "@/lib/haptics";
 
-const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_BROWSER_KEY as
-  string | undefined;
+const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_BROWSER_KEY as string | undefined;
 
 const TARGET_ZOOM = 15;
 const ARRIVAL_START_ZOOM = 11;
@@ -334,8 +333,7 @@ function UserAvatarOverlay({
       "position:absolute;left:50%;top:50%;width:150px;height:150px;margin-left:-75px;margin-top:-75px;border-radius:9999px;pointer-events:none;background:radial-gradient(circle, color-mix(in oklch, var(--accent) 55%, transparent) 0%, color-mix(in oklch, var(--accent) 15%, transparent) 70%, transparent 100%);";
 
     const avatar = document.createElement("div");
-    avatar.style.cssText =
-      `position:relative;width:30px;height:30px;border-radius:9999px;overflow:hidden;display:flex;align-items:center;justify-content:center;background:${INK_HEX};color:#fff;font-weight:700;font-size:11px;font-family:Inter,sans-serif;box-shadow:0 0 0 2px oklch(1 0 0), 0 4px 10px -3px oklch(0.2 0.02 250 / 0.35);`;
+    avatar.style.cssText = `position:relative;width:30px;height:30px;border-radius:9999px;overflow:hidden;display:flex;align-items:center;justify-content:center;background:${INK_HEX};color:#fff;font-weight:700;font-size:11px;font-family:Inter,sans-serif;box-shadow:0 0 0 2px oklch(1 0 0), 0 4px 10px -3px oklch(0.2 0.02 250 / 0.35);`;
 
     if (avatarUrl) {
       const img = document.createElement("img");

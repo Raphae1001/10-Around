@@ -122,7 +122,11 @@ export function AuthMethodStep({ onProviderContinue, onGuestContinue }: Props) {
             className="w-full h-14 flex items-center justify-center gap-2.5 rounded-2xl text-white font-semibold transition-transform active:scale-[0.99] disabled:opacity-60"
             style={{ backgroundColor: BRAND_BLUE, boxShadow: BRAND_SHADOW }}
           >
-            {busy === "guest" ? <Loader2 className="h-4 w-4 animate-spin" /> : <UserRound className="h-4 w-4" />}
+            {busy === "guest" ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <UserRound className="h-4 w-4" />
+            )}
             {t("auth.continueGuest")}
           </button>
 

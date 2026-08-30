@@ -43,10 +43,10 @@ const LEGAL_SECTIONS: { icon: typeof UserPlus; title: string; body: React.ReactN
     title: "Account creation & authentication",
     body: (
       <>
-        You can sign in with Apple or Google, or continue as a guest using anonymous
-        authentication. We store a unique user identifier and your display name (and an optional
-        avatar if you add one). Guest accounts can be upgraded to Apple or Google sign-in at any
-        time from Profile without losing your history.
+        You can sign in with Apple or Google, or continue as a guest using anonymous authentication.
+        We store a unique user identifier and your display name (and an optional avatar if you add
+        one). Guest accounts can be upgraded to Apple or Google sign-in at any time from Profile
+        without losing your history.
       </>
     ),
   },

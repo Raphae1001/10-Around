@@ -25,9 +25,7 @@ function Success() {
     if (!id) return;
     let cancelled = false;
     async function load() {
-      const { data } = await supabase
-        .rpc("get_minyan_by_id", { _id: id! })
-        .maybeSingle();
+      const { data } = await supabase.rpc("get_minyan_by_id", { _id: id! }).maybeSingle();
       if (cancelled || !data) return;
       setPresent((data as any).present_count ?? 0);
       setAddress((data as any).address ?? null);

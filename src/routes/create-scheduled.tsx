@@ -134,9 +134,7 @@ function CreateScheduled() {
                     setPrayerAuto(false);
                   }}
                   className={`min-w-0 flex flex-col items-center gap-1.5 py-3 px-1 rounded-2xl transition-all active:scale-[0.97] ${
-                    active
-                      ? "bg-accent text-accent-foreground"
-                      : "bg-surface-muted text-ink"
+                    active ? "bg-accent text-accent-foreground" : "bg-surface-muted text-ink"
                   }`}
                 >
                   <Icon

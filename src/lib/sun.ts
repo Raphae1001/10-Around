@@ -34,7 +34,8 @@ function solarElevationDeg(dateUtc: Date, lat: number, lng: number): number {
   const ha = (haDeg * Math.PI) / 180;
 
   const latRad = (lat * Math.PI) / 180;
-  let cosZenith = Math.sin(latRad) * Math.sin(decl) + Math.cos(latRad) * Math.cos(decl) * Math.cos(ha);
+  let cosZenith =
+    Math.sin(latRad) * Math.sin(decl) + Math.cos(latRad) * Math.cos(decl) * Math.cos(ha);
   cosZenith = Math.max(-1, Math.min(1, cosZenith));
   const zenithDeg = (Math.acos(cosZenith) * 180) / Math.PI;
   return 90 - zenithDeg;
@@ -125,11 +126,7 @@ function normalizeNear(value: number, reference: number): number {
  * folded into mincha since shacharit has already ended by chatzot.
  * Maariv: shkia → the next alot hashachar.
  */
-export function currentPrayerWindow(
-  lat: number,
-  lng: number,
-  at: Date = new Date(),
-): PrayerWindow {
+export function currentPrayerWindow(lat: number, lng: number, at: Date = new Date()): PrayerWindow {
   const shkia = crossingTimesUtcMin(at, lat, lng, SUNSET_ELEVATION_DEG);
   const alot = crossingTimesUtcMin(at, lat, lng, ALOT_ELEVATION_DEG);
   if (!shkia || !alot) return isDaytime(lat, lng, at) ? "shacharit" : "maariv";

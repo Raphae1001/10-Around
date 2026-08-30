@@ -2,8 +2,7 @@ import { APIProvider, useMapsLibrary } from "@vis.gl/react-google-maps";
 import { useEffect, useRef, useState } from "react";
 import { Loader2, MapPin } from "lucide-react";
 
-const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_BROWSER_KEY as
-  string | undefined;
+const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_BROWSER_KEY as string | undefined;
 
 export type AddressPick = {
   address: string;
