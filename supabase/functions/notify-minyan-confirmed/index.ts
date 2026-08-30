@@ -152,13 +152,17 @@ Deno.serve(async (req) => {
     }
 
     // In-app notification for everyone in scope, regardless of push token.
-    await admin.from("user_notifications").insert(
+    // ignoreDuplicates (INSERT ... ON CONFLICT DO NOTHING) guards against an
+    // overlapping cron tick re-sending the same (user_id, minyan_id, kind)
+    // row — see 20260827130000_dedupe_user_notifications.sql.
+    await admin.from("user_notifications").upsert(
       notifyUserIds.map((uid) => ({
         user_id: uid,
         minyan_id: minyan.id,
         kind: notifKind,
         data: { prayer: minyan.prayer, address: minyan.address },
       })),
+      { onConflict: "user_id,minyan_id,kind", ignoreDuplicates: true },
     );
 
     const { data: tokenRows } = await admin
