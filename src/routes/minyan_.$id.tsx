@@ -18,6 +18,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { appOrigin } from "@/lib/share";
 import { Logo } from "@/components/Logo";
 import { BRAND_BLUE, BRAND_TEXT, BRAND_TEXT_SOFT } from "@/lib/brand";
+import { QUORUM_SIZE } from "@/lib/constants";
 
 type PublicSummary = {
   id: string;
@@ -39,7 +40,7 @@ const PRAYER_LABEL: Record<string, string> = {
   other: "Prayer",
 };
 
-const NEEDED = 10;
+const NEEDED = QUORUM_SIZE;
 
 export const Route = createFileRoute("/minyan_/$id")({
   ssr: true,

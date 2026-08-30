@@ -5,6 +5,7 @@ import { Check, Navigation2, Share2, Footprints } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
+import { QUORUM_SIZE } from "@/lib/constants";
 
 type MinyanRow = Database["public"]["Tables"]["minyanim"]["Row"];
 
@@ -15,7 +16,7 @@ export const Route = createFileRoute("/success")({
   component: Success,
 });
 
-const NEEDED = 10;
+const NEEDED = QUORUM_SIZE;
 
 function Success() {
   const { t } = useTranslation();

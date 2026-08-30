@@ -23,6 +23,7 @@ import { openDirections } from "@/lib/directions";
 import { shareAny, appOrigin } from "@/lib/share";
 import { tapLight, tapMedium } from "@/lib/haptics";
 import { navigateBack } from "@/lib/navigate-back";
+import { QUORUM_SIZE } from "@/lib/constants";
 
 export const Route = createFileRoute("/minyan")({
   validateSearch: (s: Record<string, unknown>) => ({
@@ -31,7 +32,7 @@ export const Route = createFileRoute("/minyan")({
   component: Details,
 });
 
-const NEEDED = 10;
+const NEEDED = QUORUM_SIZE;
 const SECONDARY_BTN =
   "flex items-center justify-center gap-2 rounded-2xl bg-surface-muted text-ink py-3.5 text-[14px] font-medium active:scale-[0.99] disabled:opacity-45 disabled:cursor-not-allowed";
 

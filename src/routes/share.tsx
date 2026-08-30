@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { shareAny, shareWhatsApp, appOrigin } from "@/lib/share";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { QUORUM_SIZE } from "@/lib/constants";
 
 export const Route = createFileRoute("/share")({
   validateSearch: (s: Record<string, unknown>) => ({
@@ -23,7 +24,7 @@ type MinyanInfo = {
   scheduled_at: string | null;
 };
 
-const NEEDED = 10;
+const NEEDED = QUORUM_SIZE;
 
 function Share() {
   const { t } = useTranslation();
