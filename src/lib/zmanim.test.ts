@@ -49,6 +49,51 @@ describe("currentPrayerWindowZmanim — standard latitude", () => {
   });
 });
 
+describe("currentPrayerWindowZmanim — shared preselection logic (create.tsx + create-scheduled.tsx)", () => {
+  // Both screens now call this same function for their prayer auto-pick.
+  // These cover the geographic spread the two screens actually see:
+  // Israel/Europe, the Americas, and the exact chatzot/shkia boundaries
+  // where an off-by-one in the comparison would show up immediately.
+
+  it("returns shacharit for a Paris (Europe) morning address", () => {
+    // Paris ~08:00 local (UTC+2 in June) = 06:00Z.
+    expect(
+      currentPrayerWindowZmanim(48.8566, 2.3522, "ashkenaze", new Date("2026-06-15T06:00:00Z")),
+    ).toBe("shacharit");
+  });
+
+  it("returns mincha for a New York (Americas) afternoon address", () => {
+    // New York ~16:00 local (UTC-4 in June) = 20:00Z.
+    expect(
+      currentPrayerWindowZmanim(40.7128, -74.006, "ashkenaze", new Date("2026-06-15T20:00:00Z")),
+    ).toBe("mincha");
+  });
+
+  it("switches from shacharit to mincha exactly at chatzot", () => {
+    const lat = 31.7767;
+    const lng = 35.2345;
+    const day = new Date("2026-06-15T12:00:00Z");
+    const chatzot = getZmanim(lat, lng, "ashkenaze", day).chatzot!;
+
+    const justBefore = new Date(chatzot.getTime() - 60_000);
+    const justAfter = new Date(chatzot.getTime() + 60_000);
+    expect(currentPrayerWindowZmanim(lat, lng, "ashkenaze", justBefore)).toBe("shacharit");
+    expect(currentPrayerWindowZmanim(lat, lng, "ashkenaze", justAfter)).toBe("mincha");
+  });
+
+  it("switches from mincha to maariv exactly at shkia", () => {
+    const lat = 31.7767;
+    const lng = 35.2345;
+    const day = new Date("2026-06-15T12:00:00Z");
+    const shkia = getZmanim(lat, lng, "ashkenaze", day).shkiatHachama!;
+
+    const justBefore = new Date(shkia.getTime() - 60_000);
+    const justAfter = new Date(shkia.getTime() + 60_000);
+    expect(currentPrayerWindowZmanim(lat, lng, "ashkenaze", justBefore)).toBe("mincha");
+    expect(currentPrayerWindowZmanim(lat, lng, "ashkenaze", justAfter)).toBe("maariv");
+  });
+});
+
 describe("currentPrayerWindowZmanim — extreme-latitude fallback", () => {
   // Longyearbyen, Svalbard (78.22N) is in permanent midsummer daylight, so
   // sunrise/sunset (and therefore alotHashachar/shkiatHachama) don't resolve
