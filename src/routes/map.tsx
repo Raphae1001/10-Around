@@ -21,6 +21,7 @@ import { useGeolocation } from "@/hooks/use-geolocation";
 import { useNearbyMinyanim, type MinyanRow } from "@/hooks/use-minyanim";
 import { openDirections } from "@/lib/directions";
 import { guardLegacyScreen } from "@/lib/legacy-route";
+import { QUORUM_SIZE } from "@/lib/constants";
 
 export const Route = createFileRoute("/map")({
   beforeLoad: guardLegacyScreen,
@@ -147,7 +148,7 @@ function LiveMap() {
               lng: m.longitude,
               label: String(m.present_count ?? 1),
               tone:
-                (m.present_count ?? 1) >= 10
+                (m.present_count ?? 1) >= QUORUM_SIZE
                   ? "success"
                   : (m.present_count ?? 1) >= 9
                     ? "urgent"
@@ -239,7 +240,9 @@ function LiveMap() {
                   </p>
                 </div>
                 {(() => {
-                  const forming = filtered.filter((m) => (m.present_count ?? 1) < 10).length;
+                  const forming = filtered.filter(
+                    (m) => (m.present_count ?? 1) < QUORUM_SIZE,
+                  ).length;
                   return (
                     <StatusPill tone={forming > 0 ? "gold" : "default"}>
                       {t("map.forming", { count: forming })}
@@ -290,7 +293,8 @@ function MapCard({ m, active, onSelect }: { m: MinyanRow; active: boolean; onSel
       <div className="flex-1 min-w-0">
         <div className="text-sm font-semibold truncate">{m.address ?? t("map.unknownSpot")}</div>
         <div className="text-[11px] text-muted-foreground">
-          {t(`prayer.${m.prayer}`, { defaultValue: m.prayer })} · {m.present_count}/10 · {m.type}
+          {t(`prayer.${m.prayer}`, { defaultValue: m.prayer })} · {m.present_count}/{QUORUM_SIZE} ·{" "}
+          {m.type}
         </div>
       </div>
       <button

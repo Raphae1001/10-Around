@@ -23,6 +23,7 @@ import { joinMinyan, useNearbyMinyanim, type MinyanRow } from "@/hooks/use-minya
 import type { GeoPosition } from "@/hooks/use-geolocation";
 import { openDirections } from "@/lib/directions";
 import { downloadIcs } from "@/lib/native";
+import { QUORUM_SIZE } from "@/lib/constants";
 import { isLiveOnMap } from "@/lib/minyan-live";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -234,7 +235,7 @@ function NearbyRow({
   isLast: boolean;
 }) {
   const { t } = useTranslation();
-  const NEEDED = 10;
+  const NEEDED = QUORUM_SIZE;
   const present = m.present_count ?? 1;
   const missing = Math.max(0, NEEDED - present);
   const complete = present >= NEEDED;
@@ -339,7 +340,7 @@ function NearbyRow({
             <span className="mx-1 shrink-0 opacity-50">·</span>
             {missing > 0 ? (
               <span className="text-urgent font-medium shrink-0">
-                {present}/10 · {t("home.missing", { count: missing })}
+                {present}/{NEEDED} · {t("home.missing", { count: missing })}
               </span>
             ) : (
               <span className="text-success font-medium shrink-0">{t("home.complete")}</span>
