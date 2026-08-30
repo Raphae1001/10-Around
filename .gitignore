@@ -10,6 +10,10 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+# Capacitor web bundle (npm run build:mobile) — regenerated fresh by
+# Xcode Cloud (ios/App/ci_scripts/ci_post_clone.sh) and by anyone doing a
+# local native build; nothing in this repo reads the committed copy.
+dist-mobile
 .output
 .vinxi
 .tanstack/**
