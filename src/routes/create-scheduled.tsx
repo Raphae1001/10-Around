@@ -6,9 +6,10 @@ import { MobileFrame } from "@/components/MobileFrame";
 import { ScreenHeader } from "@/components/ui-bits";
 import { Sunrise, Sun, Moon, MapPin, CalendarClock, Loader2 } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
+import { supabase } from "@/integrations/supabase/client";
 import { AddressAutocomplete, type AddressPick } from "@/components/AddressAutocomplete";
 import { DateTimeField } from "@/components/DateTimeField";
-import { currentPrayerWindow } from "@/lib/sun";
+import { currentPrayerWindowZmanim, type ZmanimOpinion } from "@/lib/zmanim";
 import { timezoneForCoords, zonedTimeToUtc } from "@/lib/timezone";
 import { publishScheduledMinyan, PublishMinyanError } from "@/lib/minyan-publish";
 
@@ -50,6 +51,18 @@ function CreateScheduled() {
   // auto-pick from clobbering their choice.
   const [prayerAuto, setPrayerAuto] = useState(true);
   const [comment, setComment] = useState("");
+  const [zmanimOpinion, setZmanimOpinion] = useState<ZmanimOpinion>("ashkenaze");
+
+  useEffect(() => {
+    if (!user) return;
+    void supabase.rpc("get_my_profile").then(({ data }) => {
+      const row = Array.isArray(data) ? data[0] : data;
+      const saved = row?.zmanim_opinion as ZmanimOpinion | undefined;
+      if (saved === "ashkenaze" || saved === "sepharade" || saved === "habad") {
+        setZmanimOpinion(saved);
+      }
+    });
+  }, [user]);
 
   useEffect(() => {
     if (!pick?.lat || !pick?.lng || !date || !time || !prayerAuto) return;
@@ -59,9 +72,13 @@ function CreateScheduled() {
     const tz = timezoneForCoords(pick.lat, pick.lng);
     const at = zonedTimeToUtc(`${date}T${time}`, tz);
     if (Number.isNaN(at.getTime())) return;
-    const window = currentPrayerWindow(pick.lat, pick.lng, at);
+    // Real halachic zmanim (same source as the "Now" street flow) rather
+    // than the rough solar-angle estimate — computed for the venue's own
+    // coordinates, not the device's, since a scheduled minyan can be in a
+    // different city entirely from wherever the person scheduling it is.
+    const window = currentPrayerWindowZmanim(pick.lat, pick.lng, zmanimOpinion, at);
     setPrayer(PRAYER_DISPLAY[window]);
-  }, [pick, date, time, prayerAuto]);
+  }, [pick, date, time, prayerAuto, zmanimOpinion]);
 
   const prayers = [
     { name: "Shacharit", icon: Sunrise },
