@@ -17,6 +17,7 @@ import {
 import { MobileFrame } from "@/components/MobileFrame";
 import { ScreenHeader } from "@/components/ui-bits";
 import { SUPPORT_EMAIL } from "@/lib/support-email";
+import { PRIVACY_LEGAL_SECTIONS } from "@/lib/legal-content";
 
 export const Route = createFileRoute("/privacy")({
   head: () => ({
@@ -36,127 +37,63 @@ export const Route = createFileRoute("/privacy")({
   component: Privacy,
 });
 
-// EN-only legally-required sections (not auto-translated for the v1 launch).
-const LEGAL_SECTIONS: { icon: typeof UserPlus; title: string; body: React.ReactNode }[] = [
-  {
-    icon: UserPlus,
-    title: "Account creation & authentication",
-    body: (
+// Icon per legal section, keyed by title — presentational only; the section
+// text itself now comes solely from PRIVACY_LEGAL_SECTIONS (single source of
+// truth, shared with LegalDocSheet.tsx).
+const LEGAL_SECTION_ICONS: Record<string, typeof UserPlus> = {
+  "Account creation & authentication": UserPlus,
+  "Location & blurred presence": MapPin,
+  "Chat & user-generated content": MessageCircle,
+  "Push notifications": Bell,
+  Analytics: BarChart3,
+  "Data storage & retention": Database,
+  "Your rights": Scale,
+  "Account deletion": Trash2,
+  Contact: Mail,
+};
+
+const SETTINGS_DELETE_PHRASE = "Settings → Delete Account";
+
+/**
+ * Renders a legal section's plain-text body, upgrading two known substrings
+ * (the Settings deep link, the support mailto) to real interactive links —
+ * without altering the wording, which comes entirely from
+ * PRIVACY_LEGAL_SECTIONS. Every other section renders as plain text.
+ */
+function renderLegalBody(title: string, body: string): React.ReactNode {
+  if (title === "Account deletion") {
+    const settingsIdx = body.indexOf(SETTINGS_DELETE_PHRASE);
+    const emailIdx = body.indexOf(SUPPORT_EMAIL);
+    if (settingsIdx === -1 || emailIdx === -1) return body;
+    return (
       <>
-        You can sign in with Apple or Google, or continue as a guest using anonymous authentication.
-        We store a unique user identifier and your display name (and an optional avatar if you add
-        one). Guest accounts can be upgraded to Apple or Google sign-in at any time from Profile
-        without losing your history.
-      </>
-    ),
-  },
-  {
-    icon: MapPin,
-    title: "Location & blurred presence",
-    body: (
-      <>
-        Your device location is used only while the app is in use — to show nearby minyanim, let you
-        create one where you stand, and (if you enable presence) count people in your area. We never
-        store your exact GPS coordinates for density counting. Instead we store only a blurred zone
-        (geohash, roughly ~1 km) that cannot be reversed to a street address. We do not track your
-        location in the background. You can revoke location access at any time in your device
-        settings, and adjust presence in Settings.
-      </>
-    ),
-  },
-  {
-    icon: MessageCircle,
-    title: "Chat & user-generated content",
-    body: (
-      <>
-        If you join a minyan or trip chat, messages you send are stored so other members of that
-        thread can see them. You can report inappropriate messages from inside the chat. We review
-        reports and may remove content or suspend accounts that violate our Terms.
-      </>
-    ),
-  },
-  {
-    icon: Bell,
-    title: "Push notifications",
-    body: (
-      <>
-        When push delivery is enabled in a future update, we may store an anonymous device push
-        token associated with your account so we can alert you about nearby minyanim and related
-        prompts. The token contains no personal information and is deleted when you uninstall the
-        app or delete your account. Preference toggles in Settings are saved locally until delivery
-        ships.
-      </>
-    ),
-  },
-  {
-    icon: BarChart3,
-    title: "Analytics",
-    body: (
-      <>
-        With your consent, we use Google Analytics 4 and Microsoft Clarity to understand which
-        features are used and where the app can be improved. We disable Google Signals and ad
-        personalization, do not send personal identifiers, and IP addresses are anonymized. You can
-        disable analytics at any time from Settings → Analytics.
-      </>
-    ),
-  },
-  {
-    icon: Database,
-    title: "Data storage & retention",
-    body: (
-      <>
-        Account data, minyan records, presence zones, and chat messages are stored on secure managed
-        Postgres infrastructure (Supabase) protected by row-level security. Data is encrypted in
-        transit (HTTPS) and at rest. Live street minyanim expire automatically after their time
-        window; presence rows and tokens are removed when you delete your account.
-      </>
-    ),
-  },
-  {
-    icon: Scale,
-    title: "Your rights",
-    body: (
-      <>
-        You have the right to access, correct, export, or delete your data at any time. Under GDPR
-        (EU), CCPA (California), and similar laws, you can also restrict or object to processing.
-        Most rights can be exercised directly in the app; for anything else, contact us at the email
-        below.
-      </>
-    ),
-  },
-  {
-    icon: Trash2,
-    title: "Account deletion",
-    body: (
-      <>
-        You can delete your account at any time from{" "}
+        {body.slice(0, settingsIdx)}
         <Link to="/settings" className="underline">
-          Settings → Delete Account
+          {SETTINGS_DELETE_PHRASE}
         </Link>
-        . Deletion is immediate and permanent: your profile, presence zone, push tokens,
-        participation history, chat membership, messages you sent (where cascaded), and minyanim you
-        created are removed. If you cannot sign in, email{" "}
+        {body.slice(settingsIdx + SETTINGS_DELETE_PHRASE.length, emailIdx)}
         <a className="underline" href={`mailto:${SUPPORT_EMAIL}?subject=Account%20deletion`}>
           {SUPPORT_EMAIL}
-        </a>{" "}
-        and we will process the deletion manually within 30 days.
+        </a>
+        {body.slice(emailIdx + SUPPORT_EMAIL.length)}
       </>
-    ),
-  },
-  {
-    icon: Mail,
-    title: "Contact",
-    body: (
+    );
+  }
+  if (title === "Contact") {
+    const emailIdx = body.indexOf(SUPPORT_EMAIL);
+    if (emailIdx === -1) return body;
+    return (
       <>
-        Questions or requests about your data? Email{" "}
+        {body.slice(0, emailIdx)}
         <a className="underline" href={`mailto:${SUPPORT_EMAIL}`}>
           {SUPPORT_EMAIL}
         </a>
-        .
+        {body.slice(emailIdx + SUPPORT_EMAIL.length)}
       </>
-    ),
-  },
-];
+    );
+  }
+  return body;
+}
 
 function Privacy() {
   const { t } = useTranslation();
@@ -203,19 +140,24 @@ function Privacy() {
           );
         })}
 
-        {LEGAL_SECTIONS.map((s) => (
-          <section key={s.title} className="rounded-2xl border border-border bg-surface p-5">
-            <div className="flex items-start gap-3">
-              <div className="h-10 w-10 rounded-xl bg-muted flex items-center justify-center shrink-0">
-                <s.icon className="h-5 w-5" />
+        {PRIVACY_LEGAL_SECTIONS.map((s) => {
+          const Icon = LEGAL_SECTION_ICONS[s.title] ?? Shield;
+          return (
+            <section key={s.title} className="rounded-2xl border border-border bg-surface p-5">
+              <div className="flex items-start gap-3">
+                <div className="h-10 w-10 rounded-xl bg-muted flex items-center justify-center shrink-0">
+                  <Icon className="h-5 w-5" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h2 className="font-semibold text-lg">{s.title}</h2>
+                  <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed">
+                    {renderLegalBody(s.title, s.body)}
+                  </p>
+                </div>
               </div>
-              <div className="flex-1 min-w-0">
-                <h2 className="font-semibold text-lg">{s.title}</h2>
-                <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed">{s.body}</p>
-              </div>
-            </div>
-          </section>
-        ))}
+            </section>
+          );
+        })}
 
         <div className="pt-4 flex justify-center gap-4 text-xs text-muted-foreground">
           <Link to="/terms" className="underline">
