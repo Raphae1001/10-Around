@@ -24,6 +24,34 @@ type Recipient = { user_id: string; token: string };
 
 const APNS_TOKEN_RE = /^[0-9a-fA-F]{64,200}$/;
 
+// Bounded worker pool: at most `limit` calls to `fn` in flight at once,
+// instead of either fully sequential (slow: N round trips end to end) or an
+// unbounded Promise.all (risks a burst of N simultaneous APNs/DB requests).
+// Results are returned in the same order as `items`, regardless of which
+// finishes first. `fn` must not throw for a single item to abort the rest —
+// every call site below wraps its own risky work in try/catch accordingly.
+async function mapWithConcurrency<T, R>(
+  items: T[],
+  limit: number,
+  fn: (item: T) => Promise<R>,
+): Promise<R[]> {
+  const results: R[] = new Array(items.length);
+  let next = 0;
+  async function worker() {
+    while (next < items.length) {
+      const i = next++;
+      results[i] = await fn(items[i]);
+    }
+  }
+  await Promise.all(Array.from({ length: Math.min(limit, items.length) }, worker));
+  return results;
+}
+
+// Apple has no documented hard per-key concurrency limit, but this keeps the
+// in-flight request burst (to APNs and to Postgres) modest and predictable
+// regardless of how many recipients a dense area produces.
+const PUSH_CONCURRENCY = 5;
+
 // APNs signing key is imported once per warm instance and reused.
 let cachedKey: CryptoKey | null = null;
 let cachedJwt: { token: string; issuedAt: number } | null = null;
@@ -175,18 +203,26 @@ Deno.serve(async (req) => {
       return json({ ok: true, sent: 0, skipped: 0, reason: "no_recipients" });
     }
 
-    // Cap: 3 notifications per person per 6 hours.
+    // Cap: 3 notifications per person per 6 hours. Independent read per
+    // recipient (no ordering dependency between users) — safe to check with
+    // bounded concurrency instead of one at a time.
     const notifCap = 3;
     const since = new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString();
-    const eligible: Recipient[] = [];
-    for (const r of list) {
-      const { count } = await admin
-        .from("push_notification_log")
-        .select("id", { count: "exact", head: true })
-        .eq("user_id", r.user_id)
-        .gte("created_at", since);
-      if ((count ?? 0) < notifCap) eligible.push(r);
-    }
+    const eligibleFlags = await mapWithConcurrency(list, PUSH_CONCURRENCY, async (r) => {
+      try {
+        const { count } = await admin
+          .from("push_notification_log")
+          .select("id", { count: "exact", head: true })
+          .eq("user_id", r.user_id)
+          .gte("created_at", since);
+        return (count ?? 0) < notifCap;
+      } catch {
+        // Can't confirm this user is under the cap — fail closed (skip them)
+        // rather than risk over-notifying.
+        return false;
+      }
+    });
+    const eligible: Recipient[] = list.filter((_, i) => eligibleFlags[i]);
 
     const prayerLabel =
       String(minyan.prayer ?? "minyan")
@@ -195,48 +231,70 @@ Deno.serve(async (req) => {
     const title = "Minyan nearby";
     const bodyText = `${prayerLabel} — ${minyan.address ?? "around you"}`;
 
+    // Delivery to each recipient is fully independent — no relative ordering
+    // between different users matters — so this also runs with bounded
+    // concurrency instead of one APNs round trip at a time. Each task
+    // catches its own errors so one recipient's failure can never abort the
+    // rest (mapWithConcurrency's Promise.all would otherwise reject as a
+    // whole on the first uncaught rejection).
+    type DeliveryOutcome =
+      { status: "sent" } | { status: "queued" } | { status: "skipped"; reason: string };
+
+    const outcomes = await mapWithConcurrency(
+      eligible,
+      PUSH_CONCURRENCY,
+      async (r): Promise<DeliveryOutcome> => {
+        try {
+          const isApns = APNS_TOKEN_RE.test(r.token);
+
+          if (isApns && apnsConfigured) {
+            const result = await sendApns(
+              r.token,
+              { title, body: bodyText, minyanId: minyan.id },
+              {
+                keyId: APNS_KEY_ID,
+                teamId: APNS_TEAM_ID,
+                authKeyPem: APNS_AUTH_KEY,
+                topic: APNS_TOPIC,
+                host: APNS_HOST,
+              },
+            );
+            if (result.ok) {
+              await admin.from("push_notification_log").insert({
+                user_id: r.user_id,
+                minyan_id: minyan.id,
+                kind: "nearby_minyan",
+              });
+              return { status: "sent" };
+            }
+            return { status: "skipped", reason: result.reason };
+          }
+
+          // Not an APNs token, or APNs not configured yet — record intent
+          // without claiming delivery (mirrors the pre-APNs "queued" behaviour).
+          await admin.from("push_notification_log").insert({
+            user_id: r.user_id,
+            minyan_id: minyan.id,
+            kind: "nearby_minyan_queued",
+          });
+          return { status: "queued" };
+        } catch (e) {
+          return { status: "skipped", reason: (e as Error).message };
+        }
+      },
+    );
+
     let sent = 0;
     let queued = 0;
     let skipped = list.length - eligible.length;
     const deliveryErrors: string[] = [];
-
-    for (const r of eligible) {
-      const isApns = APNS_TOKEN_RE.test(r.token);
-
-      if (isApns && apnsConfigured) {
-        const result = await sendApns(
-          r.token,
-          { title, body: bodyText, minyanId: minyan.id },
-          {
-            keyId: APNS_KEY_ID,
-            teamId: APNS_TEAM_ID,
-            authKeyPem: APNS_AUTH_KEY,
-            topic: APNS_TOPIC,
-            host: APNS_HOST,
-          },
-        );
-        if (result.ok) {
-          sent += 1;
-          await admin.from("push_notification_log").insert({
-            user_id: r.user_id,
-            minyan_id: minyan.id,
-            kind: "nearby_minyan",
-          });
-        } else {
-          skipped += 1;
-          deliveryErrors.push(result.reason);
-        }
-        continue;
+    for (const outcome of outcomes) {
+      if (outcome.status === "sent") sent += 1;
+      else if (outcome.status === "queued") queued += 1;
+      else {
+        skipped += 1;
+        deliveryErrors.push(outcome.reason);
       }
-
-      // Not an APNs token, or APNs not configured yet — record intent without
-      // claiming delivery (mirrors the pre-APNs "queued" behaviour).
-      queued += 1;
-      await admin.from("push_notification_log").insert({
-        user_id: r.user_id,
-        minyan_id: minyan.id,
-        kind: "nearby_minyan_queued",
-      });
     }
 
     return json({
