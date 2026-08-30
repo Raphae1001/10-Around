@@ -3,43 +3,14 @@ import { useTranslation } from "react-i18next";
 import { MobileFrame } from "@/components/MobileFrame";
 import { ScreenHeader } from "@/components/ui-bits";
 import { SUPPORTED_LANGS, type LangCode } from "@/i18n";
-import {
-  Bell,
-  Lock,
-  MapPin,
-  ChevronDown,
-  Sparkles,
-  BarChart3,
-  Trash2,
-  Loader2,
-  Globe,
-  Users,
-  Check,
-} from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import { useQueryClient } from "@tanstack/react-query";
+import { Bell, Lock, MapPin, ChevronDown, Sparkles, BarChart3, Globe, Users } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
-import { track, setAnalyticsEnabled, isAnalyticsEnabled } from "@/lib/analytics";
-import { toast } from "sonner";
+import { setAnalyticsEnabled, isAnalyticsEnabled } from "@/lib/analytics";
 import { tapLight } from "@/lib/haptics";
 import { getAppPref, setAppPref } from "@/lib/app-prefs";
-import { deleteAccountAndLeave, goToWelcomeAfterLeave, signOutAndLeave } from "@/lib/leave-account";
-import {
-  getPresenceLevel,
-  setPresenceLevel,
-  type PresenceLevel,
-  PRESENCE_LEVELS,
-} from "@/lib/presence-prefs";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import { PresenceSettings } from "@/components/PresenceSettings";
+import { DangerZone } from "@/components/DangerZone";
 
 export const Route = createFileRoute("/settings")({
   component: Settings,
@@ -48,91 +19,11 @@ export const Route = createFileRoute("/settings")({
 function Settings() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const { user, loading: authLoading } = useAuth();
-  const [deleteOpen, setDeleteOpen] = useState(false);
-  const [confirmText, setConfirmText] = useState("");
-  const [deleting, setDeleting] = useState(false);
-  const [presenceLevel, setPresenceLevelState] = useState<PresenceLevel>("ponctual");
-  const [presenceLoading, setPresenceLoading] = useState(true);
-  const signingOutRef = useRef(false);
 
   useEffect(() => {
     if (!authLoading && !user) navigate({ to: "/auth" });
   }, [authLoading, user, navigate]);
-
-  useEffect(() => {
-    let cancelled = false;
-    void getPresenceLevel(user?.id).then((level) => {
-      if (!cancelled) {
-        setPresenceLevelState(level);
-        setPresenceLoading(false);
-      }
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, [user?.id]);
-
-  async function onPresenceChange(level: PresenceLevel) {
-    if (level === presenceLevel) return;
-    void tapLight();
-    setPresenceLevelState(level);
-    await setPresenceLevel(level, user?.id);
-    toast.success(t("settings.presenceSaved"));
-  }
-
-  async function signOut() {
-    // Guards a double-tap: navigation is instant now, so nothing else
-    // disables the button in between the click and the route change.
-    if (signingOutRef.current) return;
-    signingOutRef.current = true;
-    track("sign_out");
-    try {
-      await queryClient.cancelQueries();
-    } catch {}
-    try {
-      queryClient.clear();
-    } catch {}
-    // Navigate first (client-side, no reload) so the account teardown keeps
-    // running in the background instead of blocking the screen transition.
-    navigate({ to: "/onboarding" });
-    try {
-      if (user?.is_anonymous) {
-        await deleteAccountAndLeave();
-      } else {
-        await signOutAndLeave();
-      }
-    } catch (e) {
-      toast.error(t("common.couldNotSignOut"), { description: (e as Error).message });
-    }
-  }
-
-  async function handleDelete() {
-    if (confirmText !== "DELETE") return;
-    setDeleting(true);
-    const timeout = setTimeout(() => {
-      setDeleting(false);
-      toast.error(t("common.deleteTimedOut"));
-    }, 20000);
-    try {
-      await deleteAccountAndLeave();
-      track("delete_account");
-      try {
-        await queryClient.cancelQueries();
-      } catch {}
-      try {
-        queryClient.clear();
-      } catch {}
-      clearTimeout(timeout);
-      toast.success(t("common.accountDeleted"));
-      goToWelcomeAfterLeave();
-    } catch (e) {
-      clearTimeout(timeout);
-      toast.error(t("common.couldNotDeleteAccount"), { description: (e as Error).message });
-      setDeleting(false);
-    }
-  }
 
   const currentLang = (i18n.language?.split("-")[0] as LangCode) || "en";
   const activeLang = SUPPORTED_LANGS.find((l) => l.code === currentLang) ?? SUPPORTED_LANGS[0];
@@ -171,25 +62,7 @@ function Settings() {
         </SettingsSection>
 
         <SettingsSection title={t("settings.presence")} icon={Users}>
-          {presenceLoading ? (
-            <div className="flex justify-center py-6 text-muted-foreground">
-              <Loader2 className="h-5 w-5 animate-spin" />
-            </div>
-          ) : (
-            PRESENCE_LEVELS.map((level, idx) => (
-              <PresenceRow
-                key={level}
-                label={t(`settings.presence${levelKey(level)}`)}
-                description={t(`settings.presence${levelKey(level)}Desc`)}
-                selected={presenceLevel === level}
-                isLast={idx === PRESENCE_LEVELS.length - 1}
-                onSelect={() => void onPresenceChange(level)}
-              />
-            ))
-          )}
-          <p className="px-4 py-3 text-[11px] text-muted-foreground border-t border-border/60 leading-relaxed">
-            {t("settings.presenceFootnote")}
-          </p>
+          <PresenceSettings userId={user?.id} />
         </SettingsSection>
 
         <SettingsSection title={t("settings.notifications")} icon={Bell}>
@@ -253,70 +126,10 @@ function Settings() {
           <LinkRow to="/support" label={t("settings.support")} isLast />
         </div>
 
-        <button
-          onClick={signOut}
-          className="w-full text-center text-sm text-muted-foreground py-4 rounded-2xl border border-border bg-surface active:bg-muted/50 transition-colors"
-        >
-          {t("common.signOut")}
-        </button>
-
-        <button
-          onClick={() => {
-            setConfirmText("");
-            setDeleteOpen(true);
-          }}
-          className="w-full flex items-center justify-center gap-2 text-center text-sm text-destructive py-4 rounded-2xl border border-destructive/30 bg-destructive/5 active:opacity-80 transition-opacity"
-        >
-          <Trash2 className="h-4 w-4" /> {t("settings.deleteAccount")}
-        </button>
+        <DangerZone isAnonymous={!!user?.is_anonymous} />
       </div>
-
-      <AlertDialog
-        open={deleteOpen}
-        onOpenChange={(v) => {
-          if (!deleting) setDeleteOpen(v);
-        }}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{t("settings.deleteAccountTitle")}</AlertDialogTitle>
-            <AlertDialogDescription>{t("settings.deleteAccountDesc")}</AlertDialogDescription>
-          </AlertDialogHeader>
-          <input
-            type="text"
-            value={confirmText}
-            onChange={(e) => setConfirmText(e.target.value)}
-            placeholder="DELETE"
-            disabled={deleting}
-            className="w-full rounded-xl border border-border bg-surface p-3 text-sm outline-none focus:border-urgent"
-          />
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={deleting}>{t("common.cancel")}</AlertDialogCancel>
-            <AlertDialogAction
-              disabled={confirmText !== "DELETE" || deleting}
-              onClick={(e) => {
-                e.preventDefault();
-                void handleDelete();
-              }}
-              className="bg-urgent text-white hover:bg-urgent/90"
-            >
-              {deleting ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                t("settings.deleteForever")
-              )}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </MobileFrame>
   );
-}
-
-function levelKey(level: PresenceLevel): "Off" | "Ponctual" | "Active" {
-  if (level === "off") return "Off";
-  if (level === "active_foreground") return "Active";
-  return "Ponctual";
 }
 
 function SettingsSection({
@@ -338,36 +151,6 @@ function SettingsSection({
       </div>
       <div className="rounded-2xl bg-surface border border-border overflow-hidden">{children}</div>
     </section>
-  );
-}
-
-function PresenceRow({
-  label,
-  description,
-  selected,
-  isLast,
-  onSelect,
-}: {
-  label: string;
-  description: string;
-  selected: boolean;
-  isLast?: boolean;
-  onSelect: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onSelect}
-      className={`w-full px-4 py-3.5 flex items-start gap-3 text-left active:bg-muted/50 transition-colors ${
-        !isLast ? "border-b border-border/60" : ""
-      }`}
-    >
-      <div className="flex-1 min-w-0">
-        <div className="text-[15px] font-medium text-foreground">{label}</div>
-        <div className="text-[13px] text-muted-foreground mt-0.5 leading-snug">{description}</div>
-      </div>
-      {selected && <Check className="h-5 w-5 text-gold shrink-0 mt-0.5" strokeWidth={2.5} />}
-    </button>
   );
 }
 
