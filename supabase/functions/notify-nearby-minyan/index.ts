@@ -203,26 +203,64 @@ Deno.serve(async (req) => {
       return json({ ok: true, sent: 0, skipped: 0, reason: "no_recipients" });
     }
 
-    // Cap: 3 notifications per person per 6 hours. Independent read per
-    // recipient (no ordering dependency between users) — safe to check with
-    // bounded concurrency instead of one at a time.
+    // Cap: 3 notifications per person per 6 hours. Counts every
+    // push_notification_log row for a user in the window regardless of
+    // `kind` (nearby_minyan or nearby_minyan_queued both count) — same
+    // semantics as the previous per-recipient COUNT query, just fetched in
+    // one batched query instead of one query per recipient.
     const notifCap = 3;
     const since = new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString();
-    const eligibleFlags = await mapWithConcurrency(list, PUSH_CONCURRENCY, async (r) => {
-      try {
-        const { count } = await admin
-          .from("push_notification_log")
-          .select("id", { count: "exact", head: true })
-          .eq("user_id", r.user_id)
-          .gte("created_at", since);
-        return (count ?? 0) < notifCap;
-      } catch {
-        // Can't confirm this user is under the cap — fail closed (skip them)
-        // rather than risk over-notifying.
-        return false;
+
+    // A single `.in("user_id", ...)` with hundreds of UUIDs risks an
+    // oversized request; chunk it defensively. In practice `list` is small
+    // enough (~1km radius, opted-in + fresh presence) that this is almost
+    // always exactly one chunk — reuses the same bounded pool from the
+    // concurrency fix (PUSH_CONCURRENCY unchanged) for the rare case where
+    // it isn't.
+    const RATE_LIMIT_CHUNK_SIZE = 200;
+    const userIds = list.map((r) => r.user_id);
+    const idChunks: string[][] = [];
+    for (let i = 0; i < userIds.length; i += RATE_LIMIT_CHUNK_SIZE) {
+      idChunks.push(userIds.slice(i, i + RATE_LIMIT_CHUNK_SIZE));
+    }
+
+    type ChunkResult = { ok: true; rows: { user_id: string }[] } | { ok: false; userIds: string[] };
+
+    const chunkResults = await mapWithConcurrency(
+      idChunks,
+      PUSH_CONCURRENCY,
+      async (ids): Promise<ChunkResult> => {
+        try {
+          const { data, error } = await admin
+            .from("push_notification_log")
+            .select("user_id")
+            .in("user_id", ids)
+            .gte("created_at", since);
+          if (error) throw error;
+          return { ok: true, rows: (data ?? []) as { user_id: string }[] };
+        } catch {
+          // Can't confirm these users are under the cap — fail closed (skip
+          // them) rather than risk over-notifying, same as before.
+          return { ok: false, userIds: ids };
+        }
+      },
+    );
+
+    const countsByUser = new Map<string, number>();
+    const failedUserIds = new Set<string>();
+    for (const result of chunkResults) {
+      if (result.ok) {
+        for (const row of result.rows) {
+          countsByUser.set(row.user_id, (countsByUser.get(row.user_id) ?? 0) + 1);
+        }
+      } else {
+        for (const uid of result.userIds) failedUserIds.add(uid);
       }
-    });
-    const eligible: Recipient[] = list.filter((_, i) => eligibleFlags[i]);
+    }
+
+    const eligible: Recipient[] = list.filter(
+      (r) => !failedUserIds.has(r.user_id) && (countsByUser.get(r.user_id) ?? 0) < notifCap,
+    );
 
     const prayerLabel =
       String(minyan.prayer ?? "minyan")
