@@ -190,6 +190,21 @@ function Home() {
     [zones],
   );
 
+  // nowTick ticks every 15s (see effect above), but the arrival countdown
+  // label only has minute granularity and only exists for minyanim actively
+  // in their 10-min arrival window. Without this, `pins` — and therefore
+  // every Google Maps marker plus the whole MarkerClusterer, which
+  // ClusteredPins fully recreates whenever `pins` gets a new reference —
+  // would get rebuilt every 15s regardless of whether anything on the map
+  // actually changed. Keying off a value that only changes when an arrival
+  // countdown is actually running (and even then only once a minute) makes
+  // `pins` reuse the same reference the rest of the time.
+  const arrivalTick = minyanim.some(
+    (m) => m.arrival_deadline != null && new Date(m.arrival_deadline).getTime() > nowTick,
+  )
+    ? Math.floor(nowTick / 60_000)
+    : 0;
+
   const pins: MapPinDatum[] = useMemo(
     () =>
       minyanim.map((m) => {
@@ -209,7 +224,8 @@ function Home() {
           onClick: () => navigate({ to: "/minyan", search: { id: m.id } }),
         } satisfies MapPinDatum;
       }),
-    [minyanim, navigate, nowTick],
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- arrivalTick stands in for nowTick, see comment above
+    [minyanim, navigate, arrivalTick],
   );
 
   const initial = useMemo(
