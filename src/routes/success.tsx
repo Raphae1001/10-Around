@@ -4,6 +4,9 @@ import { MobileFrame } from "@/components/MobileFrame";
 import { Check, Navigation2, Share2, Footprints } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import type { Database } from "@/integrations/supabase/types";
+
+type MinyanRow = Database["public"]["Tables"]["minyanim"]["Row"];
 
 export const Route = createFileRoute("/success")({
   validateSearch: (s: Record<string, unknown>) => ({
@@ -27,18 +30,18 @@ function Success() {
     async function load() {
       const { data } = await supabase.rpc("get_minyan_by_id", { _id: id! }).maybeSingle();
       if (cancelled || !data) return;
-      setPresent((data as any).present_count ?? 0);
-      setAddress((data as any).address ?? null);
-      setPrayer((data as any).prayer ?? null);
+      setPresent(data.present_count ?? 0);
+      setAddress(data.address ?? null);
+      setPrayer(data.prayer ?? null);
     }
     load();
     const ch = supabase
       .channel(`success-${id}`)
-      .on(
+      .on<MinyanRow>(
         "postgres_changes",
         { event: "*", schema: "public", table: "minyanim", filter: `id=eq.${id}` },
         (payload) => {
-          if (payload.new) setPresent((payload.new as any).present_count ?? 0);
+          if ("present_count" in payload.new) setPresent(payload.new.present_count ?? 0);
         },
       )
       .subscribe();

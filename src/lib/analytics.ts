@@ -9,8 +9,21 @@
  * No PII is ever forwarded. User IDs are hashed before being sent.
  */
 
-const GA_ID = (import.meta as any).env?.VITE_GA4_ID as string | undefined;
-const CLARITY_ID = (import.meta as any).env?.VITE_CLARITY_ID as string | undefined;
+const GA_ID = import.meta.env.VITE_GA4_ID as string | undefined;
+const CLARITY_ID = import.meta.env.VITE_CLARITY_ID as string | undefined;
+
+type GtagFn = (...args: unknown[]) => void;
+type ClarityFn = ((...args: unknown[]) => void) & { q?: IArguments[] };
+
+interface AnalyticsWindow extends Window {
+  dataLayer?: unknown[];
+  gtag?: GtagFn;
+  clarity?: ClarityFn;
+}
+
+function analyticsWindow(): AnalyticsWindow {
+  return window as unknown as AnalyticsWindow;
+}
 
 export type AnalyticsEvent =
   | "page_view"
@@ -62,14 +75,15 @@ async function ensureLoaded() {
   if (!isBrowser() || loaded || !userEnabled()) return;
   if (loading) return loading;
   loading = (async () => {
+    const w = analyticsWindow();
     if (GA_ID) {
       // GA4
-      (window as any).dataLayer = (window as any).dataLayer || [];
-      (window as any).gtag = function gtag() {
-        (window as any).dataLayer.push(arguments);
+      w.dataLayer = w.dataLayer || [];
+      w.gtag = function gtag() {
+        w.dataLayer!.push(arguments);
       };
-      (window as any).gtag("js", new Date());
-      (window as any).gtag("config", GA_ID, {
+      w.gtag("js", new Date());
+      w.gtag("config", GA_ID, {
         anonymize_ip: true,
         allow_google_signals: false,
         allow_ad_personalization_signals: false,
@@ -79,18 +93,18 @@ async function ensureLoaded() {
     }
     if (CLARITY_ID) {
       // Microsoft Clarity bootstrap
-      (function (c: any, l: Document, a: string, r: string, i: string) {
+      (function (c: AnalyticsWindow, l: Document, a: "clarity", r: string, i: string) {
         c[a] =
           c[a] ||
-          function () {
-            (c[a].q = c[a].q || []).push(arguments);
-          };
+          (function () {
+            (c[a]!.q = c[a]!.q || []).push(arguments);
+          } as ClarityFn);
         const t = l.createElement(r) as HTMLScriptElement;
         t.async = true;
         t.src = "https://www.clarity.ms/tag/" + i;
         const y = l.getElementsByTagName(r)[0];
         y.parentNode?.insertBefore(t, y);
-      })(window, document, "clarity", "script", CLARITY_ID);
+      })(w, document, "clarity", "script", CLARITY_ID);
     }
     loaded = true;
   })();
@@ -114,14 +128,15 @@ export function track(event: AnalyticsEvent, params?: EventParams) {
   void ensureLoaded().then(() => {
     try {
       const p = safeParams(params);
-      if (GA_ID && (window as any).gtag) {
-        (window as any).gtag("event", event, p ?? {});
+      const w = analyticsWindow();
+      if (GA_ID && w.gtag) {
+        w.gtag("event", event, p ?? {});
       }
-      if (CLARITY_ID && (window as any).clarity) {
-        (window as any).clarity("event", event);
+      if (CLARITY_ID && w.clarity) {
+        w.clarity("event", event);
         if (p) {
           for (const [k, v] of Object.entries(p)) {
-            (window as any).clarity("set", k, String(v));
+            w.clarity("set", k, String(v));
           }
         }
       }
@@ -135,8 +150,9 @@ export function pageView(path: string, title?: string) {
   if (!isBrowser() || !userEnabled()) return;
   void ensureLoaded().then(() => {
     try {
-      if (GA_ID && (window as any).gtag) {
-        (window as any).gtag("event", "page_view", {
+      const w = analyticsWindow();
+      if (GA_ID && w.gtag) {
+        w.gtag("event", "page_view", {
           page_path: path,
           page_title: title,
           page_location: window.location.href,

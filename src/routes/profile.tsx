@@ -65,17 +65,11 @@ function Profile() {
 
   useEffect(() => {
     if (!user) return;
-    void (supabase as any).rpc("get_my_profile").then(({ data }: any) => {
-      setProfile(Array.isArray(data) ? data[0] : data);
-    });
-    void (supabase as any).rpc("get_my_stats").then(({ data }: any) => {
-      setStats(Array.isArray(data) ? data[0] : data);
-    });
-    void (supabase as any)
+    void supabase.rpc("get_my_profile").then(({ data }) => setProfile(data?.[0] ?? null));
+    void supabase.rpc("get_my_stats").then(({ data }) => setStats(data?.[0] ?? null));
+    void supabase
       .rpc("get_my_recent_participations", { _limit: 5 })
-      .then(({ data }: any) => {
-        setRecent(Array.isArray(data) ? data : []);
-      });
+      .then(({ data }) => setRecent(data ?? []));
   }, [user]);
 
   const first = profile?.first_name ?? "";
@@ -105,7 +99,7 @@ function Profile() {
     const display = `${f} ${l}`;
     const { error } = await supabase
       .from("profiles")
-      .update({ first_name: f, last_name: l, display_name: display } as any)
+      .update({ first_name: f, last_name: l, display_name: display })
       .eq("id", user.id);
     setSavingName(false);
     if (error) {

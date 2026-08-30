@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { MobileFrame } from "@/components/MobileFrame";
 import { ScreenHeader, StatusPill } from "@/components/ui-bits";
-import { Shield, CheckCircle2, Award, TrendingUp, Star } from "lucide-react";
+import { Shield, CheckCircle2, Award, TrendingUp, Star, type LucideIcon } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -26,9 +26,7 @@ function Trust() {
 
   useEffect(() => {
     if (!user) return;
-    (supabase as any).rpc("get_my_stats").then(({ data }: any) => {
-      setStats(Array.isArray(data) ? data[0] : data);
-    });
+    void supabase.rpc("get_my_stats").then(({ data }) => setStats(data?.[0] ?? null));
   }, [user]);
 
   const stars = Number(stats?.stars ?? 0);
@@ -117,7 +115,21 @@ function Trust() {
   );
 }
 
-function Pillar({ icon: Icon, tone, label, value, bar, sub }: any) {
+function Pillar({
+  icon: Icon,
+  tone,
+  label,
+  value,
+  bar,
+  sub,
+}: {
+  icon: LucideIcon;
+  tone: "success" | "sky" | "gold";
+  label: string;
+  value: string;
+  bar: number;
+  sub: string;
+}) {
   const toneBg =
     tone === "success"
       ? "bg-success/15 text-success"
