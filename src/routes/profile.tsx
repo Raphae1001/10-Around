@@ -404,11 +404,11 @@ function Profile() {
 
       {editing && (
         <div
-          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 p-4"
+          className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center bg-black/40 p-4"
           onClick={() => !savingName && setEditing(false)}
         >
           <div
-            className="w-full max-w-sm rounded-3xl bg-background p-5 shadow-lift"
+            className="w-full max-w-sm max-h-[85vh] overflow-y-auto overscroll-contain rounded-3xl bg-background p-5 shadow-lift"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="text-lg font-semibold mb-3">{t("profile.editProfile")}</div>
