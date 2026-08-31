@@ -8,7 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { tapLight } from "@/lib/haptics";
 import { humanTimeAgo } from "@/lib/time";
-import { LEGACY_SCREENS_ENABLED } from "@/lib/feature-flags";
+import { TRAVEL_STAY_ENABLED } from "@/lib/feature-flags";
 
 type TravelCity = {
   city_key: string;
@@ -133,14 +133,14 @@ function ChatsPage() {
                             {t("chats.peerCount", { count: c.peer_count })}
                           </div>
                         </div>
-                        {LEGACY_SCREENS_ENABLED && (
+                        {TRAVEL_STAY_ENABLED && (
                           <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
                         )}
                       </>
                     );
                     // The travel-city screen is feature-flagged off (see PlannedMinyanRow.tsx) —
                     // render the row inert instead of dead-ending on tap.
-                    if (!LEGACY_SCREENS_ENABLED) {
+                    if (!TRAVEL_STAY_ENABLED) {
                       return (
                         <div key={c.city_key} className={rowClass}>
                           {inner}
