@@ -4,7 +4,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.17";
+    PostgrestVersion: "14.5";
   };
   public: {
     Tables: {
@@ -578,6 +578,54 @@ export type Database = {
       count_travelers_in_city: {
         Args: { _city_key: string; _from: string; _to: string };
         Returns: number;
+      };
+      create_stay_minyan: {
+        Args: {
+          _address: string;
+          _expires_at: string;
+          _lat: number;
+          _lng: number;
+          // Nullable columns — the generator can't see that from the SQL
+          // parameter type alone, so this is hand-corrected here (same
+          // convention as create_street_minyan's _message below).
+          _message: string | null;
+          _trip_end_date: string;
+          _trip_prayer_interests: Json;
+          _trip_start_date: string;
+        };
+        Returns: {
+          address: string | null;
+          arrival_deadline: string | null;
+          awaiting_creator_decision: boolean;
+          city: string | null;
+          confirmation_path: string | null;
+          confirmed_at: string | null;
+          created_at: string;
+          creator_id: string;
+          expires_at: string;
+          extra_present: number;
+          id: string;
+          is_live: boolean;
+          latitude: number;
+          location: unknown;
+          longitude: number;
+          message: string | null;
+          nusach: string | null;
+          prayer: Database["public"]["Enums"]["minyan_prayer"];
+          present_count: number;
+          scheduled_at: string | null;
+          trip_end_date: string | null;
+          trip_prayer_interests: Json;
+          trip_start_date: string | null;
+          type: Database["public"]["Enums"]["minyan_type"];
+          updated_at: string;
+        }[];
+        SetofOptions: {
+          from: "*";
+          to: "minyanim";
+          isOneToOne: false;
+          isSetofReturn: true;
+        };
       };
       create_street_minyan: {
         Args: {

@@ -8,7 +8,7 @@ import { PlannedMinyanRow } from "@/components/PlannedMinyanRow";
 import { useAuth } from "@/hooks/use-auth";
 import { usePlannedMinyanim } from "@/hooks/use-planned-minyanim";
 import { tapLight } from "@/lib/haptics";
-import { LEGACY_SCREENS_ENABLED } from "@/lib/feature-flags";
+import { TRAVEL_STAY_ENABLED } from "@/lib/feature-flags";
 
 export const Route = createFileRoute("/planned")({
   component: Planned,
@@ -124,12 +124,12 @@ function Planned() {
               )}
             </PlannedSection>
 
-            {(LEGACY_SCREENS_ENABLED || stays.length > 0) && (
+            {(TRAVEL_STAY_ENABLED || stays.length > 0) && (
               <PlannedSection
                 title={t("planned.staySection")}
                 hint={t("planned.travelHint")}
                 action={
-                  LEGACY_SCREENS_ENABLED ? (
+                  TRAVEL_STAY_ENABLED ? (
                     <CreateTextButton
                       label={t("planned.addStay")}
                       onClick={() => navigate({ to: "/create-stay" })}
@@ -145,7 +145,7 @@ function Planned() {
                         m={m}
                         variant="stay"
                         isLast={idx === stays.length - 1}
-                        linkable={LEGACY_SCREENS_ENABLED}
+                        linkable={TRAVEL_STAY_ENABLED}
                       />
                     ))}
                   </div>

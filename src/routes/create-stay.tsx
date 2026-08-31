@@ -10,8 +10,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { AddressAutocomplete, type AddressPick } from "@/components/AddressAutocomplete";
 import { DateTimeField } from "@/components/DateTimeField";
 import { stayCityKey } from "@/lib/stay";
+import { guardTravelStayScreen } from "@/lib/legacy-route";
 
 export const Route = createFileRoute("/create-stay")({
+  beforeLoad: guardTravelStayScreen,
   component: CreateStay,
 });
 
@@ -227,38 +229,6 @@ function CreateStay() {
       const lng = pick.lng ?? 0;
       const expiresAt = new Date(`${dateEnd}T23:59:59`).toISOString();
 
-      // Duplicate guard: block a second submission of the *same* trip (same
-      // creator, same city, overlapping dates) — e.g. a retried request
-      // after a perceived timeout, or a second tab. This mirrors
-      // list_city_peers/count_travelers_in_city's own city-key + date-range
-      // overlap semantics (supabase/migrations/20260708120000_v2_phase3c_stay_migration.sql),
-      // not the street flow's geographic radius check, which doesn't apply
-      // to a multi-day city stay. Like create-scheduled.tsx's existing
-      // duplicate check, this is a check-then-insert, not a fully atomic
-      // guarantee — acceptable here since a stay listing is not a
-      // safety-critical in-person gathering (unlike a street minyan), and
-      // matches the same trade-off already accepted for create-scheduled.tsx.
-      const cityKey = stayCityKey(cityLabel);
-      const { data: existingStays, error: existingErr } = await supabase
-        .from("minyanim")
-        .select("address, trip_start_date, trip_end_date")
-        .eq("creator_id", user.id)
-        .eq("type", "stay")
-        .gt("expires_at", new Date().toISOString());
-      if (existingErr) throw existingErr;
-
-      const alreadyPlanned = (existingStays ?? []).some((s) => {
-        if (!s.address || stayCityKey(s.address) !== cityKey) return false;
-        if (!s.trip_start_date || !s.trip_end_date) return false;
-        return s.trip_start_date <= dateEnd && s.trip_end_date >= dateStart;
-      });
-      if (alreadyPlanned) {
-        toast.error(t("createStay.errPublish"), {
-          description: "You already have a trip planned in this city for overlapping dates.",
-        });
-        return;
-      }
-
       const tripPrayerInterests = (Object.keys(interests) as PrayerKey[])
         .filter((key) => interests[key])
         .map((key) => ({
@@ -267,38 +237,34 @@ function CreateStay() {
           note: interests[key]!.note.trim() || null,
         }));
 
-      const { data: stay, error: stayErr } = await supabase
-        .from("minyanim")
-        .insert({
-          creator_id: user.id,
-          type: "stay",
-          prayer: "mincha",
-          message: note || null,
-          address: cityLabel,
-          latitude: lat,
-          longitude: lng,
-          is_live: false,
-          trip_start_date: dateStart,
-          trip_end_date: dateEnd,
-          trip_prayer_interests: tripPrayerInterests,
-          expires_at: expiresAt,
-          present_count: 0,
-          extra_present: 0,
-        })
-        .select()
-        .single();
+      // Duplicate-check + minyanim insert + participant insert all happen
+      // atomically server-side (one transaction, serialized per creator via
+      // an advisory lock) — see create_stay_minyan() in
+      // 20260831120000_stay_confirmations_and_atomic_create.sql. A failed
+      // participant insert rolls back the whole stay too; no partially
+      // created trip, no false success.
+      const { data: createdRows, error } = await supabase.rpc("create_stay_minyan", {
+        _address: cityLabel,
+        _lat: lat,
+        _lng: lng,
+        _message: note || null,
+        _trip_start_date: dateStart,
+        _trip_end_date: dateEnd,
+        _trip_prayer_interests: tripPrayerInterests,
+        _expires_at: expiresAt,
+      });
 
-      if (stayErr) throw stayErr;
-
-      // Checked explicitly (unlike before): a failure here must not be
-      // reported to the user as a success — same principle as
-      // minyan-publish.ts's insertCreatorParticipant for the street/
-      // scheduled flows, which likewise surfaces a participant-insert
-      // failure as an error rather than silently ignoring it.
-      const { error: participantErr } = await supabase
-        .from("minyan_participants")
-        .insert({ minyan_id: stay.id, user_id: user.id });
-      if (participantErr) throw participantErr;
+      if (error) {
+        if (error.message.includes("duplicate_stay")) {
+          toast.error(t("createStay.errPublish"), {
+            description: "You already have a trip planned in this city for overlapping dates.",
+          });
+          return;
+        }
+        throw error;
+      }
+      const stay = createdRows?.[0];
+      if (!stay) throw new Error("No trip returned");
 
       void import("@/lib/analytics").then(({ track }) => track("create_minyan", { type: "stay" }));
       toast.success(t("createStay.published"));
