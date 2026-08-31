@@ -60,9 +60,9 @@ Google Play Developer Program Policies (as of 2026).
 
 | URL                                                 | Status                    |
 | --------------------------------------------------- | ------------------------- |
-| `https://global-minyan-connect.lovable.app/privacy` | ✅ Live                   |
-| `https://global-minyan-connect.lovable.app/terms`   | ✅ Live (added this pass) |
-| `https://global-minyan-connect.lovable.app/support` | ✅ Live (added this pass) |
+| `https://minyan-now-18mb.vercel.app/privacy` | ✅ Live                   |
+| `https://minyan-now-18mb.vercel.app/terms`   | ✅ Live (added this pass) |
+| `https://minyan-now-18mb.vercel.app/support` | ✅ Live (added this pass) |
 
 ---
 
