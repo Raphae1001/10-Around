@@ -1,6 +1,8 @@
-# MinyanNow
+# 10 Around
 
 Trouver ou lancer un minyan autour de soi, en temps réel. Application mobile native (iOS/Android via Capacitor) + web, avec carte de densité floutée respectueuse de la vie privée.
+
+Nom de code interne : `minyannow` (package, bundle ID, projet Supabase).
 
 ---
 

@@ -56,7 +56,7 @@ Provide:
 - Foreground SVG: 108×108 dp, safe area 66 dp diameter (Android crops the corners)
 - Background: solid color or simple gradient (use `#FFFFFF` or the brand color)
 
-Lovable generates icons under `android/app/src/main/res/mipmap-*`. Run
+Place generated icons under `android/app/src/main/res/mipmap-*`. Run
 `npm run cap:sync` after replacing them.
 
 ## Play Store metadata

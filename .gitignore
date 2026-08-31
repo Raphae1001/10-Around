@@ -27,10 +27,13 @@ exports/
 .wrangler/
 .dev.vars
 
-# Editor directories and files
+# Editor / local AI-tooling directories — machine-specific, not needed to
+# build or run the app; each dev keeps their own local copy.
 .vscode/*
 !.vscode/extensions.json
 .idea
+.claude/
+.cursor/
 .DS_Store
 *.suo
 *.ntvs*

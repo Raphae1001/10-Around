@@ -77,7 +77,7 @@ In Android Studio:
 
 1. Create app in Play Console → App name "MinyanNow", language English
 2. Complete **App content**:
-   - Privacy policy URL: `https://global-minyan-connect.lovable.app/privacy`
+   - Privacy policy URL: `https://minyan-now-18mb.vercel.app/privacy`
    - App access: provide test credentials if sign-in required
    - Ads: No
    - Content rating questionnaire
@@ -114,4 +114,4 @@ In Android Studio:
 
 - **iOS rejections**: most common are missing permission strings, missing Sign in with Apple, or non-functional placeholder content. All addressed in this codebase.
 - **Android rejections**: most common are incomplete Data Safety form and missing target SDK 34+.
-- **Web updates after submission**: because Capacitor wraps the published Lovable URL, future UI changes deploy via `Publish` in the editor — no resubmission needed for web-only changes. Native plugin additions or permission changes require a new submission.
+- **Web updates after submission**: the app is a true native bundle (`dist-mobile/` built into the binary, no `server.url`) — any web/UI change requires a new `npm run build:mobile` + `cap sync` + Xcode archive + resubmission, not just a redeploy. Native plugin additions or permission changes also require a new submission.
