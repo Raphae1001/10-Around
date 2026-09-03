@@ -28,7 +28,22 @@ export async function signOutAndLeave(): Promise<void> {
  */
 export async function deleteAccountAndLeave(): Promise<void> {
   const { data, error } = await supabase.functions.invoke("delete-account", { body: {} });
-  if (error) throw error;
+  if (error) {
+    // supabase-js's FunctionsHttpError only carries a generic
+    // "Edge Function returned a non-2xx status code" message; the real
+    // reason is in the unconsumed Response body on `error.context`.
+    const context = (error as { context?: Response }).context;
+    let realMessage: string | null = null;
+    if (context && typeof context.json === "function") {
+      try {
+        const body = await context.clone().json();
+        if (body && typeof body.error === "string") realMessage = body.error;
+      } catch {
+        /* not JSON, or already consumed — fall back to the generic error */
+      }
+    }
+    throw realMessage ? new Error(realMessage) : error;
+  }
   if (data && typeof data === "object" && "ok" in data && (data as { ok?: boolean }).ok === false) {
     throw new Error(
       typeof (data as { error?: string }).error === "string"
