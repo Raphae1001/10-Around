@@ -51,6 +51,17 @@ Deno.serve(async (req) => {
 
     // Explicit cleanup before auth delete (CASCADE also covers profiles).
     const uid = ures.user.id;
+
+    // travel_city chat_threads have no minyan_id, so they don't cascade from
+    // the minyanim delete below like minyan-kind threads do — capture which
+    // ones this user belongs to now, before their membership row is gone, so
+    // we can prune any left with zero members after cleanup.
+    const { data: myThreadRows } = await admin
+      .from("chat_thread_members")
+      .select("thread_id")
+      .eq("user_id", uid);
+    const myThreadIds = (myThreadRows ?? []).map((r) => r.thread_id as string);
+
     await admin.from("member_presence").delete().eq("user_id", uid);
     await admin.from("user_push_tokens").delete().eq("user_id", uid);
     await admin.from("travel_presence").delete().eq("user_id", uid);
@@ -61,6 +72,19 @@ Deno.serve(async (req) => {
     await admin.from("content_reports").delete().eq("reporter_id", uid);
     await admin.from("content_reports").delete().eq("reported_user_id", uid);
     await admin.from("minyanim").delete().eq("creator_id", uid);
+
+    // A travel_city thread this user was the last member of is now orphaned
+    // (0 members, no minyan_id to have cascaded it) — prune it. A thread
+    // shared with other travelers still has members and is left alone.
+    for (const threadId of myThreadIds) {
+      const { count } = await admin
+        .from("chat_thread_members")
+        .select("user_id", { count: "exact", head: true })
+        .eq("thread_id", threadId);
+      if (!count) {
+        await admin.from("chat_threads").delete().eq("id", threadId).eq("kind", "travel_city");
+      }
+    }
 
     const { error: delErr } = await admin.auth.admin.deleteUser(uid);
     if (delErr) {
