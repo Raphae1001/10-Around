@@ -48,6 +48,9 @@ export async function nativeAuthClear(): Promise<void> {
 /** Extract the PKCE `code` (or implicit-flow tokens) from a deep-link callback URL. */
 async function completeSessionFromCallbackUrl(url: string): Promise<void> {
   const parsed = new URL(url);
+  const hash = parsed.hash.startsWith("#") ? parsed.hash.slice(1) : parsed.hash;
+  const hashParams = new URLSearchParams(hash);
+
   const code = parsed.searchParams.get("code");
   if (code) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
@@ -55,14 +58,22 @@ async function completeSessionFromCallbackUrl(url: string): Promise<void> {
     return;
   }
   // Fallback for providers/configs that return an implicit-flow hash instead.
-  const hash = parsed.hash.startsWith("#") ? parsed.hash.slice(1) : parsed.hash;
-  const hashParams = new URLSearchParams(hash);
   const access_token = hashParams.get("access_token");
   const refresh_token = hashParams.get("refresh_token");
   if (access_token && refresh_token) {
     const { error } = await supabase.auth.setSession({ access_token, refresh_token });
     if (error) throw error;
     return;
+  }
+  // GoTrue redirects here with `error`/`error_description` instead of a code
+  // when it rejects the request server-side (e.g. manual identity linking
+  // disabled, or the identity is already linked to another account) — surface
+  // that instead of the opaque "no code or tokens" fallback below.
+  const errorDescription =
+    parsed.searchParams.get("error_description") ?? hashParams.get("error_description");
+  const errorCode = parsed.searchParams.get("error") ?? hashParams.get("error");
+  if (errorDescription || errorCode) {
+    throw new Error(errorDescription ?? errorCode ?? "Auth callback returned an error");
   }
   throw new Error("No code or tokens in auth callback URL");
 }
