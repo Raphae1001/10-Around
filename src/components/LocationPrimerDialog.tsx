@@ -49,7 +49,7 @@ export function LocationPrimerDialog({
         <AlertDialogFooter className="flex-col gap-2 sm:flex-col">
           <AlertDialogAction
             onClick={onAllow}
-            className="w-full gold-gradient text-gold-foreground border-0"
+            className="w-full bg-accent text-accent-foreground border-0 hover:bg-accent"
           >
             {t("home.locationPrimer.allow")}
           </AlertDialogAction>
