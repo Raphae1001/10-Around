@@ -389,9 +389,13 @@ function DensityDotsOverlay({
       const r = Math.sqrt(rand()) * DENSITY_DOTS_SPREAD_PX;
       const x = Math.cos(angle) * r;
       const y = Math.sin(angle) * r;
-      const size = 8 + rand() * 4;
+      // Soft "presence glow" rather than a hard marker-style dot (which read
+      // as a miniature, confusing pin) — a blurred radial core with an
+      // ambient halo, gently breathing via the shared pulse-dot keyframe,
+      // staggered per-dot so a cluster doesn't pulse in lockstep.
+      const size = 7 + rand() * 5;
       const dot = document.createElement("div");
-      dot.style.cssText = `position:absolute;left:${x}px;top:${y}px;width:${size}px;height:${size}px;margin-left:${-size / 2}px;margin-top:${-size / 2}px;border-radius:9999px;background:var(--accent);border:1.5px solid #fff;box-shadow:0 2px 6px color-mix(in oklch, var(--accent) 45%, transparent);opacity:${0.75 + rand() * 0.25};`;
+      dot.style.cssText = `position:absolute;left:${x}px;top:${y}px;width:${size}px;height:${size}px;margin-left:${-size / 2}px;margin-top:${-size / 2}px;border-radius:9999px;background:radial-gradient(circle, color-mix(in oklch, var(--accent) 92%, white) 0%, var(--accent) 60%, color-mix(in oklch, var(--accent) 40%, transparent) 100%);box-shadow:0 0 ${size * 1.6}px color-mix(in oklch, var(--accent) 50%, transparent);opacity:${0.7 + rand() * 0.25};animation:pulse-dot ${2.6 + rand() * 1.4}s ease-in-out infinite;animation-delay:${(-rand() * 3).toFixed(2)}s;`;
       container.appendChild(dot);
     }
   }, [count, seed]);
