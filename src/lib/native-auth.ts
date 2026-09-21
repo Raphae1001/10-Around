@@ -213,8 +213,35 @@ async function nativeLinkProvider(provider: OAuthProvider): Promise<void> {
   });
 }
 
+/**
+ * Native Apple identity linking via the native Sign in with Apple sheet and
+ * `linkIdentity`'s ID-token form — this is Supabase's documented path for
+ * linking an OAuth identity to an anonymous user on native/mobile, unlike
+ * the browser-redirect + deep-link `nativeLinkProvider` above (which an
+ * anonymous session doesn't reliably survive the external-browser round
+ * trip for, producing "User from sub claim in JWT does not exist").
+ */
+async function nativeLinkAppleIdentity(): Promise<void> {
+  const { SignInWithApple } = await import("@capacitor-community/apple-sign-in");
+  const { response } = await SignInWithApple.authorize({
+    clientId: "com.raphaelkalfon.minyannow",
+    redirectURI: NATIVE_AUTH_REDIRECT,
+    scopes: "email name",
+  });
+  if (!response.identityToken) throw new Error("Apple did not return an identity token");
+  const { error } = await supabase.auth.linkIdentity({
+    provider: "apple",
+    token: response.identityToken,
+  });
+  if (error) throw error;
+}
+
 /** Upgrades the current guest (anonymous) session to a real account, keeping the same user id/history. */
 export async function linkProviderIdentity(provider: OAuthProvider): Promise<void> {
+  if (isNative() && provider === "apple") {
+    await nativeLinkAppleIdentity();
+    return;
+  }
   if (isNative()) {
     await nativeLinkProvider(provider);
     return;
