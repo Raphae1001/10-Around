@@ -51,6 +51,7 @@ function Inner({ value, onChange, onPick, placeholder, citiesOnly, className }: 
   const [loading, setLoading] = useState(false);
   const sessionTokenRef = useRef<any>(null);
   const debounceRef = useRef<number | null>(null);
+  const focusedRef = useRef(false);
 
   const lastQueryRef = useRef<string>("");
 
@@ -81,7 +82,9 @@ function Inner({ value, onChange, onPick, placeholder, citiesOnly, className }: 
         );
         if (lastQueryRef.current === q) {
           setSuggestions(suggestions);
-          setOpen(true);
+          // The value can be set programmatically (GPS reverse-geocode) while
+          // the input isn't focused — never pop the list open in that case.
+          setOpen(focusedRef.current);
         }
       } catch {
         setSuggestions([]);
@@ -129,8 +132,14 @@ function Inner({ value, onChange, onPick, placeholder, citiesOnly, className }: 
         <input
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          onFocus={() => suggestions.length > 0 && setOpen(true)}
-          onBlur={() => setTimeout(() => setOpen(false), 150)}
+          onFocus={() => {
+            focusedRef.current = true;
+            if (suggestions.length > 0) setOpen(true);
+          }}
+          onBlur={() => {
+            focusedRef.current = false;
+            setTimeout(() => setOpen(false), 150);
+          }}
           placeholder={placeholder}
           className={
             className ??
