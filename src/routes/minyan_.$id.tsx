@@ -105,7 +105,7 @@ function PublicMinyanPage() {
   const inAppUrl = `/minyan?id=${encodeURIComponent(id)}`;
 
   return (
-    <div className="min-h-dvh w-full flex flex-col items-center px-6 pt-[max(3.5rem,calc(env(safe-area-inset-top)+1rem))] pb-10 text-center bg-background">
+    <div className="min-h-dvh w-full flex flex-col items-center px-6 pt-14 pb-10 text-center bg-background">
       <Logo size={56} />
 
       <div

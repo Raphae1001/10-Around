@@ -6,7 +6,6 @@ import {
   useRouter,
   HeadContent,
   Scripts,
-  type ErrorComponentProps,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
@@ -46,7 +45,7 @@ function NotFoundComponent() {
   );
 }
 
-function ErrorComponent({ error, reset }: ErrorComponentProps) {
+function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   const { t } = useTranslation();
   console.error(error);
   const router = useRouter();
@@ -101,9 +100,9 @@ const IS_CAPACITOR_RUNTIME =
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (window as any).Capacitor.isNativePlatform?.() === true;
 
-const rootRouteOptions: NonNullable<
-  Parameters<ReturnType<typeof createRootRouteWithContext<{ queryClient: QueryClient }>>>[0]
-> = {
+const rootRouteOptions: Parameters<
+  ReturnType<typeof createRootRouteWithContext<{ queryClient: QueryClient }>>
+>[0] = {
   head: () => ({
     meta: [
       { charSet: "utf-8" },

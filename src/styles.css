@@ -198,27 +198,6 @@
     height: 100%;
     overflow: hidden;
   }
-  /* iPad (full screen or wide split view): the UI is phone-width, so show it as
-     a centered phone-width column instead of stretching it. The transform makes
-     the column the containing block for position:fixed descendants, so portaled
-     sheets, dialogs and toasts stay inside it. iPhones are ≤440px wide, so this
-     never applies to them.
-     Centered with `left`, not auto margins: while a Radix dialog is open,
-     react-remove-scroll forces `position: relative` and zeroes the body margins,
-     which would slide a margin-centered column to the left edge. */
-  @media (min-width: 640px) {
-    html.capacitor-native {
-      background-color: var(--color-muted);
-    }
-    html.capacitor-native body {
-      inset: 0 auto 0 calc(50% - 220px);
-      width: 440px;
-      max-width: 440px;
-      margin-inline: 0;
-      transform: translateZ(0);
-      box-shadow: 0 0 0 1px var(--color-border);
-    }
-  }
   body {
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
