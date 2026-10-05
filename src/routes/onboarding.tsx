@@ -56,7 +56,7 @@ function Onboarding() {
           })}
         </svg>
 
-        <div className="relative flex justify-between items-center px-6 pt-6">
+        <div className="relative flex justify-between items-center px-6 pt-[max(1.5rem,calc(env(safe-area-inset-top)+0.5rem))]">
           <div className="flex gap-1.5">
             {Array.from({ length: TOTAL_STEPS }).map((_, i) => (
               <span
