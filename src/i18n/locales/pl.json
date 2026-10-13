@@ -60,6 +60,7 @@
     "upgradeApple": "Połącz Apple",
     "upgradeGoogle": "Połącz Google",
     "upgradeSuccess": "Konto połączone!",
+    "switchedToExisting": "Zalogowano na istniejące konto",
     "upgradeError": "Nie udało się połączyć konta",
     "continueEmail": "Kontynuuj z e-mailem",
     "email": "E-mail",
