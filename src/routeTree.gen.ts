@@ -9,178 +9,43 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as ZmanimRouteImport } from './routes/zmanim'
-import { Route as TrustRouteImport } from './routes/trust'
-import { Route as TravelerRouteImport } from './routes/traveler'
-import { Route as TravelRouteImport } from './routes/travel'
-import { Route as TermsRouteImport } from './routes/terms'
-import { Route as SynagogueRouteImport } from './routes/synagogue'
-import { Route as SupportRouteImport } from './routes/support'
-import { Route as SuccessRouteImport } from './routes/success'
-import { Route as SiddurRouteImport } from './routes/siddur'
-import { Route as ShareRouteImport } from './routes/share'
-import { Route as ShabbatRouteImport } from './routes/shabbat'
-import { Route as SettingsRouteImport } from './routes/settings'
-import { Route as ProfileRouteImport } from './routes/profile'
-import { Route as PrivacyRouteImport } from './routes/privacy'
-import { Route as PlannedRouteImport } from './routes/planned'
-import { Route as OnboardingRouteImport } from './routes/onboarding'
-import { Route as NotificationsRouteImport } from './routes/notifications'
-import { Route as MinyanRouteImport } from './routes/minyan'
-import { Route as MapsTestRouteImport } from './routes/maps-test'
-import { Route as MapRouteImport } from './routes/map'
-import { Route as KaddishRouteImport } from './routes/kaddish'
-import { Route as HomeRouteImport } from './routes/home'
-import { Route as FlightRouteImport } from './routes/flight'
-import { Route as CreateStayRouteImport } from './routes/create-stay'
-import { Route as CreateScheduledRouteImport } from './routes/create-scheduled'
-import { Route as CreateRouteImport } from './routes/create'
-import { Route as ChatsRouteImport } from './routes/chats'
-import { Route as ChatRouteImport } from './routes/chat'
-import { Route as AuthRouteImport } from './routes/auth'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as TravelCityCityKeyRouteImport } from './routes/travel-city.$cityKey'
-import { Route as MinyanIdRouteImport } from './routes/minyan_.$id'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as ChatRouteImport } from './routes/chat'
+import { Route as ChatsRouteImport } from './routes/chats'
+import { Route as CreateRouteImport } from './routes/create'
+import { Route as CreateScheduledRouteImport } from './routes/create-scheduled'
+import { Route as CreateStayRouteImport } from './routes/create-stay'
+import { Route as FlightRouteImport } from './routes/flight'
+import { Route as HomeRouteImport } from './routes/home'
+import { Route as KaddishRouteImport } from './routes/kaddish'
+import { Route as MapRouteImport } from './routes/map'
+import { Route as MapsTestRouteImport } from './routes/maps-test'
+import { Route as MinyanRouteImport } from './routes/minyan'
+import { Route as NotificationsRouteImport } from './routes/notifications'
+import { Route as OnboardingRouteImport } from './routes/onboarding'
+import { Route as PlannedRouteImport } from './routes/planned'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as ShabbatRouteImport } from './routes/shabbat'
+import { Route as ShareRouteImport } from './routes/share'
+import { Route as SiddurRouteImport } from './routes/siddur'
+import { Route as SuccessRouteImport } from './routes/success'
+import { Route as SupportRouteImport } from './routes/support'
+import { Route as SynagogueRouteImport } from './routes/synagogue'
+import { Route as TermsRouteImport } from './routes/terms'
+import { Route as TravelRouteImport } from './routes/travel'
+import { Route as TravelerRouteImport } from './routes/traveler'
+import { Route as TrustRouteImport } from './routes/trust'
+import { Route as ZmanimRouteImport } from './routes/zmanim'
 import { Route as AuthCallbackRouteImport } from './routes/auth.callback'
+import { Route as MinyanIdRouteImport } from './routes/minyan_.$id'
+import { Route as TravelCityCityKeyRouteImport } from './routes/travel-city.$cityKey'
 
-const ZmanimRoute = ZmanimRouteImport.update({
-  id: '/zmanim',
-  path: '/zmanim',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TrustRoute = TrustRouteImport.update({
-  id: '/trust',
-  path: '/trust',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TravelerRoute = TravelerRouteImport.update({
-  id: '/traveler',
-  path: '/traveler',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TravelRoute = TravelRouteImport.update({
-  id: '/travel',
-  path: '/travel',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TermsRoute = TermsRouteImport.update({
-  id: '/terms',
-  path: '/terms',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SynagogueRoute = SynagogueRouteImport.update({
-  id: '/synagogue',
-  path: '/synagogue',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SupportRoute = SupportRouteImport.update({
-  id: '/support',
-  path: '/support',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SuccessRoute = SuccessRouteImport.update({
-  id: '/success',
-  path: '/success',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SiddurRoute = SiddurRouteImport.update({
-  id: '/siddur',
-  path: '/siddur',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ShareRoute = ShareRouteImport.update({
-  id: '/share',
-  path: '/share',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ShabbatRoute = ShabbatRouteImport.update({
-  id: '/shabbat',
-  path: '/shabbat',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SettingsRoute = SettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ProfileRoute = ProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PrivacyRoute = PrivacyRouteImport.update({
-  id: '/privacy',
-  path: '/privacy',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PlannedRoute = PlannedRouteImport.update({
-  id: '/planned',
-  path: '/planned',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const OnboardingRoute = OnboardingRouteImport.update({
-  id: '/onboarding',
-  path: '/onboarding',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const NotificationsRoute = NotificationsRouteImport.update({
-  id: '/notifications',
-  path: '/notifications',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MinyanRoute = MinyanRouteImport.update({
-  id: '/minyan',
-  path: '/minyan',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MapsTestRoute = MapsTestRouteImport.update({
-  id: '/maps-test',
-  path: '/maps-test',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MapRoute = MapRouteImport.update({
-  id: '/map',
-  path: '/map',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const KaddishRoute = KaddishRouteImport.update({
-  id: '/kaddish',
-  path: '/kaddish',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const HomeRoute = HomeRouteImport.update({
-  id: '/home',
-  path: '/home',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FlightRoute = FlightRouteImport.update({
-  id: '/flight',
-  path: '/flight',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CreateStayRoute = CreateStayRouteImport.update({
-  id: '/create-stay',
-  path: '/create-stay',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CreateScheduledRoute = CreateScheduledRouteImport.update({
-  id: '/create-scheduled',
-  path: '/create-scheduled',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CreateRoute = CreateRouteImport.update({
-  id: '/create',
-  path: '/create',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ChatsRoute = ChatsRouteImport.update({
-  id: '/chats',
-  path: '/chats',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ChatRoute = ChatRouteImport.update({
-  id: '/chat',
-  path: '/chat',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -188,25 +53,160 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const ChatRoute = ChatRouteImport.update({
+  id: '/chat',
+  path: '/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TravelCityCityKeyRoute = TravelCityCityKeyRouteImport.update({
-  id: '/travel-city/$cityKey',
-  path: '/travel-city/$cityKey',
+const ChatsRoute = ChatsRouteImport.update({
+  id: '/chats',
+  path: '/chats',
   getParentRoute: () => rootRouteImport,
 } as any)
-const MinyanIdRoute = MinyanIdRouteImport.update({
-  id: '/minyan_/$id',
-  path: '/minyan/$id',
+const CreateRoute = CreateRouteImport.update({
+  id: '/create',
+  path: '/create',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CreateScheduledRoute = CreateScheduledRouteImport.update({
+  id: '/create-scheduled',
+  path: '/create-scheduled',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CreateStayRoute = CreateStayRouteImport.update({
+  id: '/create-stay',
+  path: '/create-stay',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FlightRoute = FlightRouteImport.update({
+  id: '/flight',
+  path: '/flight',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HomeRoute = HomeRouteImport.update({
+  id: '/home',
+  path: '/home',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KaddishRoute = KaddishRouteImport.update({
+  id: '/kaddish',
+  path: '/kaddish',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MapRoute = MapRouteImport.update({
+  id: '/map',
+  path: '/map',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MapsTestRoute = MapsTestRouteImport.update({
+  id: '/maps-test',
+  path: '/maps-test',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MinyanRoute = MinyanRouteImport.update({
+  id: '/minyan',
+  path: '/minyan',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NotificationsRoute = NotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OnboardingRoute = OnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlannedRoute = PlannedRouteImport.update({
+  id: '/planned',
+  path: '/planned',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ShabbatRoute = ShabbatRouteImport.update({
+  id: '/shabbat',
+  path: '/shabbat',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ShareRoute = ShareRouteImport.update({
+  id: '/share',
+  path: '/share',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SiddurRoute = SiddurRouteImport.update({
+  id: '/siddur',
+  path: '/siddur',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SuccessRoute = SuccessRouteImport.update({
+  id: '/success',
+  path: '/success',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SupportRoute = SupportRouteImport.update({
+  id: '/support',
+  path: '/support',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SynagogueRoute = SynagogueRouteImport.update({
+  id: '/synagogue',
+  path: '/synagogue',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TravelRoute = TravelRouteImport.update({
+  id: '/travel',
+  path: '/travel',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TravelerRoute = TravelerRouteImport.update({
+  id: '/traveler',
+  path: '/traveler',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TrustRoute = TrustRouteImport.update({
+  id: '/trust',
+  path: '/trust',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ZmanimRoute = ZmanimRouteImport.update({
+  id: '/zmanim',
+  path: '/zmanim',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthCallbackRoute = AuthCallbackRouteImport.update({
   id: '/callback',
   path: '/callback',
   getParentRoute: () => AuthRoute,
+} as any)
+const MinyanIdRoute = MinyanIdRouteImport.update({
+  id: '/minyan_/$id',
+  path: '/minyan/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TravelCityCityKeyRoute = TravelCityCityKeyRouteImport.update({
+  id: '/travel-city/$cityKey',
+  path: '/travel-city/$cityKey',
+  getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -460,200 +460,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/zmanim': {
-      id: '/zmanim'
-      path: '/zmanim'
-      fullPath: '/zmanim'
-      preLoaderRoute: typeof ZmanimRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/trust': {
-      id: '/trust'
-      path: '/trust'
-      fullPath: '/trust'
-      preLoaderRoute: typeof TrustRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/traveler': {
-      id: '/traveler'
-      path: '/traveler'
-      fullPath: '/traveler'
-      preLoaderRoute: typeof TravelerRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/travel': {
-      id: '/travel'
-      path: '/travel'
-      fullPath: '/travel'
-      preLoaderRoute: typeof TravelRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/terms': {
-      id: '/terms'
-      path: '/terms'
-      fullPath: '/terms'
-      preLoaderRoute: typeof TermsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/synagogue': {
-      id: '/synagogue'
-      path: '/synagogue'
-      fullPath: '/synagogue'
-      preLoaderRoute: typeof SynagogueRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/support': {
-      id: '/support'
-      path: '/support'
-      fullPath: '/support'
-      preLoaderRoute: typeof SupportRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/success': {
-      id: '/success'
-      path: '/success'
-      fullPath: '/success'
-      preLoaderRoute: typeof SuccessRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/siddur': {
-      id: '/siddur'
-      path: '/siddur'
-      fullPath: '/siddur'
-      preLoaderRoute: typeof SiddurRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/share': {
-      id: '/share'
-      path: '/share'
-      fullPath: '/share'
-      preLoaderRoute: typeof ShareRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/shabbat': {
-      id: '/shabbat'
-      path: '/shabbat'
-      fullPath: '/shabbat'
-      preLoaderRoute: typeof ShabbatRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/settings': {
-      id: '/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof SettingsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/profile': {
-      id: '/profile'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof ProfileRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/privacy': {
-      id: '/privacy'
-      path: '/privacy'
-      fullPath: '/privacy'
-      preLoaderRoute: typeof PrivacyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/planned': {
-      id: '/planned'
-      path: '/planned'
-      fullPath: '/planned'
-      preLoaderRoute: typeof PlannedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/onboarding': {
-      id: '/onboarding'
-      path: '/onboarding'
-      fullPath: '/onboarding'
-      preLoaderRoute: typeof OnboardingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/notifications': {
-      id: '/notifications'
-      path: '/notifications'
-      fullPath: '/notifications'
-      preLoaderRoute: typeof NotificationsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/minyan': {
-      id: '/minyan'
-      path: '/minyan'
-      fullPath: '/minyan'
-      preLoaderRoute: typeof MinyanRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/maps-test': {
-      id: '/maps-test'
-      path: '/maps-test'
-      fullPath: '/maps-test'
-      preLoaderRoute: typeof MapsTestRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/map': {
-      id: '/map'
-      path: '/map'
-      fullPath: '/map'
-      preLoaderRoute: typeof MapRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/kaddish': {
-      id: '/kaddish'
-      path: '/kaddish'
-      fullPath: '/kaddish'
-      preLoaderRoute: typeof KaddishRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/home': {
-      id: '/home'
-      path: '/home'
-      fullPath: '/home'
-      preLoaderRoute: typeof HomeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/flight': {
-      id: '/flight'
-      path: '/flight'
-      fullPath: '/flight'
-      preLoaderRoute: typeof FlightRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/create-stay': {
-      id: '/create-stay'
-      path: '/create-stay'
-      fullPath: '/create-stay'
-      preLoaderRoute: typeof CreateStayRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/create-scheduled': {
-      id: '/create-scheduled'
-      path: '/create-scheduled'
-      fullPath: '/create-scheduled'
-      preLoaderRoute: typeof CreateScheduledRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/create': {
-      id: '/create'
-      path: '/create'
-      fullPath: '/create'
-      preLoaderRoute: typeof CreateRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/chats': {
-      id: '/chats'
-      path: '/chats'
-      fullPath: '/chats'
-      preLoaderRoute: typeof ChatsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/chat': {
-      id: '/chat'
-      path: '/chat'
-      fullPath: '/chat'
-      preLoaderRoute: typeof ChatRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -663,25 +474,200 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/chat': {
+      id: '/chat'
+      path: '/chat'
+      fullPath: '/chat'
+      preLoaderRoute: typeof ChatRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/travel-city/$cityKey': {
-      id: '/travel-city/$cityKey'
-      path: '/travel-city/$cityKey'
-      fullPath: '/travel-city/$cityKey'
-      preLoaderRoute: typeof TravelCityCityKeyRouteImport
+    '/chats': {
+      id: '/chats'
+      path: '/chats'
+      fullPath: '/chats'
+      preLoaderRoute: typeof ChatsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/minyan_/$id': {
-      id: '/minyan_/$id'
-      path: '/minyan/$id'
-      fullPath: '/minyan/$id'
-      preLoaderRoute: typeof MinyanIdRouteImport
+    '/create': {
+      id: '/create'
+      path: '/create'
+      fullPath: '/create'
+      preLoaderRoute: typeof CreateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/create-scheduled': {
+      id: '/create-scheduled'
+      path: '/create-scheduled'
+      fullPath: '/create-scheduled'
+      preLoaderRoute: typeof CreateScheduledRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/create-stay': {
+      id: '/create-stay'
+      path: '/create-stay'
+      fullPath: '/create-stay'
+      preLoaderRoute: typeof CreateStayRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/flight': {
+      id: '/flight'
+      path: '/flight'
+      fullPath: '/flight'
+      preLoaderRoute: typeof FlightRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/home': {
+      id: '/home'
+      path: '/home'
+      fullPath: '/home'
+      preLoaderRoute: typeof HomeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/kaddish': {
+      id: '/kaddish'
+      path: '/kaddish'
+      fullPath: '/kaddish'
+      preLoaderRoute: typeof KaddishRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/map': {
+      id: '/map'
+      path: '/map'
+      fullPath: '/map'
+      preLoaderRoute: typeof MapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/maps-test': {
+      id: '/maps-test'
+      path: '/maps-test'
+      fullPath: '/maps-test'
+      preLoaderRoute: typeof MapsTestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/minyan': {
+      id: '/minyan'
+      path: '/minyan'
+      fullPath: '/minyan'
+      preLoaderRoute: typeof MinyanRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/notifications': {
+      id: '/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof NotificationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/onboarding': {
+      id: '/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof OnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/planned': {
+      id: '/planned'
+      path: '/planned'
+      fullPath: '/planned'
+      preLoaderRoute: typeof PlannedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/shabbat': {
+      id: '/shabbat'
+      path: '/shabbat'
+      fullPath: '/shabbat'
+      preLoaderRoute: typeof ShabbatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/share': {
+      id: '/share'
+      path: '/share'
+      fullPath: '/share'
+      preLoaderRoute: typeof ShareRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/siddur': {
+      id: '/siddur'
+      path: '/siddur'
+      fullPath: '/siddur'
+      preLoaderRoute: typeof SiddurRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/success': {
+      id: '/success'
+      path: '/success'
+      fullPath: '/success'
+      preLoaderRoute: typeof SuccessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/support': {
+      id: '/support'
+      path: '/support'
+      fullPath: '/support'
+      preLoaderRoute: typeof SupportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/synagogue': {
+      id: '/synagogue'
+      path: '/synagogue'
+      fullPath: '/synagogue'
+      preLoaderRoute: typeof SynagogueRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/travel': {
+      id: '/travel'
+      path: '/travel'
+      fullPath: '/travel'
+      preLoaderRoute: typeof TravelRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/traveler': {
+      id: '/traveler'
+      path: '/traveler'
+      fullPath: '/traveler'
+      preLoaderRoute: typeof TravelerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/trust': {
+      id: '/trust'
+      path: '/trust'
+      fullPath: '/trust'
+      preLoaderRoute: typeof TrustRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/zmanim': {
+      id: '/zmanim'
+      path: '/zmanim'
+      fullPath: '/zmanim'
+      preLoaderRoute: typeof ZmanimRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth/callback': {
@@ -690,6 +676,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/auth/callback'
       preLoaderRoute: typeof AuthCallbackRouteImport
       parentRoute: typeof AuthRoute
+    }
+    '/minyan_/$id': {
+      id: '/minyan_/$id'
+      path: '/minyan/$id'
+      fullPath: '/minyan/$id'
+      preLoaderRoute: typeof MinyanIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/travel-city/$cityKey': {
+      id: '/travel-city/$cityKey'
+      path: '/travel-city/$cityKey'
+      fullPath: '/travel-city/$cityKey'
+      preLoaderRoute: typeof TravelCityCityKeyRouteImport
+      parentRoute: typeof rootRouteImport
     }
   }
 }
@@ -741,13 +741,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
