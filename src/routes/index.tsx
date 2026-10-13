@@ -101,7 +101,7 @@ function Splash() {
           </div>
         </div>
 
-        <div className="px-6 pb-10 space-y-3 relative">
+        <div className="px-6 pb-[max(2.5rem,calc(env(safe-area-inset-bottom)+1rem))] space-y-3 relative">
           <Link
             to="/onboarding"
             className="flex items-center justify-center gap-2 w-full h-14 text-white font-semibold rounded-2xl"

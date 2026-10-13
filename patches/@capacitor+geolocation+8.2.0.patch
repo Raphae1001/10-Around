@@ -1,0 +1,45 @@
+diff --git a/node_modules/@capacitor/geolocation/ios/Sources/GeolocationPlugin/GeolocationPlugin.swift b/node_modules/@capacitor/geolocation/ios/Sources/GeolocationPlugin/GeolocationPlugin.swift
+index c9252d5..6d11064 100644
+--- a/node_modules/@capacitor/geolocation/ios/Sources/GeolocationPlugin/GeolocationPlugin.swift
++++ b/node_modules/@capacitor/geolocation/ios/Sources/GeolocationPlugin/GeolocationPlugin.swift
+@@ -15,7 +15,28 @@ public class GeolocationPlugin: CAPPlugin, CAPBridgedPlugin {
+         .init(name: "requestPermissions", returnType: CAPPluginReturnPromise)
+     ]
+ 
+-    private var locationService: (any IONGLOCService)?
++    private var lazyLocationService: (any IONGLOCService)?
++    // Created on first use instead of in load(): IONGLOCManagerWrapper() reads the
++    // authorization status, a synchronous XPC call to locationd. In load() it runs on the
++    // main thread during scene creation, and iOS kills the app (0x8BADF00D scene-create
++    // watchdog) when locationd is slow to answer, e.g. on a freshly booted simulator.
++    private var locationService: (any IONGLOCService)? {
++        get {
++            // CLLocationManager must be created on the main thread (its delegate callbacks
++            // follow the creating thread's run loop), so never create it on a plugin queue.
++            if lazyLocationService == nil {
++                if Thread.isMainThread {
++                    lazyLocationService = IONGLOCManagerWrapper()
++                } else {
++                    DispatchQueue.main.sync { [self] in
++                        if lazyLocationService == nil { lazyLocationService = IONGLOCManagerWrapper() }
++                    }
++                }
++            }
++            return lazyLocationService
++        }
++        set { lazyLocationService = newValue }
++    }
+     private var cancellables = Set<AnyCancellable>()
+     private var locationCancellable: AnyCancellable?
+     private var timeoutCancellable: AnyCancellable?
+@@ -24,8 +45,9 @@ public class GeolocationPlugin: CAPPlugin, CAPBridgedPlugin {
+     private var locationInitialized: Bool = false
+ 
+     override public func load() {
+-        self.locationService = IONGLOCManagerWrapper()
+         self.callbackManager = .init(capacitorBridge: bridge)
++        // Warm the location manager right after scene creation instead of during it.
++        DispatchQueue.main.async { [weak self] in _ = self?.locationService }
+ 
+         NotificationCenter.default.addObserver(
+             self,
