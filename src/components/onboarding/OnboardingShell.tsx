@@ -23,8 +23,14 @@ export function OnboardingShell({ children, footer }: Props) {
         className="relative w-full max-w-[440px] min-h-dvh flex flex-col"
         style={{ backgroundColor: BRAND_BG }}
       >
-        <div className="flex-1 flex flex-col px-8 pt-14 pb-6">{children}</div>
-        {footer && <div className="px-6 pb-10 pt-4 shrink-0">{footer}</div>}
+        <div className="flex-1 flex flex-col px-8 pt-[max(3.5rem,calc(env(safe-area-inset-top)+1rem))] pb-[max(1.5rem,calc(env(safe-area-inset-bottom)+0.75rem))]">
+          {children}
+        </div>
+        {footer && (
+          <div className="px-6 pb-[max(2.5rem,calc(env(safe-area-inset-bottom)+1rem))] pt-4 shrink-0">
+            {footer}
+          </div>
+        )}
       </div>
     </div>
   );

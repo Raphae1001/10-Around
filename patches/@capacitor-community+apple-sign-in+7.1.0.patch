@@ -1,0 +1,36 @@
+diff --git a/node_modules/@capacitor-community/apple-sign-in/ios/Sources/SignInWithApple/Plugin.swift b/node_modules/@capacitor-community/apple-sign-in/ios/Sources/SignInWithApple/Plugin.swift
+index f53087c..b30fec8 100755
+--- a/node_modules/@capacitor-community/apple-sign-in/ios/Sources/SignInWithApple/Plugin.swift
++++ b/node_modules/@capacitor-community/apple-sign-in/ios/Sources/SignInWithApple/Plugin.swift
+@@ -24,7 +24,11 @@ public class SignInWithApple: CAPPlugin, CAPBridgedPlugin {
+ 
+         let authorizationController = ASAuthorizationController(authorizationRequests: [request])
+         authorizationController.delegate = self
+-        authorizationController.performRequests()
++        // With the UIScene lifecycle the sheet must be anchored to the app's window explicitly.
++        authorizationController.presentationContextProvider = self
++        DispatchQueue.main.async {
++            authorizationController.performRequests()
++        }
+     }
+ 
+     func getRequestedScopes(from call: CAPPluginCall) -> [ASAuthorization.Scope]? {
+@@ -48,6 +52,18 @@ public class SignInWithApple: CAPPlugin, CAPBridgedPlugin {
+     }
+ }
+ 
++extension SignInWithApple: ASAuthorizationControllerPresentationContextProviding {
++    public func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
++        if let window = self.bridge?.viewController?.view.window {
++            return window
++        }
++        let windows = UIApplication.shared.connectedScenes
++            .compactMap { $0 as? UIWindowScene }
++            .flatMap { $0.windows }
++        return windows.first(where: { $0.isKeyWindow }) ?? windows.first ?? ASPresentationAnchor()
++    }
++}
++
+ extension SignInWithApple: ASAuthorizationControllerDelegate {
+     public func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
+         guard let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential else { return }

@@ -56,7 +56,7 @@ function Onboarding() {
           })}
         </svg>
 
-        <div className="relative flex justify-between items-center px-6 pt-6">
+        <div className="relative flex justify-between items-center px-6 pt-[max(1.5rem,calc(env(safe-area-inset-top)+0.5rem))]">
           <div className="flex gap-1.5">
             {Array.from({ length: TOTAL_STEPS }).map((_, i) => (
               <span
@@ -107,7 +107,7 @@ function Onboarding() {
           )}
         </div>
 
-        <div className="relative px-6 pb-10 space-y-3">
+        <div className="relative px-6 pb-[max(2.5rem,calc(env(safe-area-inset-bottom)+1rem))] space-y-3">
           <button
             onClick={next}
             className="w-full h-14 flex items-center justify-center gap-2 text-white font-semibold rounded-2xl"
