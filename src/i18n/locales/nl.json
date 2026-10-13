@@ -60,6 +60,7 @@
     "upgradeApple": "Apple koppelen",
     "upgradeGoogle": "Google koppelen",
     "upgradeSuccess": "Account gekoppeld!",
+    "switchedToExisting": "Ingelogd op je bestaande account",
     "upgradeError": "Kon account niet koppelen",
     "continueEmail": "Ga door met e-mail",
     "email": "E-mail",

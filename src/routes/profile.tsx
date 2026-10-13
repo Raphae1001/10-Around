@@ -140,8 +140,8 @@ function Profile() {
     if (upgrading) return;
     setUpgrading(provider);
     try {
-      await linkProviderIdentity(provider);
-      toast.success(t("auth.upgradeSuccess"));
+      const result = await linkProviderIdentity(provider);
+      toast.success(t(result === "switched" ? "auth.switchedToExisting" : "auth.upgradeSuccess"));
     } catch (e) {
       toast.error(t("auth.upgradeError"), { description: (e as Error).message });
     } finally {

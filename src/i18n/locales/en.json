@@ -61,6 +61,7 @@
     "upgradeApple": "Link Apple",
     "upgradeGoogle": "Link Google",
     "upgradeSuccess": "Account linked!",
+    "switchedToExisting": "Signed in to your existing account",
     "upgradeError": "Could not link account",
     "email": "Email",
     "password": "Password (min 6 chars)",
