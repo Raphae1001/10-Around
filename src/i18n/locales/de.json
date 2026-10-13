@@ -60,6 +60,7 @@
     "upgradeApple": "Apple verknüpfen",
     "upgradeGoogle": "Google verknüpfen",
     "upgradeSuccess": "Konto verknüpft!",
+    "switchedToExisting": "Bei deinem bestehenden Konto angemeldet",
     "upgradeError": "Konto konnte nicht verknüpft werden",
     "continueEmail": "Mit E-Mail fortfahren",
     "email": "E-Mail",

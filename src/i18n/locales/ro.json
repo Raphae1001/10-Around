@@ -60,6 +60,7 @@
     "upgradeApple": "Conectează Apple",
     "upgradeGoogle": "Conectează Google",
     "upgradeSuccess": "Cont conectat!",
+    "switchedToExisting": "Te-ai conectat la contul tău existent",
     "upgradeError": "Contul nu a putut fi conectat",
     "continueEmail": "Continuă cu email",
     "email": "Email",

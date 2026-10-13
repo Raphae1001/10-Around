@@ -60,6 +60,7 @@
     "upgradeApple": "Vincular Apple",
     "upgradeGoogle": "Vincular Google",
     "upgradeSuccess": "Conta vinculada!",
+    "switchedToExisting": "Sessão iniciada na sua conta existente",
     "upgradeError": "Não foi possível vincular a conta",
     "continueEmail": "Continuar com email",
     "email": "Email",

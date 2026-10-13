@@ -213,6 +213,44 @@ async function nativeLinkProvider(provider: OAuthProvider): Promise<void> {
   });
 }
 
+/** GoTrue refuses a link when the Apple/Google identity already belongs to another account. */
+function isIdentityAlreadyLinked(e: unknown): boolean {
+  const err = e as { code?: string; message?: string } | null;
+  return (
+    err?.code === "identity_already_exists" ||
+    /already linked to another user/i.test(err?.message ?? "")
+  );
+}
+
+/**
+ * The Apple/Google identity already has its own account: sign into that
+ * account instead, then delete the temporary guest account it replaces
+ * (with the guest's own token, captured before the session switch).
+ */
+async function switchFromGuestToExistingAccount(signIn: () => Promise<void>): Promise<void> {
+  const { data } = await supabase.auth.getSession();
+  const guestToken = data.session?.user.is_anonymous ? data.session.access_token : null;
+  await signIn();
+  if (guestToken) {
+    await supabase.functions
+      .invoke("delete-account", { body: {}, headers: { Authorization: `Bearer ${guestToken}` } })
+      .catch(() => {
+        /* best effort — the guest account is no longer reachable either way */
+      });
+  }
+}
+
+async function authorizeWithApple(): Promise<string> {
+  const { SignInWithApple } = await import("@capacitor-community/apple-sign-in");
+  const { response } = await SignInWithApple.authorize({
+    clientId: "com.raphaelkalfon.minyannow",
+    redirectURI: NATIVE_AUTH_REDIRECT,
+    scopes: "email name",
+  });
+  if (!response.identityToken) throw new Error("Apple did not return an identity token");
+  return response.identityToken;
+}
+
 /**
  * Native Apple identity linking via the native Sign in with Apple sheet and
  * `linkIdentity`'s ID-token form — this is Supabase's documented path for
@@ -221,34 +259,50 @@ async function nativeLinkProvider(provider: OAuthProvider): Promise<void> {
  * anonymous session doesn't reliably survive the external-browser round
  * trip for, producing "User from sub claim in JWT does not exist").
  */
-async function nativeLinkAppleIdentity(): Promise<void> {
-  const { SignInWithApple } = await import("@capacitor-community/apple-sign-in");
-  const { response } = await SignInWithApple.authorize({
-    clientId: "com.raphaelkalfon.minyannow",
-    redirectURI: NATIVE_AUTH_REDIRECT,
-    scopes: "email name",
+async function nativeLinkAppleIdentity(): Promise<LinkResult> {
+  const token = await authorizeWithApple();
+  const { error } = await supabase.auth.linkIdentity({ provider: "apple", token });
+  if (!error) return "linked";
+  if (!isIdentityAlreadyLinked(error)) throw error;
+  await switchFromGuestToExistingAccount(async () => {
+    let { error: signInError } = await supabase.auth.signInWithIdToken({
+      provider: "apple",
+      token,
+    });
+    if (signInError) {
+      // The first token may not be accepted twice — ask Apple for a fresh one.
+      ({ error: signInError } = await supabase.auth.signInWithIdToken({
+        provider: "apple",
+        token: await authorizeWithApple(),
+      }));
+    }
+    if (signInError) throw signInError;
   });
-  if (!response.identityToken) throw new Error("Apple did not return an identity token");
-  const { error } = await supabase.auth.linkIdentity({
-    provider: "apple",
-    token: response.identityToken,
-  });
-  if (error) throw error;
+  return "switched";
 }
 
+/** "linked": the guest became a real account. "switched": signed into the existing account instead. */
+export type LinkResult = "linked" | "switched";
+
 /** Upgrades the current guest (anonymous) session to a real account, keeping the same user id/history. */
-export async function linkProviderIdentity(provider: OAuthProvider): Promise<void> {
+export async function linkProviderIdentity(provider: OAuthProvider): Promise<LinkResult> {
   if (isNative() && provider === "apple") {
-    await nativeLinkAppleIdentity();
-    return;
+    return nativeLinkAppleIdentity();
   }
   if (isNative()) {
-    await nativeLinkProvider(provider);
-    return;
+    try {
+      await nativeLinkProvider(provider);
+      return "linked";
+    } catch (e) {
+      if (!isIdentityAlreadyLinked(e)) throw e;
+      await switchFromGuestToExistingAccount(() => nativeSignInWithProvider(provider));
+      return "switched";
+    }
   }
   const { error } = await supabase.auth.linkIdentity({
     provider,
     options: { redirectTo: `${window.location.origin}/auth/callback` },
   });
   if (error) throw error;
+  return "linked";
 }

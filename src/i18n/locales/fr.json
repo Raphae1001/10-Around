@@ -61,6 +61,7 @@
     "upgradeApple": "Lier Apple",
     "upgradeGoogle": "Lier Google",
     "upgradeSuccess": "Compte lié !",
+    "switchedToExisting": "Connecté à votre compte existant",
     "upgradeError": "Impossible de lier le compte",
     "email": "Email",
     "password": "Mot de passe (min 6 caractères)",

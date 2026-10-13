@@ -60,6 +60,7 @@
     "upgradeApple": "ربط Apple",
     "upgradeGoogle": "ربط Google",
     "upgradeSuccess": "تم ربط الحساب!",
+    "switchedToExisting": "تم تسجيل الدخول إلى حسابك الحالي",
     "upgradeError": "تعذّر ربط الحساب",
     "continueEmail": "متابعة بالبريد الإلكتروني",
     "email": "البريد الإلكتروني",
