@@ -60,6 +60,7 @@
     "upgradeApple": "Привязать Apple",
     "upgradeGoogle": "Привязать Google",
     "upgradeSuccess": "Аккаунт привязан!",
+    "switchedToExisting": "Вы вошли в существующий аккаунт",
     "upgradeError": "Не удалось привязать аккаунт",
     "continueEmail": "Продолжить с email",
     "email": "Email",
