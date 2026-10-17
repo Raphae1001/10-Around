@@ -15,7 +15,7 @@
     "lint": "eslint .",
     "test": "vitest run",
     "format": "prettier --write .",
-    "postinstall": "patch-package"
+    "postinstall": "[ -n \"$VERCEL\" ] || patch-package"
   },
   "dependencies": {
     "@capacitor-community/apple-sign-in": "7.1.0",
