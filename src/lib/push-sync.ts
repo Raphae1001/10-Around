@@ -32,6 +32,12 @@ let lastSubscriber: ((token: string) => void) | null = null;
 export async function syncPushRegistration(userId: string): Promise<void> {
   if (!isNative()) return;
   if (lastSyncedUserId === userId) return;
+  // App start must never open the system permission dialog by itself: only
+  // refresh the token when the user already allowed notifications (the
+  // onboarding primer is the one place that asks).
+  const { PushNotifications } = await import("@capacitor/push-notifications");
+  const { receive } = await PushNotifications.checkPermissions();
+  if (receive !== "granted") return;
   // Switching accounts within one running app session — drop the previous
   // user's subscriber so their closure doesn't keep firing (and writing to
   // the wrong user's row) after a token refresh.

@@ -4,24 +4,24 @@ import { useTranslation } from "react-i18next";
 import { Loader2, LocateFixed, Moon, SunMedium, X } from "lucide-react";
 import { MobileFrame } from "@/components/MobileFrame";
 import { Wordmark } from "@/components/Logo";
-import { GoogleMapCanvas, type DensityHalo, type MapPinDatum } from "@/components/GoogleMap";
+import { GoogleMapCanvas, type MapPinDatum } from "@/components/GoogleMap";
 import { LocationPrimerDialog } from "@/components/LocationPrimerDialog";
 import { HomePresenceCard } from "@/components/HomePresenceCard";
+import { LocationOffCard } from "@/components/LocationOffCard";
 import { HomeNearbyList } from "@/components/HomeNearbyList";
 import { useTheme } from "@/hooks/use-theme";
 import { useAuth } from "@/hooks/use-auth";
 import { useGeolocation } from "@/hooks/use-geolocation";
-import { useDensity } from "@/hooks/use-density";
+import { useBlockedUsers } from "@/hooks/use-blocked-users";
 import { usePresence } from "@/hooks/use-presence";
 import { useNearbyMinyanim } from "@/hooks/use-minyanim";
 import { supabase } from "@/integrations/supabase/client";
 import { tapLight } from "@/lib/haptics";
 import { getAppPref, setAppPref } from "@/lib/app-prefs";
-import { reverseNeighborhood } from "@/lib/geocoding";
-import { distanceMeters } from "@/lib/geo";
-import { isLiveOnMap } from "@/lib/minyan-live";
+import { isLiveOnMap, isNearbySoon, minyanStartMs } from "@/lib/minyan-live";
 import {
   checkLocationPermission,
+  openAppSettings,
   requestLocationPermission,
   type LocationPermissionState,
 } from "@/lib/native";
@@ -49,15 +49,17 @@ function Home() {
   const { user, loading: authLoading } = useAuth();
   const { theme, toggle: toggleTheme } = useTheme();
   const { position, loading: geoLoading, request: requestGeo } = useGeolocation(false);
-  const { zones, activeCount, lastUpdatedAt, loading: densityLoading } = useDensity(position, 1000);
   const { data: allMinyanim } = useNearbyMinyanim(position, 5000);
-  const minyanim = useMemo(() => allMinyanim.filter((m) => isLiveOnMap(m)), [allMinyanim]);
+  const { blockedIds } = useBlockedUsers(user?.id);
+  const minyanim = useMemo(
+    () => allMinyanim.filter((m) => isLiveOnMap(m) && !blockedIds.has(m.creator_id)),
+    [allMinyanim, blockedIds],
+  );
   const { refresh: refreshPresence } = usePresence(position, !!user, user?.id);
   const [firstName, setFirstName] = useState("");
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [primerOpen, setPrimerOpen] = useState(false);
   const [permState, setPermState] = useState<LocationPermissionState | null>(null);
-  const [neighborhood, setNeighborhood] = useState<string | null>(null);
   const [listSheet, setListSheet] = useState<ListSheet>("closed");
   const [recenterNonce, setRecenterNonce] = useState(0);
   const [nowTick, setNowTick] = useState(() => Date.now());
@@ -65,9 +67,13 @@ function Home() {
     const i = setInterval(() => setNowTick(Date.now()), 15_000);
     return () => clearInterval(i);
   }, []);
+  /** "N minyanim near you": live now or starting within the hour, within 1 km. */
+  const nearbySoon = useMemo(
+    () => (position ? minyanim.filter((m) => isNearbySoon(m, position, nowTick)) : []),
+    [minyanim, position, nowTick],
+  );
   const pendingCreateRef = useRef(false);
   const allowingRef = useRef(false);
-  const lastGeoRef = useRef<{ lat: number; lng: number } | null>(null);
   const listDragStartY = useRef<number | null>(null);
   const listDragStartState = useRef<Exclude<ListSheet, "closed">>("peek");
 
@@ -116,16 +122,6 @@ function Home() {
   useEffect(() => {
     if (!authLoading && !user) navigate({ to: "/auth" });
   }, [authLoading, user, navigate]);
-
-  useEffect(() => {
-    if (!position) return;
-    const last = lastGeoRef.current;
-    if (last && distanceMeters(last, position) < 500) return;
-    lastGeoRef.current = { lat: position.lat, lng: position.lng };
-    void reverseNeighborhood(position.lat, position.lng).then((n) => {
-      if (n) setNeighborhood(n);
-    });
-  }, [position?.lat, position?.lng, position]);
 
   useEffect(() => {
     void (async () => {
@@ -178,18 +174,6 @@ function Home() {
   }, []);
 
   const center = position ?? FALLBACK_CENTER;
-  const halos: DensityHalo[] = useMemo(
-    () =>
-      zones.map((z) => ({
-        id: z.zone,
-        lat: z.lat,
-        lng: z.lng,
-        intensity: z.intensity,
-        memberCount: z.memberCount,
-      })),
-    [zones],
-  );
-
   // nowTick ticks every 15s (see effect above), but the arrival countdown
   // label only has minute granularity and only exists for minyanim actively
   // in their 10-min arrival window. Without this, `pins` — and therefore
@@ -234,12 +218,8 @@ function Home() {
   );
 
   const nextMinyanLabel = useMemo(() => {
-    if (minyanim.length === 0) return null;
-    const sorted = [...minyanim].sort((a, b) => {
-      const ta = new Date(a.scheduled_at ?? a.created_at).getTime();
-      const tb = new Date(b.scheduled_at ?? b.created_at).getTime();
-      return ta - tb;
-    });
+    if (nearbySoon.length === 0) return null;
+    const sorted = [...nearbySoon].sort((a, b) => minyanStartMs(a) - minyanStartMs(b));
     const m = sorted[0];
     const prayer = t(`prayer.${m.prayer}`, { defaultValue: m.prayer });
     const when = new Date(m.scheduled_at ?? m.created_at).toLocaleTimeString([], {
@@ -247,7 +227,36 @@ function Home() {
       minute: "2-digit",
     });
     return `${prayer} · ${when}`;
-  }, [minyanim, t]);
+  }, [nearbySoon, t]);
+
+  /** Location is off: explain what is missing and let the user turn it on. */
+  const locationOff = !position && !geoLoading && permState !== null && permState !== "granted";
+  const turnOnLocation = useCallback(async () => {
+    void tapLight();
+    if (permState === "prompt") {
+      allowingRef.current = true;
+      const ok = await requestLocationPermission();
+      setPermState(ok ? "granted" : "denied");
+      if (ok) await requestGeo();
+      allowingRef.current = false;
+    } else {
+      // iOS only shows its permission dialog once; after a refusal the user must use Settings.
+      await openAppSettings();
+    }
+  }, [permState, requestGeo]);
+
+  // Back from the Settings app: pick up a permission the user just turned on.
+  useEffect(() => {
+    const recheck = () => {
+      if (document.visibilityState !== "visible") return;
+      void checkLocationPermission().then((perm) => {
+        setPermState(perm);
+        if (perm === "granted") void requestGeo();
+      });
+    };
+    document.addEventListener("visibilitychange", recheck);
+    return () => document.removeEventListener("visibilitychange", recheck);
+  }, [requestGeo]);
 
   return (
     <MobileFrame bg="map">
@@ -262,7 +271,6 @@ function Home() {
             user={position}
             userAvatarUrl={avatarUrl}
             userInitial={initial}
-            densityHalos={halos}
             pins={pins}
             theme={theme}
             recenterNonce={recenterNonce}
@@ -314,13 +322,13 @@ function Home() {
           </button>
         )}
 
+        {locationOff && (
+          <LocationOffCard denied={permState === "denied"} onTurnOn={turnOnLocation} />
+        )}
+
         {position && listSheet === "closed" && (
           <HomePresenceCard
-            activeCount={activeCount}
-            neighborhood={neighborhood}
-            lastUpdatedAt={lastUpdatedAt}
-            loading={densityLoading}
-            minyanimCount={minyanim.length}
+            minyanimCount={nearbySoon.length}
             nextMinyanLabel={nextMinyanLabel}
             onOpenList={openListSheet}
             onRecenter={() => {

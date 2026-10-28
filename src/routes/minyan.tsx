@@ -23,6 +23,7 @@ import { openDirections } from "@/lib/directions";
 import { shareAny, appOrigin } from "@/lib/share";
 import { tapLight, tapMedium } from "@/lib/haptics";
 import { navigateBack } from "@/lib/navigate-back";
+import { isJoinSpacingError } from "@/lib/join-rules";
 import { QUORUM_SIZE } from "@/lib/constants";
 
 export const Route = createFileRoute("/minyan")({
@@ -173,7 +174,8 @@ function Details() {
     setBusy(true);
     const { error } = await joinMinyan(minyan.id, user.id, readyNow);
     setBusy(false);
-    if (error) toast.error(error.message);
+    if (error)
+      toast.error(isJoinSpacingError(error.message) ? t("home.joinConflictToast") : error.message);
     else {
       setJoined(true);
       setMinyan((m) => (m ? { ...m, present_count: (m.present_count ?? 0) + 1 } : m));

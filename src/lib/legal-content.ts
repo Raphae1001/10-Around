@@ -57,24 +57,24 @@ export const PRIVACY_LEGAL_SECTIONS: LegalSection[] = [
     body: "You can sign in with Apple or Google, or continue as a guest using anonymous authentication. We store a unique user identifier and your display name (and an optional avatar if you add one). Guest accounts can be upgraded to Apple or Google sign-in at any time from Profile without losing your history.",
   },
   {
-    title: "Location & blurred presence",
-    body: "Your device location is used only while the app is in use — to show nearby minyanim, let you create one where you stand, and (if you enable presence) count people in your area. We never store your exact GPS coordinates for density counting. Instead we store only a blurred zone (geohash, roughly ~1 km) that cannot be reversed to a street address. We do not track your location in the background. You can revoke location access at any time in your device settings, and adjust presence in Settings.",
+    title: "Location & nearby alerts",
+    body: "Your device location is used only while the app is in use — to show the minyanim near you and to let you start one where you stand. When you publish a minyan, its location (your current position or the address you chose) is shown to people nearby as the place of that minyan; this happens only when you publish, each time. Your own position is never shown to other users. If you agree to nearby alerts, we also keep a blurred zone (geohash, roughly ~1 km) that cannot be reversed to a street address; it is used only by our server to notify you when a minyan starts near you, and you can turn this off at any time in Settings, which erases it. We do not track your location in the background. You can revoke location access at any time in your device settings.",
   },
   {
     title: "Chat & user-generated content",
-    body: "If you join a minyan or trip chat, messages you send are stored so other members of that thread can see them. You can report inappropriate messages from inside the chat. We review reports and may remove content or suspend accounts that violate our Terms.",
+    body: "If you join a minyan or trip chat, messages you send are stored so other members of that thread can see them. You can block another user from inside the chat — you will no longer see their messages or minyanim — and unblock them in Settings. You can also report inappropriate messages. We review reports and may remove content or suspend accounts that violate our Terms.",
   },
   {
     title: "Push notifications",
-    body: "When push delivery is enabled in a future update, we may store an anonymous device push token associated with your account so we can alert you about nearby minyanim and related prompts. The token contains no personal information and is deleted when you uninstall the app or delete your account. Preference toggles in Settings are saved locally until delivery ships.",
+    body: "If you allow notifications, we store an anonymous device push token associated with your account so we can alert you about nearby minyanim and related prompts. The token contains no personal information and is deleted when you uninstall the app or delete your account.",
   },
   {
     title: "Analytics",
-    body: "With your consent, we use Google Analytics 4 and Microsoft Clarity to understand which features are used and where the app can be improved. We disable Google Signals and ad personalization, do not send personal identifiers, and IP addresses are anonymized. You can disable analytics at any time from Settings → Analytics.",
+    body: "The app can use Google Analytics 4 and Microsoft Clarity to understand which features are used and where the app can be improved. We disable Google Signals and ad personalization, do not send personal identifiers, and IP addresses are anonymized. You can disable analytics at any time from Settings → Analytics.",
   },
   {
     title: "Data storage & retention",
-    body: "Account data, minyan records, presence zones, and chat messages are stored on secure managed Postgres infrastructure (Supabase) protected by row-level security. Data is encrypted in transit (HTTPS) and at rest. Live street minyanim expire automatically after their time window; presence rows and tokens are removed when you delete your account.",
+    body: "Account data, minyan records, your nearby-alerts zone (if you opted in), blocked-user lists, and chat messages are stored on secure managed Postgres infrastructure (Supabase) protected by row-level security. Data is encrypted in transit (HTTPS) and at rest. Live street minyanim expire automatically after their time window. Guest accounts with no activity for 5 days, and other accounts with no activity for 1 year, are deleted automatically together with their data.",
   },
   {
     title: "Your rights",
@@ -82,7 +82,7 @@ export const PRIVACY_LEGAL_SECTIONS: LegalSection[] = [
   },
   {
     title: "Account deletion",
-    body: `You can delete your account at any time from Settings → Delete Account. Deletion is immediate and permanent: your profile, presence zone, push tokens, participation history, chat membership, messages you sent (where cascaded), and minyanim you created are removed. If you cannot sign in, email ${SUPPORT_EMAIL} and we will process the deletion manually within 30 days.`,
+    body: `You can delete your account at any time from Settings → Delete Account. Deletion is immediate and permanent: your profile, nearby-alerts zone, push tokens, participation history, chat membership, messages you sent (where cascaded), and minyanim you created are removed. If you cannot sign in, email ${SUPPORT_EMAIL} and we will process the deletion manually within 30 days.`,
   },
   {
     title: "Contact",

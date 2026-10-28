@@ -77,7 +77,7 @@
     "acceptTerms": "Acepto los <terms>Términos de servicio</terms> y la <privacy>Política de privacidad</privacy>",
     "legal": {
       "termsTitle": "Términos de servicio",
-      "termsUpdated": "Última actualización: julio de 2026",
+      "termsUpdated": "Última actualización: octubre de 2026",
       "privacyTitle": "Política de privacidad"
     },
     "firstName": "Nombre",
@@ -85,9 +85,10 @@
     "firstNamePlaceholder": "p. ej. David",
     "lastNamePlaceholder": "p. ej. Cohen",
     "notificationsPrimer": {
-      "title": "Activar notificaciones",
-      "body": "Recibe alertas cuando un minyan esté cerca o necesite una persona más.",
-      "allow": "Activar"
+      "title": "Entérate cuando un minyan empiece cerca de ti",
+      "body": "Podemos avisarte cuando un minyan empiece cerca de ti o le falte una persona. Para ello, tu zona aproximada (unos 1 km) se guarda en nuestro servidor. Nunca se muestra a otros usuarios y puedes desactivarlo en cualquier momento en Ajustes.",
+      "allow": "Continuar",
+      "later": "Ahora no"
     }
   },
   "home": {
@@ -95,19 +96,19 @@
     "subtitleNoGps": "Permite la ubicación para ver minyanim cercanos",
     "createFab": "Iniciar un minyan aquí",
     "locationPrimer": {
-      "title": "Mira quién reza cerca",
-      "body": "10 Around usa tu ubicación para mostrar la presencia de la comunidad a tu alrededor y ayudarte a iniciar un minyan justo donde estás.",
-      "privacy": "Tu posición exacta nunca se almacena — solo un área difuminada (~1 km) para el conteo.",
-      "allow": "Permitir ubicación",
+      "title": "Encuentra minyanim cerca de ti",
+      "body": "10 Around usa tu ubicación para mostrarte los minyanim cercanos y ayudarte a iniciar uno donde estás.",
+      "privacy": "Tu posición nunca se muestra a otros usuarios.",
+      "allow": "Continuar",
       "later": "Ahora no"
     },
     "presence": {
-      "count_one": "{{count}} miembro activo cerca de ti",
-      "count_other": "{{count}} miembros activos cerca de ti",
       "updated": "actualizado {{time}}",
       "emptyTitle": "Sé el primero en rezar aquí",
       "emptySubtitle": "Nadie alrededor todavía — inicia un minyan",
-      "openList": "Ver minyanim cercanos"
+      "openList": "Ver minyanim cercanos",
+      "minyanimNearby_one": "{{count}} minyan cerca de ti",
+      "minyanimNearby_other": "{{count}} minyanim cerca de ti"
     },
     "recenter": "Centrar en mí",
     "tapGps": "Toca para activar GPS",
@@ -117,7 +118,7 @@
     "rightHere": "aquí mismo.",
     "rightWhereYouStand": "Justo donde estás",
     "orJoinNearby": "O únete a uno cercano",
-    "joinHint": "Minyanim GPS a 1 km · más todos los programados (Otros / Viaje)",
+    "joinHint": "A menos de 1 km · en curso o empieza en la próxima hora",
     "live": "en vivo",
     "enableLocation": "Activa la ubicación para descubrir minyanim cercanos.",
     "noneNearby": "Aún no hay minyan a tu alrededor. Sé el primero — toca \"Iniciar un minyan\".",
@@ -133,7 +134,16 @@
     "present": "presentes",
     "missing": "faltan {{count}}",
     "complete": "minyan completo",
-    "liveNow": "en vivo"
+    "liveNow": "en vivo",
+    "locationOff": {
+      "title": "La ubicación está desactivada",
+      "body": "Activa la ubicación para ver los minyanim cerca de ti. Aún puedes iniciar o planificar un minyan y usar los viajes.",
+      "turnOn": "Activar la ubicación",
+      "openSettings": "Abrir Ajustes para activar la ubicación"
+    },
+    "joinConflict": "Ya inscrito en un minyan a las {{time}}",
+    "joinConflictToast": "Ya estás inscrito en otro minyan que empieza dentro de 30 minutos.",
+    "joinError": "No se pudo inscribir"
   },
   "planned": {
     "title": "Planeado",
@@ -174,7 +184,14 @@
     "reportBody": "Lo revisaremos y tomaremos medidas si infringe las normas de la comunidad. El remitente no será notificado de que lo reportaste.",
     "reportConfirm": "Reportar",
     "reportThanks": "Gracias — lo revisaremos en breve.",
-    "reportError": "No se pudo enviar el reporte"
+    "reportError": "No se pudo enviar el reporte",
+    "block": "Bloquear usuario",
+    "blockTitle": "¿Bloquear a este usuario?",
+    "blockBody": "Ya no verás sus mensajes ni sus minyanim. Puedes desbloquearlo en Ajustes.",
+    "blockConfirm": "Bloquear",
+    "blockedToast": "Usuario bloqueado",
+    "blockError": "No se pudieron actualizar los usuarios bloqueados",
+    "blockedUserFallback": "Usuario bloqueado · {{date}}"
   },
   "createScheduled": {
     "title": "Planear un minyan",
@@ -277,7 +294,7 @@
     "commentPh": "Kaddish · Yahrzeit · traer tefilín…",
     "commentVisible": "Visible para todos los notificados.",
     "publish": "Publicar minyan",
-    "gpsShared": "Tu posición GPS se compartirá solo con este minyan.",
+    "gpsShared": "Tu posición actual se mostrará a las personas cercanas como la ubicación de este minyan.",
     "allowLocationToPublish": "Toca para permitir ubicación — necesario para un minyan calle/aeropuerto.",
     "travelersWillSee": "Los viajeros lo verán con antelación.",
     "needLocationLive": "Necesitamos tu ubicación para un minyan en vivo.",
@@ -300,7 +317,9 @@
     "evening": "Noche",
     "custom": "Personalizado",
     "now": "Ahora",
-    "locationFromPick": "Ubicación personalizada — no tu posición actual."
+    "locationFromPick": "Ubicación personalizada — no tu posición actual.",
+    "joinConflict": "Ya estás inscrito en un minyan a las {{time}}. Elige una hora con al menos 30 minutos de diferencia.",
+    "addressShared": "Esta dirección se mostrará a las personas cercanas como la ubicación de este minyan."
   },
   "onboarding": {
     "welcome": "Bienvenido",
@@ -717,16 +736,6 @@
     "highContrast": "Alto contraste",
     "reduceMotion": "Reducir animaciones",
     "chooseLanguage": "Elige tu idioma",
-    "presence": "Presencia comunitaria",
-    "presenceOff": "Desactivada",
-    "presenceOffDesc": "No me cuentes en el mapa de la comunidad",
-    "presencePonctual": "Ocasional",
-    "presencePonctualDesc": "Se cuenta cuando me muevo (~200 m)",
-    "presenceActive": "Con la app abierta",
-    "presenceActiveDesc": "Se cuenta siempre que la app esté en primer plano",
-    "presenceFootnote": "Tu posición exacta nunca se almacena — solo un área difuminada (~1 km) para el conteo.",
-    "presenceSaved": "Preferencia de presencia guardada",
-    "notifComingSoon": "El envío de notificaciones push llegará en una futura actualización. Las preferencias se guardan localmente por ahora.",
     "analytics": "Analíticas",
     "analyticsHelp": "Ayuda a mejorar 10 Around",
     "analyticsDesc": "Estadísticas de uso anónimas. Sin datos personales.",
@@ -736,7 +745,16 @@
     "deleteAccount": "Eliminar cuenta",
     "deleteAccountTitle": "¿Eliminar tu cuenta?",
     "deleteAccountDesc": "Esto elimina permanentemente tu perfil, tokens push, historial de participación y membresía en chats. Escribe DELETE para confirmar.",
-    "deleteForever": "Eliminar para siempre"
+    "deleteForever": "Eliminar para siempre",
+    "nearbyAlerts": "Alertas cercanas",
+    "nearbyAlertsLabel": "Avisarme cuando un minyan empiece cerca de mí",
+    "nearbyAlertsDesc": "Usa tu zona aproximada (~1 km).",
+    "nearbyAlertsFootnote": "Tu zona solo se usa para enviarte estas alertas. Nunca se muestra a otros usuarios. Al desactivarlo se borra.",
+    "blockedUsers": "Usuarios bloqueados",
+    "noBlocked": "No has bloqueado a nadie.",
+    "unblock": "Desbloquear",
+    "unblocked": "Usuario desbloqueado",
+    "openSystemSettings": "Abrir ajustes del sistema"
   },
   "confirm": {
     "organizerTitle": "¿Empezó el minyan?",
@@ -752,20 +770,20 @@
   },
   "privacy": {
     "title": "Política de privacidad",
-    "updated": "Última actualización: junio 2026",
+    "updated": "Última actualización: octubre de 2026",
     "intro": "MinyanStreet ayuda a los judíos a encontrar o iniciar un minyan en cualquier parte del mundo. Nos tomamos tu privacidad muy en serio.",
     "sections": {
       "data": {
         "title": "Datos que recogemos",
-        "body": "Email (inicio de sesión), nombre y avatar (opcionales), ubicación aproximada (solo cuando eliges compartirla para un minyan), token de notificación, puntuación de confianza e historial."
+        "body": "Nombre visible (y avatar opcional), un identificador de cuenta anónimo único, minyanim que creas o a los que te unes, mensajes de los chats en los que participas, usuarios que bloqueas, historial de confianza y participación, un token de notificaciones si las permites y — solo si activas las alertas cercanas — un área aproximada (unos 1 km)."
       },
       "use": {
         "title": "Cómo usamos los datos",
-        "body": "Para mostrarte minyanim cercanos, notificar solicitudes urgentes, contar asistencia y mantener el sistema de confianza. Nunca vendemos tus datos."
+        "body": "Para mostrarte minyanim cercanos, hacer funcionar los chats de coordinación, mantener la confianza y — si lo aceptaste — avisarte cuando empiece un minyan cerca de ti. Nunca vendemos tus datos."
       },
       "location": {
         "title": "Ubicación",
-        "body": "Tu GPS se usa solo cuando abres el mapa o inicias/te unes a un minyan en vivo. Se comparte solo con ese minyan, nunca públicamente."
+        "body": "El GPS solo se usa mientras la app está abierta — para mostrar los minyanim cerca de ti y crear un minyan donde estás. Tu posición nunca se muestra a otros usuarios; solo se muestra el lugar de un minyan que publicas. Si activas las alertas cercanas, guardamos un área aproximada (~1 km) que solo usa nuestro servidor para avisarte; al desactivarlas se borra."
       },
       "sharing": {
         "title": "Compartir datos",
@@ -773,7 +791,7 @@
       },
       "retention": {
         "title": "Conservación y eliminación",
-        "body": "Puedes eliminar tu cuenta en cualquier momento desde Ajustes. Todos tus datos se eliminan definitivamente en 30 días."
+        "body": "Puedes eliminar tu cuenta en cualquier momento desde Ajustes. Se borran tu perfil, área aproximada, tokens, lista de bloqueados e historial asociado. Los minyanim en vivo caducan al terminar su franja horaria. Las cuentas de invitado inactivas se eliminan a los 5 días y las demás cuentas inactivas al año."
       },
       "contact": {
         "title": "Contacto",
@@ -797,9 +815,9 @@
     "faqTitle": "Preguntas frecuentes",
     "faq": {
       "notifQ": "No estoy recibiendo notificaciones",
-      "notifA": "El envío push aún no está activo — Ajustes → Notificaciones explica que las preferencias se guardan localmente para una futura actualización. Cuando el push esté disponible, permite también las notificaciones del sistema para 10 Around en tu dispositivo.",
+      "notifA": "Si desactivaste las notificaciones, permítelas para 10 Around en los ajustes del dispositivo (Ajustes → Notificaciones → Abrir ajustes del sistema). Las alertas cercanas también deben estar activadas en Ajustes → Alertas cercanas.",
       "nearbyQ": "Los minyanim cercanos no aparecen",
-      "nearbyA": "10 Around necesita tu ubicación para mostrar minyanim cerca de ti. Abre Ajustes → Ubicación y permite el acceso «Al usar» la app.",
+      "nearbyA": "10 Around necesita tu ubicación para mostrar minyanim cercanos. Toca el botón de ubicación del mapa, o abre los ajustes del dispositivo y permite el acceso «Mientras se usa la app». También puedes crear o planificar un minyan sin ella.",
       "langQ": "¿Cómo cambio el idioma?",
       "langA": "Abre Ajustes → Idioma y elige entre los idiomas disponibles. El cambio es inmediato.",
       "createQ": "¿Cómo creo un minyan?",

@@ -3,13 +3,25 @@ import { useTranslation } from "react-i18next";
 import { MobileFrame } from "@/components/MobileFrame";
 import { ScreenHeader } from "@/components/ui-bits";
 import { SUPPORTED_LANGS, type LangCode } from "@/i18n";
-import { Bell, Lock, MapPin, ChevronDown, Sparkles, BarChart3, Globe, Users } from "lucide-react";
+import {
+  Bell,
+  Lock,
+  MapPin,
+  ChevronDown,
+  ChevronRight,
+  Sparkles,
+  BarChart3,
+  Globe,
+  Users,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { setAnalyticsEnabled, isAnalyticsEnabled } from "@/lib/analytics";
 import { tapLight } from "@/lib/haptics";
+import { openAppSettings } from "@/lib/native";
 import { getAppPref, setAppPref } from "@/lib/app-prefs";
-import { PresenceSettings } from "@/components/PresenceSettings";
+import { BlockedUsersList } from "@/components/BlockedUsersList";
+import { getPresenceLevel, setPresenceLevel } from "@/lib/presence-prefs";
 import { DangerZone } from "@/components/DangerZone";
 
 export const Route = createFileRoute("/settings")({
@@ -61,22 +73,16 @@ function Settings() {
           </div>
         </SettingsSection>
 
-        <SettingsSection title={t("settings.presence")} icon={Users}>
-          <PresenceSettings userId={user?.id} />
+        <SettingsSection title={t("settings.nearbyAlerts")} icon={Users}>
+          <NearbyAlertsToggle userId={user?.id} />
+        </SettingsSection>
+
+        <SettingsSection title={t("settings.blockedUsers")} icon={Lock}>
+          <BlockedUsersList userId={user?.id} />
         </SettingsSection>
 
         <SettingsSection title={t("settings.notifications")} icon={Bell}>
-          <p className="px-4 pt-3 pb-1 text-[11px] text-muted-foreground leading-relaxed">
-            {t("settings.notifComingSoon")}
-          </p>
-          <PrefToggle storageKey="notif.urgent" label={t("settings.urgent")} defaultOn disabled />
-          <PrefToggle
-            storageKey="notif.confirmed"
-            label={t("settings.minyanConfirmed")}
-            defaultOn
-            disabled
-          />
-          <PrefToggle storageKey="notif.quiet" label={t("settings.quietHours")} disabled isLast />
+          <SystemSettingsRow label={t("settings.openSystemSettings")} isLast />
         </SettingsSection>
 
         <SettingsSection title={t("settings.nusachPrefs")} icon={Sparkles}>
@@ -95,29 +101,12 @@ function Settings() {
           />
         </SettingsSection>
 
-        <SettingsSection title={t("settings.privacy")} icon={Lock}>
-          <PrefToggle storageKey="privacy.shareTrust" label={t("settings.shareTrust")} defaultOn />
-          <PrefSelect
-            storageKey="privacy.visibility"
-            label={t("settings.profileVisibility")}
-            defaultValue={t("settings.communityOnly")}
-            options={[t("settings.communityOnly"), "Public", "Private"]}
-            isLast
-          />
-        </SettingsSection>
-
         <SettingsSection title={t("settings.analytics")} icon={BarChart3}>
           <AnalyticsToggle isLast />
         </SettingsSection>
 
         <SettingsSection title={t("settings.location")} icon={MapPin}>
-          <PrefSelect
-            storageKey="location.permission"
-            label={t("settings.permission")}
-            defaultValue={t("settings.whileUsing")}
-            options={[t("settings.whileUsing"), "Always", "Never"]}
-            isLast
-          />
+          <SystemSettingsRow label={t("settings.openSystemSettings")} isLast />
         </SettingsSection>
 
         <div className="rounded-2xl bg-surface border border-border overflow-hidden">
@@ -206,6 +195,70 @@ function AnalyticsToggle({ isLast }: { isLast?: boolean }) {
   );
 }
 
+/** Opt-in for "a minyan starts near you" alerts; opting out erases the stored zone. */
+function NearbyAlertsToggle({ userId }: { userId: string | undefined }) {
+  const { t } = useTranslation();
+  const [on, setOn] = useState(false);
+  const [ready, setReady] = useState(false);
+  useEffect(() => {
+    let cancelled = false;
+    void getPresenceLevel(userId).then((level) => {
+      if (!cancelled) {
+        setOn(level === "ponctual");
+        setReady(true);
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [userId]);
+  async function toggle() {
+    if (!ready) return;
+    void tapLight();
+    const next = !on;
+    setOn(next);
+    await setPresenceLevel(next ? "ponctual" : "off", userId);
+  }
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => void toggle()}
+        className="w-full px-4 py-3.5 flex items-center gap-3 text-left active:bg-muted/50"
+      >
+        <div className="flex-1 min-w-0">
+          <div className="text-[15px] font-medium">{t("settings.nearbyAlertsLabel")}</div>
+          <div className="text-[13px] text-muted-foreground mt-0.5">
+            {t("settings.nearbyAlertsDesc")}
+          </div>
+        </div>
+        <OnOffSegment on={on} />
+      </button>
+      <p className="px-4 py-3 text-[11px] text-muted-foreground border-t border-border/60 leading-relaxed">
+        {t("settings.nearbyAlertsFootnote")}
+      </p>
+    </>
+  );
+}
+
+function SystemSettingsRow({ label, isLast }: { label: string; isLast?: boolean }) {
+  return (
+    <button
+      type="button"
+      onClick={() => {
+        void tapLight();
+        void openAppSettings();
+      }}
+      className={`w-full px-4 py-3.5 flex items-center gap-3 text-left active:bg-muted/50 ${
+        !isLast ? "border-b border-border/60" : ""
+      }`}
+    >
+      <div className="flex-1 text-[15px] font-medium min-w-0">{label}</div>
+      <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
+    </button>
+  );
+}
+
 function PrefSelect({
   label,
   defaultValue,
@@ -264,58 +317,6 @@ function PrefSelect({
         ))}
       </select>
     </label>
-  );
-}
-
-function PrefToggle({
-  label,
-  defaultOn = false,
-  storageKey,
-  disabled,
-  isLast,
-}: {
-  label: string;
-  defaultOn?: boolean;
-  storageKey: string;
-  disabled?: boolean;
-  isLast?: boolean;
-}) {
-  const [on, setOn] = useState(defaultOn);
-
-  useEffect(() => {
-    let cancelled = false;
-    void (async () => {
-      const legacy = await getAppPref(`minyannow.${storageKey}`);
-      const saved = legacy ?? (await getAppPref(storageKey));
-      if (!cancelled && saved !== null) setOn(saved === "1" || saved === "true");
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [storageKey]);
-
-  function toggle() {
-    if (disabled) return;
-    void tapLight();
-    const next = !on;
-    setOn(next);
-    const v = next ? "1" : "0";
-    void setAppPref(storageKey, v);
-    void setAppPref(`minyannow.${storageKey}`, v);
-  }
-
-  return (
-    <button
-      type="button"
-      onClick={toggle}
-      disabled={disabled}
-      className={`w-full px-4 py-3.5 flex items-center gap-3 text-left ${
-        !isLast ? "border-b border-border/60" : ""
-      } ${disabled ? "opacity-60 cursor-default" : "active:bg-muted/50"}`}
-    >
-      <div className="flex-1 text-[15px] font-medium">{label}</div>
-      <OnOffSegment on={on} disabled={disabled} />
-    </button>
   );
 }
 

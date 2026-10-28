@@ -77,7 +77,7 @@
     "acceptTerms": "I accept the <terms>Terms of Service</terms> and the <privacy>Privacy Policy</privacy>",
     "legal": {
       "termsTitle": "Terms of Service",
-      "termsUpdated": "Last updated: July 2026",
+      "termsUpdated": "Last updated: October 2026",
       "privacyTitle": "Privacy Policy"
     },
     "firstName": "First name",
@@ -85,9 +85,10 @@
     "firstNamePlaceholder": "e.g. David",
     "lastNamePlaceholder": "e.g. Cohen",
     "notificationsPrimer": {
-      "title": "Enable notifications",
-      "body": "Get alerts when a minyan is close or needs one more person.",
-      "allow": "Enable"
+      "title": "Know when a minyan starts near you",
+      "body": "We can notify you when a minyan starts near you or needs one more person. To do this, your approximate area (about 1 km) is kept on our server. It is never shown to other users, and you can turn this off anytime in Settings.",
+      "allow": "Continue",
+      "later": "Not now"
     }
   },
   "home": {
@@ -95,19 +96,19 @@
     "subtitleNoGps": "Allow location to see nearby minyanim",
     "createFab": "Start a minyan here",
     "locationPrimer": {
-      "title": "See who's praying nearby",
-      "body": "10 Around uses your location to show community presence around you and help you start a minyan right where you stand.",
-      "privacy": "Your exact position is never stored — only a blurred area (~1 km) for counting.",
-      "allow": "Allow location",
+      "title": "Find minyanim near you",
+      "body": "10 Around uses your location to show minyanim near you and help you start one right where you stand.",
+      "privacy": "Your position is never shown to other users.",
+      "allow": "Continue",
       "later": "Not now"
     },
     "presence": {
-      "count_one": "{{count}} active member near you",
-      "count_other": "{{count}} active members near you",
       "updated": "updated {{time}}",
       "emptyTitle": "Be the first to pray here",
       "emptySubtitle": "No one around yet — start a minyan",
-      "openList": "See nearby minyanim"
+      "openList": "See nearby minyanim",
+      "minyanimNearby_one": "{{count}} minyan near you",
+      "minyanimNearby_other": "{{count}} minyanim near you"
     },
     "recenter": "Recenter on me",
     "tapGps": "Tap to enable GPS",
@@ -117,7 +118,7 @@
     "rightHere": "right here.",
     "rightWhereYouStand": "Right where you stand",
     "orJoinNearby": "Or join one nearby",
-    "joinHint": "GPS minyanim within 1 km · plus all scheduled (Other / Travel)",
+    "joinHint": "Within 1 km · live now or starting in the next hour",
     "live": "live",
     "enableLocation": "Enable location to discover minyanim nearby.",
     "noneNearby": "No minyan nearby yet — be the first to start one.",
@@ -133,7 +134,16 @@
     "present": "present",
     "missing": "{{count}} missing",
     "complete": "minyan complete",
-    "liveNow": "live now"
+    "liveNow": "live now",
+    "locationOff": {
+      "title": "Location is off",
+      "body": "Turn on location to see the minyanim near you. You can still start or plan a minyan, and use trips.",
+      "turnOn": "Turn on location",
+      "openSettings": "Open Settings to turn on location"
+    },
+    "joinConflict": "Already registered to a minyan at {{time}}",
+    "joinConflictToast": "You're already registered to another minyan starting within 30 minutes.",
+    "joinError": "Couldn't register"
   },
   "planned": {
     "title": "Planned",
@@ -174,7 +184,14 @@
     "reportBody": "We’ll review it and take action if it violates community guidelines. The sender won’t be notified that you reported them.",
     "reportConfirm": "Report",
     "reportThanks": "Thanks — we’ll review this shortly.",
-    "reportError": "Could not send report"
+    "reportError": "Could not send report",
+    "block": "Block user",
+    "blockTitle": "Block this user?",
+    "blockBody": "You won't see their messages or minyanim anymore. You can unblock them in Settings.",
+    "blockConfirm": "Block",
+    "blockedToast": "User blocked",
+    "blockError": "Couldn't update blocked users",
+    "blockedUserFallback": "Blocked user · {{date}}"
   },
   "createScheduled": {
     "title": "Plan a minyan",
@@ -277,7 +294,7 @@
     "commentPh": "Kaddish · Yahrzeit · bring tefillin…",
     "commentVisible": "Visible to everyone notified.",
     "publish": "Publish minyan",
-    "gpsShared": "Your GPS position will be shared with this minyan only.",
+    "gpsShared": "Your current position will be shown to people nearby as this minyan's location.",
     "allowLocationToPublish": "Tap to allow location — needed to publish a street/airport minyan.",
     "travelersWillSee": "Travelers will see it in advance.",
     "needLocationLive": "We need your location for a live minyan.",
@@ -299,7 +316,9 @@
     "afternoon": "Afternoon",
     "evening": "Evening",
     "custom": "Custom",
-    "now": "Now"
+    "now": "Now",
+    "joinConflict": "You're already registered to a minyan at {{time}}. Pick a time at least 30 minutes apart.",
+    "addressShared": "This address will be shown to people nearby as this minyan's location."
   },
   "onboarding": {
     "welcome": "Welcome",
@@ -711,16 +730,6 @@
     "highContrast": "High contrast",
     "reduceMotion": "Reduce motion",
     "chooseLanguage": "Choose your language",
-    "presence": "Community presence",
-    "presenceOff": "Off",
-    "presenceOffDesc": "Don't count me in the community map",
-    "presencePonctual": "Occasional",
-    "presencePonctualDesc": "Counted when I move (~200 m)",
-    "presenceActive": "While app is open",
-    "presenceActiveDesc": "Counted whenever the app is in the foreground",
-    "presenceFootnote": "Your exact position is never stored — only a blurred area (~1 km) for counting.",
-    "presenceSaved": "Presence preference saved",
-    "notifComingSoon": "Push delivery coming in a future update. Preferences are saved locally for now.",
     "analytics": "Analytics",
     "analyticsHelp": "Help improve 10 Around",
     "analyticsDesc": "Anonymous usage analytics. No personal data.",
@@ -730,7 +739,16 @@
     "deleteAccount": "Delete account",
     "deleteAccountTitle": "Delete your account?",
     "deleteAccountDesc": "This permanently removes your profile, push tokens, participation history, and chat membership. Type DELETE to confirm.",
-    "deleteForever": "Delete forever"
+    "deleteForever": "Delete forever",
+    "nearbyAlerts": "Nearby alerts",
+    "nearbyAlertsLabel": "Alert me when a minyan starts near me",
+    "nearbyAlertsDesc": "Uses your approximate area (~1 km).",
+    "nearbyAlertsFootnote": "Your area is only used to send you these alerts. It is never shown to other users. Turning this off erases it.",
+    "blockedUsers": "Blocked users",
+    "noBlocked": "You haven't blocked anyone.",
+    "unblock": "Unblock",
+    "unblocked": "User unblocked",
+    "openSystemSettings": "Open system settings"
   },
   "confirm": {
     "organizerTitle": "Did the minyan start?",
@@ -746,20 +764,20 @@
   },
   "privacy": {
     "title": "Privacy Policy",
-    "updated": "Last updated: July 2026",
+    "updated": "Last updated: October 2026",
     "intro": "10 Around helps Jewish people find or start a minyan anywhere in the world. We take your privacy seriously.",
     "sections": {
       "data": {
         "title": "Data we collect",
-        "body": "Display name (and optional avatar), a unique anonymous account ID, blurred presence zone (~1 km geohash when you enable presence), minyanim you create or join, chat messages in threads you belong to, trust/participation history, optional analytics (if you opt in), and a push token when push delivery is enabled."
+        "body": "Display name (and optional avatar), a unique anonymous account ID, minyanim you create or join, chat messages in threads you belong to, the users you block, trust/participation history, a push token if you allow notifications, and — only if you turn on nearby alerts — an approximate area (about 1 km)."
       },
       "use": {
         "title": "How we use data",
-        "body": "To show you nearby minyanim, count people in blurred areas, run chats for coordination, maintain trust, and (when available) notify you about nearby activity. We never sell your data."
+        "body": "To show you nearby minyanim, run chats for coordination, maintain trust, and — if you opted in — notify you when a minyan starts near you. We never sell your data."
       },
       "location": {
         "title": "Location",
-        "body": "GPS is used only while the app is open — for the map, creating a minyan where you stand, and optional presence. Exact coordinates are not stored for density; we keep only a blurred zone (~1 km). Minyan pins you create store the location you publish for that minyan."
+        "body": "GPS is used only while the app is open — to show the minyanim near you and to create a minyan where you stand. Your position is never shown to other users; only the place of a minyan you publish is shown. If you turn on nearby alerts, we keep an approximate area (~1 km) that only our server uses to notify you; turning it off erases it."
       },
       "sharing": {
         "title": "Data sharing",
@@ -767,7 +785,7 @@
       },
       "retention": {
         "title": "Retention & deletion",
-        "body": "You can delete your account at any time from Settings. Your profile, presence, tokens, and related history are removed. Live minyanim expire after their time window."
+        "body": "You can delete your account at any time from Settings. Your profile, approximate area, tokens, blocked-user list and related history are removed. Live minyanim expire after their time window. Inactive guest accounts are deleted after 5 days and other inactive accounts after 1 year."
       },
       "contact": {
         "title": "Contact",
@@ -791,9 +809,9 @@
     "faqTitle": "Frequently asked questions",
     "faq": {
       "notifQ": "I'm not receiving notifications",
-      "notifA": "Push delivery is not live yet — Settings → Notifications explains that preferences are saved locally for a future update. When push ships, also allow system notifications for 10 Around on your device.",
+      "notifA": "If you turned notifications off, allow them for 10 Around in your device settings (Settings → Notifications → Open system settings). Nearby alerts must also be on in Settings → Nearby alerts.",
       "nearbyQ": "Nearby minyanim aren't showing",
-      "nearbyA": "10 Around needs your location to show minyanim near you. Open Settings → Location and allow access \"While Using\" the app.",
+      "nearbyA": "10 Around needs your location to show minyanim near you. Tap the location button shown on the map, or open your device settings and allow access “While Using” the app. You can still start or plan a minyan without it.",
       "langQ": "How do I change the language?",
       "langA": "Open Settings → Language and pick from the supported languages. The change is instant.",
       "createQ": "How do I create a minyan?",

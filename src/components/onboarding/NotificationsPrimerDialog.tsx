@@ -45,7 +45,7 @@ export function NotificationsPrimerDialog({ open, onOpenChange, onAllow, onSkip 
             {t("auth.notificationsPrimer.allow")}
           </AlertDialogAction>
           <AlertDialogCancel onClick={onSkip} className="w-full mt-0">
-            {t("common.skip")}
+            {t("auth.notificationsPrimer.later")}
           </AlertDialogCancel>
         </AlertDialogFooter>
       </AlertDialogContent>

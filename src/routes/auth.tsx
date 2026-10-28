@@ -11,6 +11,7 @@ import { LocationPrimerDialog } from "@/components/LocationPrimerDialog";
 import { NotificationsPrimerDialog } from "@/components/onboarding/NotificationsPrimerDialog";
 import { track } from "@/lib/analytics";
 import { setAppPref } from "@/lib/app-prefs";
+import { setPresenceLevel } from "@/lib/presence-prefs";
 import { setPendingTermsAcceptedAt, takePendingTermsAcceptedAt } from "@/lib/pending-terms";
 import { registerPushNotifications, requestLocationPermission, isNative } from "@/lib/native";
 import { cn } from "@/lib/utils";
@@ -102,8 +103,18 @@ function Onboarding() {
     setNotifDialogOpen(true);
   }
 
+  /** "Not now" on the location step: skip the system prompt, go on to notifications. */
+  async function handleLocLater() {
+    setLocDialogOpen(false);
+    await setAppPref(PRIMER_SEEN_KEY, "1");
+    setNotifDialogOpen(true);
+  }
+
   async function handleNotifAllow() {
     setNotifDialogOpen(false);
+    // Accepting this step is the user's consent to "a minyan starts near you" alerts:
+    // their blurred area is then kept server-side (never shown to other users).
+    await setPresenceLevel("ponctual");
     // Fresh click gesture → OS/browser notification prompt.
     await requestNotifications().catch((e) => {
       console.warn("notifications permission failed", e);
@@ -194,7 +205,7 @@ function Onboarding() {
         open={locDialogOpen}
         onOpenChange={setLocDialogOpen}
         onAllow={() => void handleLocAllow()}
-        showLater={false}
+        onLater={() => void handleLocLater()}
       />
 
       <NotificationsPrimerDialog

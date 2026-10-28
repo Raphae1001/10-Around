@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { encodeGeohash } from "@/lib/geo";
-import { getPresenceLevel, isPresenceLevel, type PresenceLevel } from "@/lib/presence-prefs";
+import { getPresenceLevel, type PresenceLevel } from "@/lib/presence-prefs";
 import type { GeoPosition } from "@/hooks/use-geolocation";
 
-/** Minimum movement before re-upserting presence (metres) — ponctual mode only. */
+/** Minimum movement before re-sending the zone (metres). */
 const UPSERT_MOVE_THRESHOLD_M = 200;
 
 function movedEnough(prev: { lat: number; lng: number } | null, next: GeoPosition): boolean {
@@ -21,16 +21,16 @@ function movedEnough(prev: { lat: number; lng: number } | null, next: GeoPositio
 }
 
 /**
- * Upserts blurred presence (geohash zone only) when the user has a GPS fix.
- * Respects presence_level from settings (off / ponctual / active_foreground).
+ * Keeps the user's blurred zone (geohash, ~1 km) up to date on the server so
+ * they can be notified when a minyan starts nearby. Only runs for users who
+ * opted in; the zone is never shown to other users.
  */
 export function usePresence(position: GeoPosition | null, enabled = true, userId?: string) {
   const lastUpsertRef = useRef<{ lat: number; lng: number; zone: string } | null>(null);
-  const [level, setLevel] = useState<PresenceLevel>("ponctual");
+  const [level, setLevel] = useState<PresenceLevel>("off");
 
-  // Latest inputs, so refresh() can force-upsert without stale closures.
-  const stateRef = useRef({ position, level, enabled, userId });
-  stateRef.current = { position, level, enabled, userId };
+  const stateRef = useRef({ position, level, enabled });
+  stateRef.current = { position, level, enabled };
 
   useEffect(() => {
     let cancelled = false;
@@ -39,7 +39,10 @@ export function usePresence(position: GeoPosition | null, enabled = true, userId
     });
     const onChange = (e: Event) => {
       const next = (e as CustomEvent<PresenceLevel>).detail;
-      if (isPresenceLevel(next)) setLevel(next);
+      if (next === "off" || next === "ponctual") {
+        if (next === "off") lastUpsertRef.current = null;
+        setLevel(next);
+      }
     };
     window.addEventListener("presence-level-changed", onChange);
     return () => {
@@ -54,39 +57,20 @@ export function usePresence(position: GeoPosition | null, enabled = true, userId
     const zone = encodeGeohash(position.lat, position.lng);
     const last = lastUpsertRef.current;
     if (last && last.zone === zone) return;
-    if (level === "ponctual" && last && !movedEnough(last, position)) return;
+    if (last && !movedEnough(last, position)) return;
 
-    void supabase.rpc("upsert_presence", { zone }).then(async ({ error }) => {
-      if (!error) {
-        lastUpsertRef.current = { lat: position.lat, lng: position.lng, zone };
-        if (userId && level !== "ponctual") {
-          await supabase
-            .from("member_presence")
-            .update({ presence_level: level, opt_out: false })
-            .eq("user_id", userId);
-        }
-      }
+    void supabase.rpc("set_nearby_alerts", { _enabled: true, _zone: zone }).then(({ error }) => {
+      if (!error) lastUpsertRef.current = { lat: position.lat, lng: position.lng, zone };
     });
-  }, [enabled, position?.lat, position?.lng, position, level, userId]);
+  }, [enabled, position?.lat, position?.lng, position, level]);
 
-  /**
-   * Force-renew presence for the current position, bypassing the movement /
-   * same-zone guard. Server sets last_seen_at = now(), so a stationary user
-   * stays inside the freshness window (counted on the map for another hour).
-   */
+  /** Force-renew the stored zone for the current position (e.g. after a manual refresh). */
   const refresh = useCallback(async () => {
     const s = stateRef.current;
     if (!s.enabled || !s.position || s.level === "off") return;
     const zone = encodeGeohash(s.position.lat, s.position.lng);
-    const { error } = await supabase.rpc("upsert_presence", { zone });
-    if (error) return;
-    lastUpsertRef.current = { lat: s.position.lat, lng: s.position.lng, zone };
-    if (s.userId && s.level !== "ponctual") {
-      await supabase
-        .from("member_presence")
-        .update({ presence_level: s.level, opt_out: false })
-        .eq("user_id", s.userId);
-    }
+    const { error } = await supabase.rpc("set_nearby_alerts", { _enabled: true, _zone: zone });
+    if (!error) lastUpsertRef.current = { lat: s.position.lat, lng: s.position.lng, zone };
   }, []);
 
   return { refresh };

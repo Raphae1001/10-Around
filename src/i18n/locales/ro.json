@@ -77,7 +77,7 @@
     "acceptTerms": "Accept <terms>Termenii de utilizare</terms> și <privacy>Politica de confidențialitate</privacy>",
     "legal": {
       "termsTitle": "Termeni de utilizare",
-      "termsUpdated": "Ultima actualizare: iulie 2026",
+      "termsUpdated": "Ultima actualizare: octombrie 2026",
       "privacyTitle": "Politica de confidențialitate"
     },
     "firstName": "Prenume",
@@ -85,9 +85,10 @@
     "firstNamePlaceholder": "ex. David",
     "lastNamePlaceholder": "ex. Cohen",
     "notificationsPrimer": {
-      "title": "Activează notificările",
-      "body": "Primește alerte când un minian este aproape sau are nevoie de încă o persoană.",
-      "allow": "Activează"
+      "title": "Află când începe un minyan lângă tine",
+      "body": "Te putem anunța când începe un minyan lângă tine sau când mai lipsește o persoană. Pentru asta, zona ta aproximativă (aproximativ 1 km) este păstrată pe serverul nostru. Nu este arătată niciodată altor utilizatori și poți dezactiva oricând din Setări.",
+      "allow": "Continuă",
+      "later": "Nu acum"
     }
   },
   "home": {
@@ -95,19 +96,19 @@
     "subtitleNoGps": "Permite accesul la locație pentru a vedea minyanim în apropiere",
     "createFab": "Pornește un minian aici",
     "locationPrimer": {
-      "title": "Vezi cine se roagă în apropiere",
-      "body": "10 Around folosește locația ta pentru a arăta prezența comunității în jurul tău și a te ajuta să pornești un minian exact unde stai.",
-      "privacy": "Poziția ta exactă nu este niciodată stocată — doar o zonă estompată (~1 km) pentru numărare.",
-      "allow": "Permite locația",
+      "title": "Găsește minyanim lângă tine",
+      "body": "10 Around folosește locația ta pentru a-ți arăta minyanim din apropiere și pentru a te ajuta să începi unul chiar unde ești.",
+      "privacy": "Poziția ta nu este arătată niciodată altor utilizatori.",
+      "allow": "Continuă",
       "later": "Nu acum"
     },
     "presence": {
-      "count_one": "{{count}} membru activ lângă tine",
-      "count_other": "{{count}} membri activi lângă tine",
       "updated": "actualizat {{time}}",
       "emptyTitle": "Fii primul care se roagă aici",
       "emptySubtitle": "Nimeni în jur încă — pornește un minian",
-      "openList": "Vezi minianim din apropiere"
+      "openList": "Vezi minianim din apropiere",
+      "minyanimNearby_one": "{{count}} minyan lângă tine",
+      "minyanimNearby_other": "{{count}} minyanim lângă tine"
     },
     "recenter": "Centrează pe mine",
     "tapGps": "Atinge pentru a activa GPS",
@@ -117,7 +118,7 @@
     "rightHere": "chiar aici.",
     "rightWhereYouStand": "Chiar unde te afli",
     "orJoinNearby": "Sau alătură-te unuia din apropiere",
-    "joinHint": "Minyanim GPS la 1 km · plus toate cele programate (Altul / Călătorie)",
+    "joinHint": "La mai puțin de 1 km · în desfășurare sau începe în ora următoare",
     "live": "live",
     "enableLocation": "Activează locația pentru a descoperi minyanim în apropiere.",
     "noneNearby": "Niciun minyan în jur. Fii primul — apasă \"Începe un minyan\" mai sus.",
@@ -133,7 +134,16 @@
     "present": "prezenți",
     "missing": "{{count}} lipsă",
     "complete": "minyan complet",
-    "liveNow": "live acum"
+    "liveNow": "live acum",
+    "locationOff": {
+      "title": "Localizarea este oprită",
+      "body": "Pornește localizarea ca să vezi minyanim lângă tine. Poți totuși să începi sau să planifici un minyan și să folosești călătoriile.",
+      "turnOn": "Pornește localizarea",
+      "openSettings": "Deschide Setări pentru a porni localizarea"
+    },
+    "joinConflict": "Deja înscris la un minyan la {{time}}",
+    "joinConflictToast": "Ești deja înscris la un alt minyan care începe în 30 de minute.",
+    "joinError": "Înscrierea nu a reușit"
   },
   "planned": {
     "title": "Planificat",
@@ -174,7 +184,14 @@
     "reportBody": "Îl vom examina și vom acționa dacă încalcă regulile comunității. Expeditorul nu va fi notificat că ai raportat.",
     "reportConfirm": "Raportează",
     "reportThanks": "Mulțumim — vom examina în curând.",
-    "reportError": "Nu s-a putut trimite raportul"
+    "reportError": "Nu s-a putut trimite raportul",
+    "block": "Blochează utilizatorul",
+    "blockTitle": "Blochezi acest utilizator?",
+    "blockBody": "Nu-i vei mai vedea mesajele și minyanim. Îl poți debloca din Setări.",
+    "blockConfirm": "Blochează",
+    "blockedToast": "Utilizator blocat",
+    "blockError": "Nu s-au putut actualiza utilizatorii blocați",
+    "blockedUserFallback": "Utilizator blocat · {{date}}"
   },
   "createScheduled": {
     "title": "Planifică un minian",
@@ -277,7 +294,7 @@
     "commentPh": "Kaddish · Yahrzeit · aduceți tefillin…",
     "commentVisible": "Vizibil tuturor celor notificați.",
     "publish": "Publică minyan",
-    "gpsShared": "Poziția ta GPS va fi partajată doar cu acest minyan.",
+    "gpsShared": "Poziția ta curentă va fi arătată persoanelor din apropiere ca locația acestui minyan.",
     "allowLocationToPublish": "Apasă pentru a permite locația — necesară pentru a publica un minyan pe stradă/aeroport.",
     "travelersWillSee": "Călătorii îl vor vedea în avans.",
     "needLocationLive": "Avem nevoie de locația ta pentru un minyan live.",
@@ -300,7 +317,9 @@
     "evening": "Seară",
     "custom": "Personalizat",
     "now": "Acum",
-    "locationFromPick": "Locație personalizată — nu poziția ta actuală."
+    "locationFromPick": "Locație personalizată — nu poziția ta actuală.",
+    "joinConflict": "Ești deja înscris la un minyan la {{time}}. Alege o oră la cel puțin 30 de minute distanță.",
+    "addressShared": "Această adresă va fi arătată persoanelor din apropiere ca locația acestui minyan."
   },
   "onboarding": {
     "welcome": "Bun venit",
@@ -717,16 +736,6 @@
     "highContrast": "Contrast ridicat",
     "reduceMotion": "Reduce mișcarea",
     "chooseLanguage": "Alege limba",
-    "presence": "Prezență în comunitate",
-    "presenceOff": "Oprit",
-    "presenceOffDesc": "Nu mă număra pe harta comunității",
-    "presencePonctual": "Ocazional",
-    "presencePonctualDesc": "Numărat când mă mișc (~200 m)",
-    "presenceActive": "Cât timp aplicația e deschisă",
-    "presenceActiveDesc": "Numărat ori de câte ori aplicația e în prim-plan",
-    "presenceFootnote": "Poziția ta exactă nu este niciodată stocată — doar o zonă estompată (~1 km) pentru numărare.",
-    "presenceSaved": "Preferința de prezență salvată",
-    "notifComingSoon": "Livrarea push vine într-o actualizare viitoare. Preferințele sunt salvate local deocamdată.",
     "analytics": "Analitică",
     "analyticsHelp": "Ajută la îmbunătățirea 10 Around",
     "analyticsDesc": "Statistici de utilizare anonime. Fără date personale.",
@@ -736,7 +745,16 @@
     "deleteAccount": "Șterge contul",
     "deleteAccountTitle": "Ștergi contul?",
     "deleteAccountDesc": "Aceasta elimină permanent profilul, token-urile push, istoricul de participare și apartenența la chat-uri. Tastează DELETE pentru a confirma.",
-    "deleteForever": "Șterge definitiv"
+    "deleteForever": "Șterge definitiv",
+    "nearbyAlerts": "Alerte din apropiere",
+    "nearbyAlertsLabel": "Anunță-mă când începe un minyan lângă mine",
+    "nearbyAlertsDesc": "Folosește zona ta aproximativă (~1 km).",
+    "nearbyAlertsFootnote": "Zona ta este folosită doar pentru a-ți trimite aceste alerte. Nu este arătată niciodată altor utilizatori. Dezactivarea o șterge.",
+    "blockedUsers": "Utilizatori blocați",
+    "noBlocked": "Nu ai blocat pe nimeni.",
+    "unblock": "Deblochează",
+    "unblocked": "Utilizator deblocat",
+    "openSystemSettings": "Deschide setările sistemului"
   },
   "confirm": {
     "organizerTitle": "A început minyan-ul?",
@@ -752,20 +770,20 @@
   },
   "privacy": {
     "title": "Politică de confidențialitate",
-    "updated": "Ultima actualizare: Iunie 2026",
+    "updated": "Ultima actualizare: octombrie 2026",
     "intro": "MinyanStreet ajută evreii să găsească sau să înceapă un minyan oriunde în lume. Luăm confidențialitatea în serios.",
     "sections": {
       "data": {
         "title": "Date pe care le colectăm",
-        "body": "Adresa de email (pentru conectare), nume afișat și avatar (opțional), locație aproximativă (doar când alegi să o partajezi pentru un minyan specific), token de notificare push (pentru a te anunța despre minyanim din apropiere), scor de încredere și istoric de participare."
+        "body": "Nume afișat (și avatar opțional), un ID de cont anonim unic, minyanim create sau la care te alături, mesajele din conversațiile din care faci parte, utilizatorii pe care îi blochezi, istoricul de încredere și participare, un token de notificări dacă le permiți și — doar dacă activezi alertele din apropiere — o zonă aproximativă (circa 1 km)."
       },
       "use": {
         "title": "Cum folosim datele",
-        "body": "Pentru a-ți arăta minyanim în apropiere, a te notifica despre cereri urgente, a număra prezența și a menține sistemul de încredere care face comunitatea fiabilă. Nu vindem niciodată datele tale."
+        "body": "Pentru a-ți arăta minyanim din apropiere, a face să funcționeze conversațiile de coordonare, a menține încrederea și — dacă ai acceptat — a te anunța când începe un minyan lângă tine. Nu îți vindem niciodată datele."
       },
       "location": {
         "title": "Locație",
-        "body": "GPS-ul tău este folosit doar când deschizi activ harta sau începi/te alături unui minyan live. Este partajat doar cu acel minyan și nu este niciodată transmis public."
+        "body": "GPS-ul este folosit doar cât timp aplicația este deschisă — pentru a arăta minyanim lângă tine și a crea un minyan unde te afli. Poziția ta nu este niciodată arătată altor utilizatori; se afișează doar locul unui minyan pe care îl publici. Dacă activezi alertele din apropiere, păstrăm o zonă aproximativă (~1 km) folosită doar de serverul nostru pentru a te anunța; dezactivarea o șterge."
       },
       "sharing": {
         "title": "Partajarea datelor",
@@ -773,7 +791,7 @@
       },
       "retention": {
         "title": "Păstrare și ștergere",
-        "body": "Îți poți șterge contul oricând din Setări. Toate datele personale și istoricul sunt eliminate permanent în termen de 30 de zile."
+        "body": "Îți poți șterge contul oricând din Setări. Profilul, zona aproximativă, token-urile, lista de blocați și istoricul asociat sunt eliminate. Minyanim live expiră după intervalul lor de timp. Conturile de oaspete inactive sunt șterse după 5 zile, iar celelalte conturi inactive după 1 an."
       },
       "contact": {
         "title": "Contact",
@@ -797,9 +815,9 @@
     "faqTitle": "Întrebări frecvente",
     "faq": {
       "notifQ": "Nu primesc notificări",
-      "notifA": "Livrarea push nu este încă activă — Setări → Notificări explică că preferințele sunt salvate local pentru o actualizare viitoare. Când push-ul va fi disponibil, permite și notificările de sistem pentru 10 Around pe dispozitiv.",
+      "notifA": "Dacă ai dezactivat notificările, permite-le pentru 10 Around în setările dispozitivului (Setări → Notificări → Deschide setările sistemului). Alertele din apropiere trebuie să fie active și în Setări → Alerte din apropiere.",
       "nearbyQ": "Minianim din apropiere nu apar",
-      "nearbyA": "10 Around are nevoie de locația ta pentru a arăta minianim lângă tine. Deschide Setări → Locație și permite accesul „În timpul utilizării” aplicației.",
+      "nearbyA": "10 Around are nevoie de locația ta pentru a arăta minyanim din apropiere. Atinge butonul de locație de pe hartă sau deschide setările dispozitivului și permite accesul „În timpul utilizării aplicației”. Poți crea sau planifica un minyan și fără ea.",
       "langQ": "Cum schimb limba?",
       "langA": "Deschide Setări → Limbă și alege din limbile suportate. Schimbarea este instantanee.",
       "createQ": "Cum creez un minian?",

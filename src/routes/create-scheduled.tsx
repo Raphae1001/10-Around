@@ -12,6 +12,7 @@ import { DateTimeField } from "@/components/DateTimeField";
 import { currentPrayerWindowZmanim, type ZmanimOpinion } from "@/lib/zmanim";
 import { timezoneForCoords, zonedTimeToUtc } from "@/lib/timezone";
 import { publishScheduledMinyan, PublishMinyanError } from "@/lib/minyan-publish";
+import { fetchJoinConflict, formatClockTime } from "@/lib/join-conflict";
 
 export const Route = createFileRoute("/create-scheduled")({
   validateSearch: (s: Record<string, unknown>): { repeat?: string } => ({
@@ -250,6 +251,12 @@ function CreateScheduled() {
 
     setPublishing(true);
     try {
+      // The creator is registered to their own minyan: same 30-minute rule as joining.
+      const clash = await fetchJoinConflict(scheduledAt.getTime());
+      if (clash) {
+        toast.error(t("create.joinConflict", { time: formatClockTime(clash.start_at) }));
+        return;
+      }
       const expiresAt = new Date(scheduledAt.getTime() + 40 * 60 * 1000).toISOString();
       const minyanId = await publishScheduledMinyan({
         userId: user.id,

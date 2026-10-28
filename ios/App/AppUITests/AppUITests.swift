@@ -130,15 +130,15 @@ final class AppUITests: XCTestCase {
             XCTFail("Terms checkbox not found")
         }
         tapUntil("Continue", shows: ["Continue as Guest"])
-        tapUntil("Continue as Guest", shows: ["Allow location", "Enable", "Home"])
+        tapUntil("Continue as Guest", shows: ["Find minyanim near you", "Know when a minyan starts near you", "Home"])
 
         // Permission primers and the matching system alerts (each is optional).
-        if element("Allow location").waitForExistence(timeout: 15) {
-            tap("Allow location")
+        if element("Find minyanim near you").waitForExistence(timeout: 15) {
+            tap("Continue")
             tapSystemAlert(["Allow While Using App", "Allow Once", "Allow"])
         }
-        if element("Enable").waitForExistence(timeout: 10) {
-            tap("Skip")
+        if element("Know when a minyan starts near you").waitForExistence(timeout: 10) {
+            tap("Not now")
         }
         tapSystemAlert(["Don’t Allow", "Don't Allow"])
 

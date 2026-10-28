@@ -23,6 +23,7 @@ import { reverseGeocode } from "@/lib/geocoding";
 import { currentPrayerWindowZmanim, type ZmanimOpinion } from "@/lib/zmanim";
 import { notifyNearbyMinyan } from "@/lib/notify-nearby";
 import { publishStreetMinyan, PublishMinyanError } from "@/lib/minyan-publish";
+import { fetchJoinConflict, formatClockTime } from "@/lib/join-conflict";
 import { AddressAutocomplete, type AddressPick } from "@/components/AddressAutocomplete";
 
 export const Route = createFileRoute("/create")({
@@ -340,7 +341,11 @@ function Create() {
             {t("create.publish")}
           </button>
           <p className="text-center text-[11px] text-ink-soft mt-2">
-            {position ? t("create.gpsShared") : t("create.allowLocationToPublish")}
+            {pick
+              ? t("create.addressShared")
+              : position
+                ? t("create.gpsShared")
+                : t("create.allowLocationToPublish")}
           </p>
         </div>
       </div>
@@ -387,6 +392,12 @@ function Create() {
       }
 
       const startMs = scheduled_at ? new Date(scheduled_at).getTime() : now;
+      // The creator is registered to their own minyan: same 30-minute rule as joining.
+      const clash = await fetchJoinConflict(startMs);
+      if (clash) {
+        toast.error(t("create.joinConflict", { time: formatClockTime(clash.start_at) }));
+        return;
+      }
       const expires_at = new Date(startMs + 2 * 60 * 60 * 1000).toISOString();
 
       const minyanId = await publishStreetMinyan({

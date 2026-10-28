@@ -24,7 +24,10 @@ import type { GeoPosition } from "@/hooks/use-geolocation";
 import { openDirections } from "@/lib/directions";
 import { downloadIcs } from "@/lib/native";
 import { QUORUM_SIZE } from "@/lib/constants";
-import { isLiveOnMap } from "@/lib/minyan-live";
+import { isNearbySoon, minyanStartMs } from "@/lib/minyan-live";
+import { findJoinConflict, isJoinSpacingError } from "@/lib/join-rules";
+import { useBlockedUsers } from "@/hooks/use-blocked-users";
+import { useMyRegistrations } from "@/hooks/use-my-registrations";
 import { supabase } from "@/integrations/supabase/client";
 
 type Props = {
@@ -35,7 +38,23 @@ type Props = {
 export function HomeNearbyList({ position, userId }: Props) {
   const { t } = useTranslation();
   const { data: allMinyanim, loading, refresh } = useNearbyMinyanim(position, 5000);
-  const minyanim = useMemo(() => allMinyanim.filter((m) => isLiveOnMap(m)), [allMinyanim]);
+  const { blockedIds } = useBlockedUsers(userId);
+  const { registrations, refresh: refreshRegistrations } = useMyRegistrations(userId);
+  const [nowMs, setNowMs] = useState(() => Date.now());
+  useEffect(() => {
+    const i = setInterval(() => setNowMs(Date.now()), 30_000);
+    return () => clearInterval(i);
+  }, []);
+  // Same set as the "N minyanim near you" card: within 1 km, live now or starting within the hour.
+  const minyanim = useMemo(
+    () =>
+      position
+        ? allMinyanim
+            .filter((m) => isNearbySoon(m, position, nowMs) && !blockedIds.has(m.creator_id))
+            .sort((a, b) => minyanStartMs(a) - minyanStartMs(b))
+        : [],
+    [allMinyanim, position, nowMs, blockedIds],
+  );
   const [pending, setPending] = useState<MinyanRow | null>(null);
   const [justJoined, setJustJoined] = useState<MinyanRow | null>(null);
   const [joinedIds, setJoinedIds] = useState<Set<string>>(new Set());
@@ -59,8 +78,14 @@ export function HomeNearbyList({ position, userId }: Props) {
     if (!pending) return;
     const { error } = await joinMinyan(pending.id, userId, readyNow);
     if (error) {
-      toast.error(t("auth.signInFailed"), { description: error.message });
+      if (isJoinSpacingError(error.message)) {
+        toast.error(t("home.joinConflictToast"));
+        void refreshRegistrations();
+      } else {
+        toast.error(t("home.joinError"), { description: error.message });
+      }
     } else {
+      void refreshRegistrations();
       void successHaptic();
       toast.success(t("home.youreIn"), { description: pending.address ?? "" });
       const start = pending.scheduled_at ? new Date(pending.scheduled_at) : new Date();
@@ -162,6 +187,11 @@ export function HomeNearbyList({ position, userId }: Props) {
                 key={m.id}
                 m={m}
                 joined={joinedIds.has(m.id)}
+                conflict={
+                  joinedIds.has(m.id)
+                    ? null
+                    : findJoinConflict(registrations, m.id, minyanStartMs(m))
+                }
                 onJoinRequest={() => setPending(m)}
                 isLast={idx === minyanim.length - 1}
               />
@@ -226,11 +256,14 @@ const SWIPE_SNAP_THRESHOLD = SWIPE_ACTION_W * 0.45;
 function NearbyRow({
   m,
   joined,
+  conflict,
   onJoinRequest,
   isLast,
 }: {
   m: MinyanRow;
   joined: boolean;
+  /** Another registration starting less than 30 minutes away: the Join button is disabled. */
+  conflict: { start_at: string } | null;
   onJoinRequest: () => void;
   isLast: boolean;
 }) {
@@ -350,6 +383,16 @@ function NearbyRow({
               {prayerLabel} · {ctxLabel}
             </span>
           </div>
+          {conflict && (
+            <div className="text-[11px] text-urgent mt-0.5 leading-snug">
+              {t("home.joinConflict", {
+                time: new Date(conflict.start_at).toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                }),
+              })}
+            </div>
+          )}
         </Link>
         <button
           onClick={(e) => {
@@ -357,9 +400,9 @@ function NearbyRow({
             void tapLight();
             onJoinRequest();
           }}
-          disabled={joined}
+          disabled={joined || !!conflict}
           aria-label={t("common.join")}
-          className={`h-9 px-3.5 rounded-full flex items-center justify-center gap-1 text-[13px] font-semibold transition-all active:scale-[0.97] shrink-0 ${joined ? "bg-success text-white" : "bg-accent text-accent-foreground"}`}
+          className={`h-9 px-3.5 rounded-full flex items-center justify-center gap-1 text-[13px] font-semibold transition-all active:scale-[0.97] shrink-0 ${joined ? "bg-success text-white" : conflict ? "bg-muted text-muted-foreground" : "bg-accent text-accent-foreground"}`}
         >
           {joined ? <Check className="h-4 w-4" strokeWidth={2.8} /> : t("common.join")}
         </button>

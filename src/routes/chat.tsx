@@ -3,9 +3,10 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { MobileFrame } from "@/components/MobileFrame";
 import { ScreenHeader } from "@/components/ui-bits";
-import { Flag, Loader2, Send } from "lucide-react";
+import { Ban, Flag, Loader2, Send } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
+import { useBlockedUsers } from "@/hooks/use-blocked-users";
 import { toast } from "sonner";
 import { tapLight } from "@/lib/haptics";
 import {
@@ -50,6 +51,10 @@ function ChatPage() {
   const [loading, setLoading] = useState(true);
   const [reportTarget, setReportTarget] = useState<Msg | null>(null);
   const [reporting, setReporting] = useState(false);
+  const [blockTarget, setBlockTarget] = useState<Msg | null>(null);
+  const [blocking, setBlocking] = useState(false);
+  const { blockedIds, block } = useBlockedUsers(user?.id);
+  const visibleMessages = messages.filter((m) => !blockedIds.has(m.user_id));
   const scrollRef = useRef<HTMLDivElement>(null);
   const profilesRef = useRef(profiles);
   profilesRef.current = profiles;
@@ -118,7 +123,21 @@ function ChatPage() {
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
-  }, [messages]);
+  }, [messages.length]);
+
+  async function submitBlock() {
+    if (!blockTarget) return;
+    setBlocking(true);
+    const { error } = await block(blockTarget.user_id, null);
+    setBlocking(false);
+    setBlockTarget(null);
+    if (error) {
+      toast.error(t("chats.blockError"), { description: error.message });
+      return;
+    }
+    void tapLight();
+    toast.success(t("chats.blockedToast"));
+  }
 
   async function send() {
     const content = text.trim();
@@ -179,7 +198,7 @@ function ChatPage() {
           <div className="flex items-center justify-center py-16 text-muted-foreground">
             <Loader2 className="h-5 w-5 animate-spin" />
           </div>
-        ) : messages.length === 0 ? (
+        ) : visibleMessages.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-center px-6">
             <div className="h-14 w-14 rounded-full bg-gold-soft text-gold flex items-center justify-center mb-3">
               <Send className="h-6 w-6" />
@@ -192,7 +211,7 @@ function ChatPage() {
             </p>
           </div>
         ) : (
-          messages.map((m) => {
+          visibleMessages.map((m) => {
             const mine = m.user_id === user?.id;
             const p = profiles[m.user_id];
             // Never show another member's real name — privacy, group chats included.
@@ -219,14 +238,24 @@ function ChatPage() {
                   {!mine && (
                     <div className="flex items-center justify-between gap-2 mb-0.5">
                       <div className="text-[11px] font-semibold text-muted-foreground">{name}</div>
-                      <button
-                        type="button"
-                        onClick={() => setReportTarget(m)}
-                        className="p-0.5 rounded text-muted-foreground/70 hover:text-urgent"
-                        aria-label={t("chats.report")}
-                      >
-                        <Flag className="h-3 w-3" />
-                      </button>
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          type="button"
+                          onClick={() => setBlockTarget(m)}
+                          className="p-0.5 rounded text-muted-foreground/70 hover:text-urgent"
+                          aria-label={t("chats.block")}
+                        >
+                          <Ban className="h-3 w-3" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setReportTarget(m)}
+                          className="p-0.5 rounded text-muted-foreground/70 hover:text-urgent"
+                          aria-label={t("chats.report")}
+                        >
+                          <Flag className="h-3 w-3" />
+                        </button>
+                      </div>
                     </div>
                   )}
                   <div className="text-[15px] whitespace-pre-wrap break-words leading-snug">
@@ -286,6 +315,28 @@ function ChatPage() {
               className="w-full bg-urgent text-white hover:bg-urgent/90"
             >
               {reporting ? <Loader2 className="h-4 w-4 animate-spin" /> : t("chats.reportConfirm")}
+            </AlertDialogAction>
+            <AlertDialogCancel className="w-full mt-0">{t("common.cancel")}</AlertDialogCancel>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={!!blockTarget} onOpenChange={(o) => !o && setBlockTarget(null)}>
+        <AlertDialogContent className="max-w-[340px]">
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t("chats.blockTitle")}</AlertDialogTitle>
+            <AlertDialogDescription>{t("chats.blockBody")}</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex-col gap-2 sm:flex-col">
+            <AlertDialogAction
+              disabled={blocking}
+              onClick={(e) => {
+                e.preventDefault();
+                void submitBlock();
+              }}
+              className="w-full bg-urgent text-white hover:bg-urgent/90"
+            >
+              {blocking ? <Loader2 className="h-4 w-4 animate-spin" /> : t("chats.blockConfirm")}
             </AlertDialogAction>
             <AlertDialogCancel className="w-full mt-0">{t("common.cancel")}</AlertDialogCancel>
           </AlertDialogFooter>

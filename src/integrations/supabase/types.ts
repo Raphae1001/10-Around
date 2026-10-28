@@ -473,6 +473,27 @@ export type Database = {
         };
         Relationships: [];
       };
+      user_blocks: {
+        Row: {
+          blocked_id: string;
+          blocked_name: string | null;
+          blocker_id: string;
+          created_at: string;
+        };
+        Insert: {
+          blocked_id: string;
+          blocked_name?: string | null;
+          blocker_id: string;
+          created_at?: string;
+        };
+        Update: {
+          blocked_id?: string;
+          blocked_name?: string | null;
+          blocker_id?: string;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
       user_notifications: {
         Row: {
           created_at: string;
@@ -901,6 +922,19 @@ export type Database = {
       };
       stay_city_key: { Args: { _label: string }; Returns: string };
       trigger_due_confirmations: { Args: never; Returns: number };
+      my_nearby_alerts: { Args: Record<PropertyKey, never>; Returns: boolean };
+      set_nearby_alerts: {
+        Args: { _enabled: boolean; _zone?: string };
+        Returns: undefined;
+      };
+      my_active_registrations: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          address: string | null;
+          minyan_id: string;
+          start_at: string;
+        }[];
+      };
       upsert_presence: { Args: { zone: string }; Returns: undefined };
       zone_density: {
         Args: { lat: number; lng: number; radius_m?: number };

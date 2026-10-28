@@ -77,7 +77,7 @@
     "acceptTerms": "Ik accepteer de <terms>Gebruiksvoorwaarden</terms> en het <privacy>Privacybeleid</privacy>",
     "legal": {
       "termsTitle": "Gebruiksvoorwaarden",
-      "termsUpdated": "Laatst bijgewerkt: juli 2026",
+      "termsUpdated": "Laatst bijgewerkt: oktober 2026",
       "privacyTitle": "Privacybeleid"
     },
     "firstName": "Voornaam",
@@ -85,9 +85,10 @@
     "firstNamePlaceholder": "bijv. David",
     "lastNamePlaceholder": "bijv. Cohen",
     "notificationsPrimer": {
-      "title": "Meldingen inschakelen",
-      "body": "Krijg meldingen wanneer een minyan dichtbij is of nog één persoon nodig heeft.",
-      "allow": "Inschakelen"
+      "title": "Weet wanneer er een minyan bij jou in de buurt begint",
+      "body": "We kunnen je waarschuwen wanneer er een minyan bij jou in de buurt begint of er nog iemand nodig is. Hiervoor wordt je geschatte gebied (ongeveer 1 km) op onze server bewaard. Het wordt nooit aan andere gebruikers getoond en je kunt dit altijd uitzetten in Instellingen.",
+      "allow": "Doorgaan",
+      "later": "Niet nu"
     }
   },
   "home": {
@@ -95,19 +96,19 @@
     "subtitleNoGps": "Sta locatie toe om minyanim in de buurt te zien",
     "createFab": "Start hier een minyan",
     "locationPrimer": {
-      "title": "Zie wie er in de buurt bidt",
-      "body": "10 Around gebruikt je locatie om community-aanwezigheid om je heen te tonen en je te helpen een minyan te starten precies waar je staat.",
-      "privacy": "Je exacte positie wordt nooit opgeslagen — alleen een vervaagd gebied (~1 km) voor telling.",
-      "allow": "Locatie toestaan",
+      "title": "Vind minyanim bij jou in de buurt",
+      "body": "10 Around gebruikt je locatie om minyanim bij jou in de buurt te tonen en om je te helpen er een te starten waar je bent.",
+      "privacy": "Je positie wordt nooit aan andere gebruikers getoond.",
+      "allow": "Doorgaan",
       "later": "Niet nu"
     },
     "presence": {
-      "count_one": "{{count}} actief lid bij jou in de buurt",
-      "count_other": "{{count}} actieve leden bij jou in de buurt",
       "updated": "bijgewerkt {{time}}",
       "emptyTitle": "Wees de eerste die hier bidt",
       "emptySubtitle": "Nog niemand in de buurt — start een minyan",
-      "openList": "Bekijk minyanim in de buurt"
+      "openList": "Bekijk minyanim in de buurt",
+      "minyanimNearby_one": "{{count}} minyan bij jou in de buurt",
+      "minyanimNearby_other": "{{count}} minyanim bij jou in de buurt"
     },
     "recenter": "Centreer op mij",
     "tapGps": "Tik om GPS in te schakelen",
@@ -117,7 +118,7 @@
     "rightHere": "precies hier.",
     "rightWhereYouStand": "Precies waar je nu bent",
     "orJoinNearby": "Of neem deel aan een in de buurt",
-    "joinHint": "GPS-minyanim binnen 1 km · plus alle geplande (Overig / Reizen)",
+    "joinHint": "Binnen 1 km · nu bezig of begint binnen het uur",
     "live": "live",
     "enableLocation": "Schakel locatie in om minyanim in de buurt te ontdekken.",
     "noneNearby": "Nog geen minyan bij jou in de buurt. Wees de eerste — tik op \"Start een minyan\" hierboven.",
@@ -133,7 +134,16 @@
     "present": "aanwezig",
     "missing": "{{count}} ontbreekt",
     "complete": "minyan compleet",
-    "liveNow": "nu live"
+    "liveNow": "nu live",
+    "locationOff": {
+      "title": "Locatie staat uit",
+      "body": "Zet locatie aan om minyanim bij jou in de buurt te zien. Je kunt nog steeds een minyan starten of plannen en reizen gebruiken.",
+      "turnOn": "Locatie aanzetten",
+      "openSettings": "Open Instellingen om locatie aan te zetten"
+    },
+    "joinConflict": "Al ingeschreven voor een minyan om {{time}}",
+    "joinConflictToast": "Je bent al ingeschreven voor een andere minyan die binnen 30 minuten begint.",
+    "joinError": "Inschrijven mislukt"
   },
   "planned": {
     "title": "Gepland",
@@ -174,7 +184,14 @@
     "reportBody": "We bekijken het en ondernemen actie als het de communityrichtlijnen schendt. De afzender wordt niet geïnformeerd dat je hebt gemeld.",
     "reportConfirm": "Melden",
     "reportThanks": "Bedankt — we bekijken dit binnenkort.",
-    "reportError": "Melding kon niet worden verzonden"
+    "reportError": "Melding kon niet worden verzonden",
+    "block": "Gebruiker blokkeren",
+    "blockTitle": "Deze gebruiker blokkeren?",
+    "blockBody": "Je ziet hun berichten en minyanim niet meer. Je kunt de blokkade opheffen in Instellingen.",
+    "blockConfirm": "Blokkeren",
+    "blockedToast": "Gebruiker geblokkeerd",
+    "blockError": "Geblokkeerde gebruikers konden niet worden bijgewerkt",
+    "blockedUserFallback": "Geblokkeerde gebruiker · {{date}}"
   },
   "createScheduled": {
     "title": "Plan een minyan",
@@ -277,7 +294,7 @@
     "commentPh": "Kaddisj · Jortzeit · breng tefillin mee…",
     "commentVisible": "Zichtbaar voor iedereen die een melding krijgt.",
     "publish": "Publiceer minyan",
-    "gpsShared": "Je GPS-positie wordt alleen met deze minyan gedeeld.",
+    "gpsShared": "Je huidige positie wordt aan mensen in de buurt getoond als locatie van deze minyan.",
     "allowLocationToPublish": "Tik om locatie toe te staan — nodig om een straat/luchthaven minyan te publiceren.",
     "travelersWillSee": "Reizigers zullen het van tevoren zien.",
     "needLocationLive": "We hebben je locatie nodig voor een live minyan.",
@@ -300,7 +317,9 @@
     "evening": "Avond",
     "custom": "Aangepast",
     "now": "Nu",
-    "locationFromPick": "Aangepaste locatie — niet je huidige positie."
+    "locationFromPick": "Aangepaste locatie — niet je huidige positie.",
+    "joinConflict": "Je bent al ingeschreven voor een minyan om {{time}}. Kies een tijd met minstens 30 minuten verschil.",
+    "addressShared": "Dit adres wordt aan mensen in de buurt getoond als locatie van deze minyan."
   },
   "onboarding": {
     "welcome": "Welkom",
@@ -717,16 +736,6 @@
     "highContrast": "Hoog contrast",
     "reduceMotion": "Verminder beweging",
     "chooseLanguage": "Kies je taal",
-    "presence": "Community-aanwezigheid",
-    "presenceOff": "Uit",
-    "presenceOffDesc": "Tel mij niet mee op de communitykaart",
-    "presencePonctual": "Af en toe",
-    "presencePonctualDesc": "Geteld wanneer ik beweeg (~200 m)",
-    "presenceActive": "Terwijl app open is",
-    "presenceActiveDesc": "Geteld wanneer de app op de voorgrond is",
-    "presenceFootnote": "Je exacte positie wordt nooit opgeslagen — alleen een vervaagd gebied (~1 km) voor telling.",
-    "presenceSaved": "Aanwezigheidsvoorkeur opgeslagen",
-    "notifComingSoon": "Pushbezorging komt in een toekomstige update. Voorkeuren worden voorlopig lokaal opgeslagen.",
     "analytics": "Analytics",
     "analyticsHelp": "Help 10 Around te verbeteren",
     "analyticsDesc": "Anonieme gebruiksstatistieken. Geen persoonlijke gegevens.",
@@ -736,7 +745,16 @@
     "deleteAccount": "Account verwijderen",
     "deleteAccountTitle": "Je account verwijderen?",
     "deleteAccountDesc": "Dit verwijdert permanent je profiel, push-tokens, deelnamegeschiedenis en chatlidmaatschap. Typ DELETE om te bevestigen.",
-    "deleteForever": "Voor altijd verwijderen"
+    "deleteForever": "Voor altijd verwijderen",
+    "nearbyAlerts": "Meldingen in de buurt",
+    "nearbyAlertsLabel": "Waarschuw me als een minyan bij mij in de buurt begint",
+    "nearbyAlertsDesc": "Gebruikt je geschatte gebied (~1 km).",
+    "nearbyAlertsFootnote": "Je gebied wordt alleen gebruikt om je deze meldingen te sturen. Het wordt nooit aan andere gebruikers getoond. Uitzetten wist het.",
+    "blockedUsers": "Geblokkeerde gebruikers",
+    "noBlocked": "Je hebt niemand geblokkeerd.",
+    "unblock": "Deblokkeren",
+    "unblocked": "Gebruiker gedeblokkeerd",
+    "openSystemSettings": "Systeeminstellingen openen"
   },
   "confirm": {
     "organizerTitle": "Is de minyan begonnen?",
@@ -752,20 +770,20 @@
   },
   "privacy": {
     "title": "Privacybeleid",
-    "updated": "Laatst bijgewerkt: juni 2026",
+    "updated": "Laatst bijgewerkt: oktober 2026",
     "intro": "MinyanStreet helpt Joodse mensen overal ter wereld een minyan te vinden of te starten. We nemen je privacy serieus.",
     "sections": {
       "data": {
         "title": "Gegevens die we verzamelen",
-        "body": "E-mailadres (voor inloggen), weergavenaam en avatar (optioneel), geschatte locatie (alleen als je ervoor kiest deze te delen voor een specifieke minyan), apparaat push-token (om je te informeren over minyanim in de buurt), vertrouwensscore en deelnamegeschiedenis."
+        "body": "Weergavenaam (en optionele avatar), een unieke anonieme account-ID, minyanim die je aanmaakt of waaraan je deelneemt, chatberichten in gesprekken waarvan je lid bent, gebruikers die je blokkeert, vertrouwens-/deelnamegeschiedenis, een pushtoken als je meldingen toestaat en — alleen als je meldingen in de buurt aanzet — een geschat gebied (ongeveer 1 km)."
       },
       "use": {
         "title": "Hoe we gegevens gebruiken",
-        "body": "Om je minyanim in de buurt te tonen, je te informeren over urgente verzoeken, aanwezigheid te tellen en het vertrouwenssysteem te onderhouden dat de gemeenschap betrouwbaar houdt. We verkopen nooit je gegevens."
+        "body": "Om minyanim in de buurt te tonen, chats voor coördinatie te laten werken, vertrouwen te onderhouden en — als je hiermee instemde — je te waarschuwen wanneer er een minyan bij jou in de buurt begint. We verkopen je gegevens nooit."
       },
       "location": {
         "title": "Locatie",
-        "body": "Je GPS wordt alleen gebruikt wanneer je actief de kaart opent of een live minyan start/deelneemt. Het wordt alleen met die minyan gedeeld en wordt nooit openbaar gemaakt."
+        "body": "GPS wordt alleen gebruikt terwijl de app open is — om minyanim bij jou in de buurt te tonen en een minyan te maken waar je bent. Je positie wordt nooit aan andere gebruikers getoond; alleen de plek van een minyan die je publiceert wordt getoond. Als je meldingen in de buurt aanzet, bewaren we een geschat gebied (~1 km) dat alleen onze server gebruikt om je te waarschuwen; uitzetten wist het."
       },
       "sharing": {
         "title": "Gegevens delen",
@@ -773,7 +791,7 @@
       },
       "retention": {
         "title": "Bewaring & verwijdering",
-        "body": "Je kunt je account op elk moment verwijderen via Instellingen. Al je persoonlijke gegevens en geschiedenis worden binnen 30 dagen permanent verwijderd."
+        "body": "Je kunt je account op elk moment verwijderen via Instellingen. Je profiel, geschat gebied, tokens, blokkeerlijst en bijbehorende geschiedenis worden verwijderd. Lopende minyanim verlopen na hun tijdsvenster. Inactieve gastaccounts worden na 5 dagen verwijderd, andere inactieve accounts na 1 jaar."
       },
       "contact": {
         "title": "Contact",
@@ -797,9 +815,9 @@
     "faqTitle": "Veelgestelde vragen",
     "faq": {
       "notifQ": "Ik ontvang geen meldingen",
-      "notifA": "Pushbezorging is nog niet live — Instellingen → Meldingen legt uit dat voorkeuren lokaal worden opgeslagen voor een toekomstige update. Wanneer push beschikbaar is, sta ook systeemmeldingen toe voor 10 Around op je apparaat.",
+      "notifA": "Als je meldingen hebt uitgezet, sta ze toe voor 10 Around in de apparaatinstellingen (Instellingen → Meldingen → Systeeminstellingen openen). Meldingen in de buurt moeten ook aanstaan onder Instellingen → Meldingen in de buurt.",
       "nearbyQ": "Minyanim in de buurt worden niet getoond",
-      "nearbyA": "10 Around heeft je locatie nodig om minyanim bij jou in de buurt te tonen. Open Instellingen → Locatie en sta toegang toe „Tijdens gebruik” van de app.",
+      "nearbyA": "10 Around heeft je locatie nodig om minyanim in de buurt te tonen. Tik op de locatieknop op de kaart, of open de apparaatinstellingen en sta toegang „Tijdens gebruik van de app” toe. Je kunt ook zonder locatie een minyan maken of plannen.",
       "langQ": "Hoe wijzig ik de taal?",
       "langA": "Open Instellingen → Taal en kies uit de ondersteunde talen. De wijziging is direct.",
       "createQ": "Hoe maak ik een minyan?",

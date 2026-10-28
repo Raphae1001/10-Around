@@ -1,48 +1,37 @@
 import { getAppPref, setAppPref } from "@/lib/app-prefs";
 import { supabase } from "@/integrations/supabase/client";
 
-export type PresenceLevel = "off" | "ponctual" | "active_foreground";
+/**
+ * Nearby minyan alerts. "ponctual" = the user opted in (the name is kept
+ * because the server rows use it); "off" = no consent, nothing is stored.
+ * The stored zone is only ever used by the server to decide who gets a push;
+ * it is never shown to other users.
+ */
+export type PresenceLevel = "off" | "ponctual";
 
-const PREF_KEY = "presence.level";
+// New key on purpose: values stored by older versions (presence on by default)
+// were never a consent to nearby alerts and must not be read as one.
+const PREF_KEY = "nearby-alerts.level";
 
-export const PRESENCE_LEVELS: PresenceLevel[] = ["off", "ponctual", "active_foreground"];
-
-export function isPresenceLevel(v: string | null | undefined): v is PresenceLevel {
-  return v === "off" || v === "ponctual" || v === "active_foreground";
-}
-
-/** Load presence level: app pref first, then server row if logged in. */
+/** Local choice first (also covers consent given before sign-in), then the server's record. */
 export async function getPresenceLevel(userId?: string): Promise<PresenceLevel> {
   const saved = await getAppPref(PREF_KEY);
-  if (isPresenceLevel(saved)) return saved;
+  if (saved === "off") return "off";
+  if (saved === "ponctual") return "ponctual";
 
   if (userId) {
-    const { data } = await supabase
-      .from("member_presence")
-      .select("presence_level, opt_out")
-      .eq("user_id", userId)
-      .maybeSingle();
-    if (data) {
-      if (data.opt_out || data.presence_level === "off") return "off";
-      if (isPresenceLevel(data.presence_level)) return data.presence_level;
-    }
+    const { data } = await supabase.rpc("my_nearby_alerts");
+    if (data === true) return "ponctual";
   }
-
-  return "ponctual";
+  return "off";
 }
 
-/** Persist locally + sync server row when it exists. */
+/** Persist the choice locally; opting out also erases the zone stored on the server. */
 export async function setPresenceLevel(level: PresenceLevel, userId?: string): Promise<void> {
   await setAppPref(PREF_KEY, level);
 
-  if (userId) {
-    await supabase
-      .from("member_presence")
-      .update({
-        presence_level: level,
-        opt_out: level === "off",
-      })
-      .eq("user_id", userId);
+  if (level === "off" && userId) {
+    await supabase.rpc("set_nearby_alerts", { _enabled: false });
   }
 
   if (typeof window !== "undefined") {
