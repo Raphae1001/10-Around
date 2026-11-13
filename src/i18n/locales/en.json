@@ -86,9 +86,8 @@
     "lastNamePlaceholder": "e.g. Cohen",
     "notificationsPrimer": {
       "title": "Know when a minyan starts near you",
-      "body": "We can notify you when a minyan starts near you or needs one more person. To do this, your approximate area (about 1 km) is kept on our server. It is never shown to other users, and you can turn this off anytime in Settings.",
-      "allow": "Continue",
-      "later": "Not now"
+      "body": "We can notify you when a minyan starts near you or needs one more person. If you allow notifications on the next screen, your approximate area (about 1 km) is kept on our server to do this. It is never shown to other users, and you can turn this off anytime in Settings. If you decline, you won't receive these alerts and nothing is stored.",
+      "allow": "Continue"
     }
   },
   "home": {
@@ -97,10 +96,9 @@
     "createFab": "Start a minyan here",
     "locationPrimer": {
       "title": "Find minyanim near you",
-      "body": "10 Around uses your location to show minyanim near you and help you start one right where you stand.",
+      "body": "10 Around uses your location to show minyanim near you and help you start one right where you stand. If you decline, you can still start or plan a minyan, but you won't see the minyanim near you.",
       "privacy": "Your position is never shown to other users.",
-      "allow": "Continue",
-      "later": "Not now"
+      "allow": "Continue"
     },
     "presence": {
       "updated": "updated {{time}}",
@@ -318,7 +316,13 @@
     "custom": "Custom",
     "now": "Now",
     "joinConflict": "You're already registered to a minyan at {{time}}. Pick a time at least 30 minutes apart.",
-    "addressShared": "This address will be shown to people nearby as this minyan's location."
+    "addressShared": "This address will be shown to people nearby as this minyan's location.",
+    "showOnMap": {
+      "title": "Show this place on the map?",
+      "body": "The place of this minyan or trip — your current position or the address you chose — will be visible to people nearby so they can join. Your position is not tracked afterwards. If you choose “Don't publish”, nothing is published: nobody nearby will see this minyan or be able to join it.",
+      "confirm": "Show on map",
+      "cancel": "Don't publish"
+    }
   },
   "onboarding": {
     "welcome": "Welcome",

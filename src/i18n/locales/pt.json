@@ -86,9 +86,8 @@
     "lastNamePlaceholder": "ex. Cohen",
     "notificationsPrimer": {
       "title": "Saiba quando um minyan começar perto de você",
-      "body": "Podemos avisar você quando um minyan começar perto de você ou faltar uma pessoa. Para isso, sua área aproximada (cerca de 1 km) é guardada em nosso servidor. Ela nunca é mostrada a outros usuários e você pode desativar isso a qualquer momento em Ajustes.",
-      "allow": "Continuar",
-      "later": "Agora não"
+      "body": "Podemos avisar-te quando um minyan começa perto de ti ou precisa de mais uma pessoa. Se permitires as notificações no ecrã seguinte, a tua área aproximada (cerca de 1 km) é guardada no nosso servidor para isso. Nunca é mostrada a outros utilizadores e podes desativar a qualquer momento nas Definições. Se recusares, não receberás estes alertas e nada é guardado.",
+      "allow": "Continuar"
     }
   },
   "home": {
@@ -97,10 +96,9 @@
     "createFab": "Iniciar um minyan aqui",
     "locationPrimer": {
       "title": "Encontre minyanim perto de você",
-      "body": "O 10 Around usa sua localização para mostrar minyanim perto de você e ajudar a iniciar um onde você está.",
+      "body": "O 10 Around usa sua localização para mostrar minyanim perto de você e ajudar a iniciar um onde você está. Se recusares, ainda podes iniciar ou planear um minyan, mas não verás os minyanim próximos.",
       "privacy": "Sua posição nunca é mostrada a outros usuários.",
-      "allow": "Continuar",
-      "later": "Agora não"
+      "allow": "Continuar"
     },
     "presence": {
       "updated": "atualizado {{time}}",
@@ -319,7 +317,13 @@
     "now": "Agora",
     "locationFromPick": "Localização personalizada — não é a tua posição atual.",
     "joinConflict": "Você já está inscrito em um minyan às {{time}}. Escolha um horário com pelo menos 30 minutos de diferença.",
-    "addressShared": "Este endereço será mostrado às pessoas próximas como o local deste minyan."
+    "addressShared": "Este endereço será mostrado às pessoas próximas como o local deste minyan.",
+    "showOnMap": {
+      "title": "Mostrar este local no mapa?",
+      "body": "O local deste minyan ou viagem — a tua posição atual ou o endereço escolhido — ficará visível para pessoas próximas para que se possam juntar. A tua posição não é seguida depois. Se escolheres «Não publicar», nada é publicado: ninguém por perto verá este minyan nem poderá juntar-se.",
+      "confirm": "Mostrar no mapa",
+      "cancel": "Não publicar"
+    }
   },
   "onboarding": {
     "welcome": "Bem-vindo",

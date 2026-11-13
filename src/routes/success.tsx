@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { MobileFrame } from "@/components/MobileFrame";
-import { Check, Navigation2, Share2, Footprints } from "lucide-react";
+import { ArrowLeft, Check, Navigation2, Share2, Footprints } from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Database } from "@/integrations/supabase/types";
@@ -59,6 +59,15 @@ function Success() {
   return (
     <MobileFrame bg="navy" showNav={false}>
       <div className="flex-1 flex flex-col items-center justify-center px-8 text-center text-white relative overflow-hidden">
+        <Link
+          to="/minyan"
+          search={{ id }}
+          aria-label={t("share.back")}
+          className="absolute left-4 z-10 h-11 w-11 rounded-full bg-white/10 text-white flex items-center justify-center active:scale-95 transition-transform"
+          style={{ top: "calc(env(safe-area-inset-top, 0px) + 12px)" }}
+        >
+          <ArrowLeft className="h-5 w-5" />
+        </Link>
         <div className="absolute inset-0 flex items-center justify-center">
           <span
             className="absolute h-72 w-72 rounded-full border border-gold/20 live-pulse-ring text-gold"
@@ -127,7 +136,7 @@ function Success() {
         >
           <Share2 className="h-4 w-4" /> {t("success.shareWithGroup")}
         </Link>
-        <Link to="/home" className="block text-center text-white/40 text-xs pt-2">
+        <Link to="/home" className="block text-center text-white/60 text-sm pt-2">
           {t("success.backHome")}
         </Link>
       </div>

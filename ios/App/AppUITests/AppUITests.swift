@@ -138,7 +138,7 @@ final class AppUITests: XCTestCase {
             tapSystemAlert(["Allow While Using App", "Allow Once", "Allow"])
         }
         if element("Know when a minyan starts near you").waitForExistence(timeout: 10) {
-            tap("Not now")
+            tap("Continue")
         }
         tapSystemAlert(["Don’t Allow", "Don't Allow"])
 

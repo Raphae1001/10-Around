@@ -3,7 +3,6 @@ import { MapPin } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
-  AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
@@ -13,25 +12,16 @@ import {
 
 type Props = {
   open: boolean;
-  onOpenChange: (open: boolean) => void;
+  /** The only way out: the system permission request always follows this screen. */
   onAllow: () => void;
-  onLater?: () => void;
-  /** When false, hide the "Not now" dismiss (e.g. mandatory onboarding). Default true. */
-  showLater?: boolean;
 };
 
-export function LocationPrimerDialog({
-  open,
-  onOpenChange,
-  onAllow,
-  onLater,
-  showLater = true,
-}: Props) {
+export function LocationPrimerDialog({ open, onAllow }: Props) {
   const { t } = useTranslation();
 
   return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent className="max-w-[340px]">
+    <AlertDialog open={open}>
+      <AlertDialogContent className="max-w-[340px] max-h-[85vh] overflow-y-auto">
         <AlertDialogHeader>
           <div className="mx-auto mb-2 h-12 w-12 rounded-2xl bg-gold-soft dark:bg-gold/20 flex items-center justify-center text-gold">
             <MapPin className="h-6 w-6" />
@@ -53,11 +43,6 @@ export function LocationPrimerDialog({
           >
             {t("home.locationPrimer.allow")}
           </AlertDialogAction>
-          {showLater && (
-            <AlertDialogCancel onClick={onLater} className="w-full mt-0">
-              {t("home.locationPrimer.later")}
-            </AlertDialogCancel>
-          )}
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

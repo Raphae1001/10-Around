@@ -86,9 +86,8 @@
     "lastNamePlaceholder": "ex. Cohen",
     "notificationsPrimer": {
       "title": "Află când începe un minyan lângă tine",
-      "body": "Te putem anunța când începe un minyan lângă tine sau când mai lipsește o persoană. Pentru asta, zona ta aproximativă (aproximativ 1 km) este păstrată pe serverul nostru. Nu este arătată niciodată altor utilizatori și poți dezactiva oricând din Setări.",
-      "allow": "Continuă",
-      "later": "Nu acum"
+      "body": "Te putem anunța când începe un minyan lângă tine sau mai are nevoie de o persoană. Dacă permiți notificările pe ecranul următor, zona ta aproximativă (circa 1 km) este păstrată pe serverul nostru pentru asta. Nu este arătată niciodată altor utilizatori, iar poți dezactiva oricând în Setări. Dacă refuzi, nu vei primi aceste alerte și nu se păstrează nimic.",
+      "allow": "Continuă"
     }
   },
   "home": {
@@ -97,10 +96,9 @@
     "createFab": "Pornește un minian aici",
     "locationPrimer": {
       "title": "Găsește minyanim lângă tine",
-      "body": "10 Around folosește locația ta pentru a-ți arăta minyanim din apropiere și pentru a te ajuta să începi unul chiar unde ești.",
+      "body": "10 Around folosește locația ta pentru a-ți arăta minyanim din apropiere și pentru a te ajuta să începi unul chiar unde ești. Dacă refuzi, poți totuși începe sau planifica un minyan, dar nu vei vedea minyanim din apropiere.",
       "privacy": "Poziția ta nu este arătată niciodată altor utilizatori.",
-      "allow": "Continuă",
-      "later": "Nu acum"
+      "allow": "Continuă"
     },
     "presence": {
       "updated": "actualizat {{time}}",
@@ -319,7 +317,13 @@
     "now": "Acum",
     "locationFromPick": "Locație personalizată — nu poziția ta actuală.",
     "joinConflict": "Ești deja înscris la un minyan la {{time}}. Alege o oră la cel puțin 30 de minute distanță.",
-    "addressShared": "Această adresă va fi arătată persoanelor din apropiere ca locația acestui minyan."
+    "addressShared": "Această adresă va fi arătată persoanelor din apropiere ca locația acestui minyan.",
+    "showOnMap": {
+      "title": "Afișezi acest loc pe hartă?",
+      "body": "Locul acestui minyan sau al acestei călătorii — poziția ta actuală sau adresa aleasă — va fi vizibil persoanelor din apropiere ca să se poată alătura. Poziția ta nu este urmărită ulterior. Dacă alegi „Nu publica”, nu se publică nimic: nimeni din apropiere nu va vedea acest minyan și nu se va putea alătura.",
+      "confirm": "Afișează pe hartă",
+      "cancel": "Nu publica"
+    }
   },
   "onboarding": {
     "welcome": "Bun venit",

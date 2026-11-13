@@ -42,6 +42,16 @@ async function requestNotifications(): Promise<void> {
   }
 }
 
+async function notificationsGranted(): Promise<boolean> {
+  if (isNative()) {
+    const { PushNotifications } = await import("@capacitor/push-notifications");
+    return (await PushNotifications.checkPermissions()).receive === "granted";
+  }
+  return typeof window !== "undefined" && "Notification" in window
+    ? Notification.permission === "granted"
+    : false;
+}
+
 function Onboarding() {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -103,27 +113,16 @@ function Onboarding() {
     setNotifDialogOpen(true);
   }
 
-  /** "Not now" on the location step: skip the system prompt, go on to notifications. */
-  async function handleLocLater() {
-    setLocDialogOpen(false);
-    await setAppPref(PRIMER_SEEN_KEY, "1");
-    setNotifDialogOpen(true);
-  }
-
   async function handleNotifAllow() {
     setNotifDialogOpen(false);
-    // Accepting this step is the user's consent to "a minyan starts near you" alerts:
-    // their blurred area is then kept server-side (never shown to other users).
-    await setPresenceLevel("ponctual");
-    // Fresh click gesture → OS/browser notification prompt.
+    // Fresh click gesture → OS/browser notification prompt. The user can refuse there.
     await requestNotifications().catch((e) => {
       console.warn("notifications permission failed", e);
     });
-    await finalizeAndEnter();
-  }
-
-  async function handleNotifSkip() {
-    setNotifDialogOpen(false);
+    // Allowing notifications after reading this screen is the consent to "a minyan starts
+    // near you" alerts: only then is their blurred area kept server-side (never shown to
+    // other users). A refusal stores nothing.
+    if (await notificationsGranted()) await setPresenceLevel("ponctual");
     await finalizeAndEnter();
   }
 
@@ -201,19 +200,9 @@ function Onboarding() {
         )}
       </div>
 
-      <LocationPrimerDialog
-        open={locDialogOpen}
-        onOpenChange={setLocDialogOpen}
-        onAllow={() => void handleLocAllow()}
-        onLater={() => void handleLocLater()}
-      />
+      <LocationPrimerDialog open={locDialogOpen} onAllow={() => void handleLocAllow()} />
 
-      <NotificationsPrimerDialog
-        open={notifDialogOpen}
-        onOpenChange={setNotifDialogOpen}
-        onAllow={() => void handleNotifAllow()}
-        onSkip={() => void handleNotifSkip()}
-      />
+      <NotificationsPrimerDialog open={notifDialogOpen} onAllow={() => void handleNotifAllow()} />
     </OnboardingShell>
   );
 }

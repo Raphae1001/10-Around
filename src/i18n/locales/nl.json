@@ -86,9 +86,8 @@
     "lastNamePlaceholder": "bijv. Cohen",
     "notificationsPrimer": {
       "title": "Weet wanneer er een minyan bij jou in de buurt begint",
-      "body": "We kunnen je waarschuwen wanneer er een minyan bij jou in de buurt begint of er nog iemand nodig is. Hiervoor wordt je geschatte gebied (ongeveer 1 km) op onze server bewaard. Het wordt nooit aan andere gebruikers getoond en je kunt dit altijd uitzetten in Instellingen.",
-      "allow": "Doorgaan",
-      "later": "Niet nu"
+      "body": "We kunnen je waarschuwen wanneer er een minyan bij jou in de buurt begint of er nog iemand nodig is. Als je op het volgende scherm meldingen toestaat, wordt hiervoor je geschatte gebied (ongeveer 1 km) op onze server bewaard. Het wordt nooit aan andere gebruikers getoond en je kunt dit altijd uitzetten in Instellingen. Als je weigert, ontvang je deze meldingen niet en wordt er niets bewaard.",
+      "allow": "Doorgaan"
     }
   },
   "home": {
@@ -97,10 +96,9 @@
     "createFab": "Start hier een minyan",
     "locationPrimer": {
       "title": "Vind minyanim bij jou in de buurt",
-      "body": "10 Around gebruikt je locatie om minyanim bij jou in de buurt te tonen en om je te helpen er een te starten waar je bent.",
+      "body": "10 Around gebruikt je locatie om minyanim bij jou in de buurt te tonen en om je te helpen er een te starten waar je bent. Als je weigert, kun je nog steeds een minyan starten of plannen, maar zie je de minyanim in de buurt niet.",
       "privacy": "Je positie wordt nooit aan andere gebruikers getoond.",
-      "allow": "Doorgaan",
-      "later": "Niet nu"
+      "allow": "Doorgaan"
     },
     "presence": {
       "updated": "bijgewerkt {{time}}",
@@ -319,7 +317,13 @@
     "now": "Nu",
     "locationFromPick": "Aangepaste locatie — niet je huidige positie.",
     "joinConflict": "Je bent al ingeschreven voor een minyan om {{time}}. Kies een tijd met minstens 30 minuten verschil.",
-    "addressShared": "Dit adres wordt aan mensen in de buurt getoond als locatie van deze minyan."
+    "addressShared": "Dit adres wordt aan mensen in de buurt getoond als locatie van deze minyan.",
+    "showOnMap": {
+      "title": "Deze plek op de kaart tonen?",
+      "body": "De plek van deze minyan of reis — je huidige positie of het gekozen adres — is zichtbaar voor mensen in de buurt zodat ze zich kunnen aansluiten. Je positie wordt daarna niet gevolgd. Als je „Niet publiceren” kiest, wordt er niets gepubliceerd: niemand in de buurt ziet deze minyan of kan zich aansluiten.",
+      "confirm": "Tonen op de kaart",
+      "cancel": "Niet publiceren"
+    }
   },
   "onboarding": {
     "welcome": "Welkom",

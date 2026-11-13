@@ -10,7 +10,7 @@ export const TERMS_SECTIONS: LegalSection[] = [
   },
   {
     title: "2. Eligibility & accounts",
-    body: "You must be at least 13 years old to use 10 Around. You are responsible for the activity on your account. You can sign in with Apple, Google, or as a guest with anonymous authentication; do not impersonate others.",
+    body: "You must be at least 18 years old to use 10 Around. You are responsible for the activity on your account. You can sign in with Apple, Google, or as a guest with anonymous authentication; do not impersonate others.",
   },
   {
     title: "3. User responsibilities",

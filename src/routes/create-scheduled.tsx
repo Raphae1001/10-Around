@@ -11,6 +11,7 @@ import { AddressAutocomplete, type AddressPick } from "@/components/AddressAutoc
 import { DateTimeField } from "@/components/DateTimeField";
 import { currentPrayerWindowZmanim, type ZmanimOpinion } from "@/lib/zmanim";
 import { timezoneForCoords, zonedTimeToUtc } from "@/lib/timezone";
+import { useShowOnMapConfirm } from "@/components/ShowOnMapDialog";
 import { publishScheduledMinyan, PublishMinyanError } from "@/lib/minyan-publish";
 import { fetchJoinConflict, formatClockTime } from "@/lib/join-conflict";
 
@@ -38,6 +39,7 @@ function CreateScheduled() {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
   const [publishing, setPublishing] = useState(false);
+  const { ask: askShowOnMap, dialog: showOnMapDialog } = useShowOnMapConfirm();
 
   useEffect(() => {
     if (!authLoading && !user) navigate({ to: "/auth" });
@@ -220,6 +222,7 @@ function CreateScheduled() {
           </p>
         </div>
       </div>
+      {showOnMapDialog}
     </MobileFrame>
   );
 
@@ -248,6 +251,8 @@ function CreateScheduled() {
       toast.error(t("createScheduled.errPast"));
       return;
     }
+
+    if (!(await askShowOnMap())) return;
 
     setPublishing(true);
     try {

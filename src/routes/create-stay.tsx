@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { MobileFrame } from "@/components/MobileFrame";
 import { ScreenHeader } from "@/components/ui-bits";
 import { Sunrise, Sun, Moon, Globe2, Loader2 } from "lucide-react";
+import { useShowOnMapConfirm } from "@/components/ShowOnMapDialog";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { AddressAutocomplete, type AddressPick } from "@/components/AddressAutocomplete";
@@ -25,6 +26,7 @@ function CreateStay() {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
   const [publishing, setPublishing] = useState(false);
+  const { ask: askShowOnMap, dialog: showOnMapDialog } = useShowOnMapConfirm();
   // Guards a double-tap synchronously, before React has re-rendered the
   // disabled button — same pattern as DangerZone.tsx's signingOutRef.
   const publishingRef = useRef(false);
@@ -193,6 +195,7 @@ function CreateStay() {
           </p>
         </div>
       </div>
+      {showOnMapDialog}
     </MobileFrame>
   );
 
@@ -221,6 +224,8 @@ function CreateStay() {
       toast.error(t("createStay.errDateOrder"));
       return;
     }
+
+    if (!(await askShowOnMap())) return;
 
     publishingRef.current = true;
     setPublishing(true);

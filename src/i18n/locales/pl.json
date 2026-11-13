@@ -86,9 +86,8 @@
     "lastNamePlaceholder": "np. Cohen",
     "notificationsPrimer": {
       "title": "Dowiedz się, gdy w pobliżu zacznie się minjan",
-      "body": "Możemy powiadomić Cię, gdy w pobliżu zacznie się minjan lub zabraknie jednej osoby. W tym celu Twój przybliżony obszar (ok. 1 km) jest przechowywany na naszym serwerze. Nigdy nie jest pokazywany innym użytkownikom, a możesz to wyłączyć w dowolnym momencie w Ustawieniach.",
-      "allow": "Dalej",
-      "later": "Nie teraz"
+      "body": "Możemy cię powiadomić, gdy w pobliżu zaczyna się minjan lub brakuje mu jednej osoby. Jeśli zezwolisz na powiadomienia na następnym ekranie, twój przybliżony obszar (około 1 km) jest w tym celu przechowywany na naszym serwerze. Nigdy nie jest pokazywany innym użytkownikom, a możesz to wyłączyć w dowolnym momencie w Ustawieniach. Jeśli odmówisz, nie otrzymasz tych powiadomień i nic nie jest przechowywane.",
+      "allow": "Dalej"
     }
   },
   "home": {
@@ -97,10 +96,9 @@
     "createFab": "Rozpocznij minjan tutaj",
     "locationPrimer": {
       "title": "Znajdź minjanim w pobliżu",
-      "body": "10 Around używa Twojej lokalizacji, aby pokazać minjanim w pobliżu i pomóc Ci zorganizować go tam, gdzie jesteś.",
+      "body": "10 Around używa Twojej lokalizacji, aby pokazać minjanim w pobliżu i pomóc Ci zorganizować go tam, gdzie jesteś. Jeśli odmówisz, nadal możesz rozpocząć lub zaplanować minjan, ale nie zobaczysz minjanim w pobliżu.",
       "privacy": "Twoja pozycja nigdy nie jest pokazywana innym użytkownikom.",
-      "allow": "Dalej",
-      "later": "Nie teraz"
+      "allow": "Dalej"
     },
     "presence": {
       "updated": "zaktualizowano {{time}}",
@@ -319,7 +317,13 @@
     "now": "Teraz",
     "locationFromPick": "Własna lokalizacja — nie twoja obecna pozycja.",
     "joinConflict": "Jesteś już zapisany na minjan o {{time}}. Wybierz godzinę oddaloną o co najmniej 30 minut.",
-    "addressShared": "Ten adres zostanie pokazany osobom w pobliżu jako lokalizacja tego minjanu."
+    "addressShared": "Ten adres zostanie pokazany osobom w pobliżu jako lokalizacja tego minjanu.",
+    "showOnMap": {
+      "title": "Pokazać to miejsce na mapie?",
+      "body": "Miejsce tego minjanu lub wyjazdu — twoja aktualna pozycja lub wybrany adres — będzie widoczne dla osób w pobliżu, aby mogły dołączyć. Twoja pozycja nie jest potem śledzona. Jeśli wybierzesz „Nie publikuj”, nic nie zostanie opublikowane: nikt w pobliżu nie zobaczy tego minjanu ani nie będzie mógł dołączyć.",
+      "confirm": "Pokaż na mapie",
+      "cancel": "Nie publikuj"
+    }
   },
   "onboarding": {
     "welcome": "Witamy",

@@ -22,6 +22,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { reverseGeocode } from "@/lib/geocoding";
 import { currentPrayerWindowZmanim, type ZmanimOpinion } from "@/lib/zmanim";
 import { notifyNearbyMinyan } from "@/lib/notify-nearby";
+import { useShowOnMapConfirm } from "@/components/ShowOnMapDialog";
 import { publishStreetMinyan, PublishMinyanError } from "@/lib/minyan-publish";
 import { fetchJoinConflict, formatClockTime } from "@/lib/join-conflict";
 import { AddressAutocomplete, type AddressPick } from "@/components/AddressAutocomplete";
@@ -57,6 +58,7 @@ function Create() {
   const { user, loading: authLoading } = useAuth();
   const { position, request: requestGeo } = useGeolocation(false);
   const [publishing, setPublishing] = useState(false);
+  const { ask: askShowOnMap, dialog: showOnMapDialog } = useShowOnMapConfirm();
 
   useEffect(() => {
     if (!authLoading && !user) navigate({ to: "/auth" });
@@ -349,6 +351,7 @@ function Create() {
           </p>
         </div>
       </div>
+      {showOnMapDialog}
     </MobileFrame>
   );
 
@@ -364,6 +367,8 @@ function Create() {
       toast.error(t("create.needLocationLive"));
       return;
     }
+
+    if (!(await askShowOnMap())) return;
 
     setPublishing(true);
     try {

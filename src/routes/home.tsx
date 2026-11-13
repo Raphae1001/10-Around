@@ -167,12 +167,6 @@ function Home() {
     allowingRef.current = false;
   }, [requestGeo, goToCreate]);
 
-  const handlePrimerLater = useCallback(() => {
-    void setAppPref(PRIMER_SEEN_KEY, "1");
-    setPrimerOpen(false);
-    pendingCreateRef.current = false;
-  }, []);
-
   const center = position ?? FALLBACK_CENTER;
   // nowTick ticks every 15s (see effect above), but the arrival countdown
   // label only has minute granularity and only exists for minyanim actively
@@ -390,15 +384,7 @@ function Home() {
         )}
       </div>
 
-      <LocationPrimerDialog
-        open={primerOpen}
-        onOpenChange={(open) => {
-          setPrimerOpen(open);
-          if (!open && !allowingRef.current) pendingCreateRef.current = false;
-        }}
-        onAllow={() => void handlePrimerAllow()}
-        onLater={handlePrimerLater}
-      />
+      <LocationPrimerDialog open={primerOpen} onAllow={() => void handlePrimerAllow()} />
     </MobileFrame>
   );
 }
