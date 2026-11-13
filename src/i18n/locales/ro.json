@@ -77,7 +77,7 @@
     "acceptTerms": "Accept <terms>Termenii de utilizare</terms> și <privacy>Politica de confidențialitate</privacy>",
     "legal": {
       "termsTitle": "Termeni de utilizare",
-      "termsUpdated": "Ultima actualizare: octombrie 2026",
+      "termsUpdated": "Ultima actualizare: noiembrie 2026",
       "privacyTitle": "Politica de confidențialitate"
     },
     "firstName": "Prenume",
@@ -740,9 +740,6 @@
     "highContrast": "Contrast ridicat",
     "reduceMotion": "Reduce mișcarea",
     "chooseLanguage": "Alege limba",
-    "analytics": "Analitică",
-    "analyticsHelp": "Ajută la îmbunătățirea 10 Around",
-    "analyticsDesc": "Statistici de utilizare anonime. Fără date personale.",
     "privacyPolicy": "Politica de confidențialitate",
     "termsOfService": "Termeni de utilizare",
     "support": "Asistență",
@@ -774,7 +771,7 @@
   },
   "privacy": {
     "title": "Politică de confidențialitate",
-    "updated": "Ultima actualizare: octombrie 2026",
+    "updated": "Ultima actualizare: noiembrie 2026",
     "intro": "MinyanStreet ajută evreii să găsească sau să înceapă un minyan oriunde în lume. Luăm confidențialitatea în serios.",
     "sections": {
       "data": {
@@ -787,7 +784,7 @@
       },
       "location": {
         "title": "Locație",
-        "body": "GPS-ul este folosit doar cât timp aplicația este deschisă — pentru a arăta minyanim lângă tine și a crea un minyan unde te afli. Poziția ta nu este niciodată arătată altor utilizatori; se afișează doar locul unui minyan pe care îl publici. Dacă activezi alertele din apropiere, păstrăm o zonă aproximativă (~1 km) folosită doar de serverul nostru pentru a te anunța; dezactivarea o șterge."
+        "body": "GPS-ul este folosit doar cât timp aplicația este deschisă — pentru a arăta minyanim lângă tine și a crea un minyan unde te afli. Poziția ta nu este niciodată arătată altor utilizatori; se afișează doar locul unui minyan pe care îl publici. Dacă activezi alertele din apropiere, păstrăm o zonă aproximativă (~1 km) folosită doar de serverul nostru pentru a te anunța; dezactivarea o șterge. Înainte de fiecare publicare confirmi „Afișezi acest loc pe hartă?”; dacă refuzi, nu se publică nimic. Nu îți urmărim locația în fundal și poți retrage accesul oricând din setările dispozitivului."
       },
       "sharing": {
         "title": "Partajarea datelor",

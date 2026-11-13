@@ -77,7 +77,7 @@
     "acceptTerms": "J'accepte les <terms>Conditions d'utilisation</terms> et la <privacy>Politique de confidentialité</privacy>",
     "legal": {
       "termsTitle": "Conditions d'utilisation",
-      "termsUpdated": "Dernière mise à jour : octobre 2026",
+      "termsUpdated": "Dernière mise à jour : novembre 2026",
       "privacyTitle": "Politique de confidentialité"
     },
     "firstName": "Prénom",
@@ -739,9 +739,6 @@
     "highContrast": "Contraste élevé",
     "reduceMotion": "Réduire les animations",
     "chooseLanguage": "Choisis ta langue",
-    "analytics": "Analytique",
-    "analyticsHelp": "Aider à améliorer 10 Around",
-    "analyticsDesc": "Statistiques d'usage anonymes. Aucune donnée personnelle.",
     "privacyPolicy": "Politique de confidentialité",
     "termsOfService": "Conditions d'utilisation",
     "support": "Support",
@@ -773,7 +770,7 @@
   },
   "privacy": {
     "title": "Politique de confidentialité",
-    "updated": "Dernière mise à jour : octobre 2026",
+    "updated": "Dernière mise à jour : novembre 2026",
     "intro": "10 Around aide les Juifs à trouver ou lancer un minyan partout dans le monde. Nous prenons ta vie privée très au sérieux.",
     "sections": {
       "data": {
@@ -786,7 +783,7 @@
       },
       "location": {
         "title": "Localisation",
-        "body": "Le GPS n'est utilisé que lorsque l'app est ouverte — pour afficher les minyanim près de vous et créer un minyan là où vous êtes. Votre position n'est jamais montrée aux autres utilisateurs ; seul le lieu d'un minyan que vous publiez est affiché. Si vous activez les alertes de proximité, nous conservons une zone approximative (~1 km) utilisée uniquement par notre serveur pour vous prévenir ; la désactiver l'efface."
+        "body": "Le GPS n'est utilisé que lorsque l'app est ouverte — pour afficher les minyanim près de vous et créer un minyan là où vous êtes. Votre position n'est jamais montrée aux autres utilisateurs ; seul le lieu d'un minyan que vous publiez est affiché. Si vous activez les alertes de proximité, nous conservons une zone approximative (~1 km) utilisée uniquement par notre serveur pour vous prévenir ; la désactiver l'efface. Avant chaque publication, vous confirmez « Afficher ce lieu sur la carte ? » ; si vous refusez, rien n'est publié. Nous ne suivons pas votre position en arrière-plan, et vous pouvez retirer l'accès à tout moment dans les réglages de votre appareil."
       },
       "sharing": {
         "title": "Partage des données",

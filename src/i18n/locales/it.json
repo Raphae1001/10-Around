@@ -77,7 +77,7 @@
     "acceptTerms": "Accetto i <terms>Termini di servizio</terms> e la <privacy>Informativa sulla privacy</privacy>",
     "legal": {
       "termsTitle": "Termini di servizio",
-      "termsUpdated": "Ultimo aggiornamento: ottobre 2026",
+      "termsUpdated": "Ultimo aggiornamento: novembre 2026",
       "privacyTitle": "Informativa sulla privacy"
     },
     "firstName": "Nome",
@@ -740,9 +740,6 @@
     "highContrast": "Contrasto elevato",
     "reduceMotion": "Riduci movimento",
     "chooseLanguage": "Scegli la tua lingua",
-    "analytics": "Analitiche",
-    "analyticsHelp": "Aiuta a migliorare 10 Around",
-    "analyticsDesc": "Statistiche di utilizzo anonime. Nessun dato personale.",
     "privacyPolicy": "Informativa sulla privacy",
     "termsOfService": "Termini di servizio",
     "support": "Assistenza",
@@ -774,7 +771,7 @@
   },
   "privacy": {
     "title": "Informativa sulla Privacy",
-    "updated": "Ultimo aggiornamento: ottobre 2026",
+    "updated": "Ultimo aggiornamento: novembre 2026",
     "intro": "MinyanStreet aiuta gli ebrei a trovare o iniziare un minyan in qualsiasi parte del mondo. Prendiamo sul serio la tua privacy.",
     "sections": {
       "data": {
@@ -787,7 +784,7 @@
       },
       "location": {
         "title": "Posizione",
-        "body": "Il GPS viene usato solo quando l'app è aperta — per mostrare i minyanim vicino a te e creare un minyan dove ti trovi. La tua posizione non viene mai mostrata ad altri utenti; viene mostrato solo il luogo di un minyan che pubblichi. Se attivi gli avvisi di prossimità, conserviamo un'area approssimativa (~1 km) usata solo dal nostro server per avvisarti; disattivandoli viene cancellata."
+        "body": "Il GPS viene usato solo quando l'app è aperta — per mostrare i minyanim vicino a te e creare un minyan dove ti trovi. La tua posizione non viene mai mostrata ad altri utenti; viene mostrato solo il luogo di un minyan che pubblichi. Se attivi gli avvisi di prossimità, conserviamo un'area approssimativa (~1 km) usata solo dal nostro server per avvisarti; disattivandoli viene cancellata. Prima di ogni pubblicazione confermi «Mostrare questo luogo sulla mappa?»; se rifiuti, non viene pubblicato nulla. Non tracciamo la tua posizione in background e puoi revocare l'accesso in qualsiasi momento nelle impostazioni del dispositivo."
       },
       "sharing": {
         "title": "Condivisione dei dati",

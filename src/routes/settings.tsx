@@ -10,13 +10,11 @@ import {
   ChevronDown,
   ChevronRight,
   Sparkles,
-  BarChart3,
   Globe,
   Users,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
-import { setAnalyticsEnabled, isAnalyticsEnabled } from "@/lib/analytics";
 import { tapLight } from "@/lib/haptics";
 import { openAppSettings } from "@/lib/native";
 import { getAppPref, setAppPref } from "@/lib/app-prefs";
@@ -101,10 +99,6 @@ function Settings() {
           />
         </SettingsSection>
 
-        <SettingsSection title={t("settings.analytics")} icon={BarChart3}>
-          <AnalyticsToggle isLast />
-        </SettingsSection>
-
         <SettingsSection title={t("settings.location")} icon={MapPin}>
           <SystemSettingsRow label={t("settings.openSystemSettings")} isLast />
         </SettingsSection>
@@ -161,37 +155,6 @@ function LinkRow({
     >
       {label}
     </Link>
-  );
-}
-
-function AnalyticsToggle({ isLast }: { isLast?: boolean }) {
-  const { t } = useTranslation();
-  const [on, setOn] = useState(true);
-  useEffect(() => {
-    setOn(isAnalyticsEnabled());
-  }, []);
-  function toggle() {
-    void tapLight();
-    const next = !on;
-    setOn(next);
-    setAnalyticsEnabled(next);
-  }
-  return (
-    <button
-      type="button"
-      onClick={toggle}
-      className={`w-full px-4 py-3.5 flex items-center gap-3 text-left active:bg-muted/50 ${
-        !isLast ? "border-b border-border/60" : ""
-      }`}
-    >
-      <div className="flex-1 min-w-0">
-        <div className="text-[15px] font-medium">{t("settings.analyticsHelp")}</div>
-        <div className="text-[13px] text-muted-foreground mt-0.5">
-          {t("settings.analyticsDesc")}
-        </div>
-      </div>
-      <OnOffSegment on={on} />
-    </button>
   );
 }
 

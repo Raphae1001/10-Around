@@ -77,7 +77,7 @@
     "acceptTerms": "Ik accepteer de <terms>Gebruiksvoorwaarden</terms> en het <privacy>Privacybeleid</privacy>",
     "legal": {
       "termsTitle": "Gebruiksvoorwaarden",
-      "termsUpdated": "Laatst bijgewerkt: oktober 2026",
+      "termsUpdated": "Laatst bijgewerkt: november 2026",
       "privacyTitle": "Privacybeleid"
     },
     "firstName": "Voornaam",
@@ -740,9 +740,6 @@
     "highContrast": "Hoog contrast",
     "reduceMotion": "Verminder beweging",
     "chooseLanguage": "Kies je taal",
-    "analytics": "Analytics",
-    "analyticsHelp": "Help 10 Around te verbeteren",
-    "analyticsDesc": "Anonieme gebruiksstatistieken. Geen persoonlijke gegevens.",
     "privacyPolicy": "Privacybeleid",
     "termsOfService": "Gebruiksvoorwaarden",
     "support": "Ondersteuning",
@@ -774,7 +771,7 @@
   },
   "privacy": {
     "title": "Privacybeleid",
-    "updated": "Laatst bijgewerkt: oktober 2026",
+    "updated": "Laatst bijgewerkt: november 2026",
     "intro": "MinyanStreet helpt Joodse mensen overal ter wereld een minyan te vinden of te starten. We nemen je privacy serieus.",
     "sections": {
       "data": {
@@ -787,7 +784,7 @@
       },
       "location": {
         "title": "Locatie",
-        "body": "GPS wordt alleen gebruikt terwijl de app open is — om minyanim bij jou in de buurt te tonen en een minyan te maken waar je bent. Je positie wordt nooit aan andere gebruikers getoond; alleen de plek van een minyan die je publiceert wordt getoond. Als je meldingen in de buurt aanzet, bewaren we een geschat gebied (~1 km) dat alleen onze server gebruikt om je te waarschuwen; uitzetten wist het."
+        "body": "GPS wordt alleen gebruikt terwijl de app open is — om minyanim bij jou in de buurt te tonen en een minyan te maken waar je bent. Je positie wordt nooit aan andere gebruikers getoond; alleen de plek van een minyan die je publiceert wordt getoond. Als je meldingen in de buurt aanzet, bewaren we een geschat gebied (~1 km) dat alleen onze server gebruikt om je te waarschuwen; uitzetten wist het. Vóór elke publicatie bevestig je „Deze plek op de kaart tonen?”; als je weigert, wordt er niets gepubliceerd. We volgen je locatie niet op de achtergrond en je kunt de toegang op elk moment intrekken in de apparaatinstellingen."
       },
       "sharing": {
         "title": "Gegevens delen",

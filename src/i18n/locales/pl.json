@@ -77,7 +77,7 @@
     "acceptTerms": "Akceptuję <terms>Warunki korzystania</terms> oraz <privacy>Politykę prywatności</privacy>",
     "legal": {
       "termsTitle": "Warunki korzystania",
-      "termsUpdated": "Ostatnia aktualizacja: październik 2026",
+      "termsUpdated": "Ostatnia aktualizacja: listopad 2026",
       "privacyTitle": "Polityka prywatności"
     },
     "firstName": "Imię",
@@ -740,9 +740,6 @@
     "highContrast": "Wysoki kontrast",
     "reduceMotion": "Ogranicz ruch",
     "chooseLanguage": "Wybierz swój język",
-    "analytics": "Analityka",
-    "analyticsHelp": "Pomóż ulepszyć 10 Around",
-    "analyticsDesc": "Anonimowe statystyki użycia. Bez danych osobowych.",
     "privacyPolicy": "Polityka prywatności",
     "termsOfService": "Warunki korzystania",
     "support": "Wsparcie",
@@ -774,7 +771,7 @@
   },
   "privacy": {
     "title": "Polityka Prywatności",
-    "updated": "Ostatnia aktualizacja: październik 2026",
+    "updated": "Ostatnia aktualizacja: listopad 2026",
     "intro": "MinyanStreet pomaga Żydom znaleźć lub rozpocząć minyan w dowolnym miejscu na świecie. Twoją prywatność traktujemy poważnie.",
     "sections": {
       "data": {
@@ -787,7 +784,7 @@
       },
       "location": {
         "title": "Lokalizacja",
-        "body": "GPS jest używany tylko, gdy aplikacja jest otwarta — aby pokazać minjanim w pobliżu i utworzyć minjan tam, gdzie jesteś. Twoja pozycja nigdy nie jest pokazywana innym użytkownikom; wyświetlane jest tylko miejsce publikowanego przez ciebie minjanu. Jeśli włączysz alerty w pobliżu, przechowujemy przybliżony obszar (~1 km), z którego korzysta wyłącznie nasz serwer, by cię powiadomić; wyłączenie go usuwa."
+        "body": "GPS jest używany tylko, gdy aplikacja jest otwarta — aby pokazać minjanim w pobliżu i utworzyć minjan tam, gdzie jesteś. Twoja pozycja nigdy nie jest pokazywana innym użytkownikom; wyświetlane jest tylko miejsce publikowanego przez ciebie minjanu. Jeśli włączysz alerty w pobliżu, przechowujemy przybliżony obszar (~1 km), z którego korzysta wyłącznie nasz serwer, by cię powiadomić; wyłączenie go usuwa. Przed każdą publikacją potwierdzasz „Pokazać to miejsce na mapie?”; jeśli odmówisz, nic nie zostanie opublikowane. Nie śledzimy twojej lokalizacji w tle, a dostęp możesz w każdej chwili cofnąć w ustawieniach urządzenia."
       },
       "sharing": {
         "title": "Udostępnianie danych",

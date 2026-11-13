@@ -77,7 +77,7 @@
     "acceptTerms": "Ich akzeptiere die <terms>Nutzungsbedingungen</terms> und die <privacy>Datenschutzerklärung</privacy>",
     "legal": {
       "termsTitle": "Nutzungsbedingungen",
-      "termsUpdated": "Zuletzt aktualisiert: Oktober 2026",
+      "termsUpdated": "Zuletzt aktualisiert: November 2026",
       "privacyTitle": "Datenschutzerklärung"
     },
     "firstName": "Vorname",
@@ -740,9 +740,6 @@
     "highContrast": "Hoher Kontrast",
     "reduceMotion": "Bewegung reduzieren",
     "chooseLanguage": "Wähle deine Sprache",
-    "analytics": "Analyse",
-    "analyticsHelp": "Hilf mit, 10 Around zu verbessern",
-    "analyticsDesc": "Anonyme Nutzungsstatistiken. Keine personenbezogenen Daten.",
     "privacyPolicy": "Datenschutzerklärung",
     "termsOfService": "Nutzungsbedingungen",
     "support": "Support",
@@ -774,7 +771,7 @@
   },
   "privacy": {
     "title": "Datenschutzerklärung",
-    "updated": "Zuletzt aktualisiert: Oktober 2026",
+    "updated": "Zuletzt aktualisiert: November 2026",
     "intro": "MinyanStreet hilft jüdischen Menschen, überall auf der Welt einen Minyan zu finden oder zu starten. Wir nehmen deinen Datenschutz ernst.",
     "sections": {
       "data": {
@@ -787,7 +784,7 @@
       },
       "location": {
         "title": "Standort",
-        "body": "GPS wird nur verwendet, solange die App geöffnet ist — um Minjanim in deiner Nähe zu zeigen und einen Minjan dort zu erstellen, wo du bist. Deine Position wird anderen Nutzern nie angezeigt; nur der Ort eines von dir veröffentlichten Minjans wird gezeigt. Wenn du Alarme in der Nähe aktivierst, speichern wir einen ungefähren Bereich (~1 km), den nur unser Server nutzt, um dich zu benachrichtigen; das Ausschalten löscht ihn."
+        "body": "GPS wird nur verwendet, solange die App geöffnet ist — um Minjanim in deiner Nähe zu zeigen und einen Minjan dort zu erstellen, wo du bist. Deine Position wird anderen Nutzern nie angezeigt; nur der Ort eines von dir veröffentlichten Minjans wird gezeigt. Wenn du Alarme in der Nähe aktivierst, speichern wir einen ungefähren Bereich (~1 km), den nur unser Server nutzt, um dich zu benachrichtigen; das Ausschalten löscht ihn. Vor jeder Veröffentlichung bestätigst du „Diesen Ort auf der Karte anzeigen?“; wenn du ablehnst, wird nichts veröffentlicht. Wir verfolgen deinen Standort nicht im Hintergrund, und du kannst den Zugriff jederzeit in den Geräteeinstellungen widerrufen."
       },
       "sharing": {
         "title": "Datenweitergabe",

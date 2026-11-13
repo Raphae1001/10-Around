@@ -10,7 +10,6 @@ import {
   Mail,
   UserPlus,
   Bell,
-  BarChart3,
   Scale,
   MessageCircle,
 } from "lucide-react";
@@ -42,10 +41,8 @@ export const Route = createFileRoute("/privacy")({
 // truth, shared with LegalDocSheet.tsx).
 const LEGAL_SECTION_ICONS: Record<string, typeof UserPlus> = {
   "Account creation & authentication": UserPlus,
-  "Location & nearby alerts": MapPin,
   "Chat & user-generated content": MessageCircle,
   "Push notifications": Bell,
-  Analytics: BarChart3,
   "Data storage & retention": Database,
   "Your rights": Scale,
   "Account deletion": Trash2,

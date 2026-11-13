@@ -18,15 +18,15 @@ export const TERMS_SECTIONS: LegalSection[] = [
   },
   {
     title: "4. Minyan creation guidelines",
-    body: "When you create a minyan you commit to providing a real, accessible location and an honest time window. Do not create test, fake, joke, or commercial minyanim. Cancel a scheduled minyan as soon as you know it will not happen.",
+    body: "When you create a minyan you commit to providing a real, accessible location and an honest time window. Do not create test, fake, joke, or commercial minyanim. Cancel a scheduled minyan as soon as you know it will not happen. Publishing a minyan makes its location visible to people nearby; the app asks you to confirm this each time.",
   },
   {
     title: "5. Community behavior & chat",
     body: "10 Around is a respectful community of Jewish daveners. Harassment, hate speech, discriminatory content, sexual content, advertising, or any content that targets, mocks, or excludes other users is prohibited — including in group chats. Moderators may remove content and suspend accounts that violate these rules.",
   },
   {
-    title: "6. Reporting",
-    body: `You can report inappropriate chat messages from inside the chat. You can also email ${SUPPORT_EMAIL}. We review reports and take action where appropriate, typically within 24 hours for clear violations.`,
+    title: "6. Reporting & blocking",
+    body: `You can report inappropriate chat messages from inside the chat, and block any user: you will no longer see their messages or minyanim (manage blocked users in Settings). You can also email ${SUPPORT_EMAIL}. We review reports and take action where appropriate, typically within 24 hours for clear violations.`,
   },
   {
     title: "7. Service availability",
@@ -54,11 +54,7 @@ export const TERMS_SECTIONS: LegalSection[] = [
 export const PRIVACY_LEGAL_SECTIONS: LegalSection[] = [
   {
     title: "Account creation & authentication",
-    body: "You can sign in with Apple or Google, or continue as a guest using anonymous authentication. We store a unique user identifier and your display name (and an optional avatar if you add one). Guest accounts can be upgraded to Apple or Google sign-in at any time from Profile without losing your history.",
-  },
-  {
-    title: "Location & nearby alerts",
-    body: "Your device location is used only while the app is in use — to show the minyanim near you and to let you start one where you stand. When you publish a minyan, its location (your current position or the address you chose) is shown to people nearby as the place of that minyan; this happens only when you publish, each time. Your own position is never shown to other users. If you agree to nearby alerts, we also keep a blurred zone (geohash, roughly ~1 km) that cannot be reversed to a street address; it is used only by our server to notify you when a minyan starts near you, and you can turn this off at any time in Settings, which erases it. We do not track your location in the background. You can revoke location access at any time in your device settings.",
+    body: "You can sign in with Apple or Google, or continue as a guest using anonymous authentication. We store a unique user identifier and your display name (and an optional avatar if you add one). Guest accounts can be upgraded to Apple or Google sign-in at any time from Profile without losing your history. 10 Around is intended for people aged 18 or over.",
   },
   {
     title: "Chat & user-generated content",
@@ -67,10 +63,6 @@ export const PRIVACY_LEGAL_SECTIONS: LegalSection[] = [
   {
     title: "Push notifications",
     body: "If you allow notifications, we store an anonymous device push token associated with your account so we can alert you about nearby minyanim and related prompts. The token contains no personal information and is deleted when you uninstall the app or delete your account.",
-  },
-  {
-    title: "Analytics",
-    body: "The app can use Google Analytics 4 and Microsoft Clarity to understand which features are used and where the app can be improved. We disable Google Signals and ad personalization, do not send personal identifiers, and IP addresses are anonymized. You can disable analytics at any time from Settings → Analytics.",
   },
   {
     title: "Data storage & retention",

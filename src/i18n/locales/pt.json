@@ -77,7 +77,7 @@
     "acceptTerms": "Aceito os <terms>Termos de Serviço</terms> e a <privacy>Política de Privacidade</privacy>",
     "legal": {
       "termsTitle": "Termos de Serviço",
-      "termsUpdated": "Última atualização: outubro de 2026",
+      "termsUpdated": "Última atualização: novembro de 2026",
       "privacyTitle": "Política de Privacidade"
     },
     "firstName": "Nome",
@@ -740,9 +740,6 @@
     "highContrast": "Alto contraste",
     "reduceMotion": "Reduzir movimento",
     "chooseLanguage": "Escolha o seu idioma",
-    "analytics": "Análises",
-    "analyticsHelp": "Ajude a melhorar o 10 Around",
-    "analyticsDesc": "Estatísticas de uso anônimas. Sem dados pessoais.",
     "privacyPolicy": "Política de Privacidade",
     "termsOfService": "Termos de Serviço",
     "support": "Suporte",
@@ -774,7 +771,7 @@
   },
   "privacy": {
     "title": "Política de Privacidade",
-    "updated": "Última atualização: outubro de 2026",
+    "updated": "Última atualização: novembro de 2026",
     "intro": "MinyanStreet ajuda pessoas judias a encontrar ou iniciar um minyan em qualquer lugar do mundo. Levamos a sua privacidade a sério.",
     "sections": {
       "data": {
@@ -787,7 +784,7 @@
       },
       "location": {
         "title": "Localização",
-        "body": "O GPS só é usado enquanto a app está aberta — para mostrar os minyanim perto de ti e criar um minyan onde estás. A tua posição nunca é mostrada a outros utilizadores; só é mostrado o local de um minyan que publicas. Se ativares os alertas de proximidade, guardamos uma área aproximada (~1 km) usada apenas pelo nosso servidor para te avisar; desativá-los apaga-a."
+        "body": "O GPS só é usado enquanto a app está aberta — para mostrar os minyanim perto de ti e criar um minyan onde estás. A tua posição nunca é mostrada a outros utilizadores; só é mostrado o local de um minyan que publicas. Se ativares os alertas de proximidade, guardamos uma área aproximada (~1 km) usada apenas pelo nosso servidor para te avisar; desativá-los apaga-a. Antes de cada publicação, confirmas «Mostrar este local no mapa?»; se recusares, nada é publicado. Não seguimos a tua localização em segundo plano e podes retirar o acesso a qualquer momento nas definições do dispositivo."
       },
       "sharing": {
         "title": "Partilha de dados",
