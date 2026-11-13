@@ -11,7 +11,8 @@ export type PresenceLevel = "off" | "ponctual";
 
 // New key on purpose: values stored by older versions (presence on by default)
 // were never a consent to nearby alerts and must not be read as one.
-const PREF_KEY = "nearby-alerts.level";
+export const NEARBY_ALERTS_PREF_KEY = "nearby-alerts.level";
+const PREF_KEY = NEARBY_ALERTS_PREF_KEY;
 
 /** Local choice first (also covers consent given before sign-in), then the server's record. */
 export async function getPresenceLevel(userId?: string): Promise<PresenceLevel> {

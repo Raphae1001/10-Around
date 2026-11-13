@@ -1,4 +1,25 @@
+import { Capacitor } from "@capacitor/core";
 import { supabase } from "@/integrations/supabase/client";
+import { NEARBY_ALERTS_PREF_KEY } from "@/lib/presence-prefs";
+
+/**
+ * Forgets what this device remembered about the person who just left. `everything` (account
+ * deleted) wipes all app preferences, so the next sign-up starts like a fresh install: the
+ * explanation screens come back and no earlier consent carries over. Otherwise (plain sign-out)
+ * only the nearby-alerts consent is dropped: it belongs to the account, and the server gives it
+ * back when the same person signs in again. System permissions (location, notifications) are
+ * owned by iOS and cannot be reset from the app.
+ */
+async function forgetLocalChoices(everything: boolean): Promise<void> {
+  if (!Capacitor.isNativePlatform()) return;
+  try {
+    const { Preferences } = await import("@capacitor/preferences");
+    if (everything) await Preferences.clear();
+    else await Preferences.remove({ key: NEARBY_ALERTS_PREF_KEY });
+  } catch {
+    /* preferences plugin unavailable — nothing to clean */
+  }
+}
 
 /**
  * Signs a real (Apple/Google) account out without deleting anything — their
@@ -18,6 +39,7 @@ export async function signOutAndLeave(): Promise<void> {
   } catch {
     /* native prefs unavailable */
   }
+  await forgetLocalChoices(false);
 }
 
 /**
@@ -68,6 +90,7 @@ export async function deleteAccountAndLeave(): Promise<void> {
   } catch {
     /* ignore */
   }
+  await forgetLocalChoices(true);
 }
 
 export function goToWelcomeAfterLeave(): void {
