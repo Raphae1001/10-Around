@@ -88,7 +88,11 @@
       "title": "Sachez quand un minyan démarre près de vous",
       "body": "Nous pouvons vous prévenir quand un minyan démarre près de vous ou qu'il lui manque une personne. Si vous autorisez les notifications à l'écran suivant, votre zone approximative (environ 1 km) est conservée sur notre serveur pour cela. Elle n'est jamais montrée aux autres utilisateurs, et vous pouvez la désactiver à tout moment dans Réglages. Si vous refusez, vous ne recevrez pas ces alertes et rien n'est conservé.",
       "allow": "Continuer"
-    }
+    },
+    "reviewSignIn": "Connexion App Review",
+    "reviewEmail": "E-mail",
+    "reviewPassword": "Mot de passe",
+    "reviewSubmit": "Se connecter"
   },
   "home": {
     "subtitleWithGps": "En direct dans un rayon d'1 km",
@@ -189,7 +193,8 @@
     "blockConfirm": "Bloquer",
     "blockedToast": "Utilisateur bloqué",
     "blockError": "Impossible de mettre à jour les utilisateurs bloqués",
-    "blockedUserFallback": "Utilisateur bloqué · {{date}}"
+    "blockedUserFallback": "Utilisateur bloqué · {{date}}",
+    "contentNotAllowed": "Ce message contient un contenu interdit par nos Conditions."
   },
   "createScheduled": {
     "title": "Planifier un minyan",
@@ -616,7 +621,11 @@
     "nusachAri": "Nusach Ari",
     "dist": "600 m · 4 min à pied",
     "walking": "{{walking}} à pied · {{driving}} en voiture",
-    "hosted": "73 minyanim organisés"
+    "hosted": "73 minyanim organisés",
+    "reportMinyan": "Signaler ce minyan",
+    "blockOrganizer": "Bloquer l’organisateur",
+    "reportMinyanTitle": "Signaler ce minyan ?",
+    "reportMinyanBody": "Nous l’examinerons et agirons s’il enfreint les règles de la communauté. L’organisateur ne sera pas informé de votre signalement."
   },
   "kaddish": {
     "title": "Demander un minyan pour Kaddish",

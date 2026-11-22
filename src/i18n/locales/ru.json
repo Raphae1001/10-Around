@@ -88,7 +88,11 @@
       "title": "Узнавайте, когда рядом начинается миньян",
       "body": "Мы можем уведомить вас, когда рядом начинается миньян или ему не хватает одного человека. Если вы разрешите уведомления на следующем экране, для этого на нашем сервере сохраняется ваша примерная область (около 1 км). Она никогда не показывается другим пользователям, и вы можете отключить это в любой момент в Настройках. Если вы откажетесь, вы не будете получать эти уведомления, и ничего не сохраняется.",
       "allow": "Продолжить"
-    }
+    },
+    "reviewSignIn": "App Review sign-in",
+    "reviewEmail": "Email",
+    "reviewPassword": "Password",
+    "reviewSubmit": "Sign in"
   },
   "home": {
     "subtitleWithGps": "Сейчас в 1 км от вас",
@@ -189,7 +193,8 @@
     "blockConfirm": "Заблокировать",
     "blockedToast": "Пользователь заблокирован",
     "blockError": "Не удалось обновить заблокированных пользователей",
-    "blockedUserFallback": "Заблокированный пользователь · {{date}}"
+    "blockedUserFallback": "Заблокированный пользователь · {{date}}",
+    "contentNotAllowed": "This message contains content that is not allowed by our Terms."
   },
   "createScheduled": {
     "title": "Запланировать миньян",
@@ -617,7 +622,11 @@
     "decisionYes": "Да, мы здесь",
     "decisionCancel": "Отменить миньян",
     "decisionYesOk": "Миньян подтверждён!",
-    "decisionPendingOther": "Ожидание решения организатора"
+    "decisionPendingOther": "Ожидание решения организатора",
+    "reportMinyan": "Report this minyan",
+    "blockOrganizer": "Block organizer",
+    "reportMinyanTitle": "Report this minyan?",
+    "reportMinyanBody": "We’ll review it and take action if it violates community guidelines. The organizer won’t be notified that you reported them."
   },
   "kaddish": {
     "title": "Запросить миньян для Кадиша",

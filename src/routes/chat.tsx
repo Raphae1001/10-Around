@@ -151,7 +151,11 @@ function ChatPage() {
       .single();
     setSending(false);
     if (error) {
-      toast.error(t("chats.sendError"), { description: error.message });
+      toast.error(t("chats.sendError"), {
+        description: error.message.includes("objectionable_content")
+          ? t("chats.contentNotAllowed")
+          : error.message,
+      });
       return;
     }
     if (inserted) {

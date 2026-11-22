@@ -21,7 +21,7 @@ export const Route = createFileRoute("/auth")({
 });
 
 type Step = 0 | 1;
-type Method = "apple" | "google" | "guest";
+type Method = "apple" | "google" | "guest" | "email";
 
 /** Same key as home.tsx — avoid re-showing the primer after we already prompted. */
 const PRIMER_SEEN_KEY = "minyan:location-primer-seen";
@@ -94,7 +94,7 @@ function Onboarding() {
   }
 
   /** Apple/Google session already exists at this point — go straight to the primer dialogs. */
-  function handleProviderContinue(provider: "apple" | "google") {
+  function handleProviderContinue(provider: "apple" | "google" | "email") {
     setPendingMethod(provider);
     setLocDialogOpen(true);
   }

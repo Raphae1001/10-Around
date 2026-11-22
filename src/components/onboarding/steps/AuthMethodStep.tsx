@@ -3,15 +3,16 @@ import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { Loader2, UserRound } from "lucide-react";
 import { signInWithProvider } from "@/lib/native-auth";
+import { supabase } from "@/integrations/supabase/client";
 import { LegalDocSheet, type LegalDocKind } from "@/components/onboarding/LegalDocSheet";
 import { BRAND_BLUE, BRAND_TEXT, BRAND_TEXT_SOFT, BRAND_SHADOW } from "@/lib/brand";
 
 type Provider = "apple" | "google";
-type Busy = Provider | "guest" | null;
+type Busy = Provider | "guest" | "email" | null;
 
 type Props = {
   /** Runs after a successful Apple/Google sign-in (session already exists). */
-  onProviderContinue: (provider: Provider) => Promise<void> | void;
+  onProviderContinue: (provider: Provider | "email") => Promise<void> | void;
   /** Runs when the user picks Guest — caller creates the anonymous session. */
   onGuestContinue: () => Promise<void> | void;
 };
@@ -51,6 +52,25 @@ export function AuthMethodStep({ onProviderContinue, onGuestContinue }: Props) {
   const { t } = useTranslation();
   const [busy, setBusy] = useState<Busy>(null);
   const [doc, setDoc] = useState<LegalDocKind | null>(null);
+  const [reviewOpen, setReviewOpen] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  /** Email/password sign-in, offered only so App Review can use the demo account. */
+  async function handleReviewSignIn(e: React.FormEvent) {
+    e.preventDefault();
+    if (busy) return;
+    setBusy("email");
+    try {
+      const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+      if (error) throw error;
+      await onProviderContinue("email");
+    } catch (err) {
+      toast.error(t("auth.authFailed"), { description: (err as Error).message });
+    } finally {
+      setBusy(null);
+    }
+  }
 
   async function handleProvider(provider: Provider) {
     if (busy) return;
@@ -136,6 +156,50 @@ export function AuthMethodStep({ onProviderContinue, onGuestContinue }: Props) {
           >
             {t("auth.guestNote")}
           </p>
+
+          {reviewOpen ? (
+            <form onSubmit={(e) => void handleReviewSignIn(e)} className="space-y-2 pt-2">
+              <input
+                type="email"
+                autoComplete="username"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder={t("auth.reviewEmail")}
+                className="w-full h-11 rounded-xl border border-border bg-white px-3 text-sm"
+                required
+              />
+              <input
+                type="password"
+                autoComplete="current-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder={t("auth.reviewPassword")}
+                className="w-full h-11 rounded-xl border border-border bg-white px-3 text-sm"
+                required
+              />
+              <button
+                type="submit"
+                disabled={busy !== null}
+                className="w-full h-11 rounded-xl border border-border text-sm font-semibold disabled:opacity-60"
+                style={{ color: BRAND_TEXT }}
+              >
+                {busy === "email" ? (
+                  <Loader2 className="h-4 w-4 animate-spin mx-auto" />
+                ) : (
+                  t("auth.reviewSubmit")
+                )}
+              </button>
+            </form>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setReviewOpen(true)}
+              className="block mx-auto text-[11px] underline underline-offset-2"
+              style={{ color: BRAND_TEXT_SOFT }}
+            >
+              {t("auth.reviewSignIn")}
+            </button>
+          )}
         </div>
       </div>
 
