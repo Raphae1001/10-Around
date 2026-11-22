@@ -21,10 +21,12 @@ INSERT INTO public.moderation_terms (term) VALUES
   ('זונה'),('בן זונה'),('חרא'),('מניאק'),('מנוול'),('הומו מסריח'),('אנס')
 ON CONFLICT DO NOTHING;
 
+-- SECURITY DEFINER: app users cannot read moderation_terms (RLS), the filter still must.
 CREATE OR REPLACE FUNCTION public.is_objectionable(_text text)
 RETURNS boolean
 LANGUAGE sql
 STABLE
+SECURITY DEFINER
 SET search_path = public
 AS $$
   SELECT _text IS NOT NULL AND EXISTS (
@@ -125,3 +127,5 @@ CREATE TRIGGER trg_notify_developer_of_report AFTER INSERT ON public.content_rep
 -- Blocked users' minyanim disappear instantly for the blocker (feed filter is client-side too).
 
 REVOKE EXECUTE ON FUNCTION public.notify_developer_of_report(), public.report_on_block(), public.reject_objectionable_content() FROM PUBLIC, anon, authenticated;
+REVOKE EXECUTE ON FUNCTION public.is_objectionable(text) FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.is_objectionable(text) TO authenticated, service_role;
