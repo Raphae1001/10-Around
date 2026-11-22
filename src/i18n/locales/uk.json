@@ -88,7 +88,11 @@
       "title": "Дізнавайтеся, коли поруч починається мінʼян",
       "body": "Ми можемо повідомити вас, коли поруч починається мінʼян або йому бракує однієї людини. Якщо ви дозволите сповіщення на наступному екрані, для цього на нашому сервері зберігається ваша приблизна зона (близько 1 км). Її ніколи не показують іншим користувачам, і ви можете вимкнути це будь-коли в Налаштуваннях. Якщо ви відмовитеся, ви не отримуватимете ці сповіщення, і нічого не зберігається.",
       "allow": "Продовжити"
-    }
+    },
+    "reviewSignIn": "App Review sign-in",
+    "reviewEmail": "Email",
+    "reviewPassword": "Password",
+    "reviewSubmit": "Sign in"
   },
   "home": {
     "subtitleWithGps": "Наживо в радіусі 1 км від вас",
@@ -189,7 +193,8 @@
     "blockConfirm": "Заблокувати",
     "blockedToast": "Користувача заблоковано",
     "blockError": "Не вдалося оновити заблокованих користувачів",
-    "blockedUserFallback": "Заблокований користувач · {{date}}"
+    "blockedUserFallback": "Заблокований користувач · {{date}}",
+    "contentNotAllowed": "This message contains content that is not allowed by our Terms."
   },
   "createScheduled": {
     "title": "Запланувати міньян",
@@ -617,7 +622,11 @@
     "decisionYes": "Так, ми тут",
     "decisionCancel": "Скасувати міньян",
     "decisionYesOk": "Міньян підтверджено!",
-    "decisionPendingOther": "Очікування рішення організатора"
+    "decisionPendingOther": "Очікування рішення організатора",
+    "reportMinyan": "Report this minyan",
+    "blockOrganizer": "Block organizer",
+    "reportMinyanTitle": "Report this minyan?",
+    "reportMinyanBody": "We’ll review it and take action if it violates community guidelines. The organizer won’t be notified that you reported them."
   },
   "kaddish": {
     "title": "Запросити міньян для Кадішу",

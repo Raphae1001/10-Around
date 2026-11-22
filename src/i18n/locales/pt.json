@@ -88,7 +88,11 @@
       "title": "Saiba quando um minyan começar perto de você",
       "body": "Podemos avisar-te quando um minyan começa perto de ti ou precisa de mais uma pessoa. Se permitires as notificações no ecrã seguinte, a tua área aproximada (cerca de 1 km) é guardada no nosso servidor para isso. Nunca é mostrada a outros utilizadores e podes desativar a qualquer momento nas Definições. Se recusares, não receberás estes alertas e nada é guardado.",
       "allow": "Continuar"
-    }
+    },
+    "reviewSignIn": "App Review sign-in",
+    "reviewEmail": "Email",
+    "reviewPassword": "Password",
+    "reviewSubmit": "Sign in"
   },
   "home": {
     "subtitleWithGps": "Ao vivo a 1 km de si",
@@ -189,7 +193,8 @@
     "blockConfirm": "Bloquear",
     "blockedToast": "Usuário bloqueado",
     "blockError": "Não foi possível atualizar os usuários bloqueados",
-    "blockedUserFallback": "Usuário bloqueado · {{date}}"
+    "blockedUserFallback": "Usuário bloqueado · {{date}}",
+    "contentNotAllowed": "This message contains content that is not allowed by our Terms."
   },
   "createScheduled": {
     "title": "Planejar um minyan",
@@ -617,7 +622,11 @@
     "decisionYes": "Sim, estamos aqui",
     "decisionCancel": "Cancelar minyan",
     "decisionYesOk": "Minyan confirmado!",
-    "decisionPendingOther": "A aguardar a decisão do organizador"
+    "decisionPendingOther": "A aguardar a decisão do organizador",
+    "reportMinyan": "Report this minyan",
+    "blockOrganizer": "Block organizer",
+    "reportMinyanTitle": "Report this minyan?",
+    "reportMinyanBody": "We’ll review it and take action if it violates community guidelines. The organizer won’t be notified that you reported them."
   },
   "kaddish": {
     "title": "Pedir um minyan para Kaddish",

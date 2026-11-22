@@ -88,7 +88,11 @@
       "title": "Află când începe un minyan lângă tine",
       "body": "Te putem anunța când începe un minyan lângă tine sau mai are nevoie de o persoană. Dacă permiți notificările pe ecranul următor, zona ta aproximativă (circa 1 km) este păstrată pe serverul nostru pentru asta. Nu este arătată niciodată altor utilizatori, iar poți dezactiva oricând în Setări. Dacă refuzi, nu vei primi aceste alerte și nu se păstrează nimic.",
       "allow": "Continuă"
-    }
+    },
+    "reviewSignIn": "App Review sign-in",
+    "reviewEmail": "Email",
+    "reviewPassword": "Password",
+    "reviewSubmit": "Sign in"
   },
   "home": {
     "subtitleWithGps": "Live la mai puțin de 1 km de tine",
@@ -189,7 +193,8 @@
     "blockConfirm": "Blochează",
     "blockedToast": "Utilizator blocat",
     "blockError": "Nu s-au putut actualiza utilizatorii blocați",
-    "blockedUserFallback": "Utilizator blocat · {{date}}"
+    "blockedUserFallback": "Utilizator blocat · {{date}}",
+    "contentNotAllowed": "This message contains content that is not allowed by our Terms."
   },
   "createScheduled": {
     "title": "Planifică un minian",
@@ -617,7 +622,11 @@
     "decisionYes": "Da, suntem aici",
     "decisionCancel": "Anulează minyan",
     "decisionYesOk": "Minyan confirmat!",
-    "decisionPendingOther": "Se așteaptă decizia organizatorului"
+    "decisionPendingOther": "Se așteaptă decizia organizatorului",
+    "reportMinyan": "Report this minyan",
+    "blockOrganizer": "Block organizer",
+    "reportMinyanTitle": "Report this minyan?",
+    "reportMinyanBody": "We’ll review it and take action if it violates community guidelines. The organizer won’t be notified that you reported them."
   },
   "kaddish": {
     "title": "Cere un minyan pentru Kaddish",

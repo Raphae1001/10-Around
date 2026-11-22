@@ -127,6 +127,10 @@ export type Database = {
           reported_user_id: string | null;
           reporter_id: string;
           thread_id: string | null;
+          handled_at: string | null
+          minyan_id: string | null
+          status: string
+          target_type: string
         };
         Insert: {
           created_at?: string;
@@ -138,6 +142,10 @@ export type Database = {
           reported_user_id?: string | null;
           reporter_id: string;
           thread_id?: string | null;
+          handled_at?: string | null
+          minyan_id?: string | null
+          status?: string
+          target_type?: string
         };
         Update: {
           created_at?: string;
@@ -149,6 +157,10 @@ export type Database = {
           reported_user_id?: string | null;
           reporter_id?: string;
           thread_id?: string | null;
+          handled_at?: string | null
+          minyan_id?: string | null
+          status?: string
+          target_type?: string
         };
         Relationships: [
           {

@@ -88,7 +88,11 @@
       "title": "اعرف متى يبدأ منيان بالقرب منك",
       "body": "يمكننا إشعارك عند بدء منيان بالقرب منك أو عندما ينقصه شخص واحد. إذا سمحت بالإشعارات في الشاشة التالية، تُحفظ منطقتك التقريبية (نحو 1 كم) على خادمنا لهذا الغرض. لا تُعرض أبدًا لمستخدمين آخرين، ويمكنك إيقاف ذلك في أي وقت من الإعدادات. إذا رفضت، فلن تتلقى هذه التنبيهات ولن يُحفظ أي شيء.",
       "allow": "متابعة"
-    }
+    },
+    "reviewSignIn": "App Review sign-in",
+    "reviewEmail": "Email",
+    "reviewPassword": "Password",
+    "reviewSubmit": "Sign in"
   },
   "home": {
     "subtitleWithGps": "مباشر على بعد 1 كم منك",
@@ -189,7 +193,8 @@
     "blockConfirm": "حظر",
     "blockedToast": "تم حظر المستخدم",
     "blockError": "تعذّر تحديث المستخدمين المحظورين",
-    "blockedUserFallback": "مستخدم محظور · {{date}}"
+    "blockedUserFallback": "مستخدم محظور · {{date}}",
+    "contentNotAllowed": "This message contains content that is not allowed by our Terms."
   },
   "createScheduled": {
     "title": "خطّط لمنيان",
@@ -617,7 +622,11 @@
     "decisionYes": "نعم، نحن هنا",
     "decisionCancel": "إلغاء المينيان",
     "decisionYesOk": "تم تأكيد المينيان!",
-    "decisionPendingOther": "بانتظار قرار المنظّم"
+    "decisionPendingOther": "بانتظار قرار المنظّم",
+    "reportMinyan": "Report this minyan",
+    "blockOrganizer": "Block organizer",
+    "reportMinyanTitle": "Report this minyan?",
+    "reportMinyanBody": "We’ll review it and take action if it violates community guidelines. The organizer won’t be notified that you reported them."
   },
   "kaddish": {
     "title": "اطلب مينيان لصلابة القاديش",

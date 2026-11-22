@@ -88,7 +88,11 @@
       "title": "װײסט ווען אַ מנין הייבט זיך אָן לעבן אײַך",
       "body": "מיר קענען אײַך מעלדן ווען א מנין הייבט זיך אָן לעבן אײַך אָדער עס פֿעלט אים נאָך איין מענטש. אויב איר דערלויבט נאטיפֿיקאַציעס אויפֿן קומענדיקן עקראַן, ווערט אײַער אָפּשאַצטע געגנט (אומגעפֿער 1 קם) געהאַלטן אויף אונדזער סערווער פֿאַר דעם. זי ווערט קיינמאָל נישט געוויזן צו אַנדערע באַנוצער, און איר קענט דאָס אויסשאַלטן יעדע צײַט אין סעטינגס. אויב איר אָפּזאָגט, וועט איר נישט באַקומען די אַלערטן, און גאָרנישט ווערט נישט געהאַלטן.",
       "allow": "ממשיכן"
-    }
+    },
+    "reviewSignIn": "App Review sign-in",
+    "reviewEmail": "Email",
+    "reviewPassword": "Password",
+    "reviewSubmit": "Sign in"
   },
   "home": {
     "subtitleWithGps": "לייוו אין 1 ק״מ פֿון דיר",
@@ -189,7 +193,8 @@
     "blockConfirm": "בלאָקירן",
     "blockedToast": "באַניצער בלאָקירט",
     "blockError": "מ׳האָט נישט געקענט דערנײַען די בלאָקירטע באַניצער",
-    "blockedUserFallback": "בלאָקירטער באַניצער · {{date}}"
+    "blockedUserFallback": "בלאָקירטער באַניצער · {{date}}",
+    "contentNotAllowed": "This message contains content that is not allowed by our Terms."
   },
   "createScheduled": {
     "title": "פּלאַנירן אַ מנין",
@@ -617,7 +622,11 @@
     "decisionYes": "יאָ, מיר זענען דאָ",
     "decisionCancel": "אָפּזאָגן דעם מנין",
     "decisionYesOk": "דער מנין איז באַשטעטיקט!",
-    "decisionPendingOther": "וואַרטנדיק אויף דעם אָרגאַניזאַטאָר'ס באַשלוס"
+    "decisionPendingOther": "וואַרטנדיק אויף דעם אָרגאַניזאַטאָר'ס באַשלוס",
+    "reportMinyan": "Report this minyan",
+    "blockOrganizer": "Block organizer",
+    "reportMinyanTitle": "Report this minyan?",
+    "reportMinyanBody": "We’ll review it and take action if it violates community guidelines. The organizer won’t be notified that you reported them."
   },
   "kaddish": {
     "title": "בעטן אַ מנין פֿאַר קדיש",

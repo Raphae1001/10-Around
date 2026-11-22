@@ -15,7 +15,20 @@ import {
   X,
   MessageCircle,
   Share2,
+  Flag,
+  Ban,
 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { useBlockedUsers } from "@/hooks/use-blocked-users";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { joinMinyan, leaveMinyan, type MinyanRow } from "@/hooks/use-minyanim";
@@ -70,6 +83,10 @@ function Details() {
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
   const [notFound, setNotFound] = useState(false);
+  const [reportOpen, setReportOpen] = useState(false);
+  const [blockOpen, setBlockOpen] = useState(false);
+  const [moderating, setModerating] = useState(false);
+  const { block } = useBlockedUsers(user?.id);
 
   useEffect(() => {
     let cancelled = false;
@@ -313,6 +330,39 @@ function Details() {
   }
 
   // Never show the organizer's real name to other participants — privacy.
+  async function submitMinyanReport() {
+    if (!user || !minyan) return;
+    setModerating(true);
+    const { error } = await supabase.from("content_reports").insert({
+      reporter_id: user.id,
+      target_type: "minyan",
+      minyan_id: minyan.id,
+      reported_user_id: minyan.creator_id,
+      reason: "inappropriate",
+      message_snapshot: (minyan.message ?? "").slice(0, 2000),
+    });
+    setModerating(false);
+    setReportOpen(false);
+    if (error) toast.error(t("chats.reportError"), { description: error.message });
+    else toast.success(t("chats.reportThanks"));
+  }
+
+  async function submitBlockOrganizer() {
+    if (!minyan) return;
+    setModerating(true);
+    const { error } = await block(minyan.creator_id, null);
+    setModerating(false);
+    setBlockOpen(false);
+    if (error) {
+      toast.error(t("chats.blockError"), { description: error.message });
+      return;
+    }
+    toast.success(t("chats.blockedToast"));
+    navigateBack(router.history, () => {
+      void navigate({ to: "/home" });
+    });
+  }
+
   const orgName = isOrganizer ? t("minyan.you") : t("minyan.organizer");
   // Street minyanim: organizer can cancel any time. Scheduled keeps the
   // 20-min-before-start protection for joiners (matches cancel_my_minyan).
@@ -532,6 +582,17 @@ function Details() {
               </button>
             </div>
 
+            {!isOrganizer && !!user && (
+              <div className="grid grid-cols-2 gap-2.5">
+                <button type="button" onClick={() => setReportOpen(true)} className={SECONDARY_BTN}>
+                  <Flag className="h-4 w-4 shrink-0" /> {t("minyan.reportMinyan")}
+                </button>
+                <button type="button" onClick={() => setBlockOpen(true)} className={SECONDARY_BTN}>
+                  <Ban className="h-4 w-4 shrink-0" /> {t("minyan.blockOrganizer")}
+                </button>
+              </div>
+            )}
+
             {canCancel && (
               <div className="pt-2 text-center">
                 <p className="text-[11px] text-ink-soft mb-1.5">{t("minyan.cancelMinyanHint")}</p>
@@ -554,6 +615,49 @@ function Details() {
       </div>
 
       <Link to="/home" className="hidden" aria-hidden />
+      <AlertDialog open={reportOpen} onOpenChange={setReportOpen}>
+        <AlertDialogContent className="max-w-[340px]">
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t("minyan.reportMinyanTitle")}</AlertDialogTitle>
+            <AlertDialogDescription>{t("minyan.reportMinyanBody")}</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex-col gap-2 sm:flex-col">
+            <AlertDialogAction
+              disabled={moderating}
+              onClick={(e) => {
+                e.preventDefault();
+                void submitMinyanReport();
+              }}
+              className="w-full bg-urgent text-white hover:bg-urgent/90"
+            >
+              {moderating ? <Loader2 className="h-4 w-4 animate-spin" /> : t("chats.reportConfirm")}
+            </AlertDialogAction>
+            <AlertDialogCancel className="w-full mt-0">{t("common.cancel")}</AlertDialogCancel>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={blockOpen} onOpenChange={setBlockOpen}>
+        <AlertDialogContent className="max-w-[340px]">
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t("chats.blockTitle")}</AlertDialogTitle>
+            <AlertDialogDescription>{t("chats.blockBody")}</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex-col gap-2 sm:flex-col">
+            <AlertDialogAction
+              disabled={moderating}
+              onClick={(e) => {
+                e.preventDefault();
+                void submitBlockOrganizer();
+              }}
+              className="w-full bg-urgent text-white hover:bg-urgent/90"
+            >
+              {moderating ? <Loader2 className="h-4 w-4 animate-spin" /> : t("chats.blockConfirm")}
+            </AlertDialogAction>
+            <AlertDialogCancel className="w-full mt-0">{t("common.cancel")}</AlertDialogCancel>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </MobileFrame>
   );
 }

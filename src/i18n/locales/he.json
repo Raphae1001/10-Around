@@ -88,7 +88,11 @@
       "title": "דעו מתי מתחיל מניין קרוב אליכם",
       "body": "נוכל להתריע לכם כשמניין מתחיל לידכם או חסר לו עוד אדם. אם תאשרו התראות במסך הבא, האזור המשוער שלכם (כ־1 ק\"מ) נשמר בשרת שלנו לצורך כך. הוא לא מוצג לעולם למשתמשים אחרים, ואפשר לכבות זאת בכל עת בהגדרות. אם תסרבו, לא תקבלו התראות אלה ושום דבר לא נשמר.",
       "allow": "המשך"
-    }
+    },
+    "reviewSignIn": "App Review sign-in",
+    "reviewEmail": "Email",
+    "reviewPassword": "Password",
+    "reviewSubmit": "Sign in"
   },
   "home": {
     "subtitleWithGps": "חי ברדיוס של ק״מ ממך",
@@ -189,7 +193,8 @@
     "blockConfirm": "חסימה",
     "blockedToast": "המשתמש נחסם",
     "blockError": "לא ניתן היה לעדכן משתמשים חסומים",
-    "blockedUserFallback": "משתמש חסום · {{date}}"
+    "blockedUserFallback": "משתמש חסום · {{date}}",
+    "contentNotAllowed": "This message contains content that is not allowed by our Terms."
   },
   "createScheduled": {
     "title": "תכנון מניין",
@@ -617,7 +622,11 @@
     "decisionYes": "כן, אנחנו כאן",
     "decisionCancel": "בטל מניין",
     "decisionYesOk": "המניין אושר!",
-    "decisionPendingOther": "ממתין להחלטת המארגן"
+    "decisionPendingOther": "ממתין להחלטת המארגן",
+    "reportMinyan": "Report this minyan",
+    "blockOrganizer": "Block organizer",
+    "reportMinyanTitle": "Report this minyan?",
+    "reportMinyanBody": "We’ll review it and take action if it violates community guidelines. The organizer won’t be notified that you reported them."
   },
   "kaddish": {
     "title": "בקש מניין לקדיש",

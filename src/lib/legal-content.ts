@@ -22,7 +22,7 @@ export const TERMS_SECTIONS: LegalSection[] = [
   },
   {
     title: "5. Community behavior & chat",
-    body: "10 Around is a respectful community of Jewish daveners. Harassment, hate speech, discriminatory content, sexual content, advertising, or any content that targets, mocks, or excludes other users is prohibited — including in group chats. Moderators may remove content and suspend accounts that violate these rules.",
+    body: "10 Around is a respectful community of Jewish daveners. Harassment, hate speech, discriminatory content, sexual content, advertising, or any content that targets, mocks, or excludes other users is prohibited — including in group chats. There is no tolerance for objectionable content or abusive users: content is automatically filtered, and we remove violating content and suspend or delete the accounts of abusive users. By using 10 Around you agree to these rules.",
   },
   {
     title: "6. Reporting & blocking",
