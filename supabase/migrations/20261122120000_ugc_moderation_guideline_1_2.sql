@@ -13,12 +13,12 @@ GRANT ALL ON public.moderation_terms TO service_role;
 
 -- Starter list (slurs, sexual, threats) in EN / FR / HE. Extend freely: INSERT INTO moderation_terms.
 INSERT INTO public.moderation_terms (term) VALUES
-  ('fuck'),('shit'),('bitch'),('asshole'),('cunt'),('dick'),('pussy'),('whore'),('slut'),('porn'),
+  ('fuck'),('shit'),('bitch'),('asshole'),('cunt'),('pussy'),('whore'),('slut'),('porn'),
   ('nigger'),('nigga'),('faggot'),('retard'),('kike'),('chink'),('spic'),('nazi'),('heil hitler'),
   ('kill you'),('kill yourself'),('rape'),('terrorist'),('sieg heil'),
   ('putain'),('merde'),('connard'),('connasse'),('salope'),('encule'),('enculé'),('pute'),('nique'),
-  ('negre'),('nègre'),('bougnoule'),('youpin'),('sale juif'),('sale arabe'),('tuer'),
-  ('זונה'),('בן זונה'),('חרא'),('כוס'),('מניאק'),('מנוול'),('הומו מסריח'),('אנס')
+  ('negre'),('nègre'),('bougnoule'),('youpin'),('sale juif'),('sale arabe'),
+  ('זונה'),('בן זונה'),('חרא'),('מניאק'),('מנוול'),('הומו מסריח'),('אנס')
 ON CONFLICT DO NOTHING;
 
 CREATE OR REPLACE FUNCTION public.is_objectionable(_text text)
@@ -123,3 +123,5 @@ CREATE TRIGGER trg_notify_developer_of_report AFTER INSERT ON public.content_rep
   FOR EACH ROW EXECUTE FUNCTION public.notify_developer_of_report();
 
 -- Blocked users' minyanim disappear instantly for the blocker (feed filter is client-side too).
+
+REVOKE EXECUTE ON FUNCTION public.notify_developer_of_report(), public.report_on_block(), public.reject_objectionable_content() FROM PUBLIC, anon, authenticated;
